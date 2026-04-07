@@ -1,22 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../users/users.interfaces';
+import { UserResponse, UserRequest } from '../users/users.interfaces';
+import { users } from '../mockup/users.mock';
 
 @Injectable ()
 export class AuthService {
-  private users: User[] = [
-    {
-      id: 1,
-      username: 'max',
-      password: 'Test123!',
-      email: 'max@max.pl',
-      bio: 'bio',
-      avatar: 'avatar',
+
+  findOne(id: number): UserResponse {
+    const user = users.find((user) => user.id === id)
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user
+  }
+  register(user: UserRequest): UserRequest {
+    const newUser = {
+      id: users.length + 1,
+      ...user,
       createdAt: new Date(),
       updatedAt: new Date(),
-    },
-  ];
-  
-  findAll(): User[] {
-    return this.users;
+    };
+    users.push(newUser);
+    return newUser;
   }
 }

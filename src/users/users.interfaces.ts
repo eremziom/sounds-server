@@ -3,8 +3,8 @@ export interface User {
   username: string;
   password: string;
   email: string;
-  bio: string;
-  avatar: string;
+  bio?: string | undefined;
+  avatar?: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,8 +13,8 @@ export interface UserResponse {
   id: number;
   username: string;
   email: string;
-  bio: string;
-  avatar: string;
+  bio?: string;
+  avatar?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,6 +23,6 @@ export interface UserRequest {
   username: string;
   password: string;
   email: string;
-  bio: string;
-  avatar: string;
+  bio?: string | undefined;
+  avatar?: string | undefined;
 }
