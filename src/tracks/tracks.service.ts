@@ -34,6 +34,13 @@ export class TracksService {
   findAll(): Track[] {
     return this.tracks
   }
+  findOne(id: number): Track {
+    const track = this.tracks.find((track) => track.id === id)
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+    return track
+  }
 
   create(createTrackDto: CreateTrackDto): Track {
     const newTrack: Track = {
