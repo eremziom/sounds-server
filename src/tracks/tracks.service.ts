@@ -1,14 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { CreateTrackDto } from './create-track.dto';
-import type { BpmRangeDto } from './bpm-range.dto';
-
-export interface Track {
-  id: number;
-  title: string;
-  description: string;
-  releaseDate: string;
-  bpm: BpmRangeDto;
-}
+import { Track } from './tracks.interfaces';
 
 type UpdatableTrackFields = Pick<Track, 'title' | 'description' | 'bpm'>;
 

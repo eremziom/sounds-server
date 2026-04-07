@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, Delete} from '@nestjs/common'
-import type { Track } from './tracks.service'
+import type { Track } from './tracks.interfaces'
 import { TracksService } from './tracks.service'
 import { CreateTrackDto } from './create-track.dto'
 import { UpdateTrackDto } from './update-track.dto'
