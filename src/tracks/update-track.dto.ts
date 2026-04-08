@@ -11,7 +11,9 @@ export class UpdateTrackDto {
 
   @IsOptional()
   @IsString({ message: 'Description must be a string' })
-  @Length(3, 300, { message: 'Description must be between 3 and 300 characters' })
+  @Length(3, 300, {
+    message: 'Description must be between 3 and 300 characters',
+  })
   description?: string;
 
   @IsOptional()

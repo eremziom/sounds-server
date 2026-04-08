@@ -7,16 +7,15 @@ type UpdatableTrackFields = Pick<Track, 'title' | 'description' | 'bpm'>;
 
 @Injectable()
 export class TracksService {
-
   findAll(): Track[] {
-    return tracks
+    return tracks;
   }
   findOne(id: number): Track {
-    const track = tracks.find((track) => track.id === id)
+    const track = tracks.find((track) => track.id === id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
-    return track
+    return track;
   }
 
   create(createTrackDto: CreateTrackDto): Track {
@@ -24,12 +23,12 @@ export class TracksService {
       id: tracks.length + 1,
       ...createTrackDto,
     };
-    tracks.push(newTrack)
+    tracks.push(newTrack);
     return newTrack;
   }
 
   update(id: number, data: Partial<UpdatableTrackFields>): Track {
-    const track = tracks.find((track) => track.id === id)
+    const track = tracks.find((track) => track.id === id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -39,11 +38,11 @@ export class TracksService {
   }
 
   remove(id: number): void {
-    const index = tracks.findIndex((track) => track.id === id)
+    const index = tracks.findIndex((track) => track.id === id);
     if (index === -1) {
       throw new NotFoundException('Track not found');
     }
 
-    tracks.splice(index, 1)
+    tracks.splice(index, 1);
   }
 }

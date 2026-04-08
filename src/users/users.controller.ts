@@ -1,7 +1,15 @@
-import { Controller, Param, Get, ParseIntPipe, Delete, Patch, Body } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Get,
+  ParseIntPipe,
+  Delete,
+  Patch,
+  Body,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './update-user.dto';
-import type { User, UserResponse } from './users.interfaces';
+import type { UserResponse } from './users.interfaces';
 
 @Controller('users')
 export class UsersController {
@@ -46,10 +54,10 @@ export class UsersController {
    * @returns {UserResponse} The updated user.
    * @throws {NotFoundException} If the user with the given id is not found.
    */
-    update(
-      @Param('id', ParseIntPipe) id: number,
-      @Body() updateUserDto: UpdateUserDto): UserResponse {
-      return this.usersService.update(id, updateUserDto)
-    }
-  
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): UserResponse {
+    return this.usersService.update(id, updateUserDto);
+  }
 }
