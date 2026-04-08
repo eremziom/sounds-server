@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, Delete} from '@nestjs/common'
-import type { Track } from './tracks.service'
-import { TracksService } from './tracks.service'
-import { CreateTrackDto } from './create-track.dto'
-import { UpdateTrackDto } from './update-track.dto'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  ParseIntPipe,
+  Delete,
+} from '@nestjs/common';
+import type { Track } from './tracks.interfaces';
+import { TracksService } from './tracks.service';
+import { CreateTrackDto } from './create-track.dto';
+import { UpdateTrackDto } from './update-track.dto';
 
 @Controller('tracks')
 export class TracksController {
@@ -14,7 +23,7 @@ export class TracksController {
    * @returns {Track[]} An array of all tracks.
    */
   findAll(): Track[] {
-    return this.tracksService.findAll()
+    return this.tracksService.findAll();
   }
 
   @Get(':id')
@@ -25,7 +34,7 @@ export class TracksController {
    * @throws {NotFoundException} If the track with the given id is not found.
    */
   findOne(@Param('id', ParseIntPipe) id: number): Track {
-    return this.tracksService.findOne(id)
+    return this.tracksService.findOne(id);
   }
 
   @Post()
@@ -35,9 +44,8 @@ export class TracksController {
    * @param {CreateTrackDto} createTrackDto The track data to be created.
    * @returns {Track} The newly created track.
    */
-  create(
-    @Body() createTrackDto: CreateTrackDto): Track {
-    return this.tracksService.create(createTrackDto)
+  create(@Body() createTrackDto: CreateTrackDto): Track {
+    return this.tracksService.create(createTrackDto);
   }
 
   @Patch(':id')
@@ -50,8 +58,9 @@ export class TracksController {
    */
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTrackDto: UpdateTrackDto): Track {
-    return this.tracksService.update(id, updateTrackDto)
+    @Body() updateTrackDto: UpdateTrackDto,
+  ): Track {
+    return this.tracksService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
@@ -61,6 +70,6 @@ export class TracksController {
    * @throws {NotFoundException} If the track with the given id is not found.
    */
   remove(@Param('id', ParseIntPipe) id: number): void {
-    this.tracksService.remove(id)
+    this.tracksService.remove(id);
   }
 }

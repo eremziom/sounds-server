@@ -39,14 +39,19 @@ describe('TracksService', () => {
 
   describe('update', () => {
     it('changes updatable fields', () => {
-      const dto: UpdateTrackDto = { title: 'Updated Title', bpm: { bpmFrom: 138, bpmTo: 142 } };
+      const dto: UpdateTrackDto = {
+        title: 'Updated Title',
+        bpm: { bpmFrom: 138, bpmTo: 142 },
+      };
       const updated = service.update(1, dto);
       expect(updated.title).toBe(dto.title);
       expect(updated.bpm).toEqual(dto.bpm);
     });
 
     it('throws NotFoundException when id missing', () => {
-      expect(() => service.update(99, { title: 'Nope' })).toThrow(NotFoundException);
+      expect(() => service.update(99, { title: 'Nope' })).toThrow(
+        NotFoundException,
+      );
     });
   });
 
