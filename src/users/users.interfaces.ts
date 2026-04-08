@@ -18,11 +18,3 @@ export interface UserResponse {
   createdAt: Date;
   updatedAt: Date;
 }
-
-export interface UserRequest {
-  username: string;
-  password: string;
-  email: string;
-  bio?: string | undefined;
-  avatar?: string | undefined;
-}
