@@ -22,7 +22,7 @@ export class TracksController {
    * Returns an array of all tracks.
    * @returns {Track[]} An array of all tracks.
    */
-  findAll(): Track[] {
+  async findAll(): Promise<Track[]> {
     return this.tracksService.findAll();
   }
 
@@ -33,7 +33,7 @@ export class TracksController {
    * @returns {Track} The track with the given id.
    * @throws {NotFoundException} If the track with the given id is not found.
    */
-  findOne(@Param('id', ParseIntPipe) id: number): Track {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Track> {
     return this.tracksService.findOne(id);
   }
 
@@ -44,7 +44,7 @@ export class TracksController {
    * @param {CreateTrackDto} createTrackDto The track data to be created.
    * @returns {Track} The newly created track.
    */
-  create(@Body() createTrackDto: CreateTrackDto): Track {
+  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     return this.tracksService.create(createTrackDto);
   }
 
@@ -59,7 +59,7 @@ export class TracksController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Track {
+  ): Promise<Track> {
     return this.tracksService.update(id, updateTrackDto);
   }
 
