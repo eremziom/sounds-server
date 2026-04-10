@@ -37,7 +37,7 @@ describe('UsersController', () => {
     const dto: UpdateUserDto = { username: 'updated-name' };
     const updated: UserResponse = controller.update(1, dto);
     expect(updated.username).toBe('updated-name');
-    expect((updated as { password?: string }).password).toBeUndefined();
+    expect('password' in updated).toBe(false);
   });
 
   it('removes a user by id', () => {
