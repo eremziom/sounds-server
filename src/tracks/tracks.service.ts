@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { CreateTrackDto } from './create-track.dto';
 import { Track } from './tracks.interfaces';
-import { tracks } from '../mockup/tracks.mock';
 import { PrismaService } from '../prisma/prisma.service';
 
 type UpdatableTrackFields = Pick<Track, 'title' | 'description' | 'bpm' | 'releaseDate'>;

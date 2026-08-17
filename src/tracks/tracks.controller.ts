@@ -69,7 +69,7 @@ export class TracksController {
    * @param {number} id The id of the track to be removed.
    * @throws {NotFoundException} If the track with the given id is not found.
    */
-  remove(@Param('id', ParseIntPipe) id: number): void {
-    this.tracksService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.tracksService.remove(id);
   }
 }

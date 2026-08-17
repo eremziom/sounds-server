@@ -11,7 +11,7 @@ export class UpdateTrackDto {
 
   @IsOptional()
   @IsDateString({}, { message: 'Release date must be a valid date string' })
-    releaseDate!: string
+  releaseDate?: string;
 
   @IsOptional()
   @IsString({ message: 'Description must be a string' })

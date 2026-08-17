@@ -48,4 +48,16 @@ describe('UsersController', () => {
   it('throws when user missing', () => {
     expect(() => controller.findOne(999)).toThrow(NotFoundException);
   });
+
+  it('does not expose passwords in users list', () => {
+    const result = controller.findAll();
+
+    expect(result.every((user) => !('password' in user))).toBe(true);
+  });
+
+  it('does not expose password when returning user by id', () => {
+    const result = controller.findOne(1);
+
+    expect('password' in result).toBe(false);
+  });
 });

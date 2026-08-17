@@ -70,4 +70,10 @@ describe('AuthController', () => {
   it('throws not found for invalid id', () => {
     expect(() => controller.findOne(999)).toThrow(NotFoundException);
   });
+
+  it('does not expose password when returning auth user by id', () => {
+    const result = controller.findOne(1);
+
+    expect('password' in result).toBe(false);
+  });
 });

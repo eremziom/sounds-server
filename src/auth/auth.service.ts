@@ -22,7 +22,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return this.toUserResponse(user);
   }
 
   register(data: CreateUserDto): UserResponse {
