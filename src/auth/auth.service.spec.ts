@@ -48,7 +48,7 @@ describe('AuthService', () => {
 
     const created: UserResponse = service.register(dto);
     expect(created.id).toBeGreaterThan(seedUsers.length);
-    expect((created as { password?: string }).password).toBeUndefined();
+    expect('password' in created).toBe(false);
     expect(users).toHaveLength(seedUsers.length + 1);
   });
 
@@ -66,7 +66,7 @@ describe('AuthService', () => {
     const dto: LoginUserDto = { login: 'admin', password: 'Test123!' };
     const response: UserResponse = service.login(dto);
     expect(response.username).toBe('admin');
-    expect((response as { password?: string }).password).toBeUndefined();
+    expect('password' in response).toBe(false);
   });
 
   it('fails login with wrong password', () => {

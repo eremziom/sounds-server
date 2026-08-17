@@ -41,7 +41,7 @@ describe('UsersService', () => {
     const updated: UserResponse = service.update(1, payload);
     expect(updated.bio).toBe('Updated bio');
     expect(updated.username).toBe(seedUsers[0].username);
-    expect((updated as { password?: string }).password).toBeUndefined();
+    expect('password' in updated).toBe(false);
   });
 
   it('throws when update target missing', () => {

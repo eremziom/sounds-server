@@ -37,7 +37,7 @@ describe('UsersController', () => {
     const dto: UpdateUserDto = { username: 'updated-name' };
     const updated: UserResponse = controller.update(1, dto);
     expect(updated.username).toBe('updated-name');
-    expect((updated as { password?: string }).password).toBeUndefined();
+    expect('password' in updated).toBe(false);
   });
 
   it('removes a user by id', () => {
@@ -47,5 +47,17 @@ describe('UsersController', () => {
 
   it('throws when user missing', () => {
     expect(() => controller.findOne(999)).toThrow(NotFoundException);
+  });
+
+  it('does not expose passwords in users list', () => {
+    const result = controller.findAll();
+
+    expect(result.every((user) => !('password' in user))).toBe(true);
+  });
+
+  it('does not expose password when returning user by id', () => {
+    const result = controller.findOne(1);
+
+    expect('password' in result).toBe(false);
   });
 });

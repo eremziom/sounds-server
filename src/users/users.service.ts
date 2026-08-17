@@ -17,7 +17,7 @@ export class UsersService {
     return userResponse;
   }
   findAll(): UserResponse[] {
-    return users;
+    return users.map((user) => this.toUserResponse(user));
   }
 
   findOne(id: number): UserResponse {
@@ -25,7 +25,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return this.toUserResponse(user);
   }
 
   remove(id: number): void {

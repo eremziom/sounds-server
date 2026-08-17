@@ -42,7 +42,7 @@ describe('AuthController', () => {
 
     const created: UserResponse = controller.register(dto);
     expect(created.id).toBeGreaterThan(seedUsers.length);
-    expect((created as { password?: string }).password).toBeUndefined();
+    expect('password' in created).toBe(false);
   });
 
   it('throws when register email exists', () => {
@@ -59,7 +59,7 @@ describe('AuthController', () => {
     const dto: LoginUserDto = { login: 'max', password: 'Test123!' };
     const response: UserResponse = controller.login(dto);
     expect(response.username).toBe('max');
-    expect((response as { password?: string }).password).toBeUndefined();
+    expect('password' in response).toBe(false);
   });
 
   it('throws unauthorized when login fails', () => {
@@ -69,5 +69,11 @@ describe('AuthController', () => {
 
   it('throws not found for invalid id', () => {
     expect(() => controller.findOne(999)).toThrow(NotFoundException);
+  });
+
+  it('does not expose password when returning auth user by id', () => {
+    const result = controller.findOne(1);
+
+    expect('password' in result).toBe(false);
   });
 });

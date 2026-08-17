@@ -1,0 +1,22 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  generatedFileExtension = "cts"
+  importFileExtension    = "cjs"
+  moduleFormat           = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Track {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  releaseDate DateTime
+  bpmFrom     Int
+  bpmTo       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
