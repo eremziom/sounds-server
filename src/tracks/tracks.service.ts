@@ -3,7 +3,10 @@ import type { CreateTrackDto } from './create-track.dto';
 import { Track } from './tracks.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 
-type UpdatableTrackFields = Pick<Track, 'title' | 'description' | 'bpm' | 'releaseDate'>;
+type UpdatableTrackFields = Pick<
+  Track,
+  'title' | 'description' | 'bpm' | 'releaseDate'
+>;
 
 @Injectable()
 export class TracksService {
@@ -63,7 +66,10 @@ export class TracksService {
     return this.mapToTrackResponse(newTrack);
   }
 
-  async update(id: number, data: Partial<UpdatableTrackFields>): Promise<Track> {
+  async update(
+    id: number,
+    data: Partial<UpdatableTrackFields>,
+  ): Promise<Track> {
     const existingTrack = await this.prisma.track.findUnique({
       where: { id },
     });
@@ -76,10 +82,14 @@ export class TracksService {
       where: { id },
       data: {
         ...(data.title !== undefined && { title: data.title }),
-        ...(data.description !== undefined && { description: data.description }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
         ...(data.bpm?.bpmFrom !== undefined && { bpmFrom: data.bpm.bpmFrom }),
         ...(data.bpm?.bpmTo !== undefined && { bpmTo: data.bpm.bpmTo }),
-        ...(data.releaseDate !== undefined && { releaseDate: new Date(data.releaseDate) }),
+        ...(data.releaseDate !== undefined && {
+          releaseDate: new Date(data.releaseDate),
+        }),
       },
     });
 

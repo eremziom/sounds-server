@@ -21,7 +21,7 @@ export class AuthController {
    * @returns {UserResponse} The user with the given id.
    * @throws {NotFoundException} If the user with the given id is not found.
    */
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserResponse> {
     return this.authService.findOne(id);
   }
 
@@ -32,12 +32,12 @@ export class AuthController {
    * @returns {UserResponse} The registered user.
    * @throws {ConflictException} If the email is already in use.
    */
-  register(@Body() createUserDto: CreateUserDto): UserResponse {
+  async register(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
     return this.authService.register(createUserDto);
   }
 
   @Post('login')
-  login(@Body() loginUserDto: LoginUserDto) {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<UserResponse> {
     return this.authService.login(loginUserDto);
   }
 }

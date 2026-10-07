@@ -1,4 +1,10 @@
-import { IsOptional, IsString, Length, ValidateNested, IsDateString } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  Length,
+  ValidateNested,
+  IsDateString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { BpmRangeDto } from './bpm-range.dto';
 import { IsBpmRangeValid } from './validators/is-bpm-range-valid';

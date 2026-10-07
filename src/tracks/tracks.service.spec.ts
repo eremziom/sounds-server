@@ -48,8 +48,9 @@ describe('TracksService', () => {
     prisma = {
       track: {
         findMany: jest.fn(async () => [...tracks].sort((a, b) => a.id - b.id)),
-        findUnique: jest.fn(async ({ where: { id } }) =>
-          tracks.find((track) => track.id === id) ?? null,
+        findUnique: jest.fn(
+          async ({ where: { id } }) =>
+            tracks.find((track) => track.id === id) ?? null,
         ),
         create: jest.fn(async ({ data }) => {
           const newTrack = {

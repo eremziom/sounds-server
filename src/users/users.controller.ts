@@ -20,7 +20,7 @@ export class UsersController {
    * Returns an array of all users.
    * @returns {User[]} An array of all users.
    */
-  findAll() {
+  async findAll(): Promise<UserResponse[]> {
     return this.usersService.findAll();
   }
 
@@ -31,7 +31,7 @@ export class UsersController {
    * @returns {UserResponse} The user with the given id.
    * @throws {NotFoundException} If the user with the given id is not found.
    */
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserResponse> {
     return this.usersService.findOne(id);
   }
 
@@ -42,7 +42,7 @@ export class UsersController {
    * @returns {void}
    * @throws {NotFoundException} If the user with the given id is not found.
    */
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.usersService.remove(id);
   }
 
@@ -57,7 +57,7 @@ export class UsersController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ): UserResponse {
+  ): Promise<UserResponse> {
     return this.usersService.update(id, updateUserDto);
   }
 }

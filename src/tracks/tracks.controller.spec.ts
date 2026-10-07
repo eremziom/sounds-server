@@ -36,7 +36,10 @@ describe('TracksController', () => {
   };
 
   beforeEach(async () => {
-    tracks = initialTracks.map((track) => ({ ...track, bpm: { ...track.bpm } }));
+    tracks = initialTracks.map((track) => ({
+      ...track,
+      bpm: { ...track.bpm },
+    }));
 
     tracksService = {
       findAll: jest.fn(async () => tracks),
