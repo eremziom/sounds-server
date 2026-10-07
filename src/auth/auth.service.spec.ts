@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as argon2 from 'argon2';
 
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
@@ -19,7 +20,7 @@ const seedUsers = [
   {
     id: 1,
     username: 'max',
-    password: 'Test123!',
+    password: '',
     email: 'max@max.pl',
     role: 'USER' as const,
     bio: 'bio',
@@ -33,7 +34,7 @@ const seedUsers = [
   {
     id: 2,
     username: 'admin',
-    password: 'Test123!',
+    password: '',
     email: 'admin@admin.pl',
     role: 'ADMIN' as const,
     bio: 'bio',
@@ -70,7 +71,12 @@ describe('AuthService', () => {
   };
 
   beforeEach(async () => {
-    users = seedUsers.map((user) => ({ ...user }));
+    users = await Promise.all(
+      seedUsers.map(async (user) => ({
+        ...user,
+        password: await argon2.hash('Test123!'),
+      })),
+    );
     prisma = {
       user: {
         findUnique: jest.fn(({ where }: UserWhereUnique) => {
@@ -155,8 +161,12 @@ describe('AuthService', () => {
     };
 
     const created: UserResponse = await service.register(dto);
+    const storedUser = users.find((user) => user.id === created.id);
+
     expect(created.id).toBeGreaterThan(seedUsers.length);
     expect('password' in created).toBe(false);
+    expect(storedUser?.password).toMatch(/^\$argon2/);
+    expect(storedUser?.password).not.toBe(dto.password);
     expect(users).toHaveLength(seedUsers.length + 1);
   });
 
