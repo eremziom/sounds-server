@@ -6,7 +6,16 @@ export const users: User[] = [
     username: 'max',
     password: 'Test123!',
     email: 'max@max.pl',
-    role: 'USER',
+    roles: [
+      {
+        role: {
+          id: 1,
+          key: 'USER',
+          name: 'User',
+          description: 'Default user role.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -20,7 +29,16 @@ export const users: User[] = [
     username: 'admin',
     password: 'Test123!',
     email: 'admin@admin.pl',
-    role: 'ADMIN',
+    roles: [
+      {
+        role: {
+          id: 3,
+          key: 'ADMIN',
+          name: 'Admin',
+          description: 'Administrator role with full management access.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -34,7 +52,16 @@ export const users: User[] = [
     username: 'zexo',
     password: 'Test123!',
     email: 'zexo@gmail.pl',
-    role: 'ARTIST',
+    roles: [
+      {
+        role: {
+          id: 2,
+          key: 'ARTIST',
+          name: 'Artist',
+          description: 'Artist role for users who can manage their own tracks.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,

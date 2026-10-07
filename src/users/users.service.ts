@@ -14,12 +14,22 @@ export class UsersService {
    * objects from functions that return User objects.
    */
   private toUserResponse(user: User): UserResponse {
-    const { password, ...userResponse } = user;
+    const { password, roles, ...userResponse } = user;
     void password;
-    return userResponse;
+    return {
+      ...userResponse,
+      roles: roles?.map((userRole) => userRole.role) ?? [],
+    };
   }
   async findAll(): Promise<UserResponse[]> {
     const users = await this.prisma.user.findMany({
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
       orderBy: {
         id: 'asc',
       },
@@ -31,6 +41,13 @@ export class UsersService {
   async findOne(id: number): Promise<UserResponse> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -68,6 +85,13 @@ export class UsersService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
       data: {
         ...(data.username !== undefined && { username: data.username }),
         ...(data.bio !== undefined && { bio: data.bio }),
@@ -87,12 +111,45 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: {
-        role,
+    const targetRole = await this.prisma.role.findUnique({
+      where: {
+        key: role,
       },
     });
+
+    if (!targetRole) {
+      throw new NotFoundException('Role not found');
+    }
+
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      await tx.userRole.deleteMany({
+        where: {
+          userId: id,
+        },
+      });
+
+      await tx.userRole.create({
+        data: {
+          userId: id,
+          roleId: targetRole.id,
+        },
+      });
+
+      return tx.user.findUnique({
+        where: { id },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      });
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
 
     return this.toUserResponse(updatedUser);
   }
@@ -108,6 +165,13 @@ export class UsersService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
       data: {
         isActive,
       },

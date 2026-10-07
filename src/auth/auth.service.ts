@@ -16,14 +16,24 @@ export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
   private toUserResponse(user: User): UserResponse {
-    const { password, ...userResponse } = user;
+    const { password, roles, ...userResponse } = user;
     void password;
-    return userResponse;
+    return {
+      ...userResponse,
+      roles: roles?.map((userRole) => userRole.role) ?? [],
+    };
   }
 
   async findOne(id: number): Promise<UserResponse> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -73,7 +83,10 @@ export class AuthService {
         },
       });
 
-      return createdUser;
+      return {
+        ...createdUser,
+        roles: [{ role: userRole }],
+      };
     });
 
     return this.toUserResponse(newUser);
@@ -83,6 +96,13 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: data.login }, { username: data.login }],
+      },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
       },
     });
 
@@ -98,6 +118,13 @@ export class AuthService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id: user.id },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
       data: {
         lastLoginAt: new Date(),
       },

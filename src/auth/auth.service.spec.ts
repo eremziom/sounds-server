@@ -23,7 +23,16 @@ const seedUsers = [
     username: 'max',
     password: '',
     email: 'max@max.pl',
-    role: 'USER' as const,
+    roles: [
+      {
+        role: {
+          id: 1,
+          key: 'USER',
+          name: 'User',
+          description: 'Default user role.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -37,7 +46,16 @@ const seedUsers = [
     username: 'admin',
     password: '',
     email: 'admin@admin.pl',
-    role: 'ADMIN' as const,
+    roles: [
+      {
+        role: {
+          id: 3,
+          key: 'ADMIN',
+          name: 'Admin',
+          description: 'Administrator role with full management access.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -93,7 +111,16 @@ describe('AuthService', () => {
       ),
       role: {
         findUnique: jest.fn(({ where }: { where: { key: string } }) =>
-          Promise.resolve(where.key === 'USER' ? { id: 1, key: 'USER' } : null),
+          Promise.resolve(
+            where.key === 'USER'
+              ? {
+                  id: 1,
+                  key: 'USER',
+                  name: 'User',
+                  description: 'Default user role.',
+                }
+              : null,
+          ),
         ),
       },
       user: {
@@ -126,7 +153,7 @@ describe('AuthService', () => {
         create: jest.fn(({ data }: UserCreateArgs) => {
           const created = {
             id: users.length + 1,
-            role: 'USER' as const,
+            roles: [],
             bio: null,
             avatar: null,
             isActive: true,
@@ -195,6 +222,14 @@ describe('AuthService', () => {
     expect(storedUser?.password).not.toBe(dto.password);
     expect(users).toHaveLength(seedUsers.length + 1);
     expect(userRoles).toContainEqual({ userId: created.id, roleId: 1 });
+    expect(created.roles).toEqual([
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ]);
   });
 
   it('throws when default user role is missing', async () => {
@@ -225,6 +260,14 @@ describe('AuthService', () => {
     const dto: LoginUserDto = { login: 'admin', password: 'Test123!' };
     const response: UserResponse = await service.login(dto);
     expect(response.username).toBe('admin');
+    expect(response.roles).toEqual([
+      {
+        id: 3,
+        key: 'ADMIN',
+        name: 'Admin',
+        description: 'Administrator role with full management access.',
+      },
+    ]);
     expect(response.lastLoginAt).toBeInstanceOf(Date);
     expect('password' in response).toBe(false);
   });

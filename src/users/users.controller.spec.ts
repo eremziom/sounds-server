@@ -15,7 +15,14 @@ const seedUsers: UserResponse[] = [
     id: 1,
     username: 'max',
     email: 'max@max.pl',
-    role: 'USER',
+    roles: [
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -28,7 +35,14 @@ const seedUsers: UserResponse[] = [
     id: 2,
     username: 'admin',
     email: 'admin@admin.pl',
-    role: 'ADMIN',
+    roles: [
+      {
+        id: 3,
+        key: 'ADMIN',
+        name: 'Admin',
+        description: 'Administrator role with full management access.',
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -67,7 +81,14 @@ describe('UsersController', () => {
         if (!user) {
           return Promise.reject(new NotFoundException('User not found'));
         }
-        user.role = role;
+        user.roles = [
+          {
+            id: role === 'ARTIST' ? 2 : 3,
+            key: role,
+            name: role === 'ARTIST' ? 'Artist' : 'Admin',
+            description: null,
+          },
+        ];
         return Promise.resolve(user);
       }),
       updateActive: jest.fn((id: number, isActive: boolean) => {
@@ -108,6 +129,14 @@ describe('UsersController', () => {
   it('returns a user by id', async () => {
     const user = await controller.findOne(1);
     expect(user.id).toBe(1);
+    expect(user.roles).toEqual([
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ]);
   });
 
   it('updates a user with only provided fields', async () => {
@@ -122,7 +151,7 @@ describe('UsersController', () => {
       role: 'ARTIST',
     });
 
-    expect(updated.role).toBe('ARTIST');
+    expect(updated.roles[0]?.key).toBe('ARTIST');
     expect('password' in updated).toBe(false);
   });
 
