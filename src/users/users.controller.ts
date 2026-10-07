@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './update-user.dto';
+import { UpdateUserActiveDto } from './update-user-active.dto';
+import { UpdateUserRoleDto } from './update-user-role.dto';
 import type { UserResponse } from './users.interfaces';
 
 @Controller('users')
@@ -59,5 +61,21 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Patch(':id/role')
+  updateRole(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+  ): Promise<UserResponse> {
+    return this.usersService.updateRole(id, updateUserRoleDto.role);
+  }
+
+  @Patch(':id/active')
+  updateActive(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserActiveDto: UpdateUserActiveDto,
+  ): Promise<UserResponse> {
+    return this.usersService.updateActive(id, updateUserActiveDto.isActive);
   }
 }

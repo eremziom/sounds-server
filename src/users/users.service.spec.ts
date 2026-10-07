@@ -120,6 +120,32 @@ describe('UsersService', () => {
     );
   });
 
+  it('updates user role', async () => {
+    const updated: UserResponse = await service.updateRole(1, 'ARTIST');
+
+    expect(updated.role).toBe('ARTIST');
+    expect('password' in updated).toBe(false);
+  });
+
+  it('throws when role update target missing', async () => {
+    await expect(service.updateRole(999, 'ADMIN')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('updates user active status', async () => {
+    const updated: UserResponse = await service.updateActive(1, false);
+
+    expect(updated.isActive).toBe(false);
+    expect('password' in updated).toBe(false);
+  });
+
+  it('throws when active status update target missing', async () => {
+    await expect(service.updateActive(999, false)).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
   it('removes a user by id', async () => {
     await service.remove(2);
     await expect(service.findAll()).resolves.toHaveLength(seedUsers.length - 1);
