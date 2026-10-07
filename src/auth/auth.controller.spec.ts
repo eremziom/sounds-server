@@ -51,19 +51,19 @@ describe('AuthController', () => {
   beforeEach(async () => {
     users = seedUsers.map((user) => ({ ...user }));
     const authService = {
-      findOne: jest.fn(async (id: number) => {
+      findOne: jest.fn((id: number) => {
         const user = users.find((item) => item.id === id);
         if (!user) {
-          throw new NotFoundException('User not found');
+          return Promise.reject(new NotFoundException('User not found'));
         }
-        return user;
+        return Promise.resolve(user);
       }),
-      register: jest.fn(async (dto: CreateUserDto) => {
+      register: jest.fn((dto: CreateUserDto) => {
         if (users.some((user) => user.email === dto.email)) {
-          throw new ConflictException('Email already in use');
+          return Promise.reject(new ConflictException('Email already in use'));
         }
 
-        const created = {
+        const created: UserResponse = {
           id: users.length + 1,
           username: dto.username,
           email: dto.email,
@@ -77,9 +77,9 @@ describe('AuthController', () => {
           updatedAt: new Date(),
         };
         users.push(created);
-        return created;
+        return Promise.resolve(created);
       }),
-      login: jest.fn(async (dto: LoginUserDto) => {
+      login: jest.fn((dto: LoginUserDto) => {
         const user = users.find(
           (item) =>
             (item.email === dto.login || item.username === dto.login) &&
@@ -87,10 +87,12 @@ describe('AuthController', () => {
         );
 
         if (!user) {
-          throw new UnauthorizedException('Invalid credentials');
+          return Promise.reject(
+            new UnauthorizedException('Invalid credentials'),
+          );
         }
 
-        return user;
+        return Promise.resolve(user);
       }),
     };
 

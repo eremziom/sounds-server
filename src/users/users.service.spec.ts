@@ -44,6 +44,10 @@ const seedUsers = [
 describe('UsersService', () => {
   let service: UsersService;
   let users: typeof seedUsers;
+  type UserWhereUnique = { where: { id: number } };
+  type UserUpdateArgs = UserWhereUnique & {
+    data: Partial<(typeof seedUsers)[number]>;
+  };
   let prisma: {
     user: {
       findMany: jest.Mock;
@@ -57,19 +61,21 @@ describe('UsersService', () => {
     users = seedUsers.map((user) => ({ ...user }));
     prisma = {
       user: {
-        findMany: jest.fn(async () => [...users].sort((a, b) => a.id - b.id)),
-        findUnique: jest.fn(async ({ where: { id } }) => {
-          return users.find((user) => user.id === id) ?? null;
-        }),
-        update: jest.fn(async ({ where: { id }, data }) => {
+        findMany: jest.fn(() =>
+          Promise.resolve([...users].sort((a, b) => a.id - b.id)),
+        ),
+        findUnique: jest.fn(({ where: { id } }: UserWhereUnique) =>
+          Promise.resolve(users.find((user) => user.id === id) ?? null),
+        ),
+        update: jest.fn(({ where: { id }, data }: UserUpdateArgs) => {
           const user = users.find((item) => item.id === id);
           Object.assign(user!, data, { updatedAt: new Date() });
-          return user;
+          return Promise.resolve(user);
         }),
-        delete: jest.fn(async ({ where: { id } }) => {
+        delete: jest.fn(({ where: { id } }: UserWhereUnique) => {
           const index = users.findIndex((user) => user.id === id);
           const [deleted] = users.splice(index, 1);
-          return deleted;
+          return Promise.resolve(deleted);
         }),
       },
     };
