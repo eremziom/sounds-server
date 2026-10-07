@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { UserResponse, User } from '../users/users.interfaces';
@@ -44,14 +45,35 @@ export class AuthService {
       throw new ConflictException('Email already in use');
     }
 
-    const newUser = await this.prisma.user.create({
-      data: {
-        username: data.username,
-        email: data.email,
-        password: hashedPassword,
-        bio: data.bio,
-        avatar: data.avatar,
+    const userRole = await this.prisma.role.findUnique({
+      where: {
+        key: 'USER',
       },
+    });
+
+    if (!userRole) {
+      throw new InternalServerErrorException('Default user role not found');
+    }
+
+    const newUser = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          username: data.username,
+          email: data.email,
+          password: hashedPassword,
+          bio: data.bio,
+          avatar: data.avatar,
+        },
+      });
+
+      await tx.userRole.create({
+        data: {
+          userId: createdUser.id,
+          roleId: userRole.id,
+        },
+      });
+
+      return createdUser;
     });
 
     return this.toUserResponse(newUser);

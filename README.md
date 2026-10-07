@@ -31,6 +31,50 @@
 $ pnpm install
 ```
 
+## Local database setup
+
+Create a `.env` file with a PostgreSQL connection string:
+
+```bash
+DATABASE_URL="postgresql://postgres:<password>@HOST:PORT/DATABASE"
+```
+
+Apply database migrations:
+
+```bash
+$ pnpm exec prisma migrate deploy
+```
+
+Generate Prisma Client:
+
+```bash
+$ pnpm exec prisma generate
+```
+
+Seed base RBAC roles and permissions:
+
+```bash
+$ pnpm run seed:rbac
+```
+
+The RBAC seed is idempotent, so it can be safely run multiple times.
+
+## Development workflow
+
+Run all local checks:
+
+```bash
+$ pnpm run devtest
+```
+
+This runs:
+
+```bash
+$ pnpm run lint
+$ pnpm run build
+$ pnpm exec jest --runInBand
+```
+
 ## Compile and run the project
 
 ```bash

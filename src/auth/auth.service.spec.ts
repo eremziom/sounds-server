@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -50,6 +51,7 @@ const seedUsers = [
 describe('AuthService', () => {
   let service: AuthService;
   let users: typeof seedUsers;
+  let userRoles: { userId: number; roleId: number }[];
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
     where: { OR: { email?: string; username?: string }[] };
@@ -62,11 +64,18 @@ describe('AuthService', () => {
     data: Partial<(typeof seedUsers)[number]>;
   };
   let prisma: {
+    $transaction: jest.Mock;
+    role: {
+      findUnique: jest.Mock;
+    };
     user: {
       findUnique: jest.Mock;
       findFirst: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
+    };
+    userRole: {
+      create: jest.Mock;
     };
   };
 
@@ -77,7 +86,16 @@ describe('AuthService', () => {
         password: await argon2.hash('Test123!'),
       })),
     );
+    userRoles = [];
     prisma = {
+      $transaction: jest.fn((callback: (tx: typeof prisma) => unknown) =>
+        Promise.resolve(callback(prisma)),
+      ),
+      role: {
+        findUnique: jest.fn(({ where }: { where: { key: string } }) =>
+          Promise.resolve(where.key === 'USER' ? { id: 1, key: 'USER' } : null),
+        ),
+      },
       user: {
         findUnique: jest.fn(({ where }: UserWhereUnique) => {
           if ('id' in where) {
@@ -127,6 +145,14 @@ describe('AuthService', () => {
           return Promise.resolve(user);
         }),
       },
+      userRole: {
+        create: jest.fn(
+          ({ data }: { data: { userId: number; roleId: number } }) => {
+            userRoles.push(data);
+            return Promise.resolve(data);
+          },
+        ),
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -168,6 +194,21 @@ describe('AuthService', () => {
     expect(storedUser?.password).toMatch(/^\$argon2/);
     expect(storedUser?.password).not.toBe(dto.password);
     expect(users).toHaveLength(seedUsers.length + 1);
+    expect(userRoles).toContainEqual({ userId: created.id, roleId: 1 });
+  });
+
+  it('throws when default user role is missing', async () => {
+    prisma.role.findUnique.mockResolvedValueOnce(null);
+
+    const dto: CreateUserDto = {
+      username: 'newcomer',
+      password: 'Secret123!',
+      email: 'new@example.com',
+    };
+
+    await expect(service.register(dto)).rejects.toThrow(
+      InternalServerErrorException,
+    );
   });
 
   it('rejects duplicate emails', async () => {
