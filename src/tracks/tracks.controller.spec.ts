@@ -6,9 +6,12 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { TracksController } from './tracks.controller';
+import { CreateTrackDto } from './create-track.dto';
+import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
+import { Track } from './tracks.interfaces';
 
-const initialTracks = [
+const initialTracks: Track[] = [
   {
     id: 1,
     title: 'Solar Drift',
@@ -42,34 +45,35 @@ describe('TracksController', () => {
     }));
 
     tracksService = {
-      findAll: jest.fn(async () => tracks),
-      create: jest.fn(async (dto) => {
-        const created = {
+      findAll: jest.fn(() => Promise.resolve(tracks)),
+      create: jest.fn((dto: CreateTrackDto) => {
+        const created: Track = {
           id: Math.max(...tracks.map((track) => track.id)) + 1,
           ...dto,
         };
 
         tracks.push(created);
-        return created;
+        return Promise.resolve(created);
       }),
-      update: jest.fn(async (id, dto) => {
+      update: jest.fn((id: number, dto: UpdateTrackDto) => {
         const track = tracks.find((item) => item.id === id);
 
         if (!track) {
-          throw new NotFoundException('Track not found');
+          return Promise.reject(new NotFoundException('Track not found'));
         }
 
         Object.assign(track, dto);
-        return track;
+        return Promise.resolve(track);
       }),
-      remove: jest.fn(async (id) => {
+      remove: jest.fn((id: number) => {
         const track = tracks.find((item) => item.id === id);
 
         if (!track) {
-          throw new NotFoundException('Track not found');
+          return Promise.reject(new NotFoundException('Track not found'));
         }
 
         tracks = tracks.filter((item) => item.id !== id);
+        return Promise.resolve();
       }),
     };
 

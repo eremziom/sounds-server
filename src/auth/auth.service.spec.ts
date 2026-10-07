@@ -49,6 +49,17 @@ const seedUsers = [
 describe('AuthService', () => {
   let service: AuthService;
   let users: typeof seedUsers;
+  type UserWhereUnique = { where: { id: number } | { email: string } };
+  type UserFindFirstArgs = {
+    where: { OR: { email?: string; username?: string }[] };
+  };
+  type UserCreateArgs = {
+    data: CreateUserDto;
+  };
+  type UserUpdateArgs = {
+    where: { id: number };
+    data: Partial<(typeof seedUsers)[number]>;
+  };
   let prisma: {
     user: {
       findUnique: jest.Mock;
@@ -62,29 +73,33 @@ describe('AuthService', () => {
     users = seedUsers.map((user) => ({ ...user }));
     prisma = {
       user: {
-        findUnique: jest.fn(async ({ where }) => {
+        findUnique: jest.fn(({ where }: UserWhereUnique) => {
           if ('id' in where) {
-            return users.find((user) => user.id === where.id) ?? null;
+            return Promise.resolve(
+              users.find((user) => user.id === where.id) ?? null,
+            );
           }
 
           if ('email' in where) {
-            return users.find((user) => user.email === where.email) ?? null;
+            return Promise.resolve(
+              users.find((user) => user.email === where.email) ?? null,
+            );
           }
 
-          return null;
+          return Promise.resolve(null);
         }),
-        findFirst: jest.fn(async ({ where: { OR } }) => {
-          return (
+        findFirst: jest.fn(({ where: { OR } }: UserFindFirstArgs) =>
+          Promise.resolve(
             users.find((user) =>
               OR.some(
                 (condition: { email?: string; username?: string }) =>
                   user.email === condition.email ||
                   user.username === condition.username,
               ),
-            ) ?? null
-          );
-        }),
-        create: jest.fn(async ({ data }) => {
+            ) ?? null,
+          ),
+        ),
+        create: jest.fn(({ data }: UserCreateArgs) => {
           const created = {
             id: users.length + 1,
             role: 'USER' as const,
@@ -98,12 +113,12 @@ describe('AuthService', () => {
             updatedAt: new Date(),
           };
           users.push(created);
-          return created;
+          return Promise.resolve(created);
         }),
-        update: jest.fn(async ({ where: { id }, data }) => {
+        update: jest.fn(({ where: { id }, data }: UserUpdateArgs) => {
           const user = users.find((item) => item.id === id);
           Object.assign(user!, data, { updatedAt: new Date() });
-          return user;
+          return Promise.resolve(user);
         }),
       },
     };

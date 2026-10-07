@@ -10,6 +10,15 @@ import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
 import { PrismaService } from '../prisma/prisma.service';
 
+type DbTrack = (typeof initialTracks)[number];
+type TrackWhereUnique = { where: { id: number } };
+type TrackCreateArgs = {
+  data: Omit<DbTrack, 'id'>;
+};
+type TrackUpdateArgs = TrackWhereUnique & {
+  data: Partial<DbTrack>;
+};
+
 const initialTracks = [
   {
     id: 1,
@@ -47,31 +56,33 @@ describe('TracksService', () => {
 
     prisma = {
       track: {
-        findMany: jest.fn(async () => [...tracks].sort((a, b) => a.id - b.id)),
-        findUnique: jest.fn(
-          async ({ where: { id } }) =>
-            tracks.find((track) => track.id === id) ?? null,
+        findMany: jest.fn(() =>
+          Promise.resolve([...tracks].sort((a, b) => a.id - b.id)),
         ),
-        create: jest.fn(async ({ data }) => {
+        findUnique: jest.fn(({ where: { id } }: TrackWhereUnique) =>
+          Promise.resolve(tracks.find((track) => track.id === id) ?? null),
+        ),
+        create: jest.fn(({ data }: TrackCreateArgs) => {
           const newTrack = {
             id: Math.max(...tracks.map((track) => track.id)) + 1,
             ...data,
           };
 
           tracks.push(newTrack);
-          return newTrack;
+          return Promise.resolve(newTrack);
         }),
-        update: jest.fn(async ({ where: { id }, data }) => {
+        update: jest.fn(({ where: { id }, data }: TrackUpdateArgs) => {
           const trackIndex = tracks.findIndex((track) => track.id === id);
           tracks[trackIndex] = {
             ...tracks[trackIndex],
             ...data,
           };
 
-          return tracks[trackIndex];
+          return Promise.resolve(tracks[trackIndex]);
         }),
-        delete: jest.fn(async ({ where: { id } }) => {
+        delete: jest.fn(({ where: { id } }: TrackWhereUnique) => {
           tracks = tracks.filter((track) => track.id !== id);
+          return Promise.resolve();
         }),
       },
     };

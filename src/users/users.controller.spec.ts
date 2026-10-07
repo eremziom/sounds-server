@@ -46,28 +46,29 @@ describe('UsersController', () => {
   beforeEach(async () => {
     users = seedUsers.map((user) => ({ ...user }));
     const usersService = {
-      findAll: jest.fn(async () => users),
-      findOne: jest.fn(async (id: number) => {
+      findAll: jest.fn(() => Promise.resolve(users)),
+      findOne: jest.fn((id: number) => {
         const user = users.find((item) => item.id === id);
         if (!user) {
-          throw new NotFoundException('User not found');
+          return Promise.reject(new NotFoundException('User not found'));
         }
-        return user;
+        return Promise.resolve(user);
       }),
-      update: jest.fn(async (id: number, dto: UpdateUserDto) => {
+      update: jest.fn((id: number, dto: UpdateUserDto) => {
         const user = users.find((item) => item.id === id);
         if (!user) {
-          throw new NotFoundException('User not found');
+          return Promise.reject(new NotFoundException('User not found'));
         }
         Object.assign(user, dto);
-        return user;
+        return Promise.resolve(user);
       }),
-      remove: jest.fn(async (id: number) => {
+      remove: jest.fn((id: number) => {
         const index = users.findIndex((item) => item.id === id);
         if (index === -1) {
-          throw new NotFoundException('User not found');
+          return Promise.reject(new NotFoundException('User not found'));
         }
         users.splice(index, 1);
+        return Promise.resolve();
       }),
     };
 
