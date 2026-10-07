@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserResponse, User } from './users.interfaces';
+import { UserResponse, User, UserRole } from './users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 
 type UpdatableUserFields = Pick<User, 'username' | 'bio' | 'avatar'>;
@@ -72,6 +72,44 @@ export class UsersService {
         ...(data.username !== undefined && { username: data.username }),
         ...(data.bio !== undefined && { bio: data.bio }),
         ...(data.avatar !== undefined && { avatar: data.avatar }),
+      },
+    });
+
+    return this.toUserResponse(updatedUser);
+  }
+
+  async updateRole(id: number, role: UserRole): Promise<UserResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        role,
+      },
+    });
+
+    return this.toUserResponse(updatedUser);
+  }
+
+  async updateActive(id: number, isActive: boolean): Promise<UserResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        isActive,
       },
     });
 

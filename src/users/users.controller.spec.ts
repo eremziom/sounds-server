@@ -7,7 +7,7 @@ jest.mock('../prisma/prisma.service', () => ({
 
 import { UsersController } from './users.controller';
 import { UpdateUserDto } from './update-user.dto';
-import { UserResponse } from './users.interfaces';
+import { UserResponse, UserRole } from './users.interfaces';
 import { UsersService } from './users.service';
 
 const seedUsers: UserResponse[] = [
@@ -62,6 +62,22 @@ describe('UsersController', () => {
         Object.assign(user, dto);
         return Promise.resolve(user);
       }),
+      updateRole: jest.fn((id: number, role: UserRole) => {
+        const user = users.find((item) => item.id === id);
+        if (!user) {
+          return Promise.reject(new NotFoundException('User not found'));
+        }
+        user.role = role;
+        return Promise.resolve(user);
+      }),
+      updateActive: jest.fn((id: number, isActive: boolean) => {
+        const user = users.find((item) => item.id === id);
+        if (!user) {
+          return Promise.reject(new NotFoundException('User not found'));
+        }
+        user.isActive = isActive;
+        return Promise.resolve(user);
+      }),
       remove: jest.fn((id: number) => {
         const index = users.findIndex((item) => item.id === id);
         if (index === -1) {
@@ -99,6 +115,36 @@ describe('UsersController', () => {
     const updated: UserResponse = await controller.update(1, dto);
     expect(updated.username).toBe('updated-name');
     expect('password' in updated).toBe(false);
+  });
+
+  it('updates user role', async () => {
+    const updated: UserResponse = await controller.updateRole(1, {
+      role: 'ARTIST',
+    });
+
+    expect(updated.role).toBe('ARTIST');
+    expect('password' in updated).toBe(false);
+  });
+
+  it('throws when role update target missing', async () => {
+    await expect(controller.updateRole(999, { role: 'ADMIN' })).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('updates user active status', async () => {
+    const updated: UserResponse = await controller.updateActive(1, {
+      isActive: false,
+    });
+
+    expect(updated.isActive).toBe(false);
+    expect('password' in updated).toBe(false);
+  });
+
+  it('throws when active status update target missing', async () => {
+    await expect(
+      controller.updateActive(999, { isActive: false }),
+    ).rejects.toThrow(NotFoundException);
   });
 
   it('removes a user by id', async () => {
