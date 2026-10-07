@@ -10,6 +10,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ARTIST
+  ADMIN
+}
+
 model Track {
   id          Int      @id @default(autoincrement())
   title       String
@@ -19,4 +25,19 @@ model Track {
   bpmTo       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  username        String    @unique
+  password        String
+  email           String    @unique
+  role            UserRole  @default(USER)
+  bio             String?
+  avatar          String?
+  isActive        Boolean   @default(true)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

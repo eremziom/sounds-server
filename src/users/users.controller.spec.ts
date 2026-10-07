@@ -1,62 +1,124 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
+jest.mock('../prisma/prisma.service', () => ({
+  PrismaService: class PrismaService {},
+}));
+
 import { UsersController } from './users.controller';
-import { UsersModule } from './users.module';
 import { UpdateUserDto } from './update-user.dto';
 import { UserResponse } from './users.interfaces';
-import { users } from '../mockup/users.mock';
+import { UsersService } from './users.service';
 
-const seedUsers = users.map((user) => ({ ...user }));
-const resetUsers = () => {
-  users.length = 0;
-  users.push(...seedUsers.map((user) => ({ ...user })));
-};
+const seedUsers: UserResponse[] = [
+  {
+    id: 1,
+    username: 'max',
+    email: 'max@max.pl',
+    role: 'USER',
+    bio: 'bio',
+    avatar: 'avatar',
+    isActive: true,
+    emailVerifiedAt: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 2,
+    username: 'admin',
+    email: 'admin@admin.pl',
+    role: 'ADMIN',
+    bio: 'bio',
+    avatar: 'avatar',
+    isActive: true,
+    emailVerifiedAt: null,
+    lastLoginAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
 
 describe('UsersController', () => {
   let controller: UsersController;
+  let users: UserResponse[];
 
   beforeEach(async () => {
-    resetUsers();
+    users = seedUsers.map((user) => ({ ...user }));
+    const usersService = {
+      findAll: jest.fn(async () => users),
+      findOne: jest.fn(async (id: number) => {
+        const user = users.find((item) => item.id === id);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+        return user;
+      }),
+      update: jest.fn(async (id: number, dto: UpdateUserDto) => {
+        const user = users.find((item) => item.id === id);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+        Object.assign(user, dto);
+        return user;
+      }),
+      remove: jest.fn(async (id: number) => {
+        const index = users.findIndex((item) => item.id === id);
+        if (index === -1) {
+          throw new NotFoundException('User not found');
+        }
+        users.splice(index, 1);
+      }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UsersModule],
+      controllers: [UsersController],
+      providers: [
+        {
+          provide: UsersService,
+          useValue: usersService,
+        },
+      ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
   });
 
-  it('returns list of users', () => {
-    expect(controller.findAll()).toHaveLength(seedUsers.length);
+  it('returns list of users', async () => {
+    await expect(controller.findAll()).resolves.toHaveLength(seedUsers.length);
   });
 
-  it('returns a user by id', () => {
-    const user = controller.findOne(1);
+  it('returns a user by id', async () => {
+    const user = await controller.findOne(1);
     expect(user.id).toBe(1);
   });
 
-  it('updates a user with only provided fields', () => {
+  it('updates a user with only provided fields', async () => {
     const dto: UpdateUserDto = { username: 'updated-name' };
-    const updated: UserResponse = controller.update(1, dto);
+    const updated: UserResponse = await controller.update(1, dto);
     expect(updated.username).toBe('updated-name');
     expect('password' in updated).toBe(false);
   });
 
-  it('removes a user by id', () => {
-    controller.remove(2);
-    expect(controller.findAll()).toHaveLength(seedUsers.length - 1);
+  it('removes a user by id', async () => {
+    await controller.remove(2);
+    await expect(controller.findAll()).resolves.toHaveLength(
+      seedUsers.length - 1,
+    );
   });
 
-  it('throws when user missing', () => {
-    expect(() => controller.findOne(999)).toThrow(NotFoundException);
+  it('throws when user missing', async () => {
+    await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
   });
 
-  it('does not expose passwords in users list', () => {
-    const result = controller.findAll();
+  it('does not expose passwords in users list', async () => {
+    const result = await controller.findAll();
 
     expect(result.every((user) => !('password' in user))).toBe(true);
   });
 
-  it('does not expose password when returning user by id', () => {
-    const result = controller.findOne(1);
+  it('does not expose password when returning user by id', async () => {
+    const result = await controller.findOne(1);
 
     expect('password' in result).toBe(false);
   });
