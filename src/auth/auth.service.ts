@@ -4,6 +4,7 @@ import {
   ConflictException,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as argon2 from 'argon2';
 import { UserResponse, User } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -32,6 +33,7 @@ export class AuthService {
   }
 
   async register(data: CreateUserDto): Promise<UserResponse> {
+    const hashedPassword = await argon2.hash(data.password);
     const existingUser = await this.prisma.user.findUnique({
       where: {
         email: data.email,
@@ -46,7 +48,7 @@ export class AuthService {
       data: {
         username: data.username,
         email: data.email,
-        password: data.password,
+        password: hashedPassword,
         bio: data.bio,
         avatar: data.avatar,
       },
@@ -62,7 +64,13 @@ export class AuthService {
       },
     });
 
-    if (!user || user.password !== data.password) {
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await argon2.verify(user.password, data.password);
+
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
