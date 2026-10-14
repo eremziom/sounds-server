@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserResponse, User, UserRole } from './users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
+import { RolesService } from '../roles/roles.service';
 
 type UpdatableUserFields = Pick<User, 'username' | 'bio' | 'avatar'>;
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly rolesService: RolesService,
+  ) {}
 
   /**
    * A private helper function to convert a User object
@@ -111,15 +115,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const targetRole = await this.prisma.role.findUnique({
-      where: {
-        key: role,
-      },
-    });
-
-    if (!targetRole) {
-      throw new NotFoundException('Role not found');
-    }
+    const targetRole = await this.rolesService.findByKey(role);
 
     const updatedUser = await this.prisma.$transaction(async (tx) => {
       await tx.userRole.deleteMany({

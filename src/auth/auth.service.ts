@@ -10,10 +10,14 @@ import { UserResponse, User } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly rolesService: RolesService,
+  ) {}
 
   private toUserResponse(user: User): UserResponse {
     const { password, roles, ...userResponse } = user;
@@ -55,11 +59,9 @@ export class AuthService {
       throw new ConflictException('Email already in use');
     }
 
-    const userRole = await this.prisma.role.findUnique({
-      where: {
-        key: 'USER',
-      },
-    });
+    const userRole = await this.rolesService
+      .findByKey('USER')
+      .catch(() => null);
 
     if (!userRole) {
       throw new InternalServerErrorException('Default user role not found');

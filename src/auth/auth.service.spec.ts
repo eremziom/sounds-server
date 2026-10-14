@@ -14,8 +14,9 @@ jest.mock('../prisma/prisma.service', () => ({
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
-import { UserResponse } from '../users/users.interfaces';
+import { AssignedRole, UserResponse } from '../users/users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
+import { RolesService } from '../roles/roles.service';
 
 const seedUsers = [
   {
@@ -70,6 +71,9 @@ describe('AuthService', () => {
   let service: AuthService;
   let users: typeof seedUsers;
   let userRoles: { userId: number; roleId: number }[];
+  let rolesService: {
+    findByKey: jest.Mock;
+  };
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
     where: { OR: { email?: string; username?: string }[] };
@@ -181,6 +185,20 @@ describe('AuthService', () => {
         ),
       },
     };
+    rolesService = {
+      findByKey: jest.fn((key: string): Promise<AssignedRole | null> => {
+        if (key !== 'USER') {
+          return Promise.resolve(null);
+        }
+
+        return Promise.resolve({
+          id: 1,
+          key: 'USER',
+          name: 'User',
+          description: 'Default user role.',
+        });
+      }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -188,6 +206,10 @@ describe('AuthService', () => {
         {
           provide: PrismaService,
           useValue: prisma,
+        },
+        {
+          provide: RolesService,
+          useValue: rolesService,
         },
       ],
     }).compile();
@@ -233,7 +255,7 @@ describe('AuthService', () => {
   });
 
   it('throws when default user role is missing', async () => {
-    prisma.role.findUnique.mockResolvedValueOnce(null);
+    rolesService.findByKey.mockRejectedValueOnce(new NotFoundException());
 
     const dto: CreateUserDto = {
       username: 'newcomer',

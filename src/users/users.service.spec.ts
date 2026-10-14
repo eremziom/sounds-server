@@ -7,8 +7,9 @@ jest.mock('../prisma/prisma.service', () => ({
 
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './update-user.dto';
-import { UserResponse, UserRole } from './users.interfaces';
+import { AssignedRole, UserResponse, UserRole } from './users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
+import { RolesService } from '../roles/roles.service';
 
 const seedUsers = [
   {
@@ -63,6 +64,9 @@ describe('UsersService', () => {
   let service: UsersService;
   let users: typeof seedUsers;
   let userRoles: { userId: number; roleId: number }[];
+  let rolesService: {
+    findByKey: jest.Mock;
+  };
   type UserWhereUnique = { where: { id: number } };
   type UserUpdateArgs = UserWhereUnique & {
     data: Partial<(typeof seedUsers)[number]>;
@@ -168,6 +172,33 @@ describe('UsersService', () => {
         ),
       },
     };
+    rolesService = {
+      findByKey: jest.fn((key: UserRole): Promise<AssignedRole | null> => {
+        const roleByKey: Record<UserRole, AssignedRole> = {
+          USER: {
+            id: 1,
+            key: 'USER',
+            name: 'User',
+            description: 'Default user role.',
+          },
+          ARTIST: {
+            id: 2,
+            key: 'ARTIST',
+            name: 'Artist',
+            description:
+              'Artist role for users who can manage their own tracks.',
+          },
+          ADMIN: {
+            id: 3,
+            key: 'ADMIN',
+            name: 'Admin',
+            description: 'Administrator role with full management access.',
+          },
+        };
+
+        return Promise.resolve(roleByKey[key] ?? null);
+      }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -175,6 +206,10 @@ describe('UsersService', () => {
         {
           provide: PrismaService,
           useValue: prisma,
+        },
+        {
+          provide: RolesService,
+          useValue: rolesService,
         },
       ],
     }).compile();
