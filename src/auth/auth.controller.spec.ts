@@ -20,7 +20,14 @@ const seedUsers: UserResponse[] = [
     id: 1,
     username: 'max',
     email: 'max@max.pl',
-    role: 'USER',
+    roles: [
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -33,7 +40,14 @@ const seedUsers: UserResponse[] = [
     id: 2,
     username: 'admin',
     email: 'admin@admin.pl',
-    role: 'ADMIN',
+    roles: [
+      {
+        id: 3,
+        key: 'ADMIN',
+        name: 'Admin',
+        description: 'Administrator role with full management access.',
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -67,7 +81,14 @@ describe('AuthController', () => {
           id: users.length + 1,
           username: dto.username,
           email: dto.email,
-          role: 'USER' as const,
+          roles: [
+            {
+              id: 1,
+              key: 'USER',
+              name: 'User',
+              description: 'Default user role.',
+            },
+          ],
           bio: dto.bio ?? null,
           avatar: dto.avatar ?? null,
           isActive: true,
@@ -122,6 +143,14 @@ describe('AuthController', () => {
 
     const created: UserResponse = await controller.register(dto);
     expect(created.id).toBeGreaterThan(seedUsers.length);
+    expect(created.roles).toEqual([
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ]);
     expect('password' in created).toBe(false);
   });
 

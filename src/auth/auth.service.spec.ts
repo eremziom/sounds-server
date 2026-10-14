@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -13,8 +14,9 @@ jest.mock('../prisma/prisma.service', () => ({
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
-import { UserResponse } from '../users/users.interfaces';
+import { AssignedRole, UserResponse } from '../users/users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
+import { RolesService } from '../roles/roles.service';
 
 const seedUsers = [
   {
@@ -22,7 +24,16 @@ const seedUsers = [
     username: 'max',
     password: '',
     email: 'max@max.pl',
-    role: 'USER' as const,
+    roles: [
+      {
+        role: {
+          id: 1,
+          key: 'USER',
+          name: 'User',
+          description: 'Default user role.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -36,7 +47,16 @@ const seedUsers = [
     username: 'admin',
     password: '',
     email: 'admin@admin.pl',
-    role: 'ADMIN' as const,
+    roles: [
+      {
+        role: {
+          id: 3,
+          key: 'ADMIN',
+          name: 'Admin',
+          description: 'Administrator role with full management access.',
+        },
+      },
+    ],
     bio: 'bio',
     avatar: 'avatar',
     isActive: true,
@@ -50,6 +70,10 @@ const seedUsers = [
 describe('AuthService', () => {
   let service: AuthService;
   let users: typeof seedUsers;
+  let userRoles: { userId: number; roleId: number }[];
+  let rolesService: {
+    findByKey: jest.Mock;
+  };
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
     where: { OR: { email?: string; username?: string }[] };
@@ -62,11 +86,18 @@ describe('AuthService', () => {
     data: Partial<(typeof seedUsers)[number]>;
   };
   let prisma: {
+    $transaction: jest.Mock;
+    role: {
+      findUnique: jest.Mock;
+    };
     user: {
       findUnique: jest.Mock;
       findFirst: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
+    };
+    userRole: {
+      create: jest.Mock;
     };
   };
 
@@ -77,7 +108,25 @@ describe('AuthService', () => {
         password: await argon2.hash('Test123!'),
       })),
     );
+    userRoles = [];
     prisma = {
+      $transaction: jest.fn((callback: (tx: typeof prisma) => unknown) =>
+        Promise.resolve(callback(prisma)),
+      ),
+      role: {
+        findUnique: jest.fn(({ where }: { where: { key: string } }) =>
+          Promise.resolve(
+            where.key === 'USER'
+              ? {
+                  id: 1,
+                  key: 'USER',
+                  name: 'User',
+                  description: 'Default user role.',
+                }
+              : null,
+          ),
+        ),
+      },
       user: {
         findUnique: jest.fn(({ where }: UserWhereUnique) => {
           if ('id' in where) {
@@ -108,7 +157,7 @@ describe('AuthService', () => {
         create: jest.fn(({ data }: UserCreateArgs) => {
           const created = {
             id: users.length + 1,
-            role: 'USER' as const,
+            roles: [],
             bio: null,
             avatar: null,
             isActive: true,
@@ -127,6 +176,28 @@ describe('AuthService', () => {
           return Promise.resolve(user);
         }),
       },
+      userRole: {
+        create: jest.fn(
+          ({ data }: { data: { userId: number; roleId: number } }) => {
+            userRoles.push(data);
+            return Promise.resolve(data);
+          },
+        ),
+      },
+    };
+    rolesService = {
+      findByKey: jest.fn((key: string): Promise<AssignedRole | null> => {
+        if (key !== 'USER') {
+          return Promise.resolve(null);
+        }
+
+        return Promise.resolve({
+          id: 1,
+          key: 'USER',
+          name: 'User',
+          description: 'Default user role.',
+        });
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -135,6 +206,10 @@ describe('AuthService', () => {
         {
           provide: PrismaService,
           useValue: prisma,
+        },
+        {
+          provide: RolesService,
+          useValue: rolesService,
         },
       ],
     }).compile();
@@ -168,6 +243,29 @@ describe('AuthService', () => {
     expect(storedUser?.password).toMatch(/^\$argon2/);
     expect(storedUser?.password).not.toBe(dto.password);
     expect(users).toHaveLength(seedUsers.length + 1);
+    expect(userRoles).toContainEqual({ userId: created.id, roleId: 1 });
+    expect(created.roles).toEqual([
+      {
+        id: 1,
+        key: 'USER',
+        name: 'User',
+        description: 'Default user role.',
+      },
+    ]);
+  });
+
+  it('throws when default user role is missing', async () => {
+    rolesService.findByKey.mockRejectedValueOnce(new NotFoundException());
+
+    const dto: CreateUserDto = {
+      username: 'newcomer',
+      password: 'Secret123!',
+      email: 'new@example.com',
+    };
+
+    await expect(service.register(dto)).rejects.toThrow(
+      InternalServerErrorException,
+    );
   });
 
   it('rejects duplicate emails', async () => {
@@ -184,6 +282,14 @@ describe('AuthService', () => {
     const dto: LoginUserDto = { login: 'admin', password: 'Test123!' };
     const response: UserResponse = await service.login(dto);
     expect(response.username).toBe('admin');
+    expect(response.roles).toEqual([
+      {
+        id: 3,
+        key: 'ADMIN',
+        name: 'Admin',
+        description: 'Administrator role with full management access.',
+      },
+    ]);
     expect(response.lastLoginAt).toBeInstanceOf(Date);
     expect('password' in response).toBe(false);
   });

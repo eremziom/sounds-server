@@ -1,11 +1,17 @@
 export type UserRole = 'USER' | 'ARTIST' | 'ADMIN';
 
+export interface AssignedRole {
+  id: number;
+  key: string;
+  name: string;
+  description: string | null;
+}
+
 export interface User {
   id: number;
   username: string;
   password: string;
   email: string;
-  role: UserRole;
   bio: string | null;
   avatar: string | null;
   isActive: boolean;
@@ -13,13 +19,13 @@ export interface User {
   lastLoginAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  roles?: { role: AssignedRole }[];
 }
 
 export interface UserResponse {
   id: number;
   username: string;
   email: string;
-  role: UserRole;
   bio: string | null;
   avatar: string | null;
   isActive: boolean;
@@ -27,4 +33,5 @@ export interface UserResponse {
   lastLoginAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  roles: AssignedRole[];
 }
