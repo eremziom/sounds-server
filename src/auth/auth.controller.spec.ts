@@ -5,6 +5,10 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+jest.mock('@nestjs/jwt', () => ({
+  JwtService: class JwtService {},
+}));
+
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));

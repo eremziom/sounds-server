@@ -7,11 +7,16 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import * as argon2 from 'argon2';
 
+jest.mock('@nestjs/jwt', () => ({
+  JwtService: class JwtService {},
+}));
+
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { AssignedRole, UserResponse } from '../users/users.interfaces';
@@ -73,6 +78,9 @@ describe('AuthService', () => {
   let userRoles: { userId: number; roleId: number }[];
   let rolesService: {
     findByKey: jest.Mock;
+  };
+  let jwtService: {
+    signAsync: jest.Mock;
   };
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
@@ -199,6 +207,9 @@ describe('AuthService', () => {
         });
       }),
     };
+    jwtService = {
+      signAsync: jest.fn(() => Promise.resolve('signed.jwt.token')),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -210,6 +221,10 @@ describe('AuthService', () => {
         {
           provide: RolesService,
           useValue: rolesService,
+        },
+        {
+          provide: JwtService,
+          useValue: jwtService,
         },
       ],
     }).compile();

@@ -5,7 +5,9 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
+import { JwtPayload } from './auth.interfaces';
 import { UserResponse, User } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -17,6 +19,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rolesService: RolesService,
+    private readonly jwtService: JwtService,
   ) {}
 
   private toUserResponse(user: User): UserResponse {
@@ -26,6 +29,18 @@ export class AuthService {
       ...userResponse,
       roles: roles?.map((userRole) => userRole.role) ?? [],
     };
+  }
+
+  private createJwtPayload(user: UserResponse): JwtPayload {
+    return {
+      sub: user.id,
+      username: user.username,
+      roles: user.roles.map((role) => role.key),
+    };
+  }
+
+  private signAccessToken(user: UserResponse): Promise<string> {
+    return this.jwtService.signAsync(this.createJwtPayload(user));
   }
 
   async findOne(id: number): Promise<UserResponse> {
