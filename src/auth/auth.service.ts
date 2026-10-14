@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import { JwtPayload } from './auth.interfaces';
+import { AuthResponse, JwtPayload } from './auth.interfaces';
 import { UserResponse, User } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -43,6 +43,13 @@ export class AuthService {
     return this.jwtService.signAsync(this.createJwtPayload(user));
   }
 
+  private async toAuthResponse(user: UserResponse): Promise<AuthResponse> {
+    return {
+      accessToken: await this.signAccessToken(user),
+      user,
+    };
+  }
+
   async findOne(id: number): Promise<UserResponse> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -62,7 +69,7 @@ export class AuthService {
     return this.toUserResponse(user);
   }
 
-  async register(data: CreateUserDto): Promise<UserResponse> {
+  async register(data: CreateUserDto): Promise<AuthResponse> {
     const hashedPassword = await argon2.hash(data.password);
     const existingUser = await this.prisma.user.findUnique({
       where: {
@@ -106,10 +113,10 @@ export class AuthService {
       };
     });
 
-    return this.toUserResponse(newUser);
+    return this.toAuthResponse(this.toUserResponse(newUser));
   }
 
-  async login(data: LoginUserDto): Promise<UserResponse> {
+  async login(data: LoginUserDto): Promise<AuthResponse> {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: data.login }, { username: data.login }],
@@ -147,6 +154,6 @@ export class AuthService {
       },
     });
 
-    return this.toUserResponse(updatedUser);
+    return this.toAuthResponse(this.toUserResponse(updatedUser));
   }
 }

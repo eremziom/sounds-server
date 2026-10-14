@@ -7,6 +7,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import type { AuthResponse } from './auth.interfaces';
 import type { UserResponse } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -29,15 +30,15 @@ export class AuthController {
   /**
    * Registers a new user with the given data.
    * @param {CreateUserDto} createUserDto The data of the user to be registered.
-   * @returns {UserResponse} The registered user.
+   * @returns {AuthResponse} The registered user and access token.
    * @throws {ConflictException} If the email is already in use.
    */
-  async register(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+  async register(@Body() createUserDto: CreateUserDto): Promise<AuthResponse> {
     return this.authService.register(createUserDto);
   }
 
   @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto): Promise<UserResponse> {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<AuthResponse> {
     return this.authService.login(loginUserDto);
   }
 }
