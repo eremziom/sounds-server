@@ -5,12 +5,21 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
+jest.mock('@nestjs/jwt', () => ({
+  JwtService: class JwtService {},
+}));
+
+jest.mock('@nestjs/passport', () => ({
+  AuthGuard: jest.fn(() => class MockAuthGuard {}),
+}));
+
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { UserResponse } from '../users/users.interfaces';
@@ -98,7 +107,10 @@ describe('AuthController', () => {
           updatedAt: new Date(),
         };
         users.push(created);
-        return Promise.resolve(created);
+        return Promise.resolve({
+          accessToken: 'registered.jwt.token',
+          user: created,
+        });
       }),
       login: jest.fn((dto: LoginUserDto) => {
         const user = users.find(
@@ -113,7 +125,10 @@ describe('AuthController', () => {
           );
         }
 
-        return Promise.resolve(user);
+        return Promise.resolve({
+          accessToken: 'logged.jwt.token',
+          user,
+        });
       }),
     };
 
@@ -141,9 +156,10 @@ describe('AuthController', () => {
       email: 'ctrl@example.com',
     };
 
-    const created: UserResponse = await controller.register(dto);
-    expect(created.id).toBeGreaterThan(seedUsers.length);
-    expect(created.roles).toEqual([
+    const response: AuthResponse = await controller.register(dto);
+    expect(response.accessToken).toBe('registered.jwt.token');
+    expect(response.user.id).toBeGreaterThan(seedUsers.length);
+    expect(response.user.roles).toEqual([
       {
         id: 1,
         key: 'USER',
@@ -151,7 +167,7 @@ describe('AuthController', () => {
         description: 'Default user role.',
       },
     ]);
-    expect('password' in created).toBe(false);
+    expect('password' in response.user).toBe(false);
   });
 
   it('throws when register email exists', async () => {
@@ -166,8 +182,25 @@ describe('AuthController', () => {
 
   it('logs in via controller', async () => {
     const dto: LoginUserDto = { login: 'max', password: 'Test123!' };
-    const response: UserResponse = await controller.login(dto);
-    expect(response.username).toBe('max');
+    const response: AuthResponse = await controller.login(dto);
+    expect(response.accessToken).toBe('logged.jwt.token');
+    expect(response.user.username).toBe('max');
+    expect('password' in response.user).toBe(false);
+  });
+
+  it('returns current user from authenticated request', async () => {
+    const request: AuthenticatedRequest = {
+      user: {
+        userId: 2,
+        username: 'admin',
+        roles: ['ADMIN'],
+      },
+    };
+
+    const response = await controller.me(request);
+
+    expect(response.id).toBe(2);
+    expect(response.username).toBe('admin');
     expect('password' in response).toBe(false);
   });
 

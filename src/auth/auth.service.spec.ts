@@ -7,14 +7,20 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import * as argon2 from 'argon2';
 
+jest.mock('@nestjs/jwt', () => ({
+  JwtService: class JwtService {},
+}));
+
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
-import { AssignedRole, UserResponse } from '../users/users.interfaces';
+import { AssignedRole } from '../users/users.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 import { RolesService } from '../roles/roles.service';
 
@@ -73,6 +79,9 @@ describe('AuthService', () => {
   let userRoles: { userId: number; roleId: number }[];
   let rolesService: {
     findByKey: jest.Mock;
+  };
+  let jwtService: {
+    signAsync: jest.Mock;
   };
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
@@ -199,6 +208,9 @@ describe('AuthService', () => {
         });
       }),
     };
+    jwtService = {
+      signAsync: jest.fn(() => Promise.resolve('signed.jwt.token')),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -210,6 +222,10 @@ describe('AuthService', () => {
         {
           provide: RolesService,
           useValue: rolesService,
+        },
+        {
+          provide: JwtService,
+          useValue: jwtService,
         },
       ],
     }).compile();
@@ -235,16 +251,17 @@ describe('AuthService', () => {
       avatar: 'https://example.com/avatar.png',
     };
 
-    const created: UserResponse = await service.register(dto);
-    const storedUser = users.find((user) => user.id === created.id);
+    const response: AuthResponse = await service.register(dto);
+    const storedUser = users.find((user) => user.id === response.user.id);
 
-    expect(created.id).toBeGreaterThan(seedUsers.length);
-    expect('password' in created).toBe(false);
+    expect(response.accessToken).toBe('signed.jwt.token');
+    expect(response.user.id).toBeGreaterThan(seedUsers.length);
+    expect('password' in response.user).toBe(false);
     expect(storedUser?.password).toMatch(/^\$argon2/);
     expect(storedUser?.password).not.toBe(dto.password);
     expect(users).toHaveLength(seedUsers.length + 1);
-    expect(userRoles).toContainEqual({ userId: created.id, roleId: 1 });
-    expect(created.roles).toEqual([
+    expect(userRoles).toContainEqual({ userId: response.user.id, roleId: 1 });
+    expect(response.user.roles).toEqual([
       {
         id: 1,
         key: 'USER',
@@ -252,6 +269,11 @@ describe('AuthService', () => {
         description: 'Default user role.',
       },
     ]);
+    expect(jwtService.signAsync).toHaveBeenCalledWith({
+      sub: response.user.id,
+      username: 'newcomer',
+      roles: ['USER'],
+    });
   });
 
   it('throws when default user role is missing', async () => {
@@ -280,9 +302,10 @@ describe('AuthService', () => {
 
   it('logs in with username', async () => {
     const dto: LoginUserDto = { login: 'admin', password: 'Test123!' };
-    const response: UserResponse = await service.login(dto);
-    expect(response.username).toBe('admin');
-    expect(response.roles).toEqual([
+    const response: AuthResponse = await service.login(dto);
+    expect(response.accessToken).toBe('signed.jwt.token');
+    expect(response.user.username).toBe('admin');
+    expect(response.user.roles).toEqual([
       {
         id: 3,
         key: 'ADMIN',
@@ -290,8 +313,13 @@ describe('AuthService', () => {
         description: 'Administrator role with full management access.',
       },
     ]);
-    expect(response.lastLoginAt).toBeInstanceOf(Date);
-    expect('password' in response).toBe(false);
+    expect(response.user.lastLoginAt).toBeInstanceOf(Date);
+    expect('password' in response.user).toBe(false);
+    expect(jwtService.signAsync).toHaveBeenCalledWith({
+      sub: 2,
+      username: 'admin',
+      roles: ['ADMIN'],
+    });
   });
 
   it('fails login with wrong password', async () => {

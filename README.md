@@ -37,6 +37,8 @@ Create a `.env` file with a PostgreSQL connection string:
 
 ```bash
 DATABASE_URL="postgresql://postgres:<password>@HOST:PORT/DATABASE"
+JWT_SECRET="<strong-random-secret>"
+JWT_EXPIRES_IN="1d"
 ```
 
 Apply database migrations:
