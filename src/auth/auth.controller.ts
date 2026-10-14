@@ -5,9 +5,12 @@ import {
   ParseIntPipe,
   Post,
   Body,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import type { AuthResponse } from './auth.interfaces';
+import type { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import type { UserResponse } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -40,5 +43,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto): Promise<AuthResponse> {
     return this.authService.login(loginUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  me(@Req() request: AuthenticatedRequest): Promise<UserResponse> {
+    return this.authService.findOne(request.user.userId);
   }
 }

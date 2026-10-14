@@ -9,13 +9,17 @@ jest.mock('@nestjs/jwt', () => ({
   JwtService: class JwtService {},
 }));
 
+jest.mock('@nestjs/passport', () => ({
+  AuthGuard: jest.fn(() => class MockAuthGuard {}),
+}));
+
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AuthResponse } from './auth.interfaces';
+import { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { UserResponse } from '../users/users.interfaces';
@@ -182,6 +186,22 @@ describe('AuthController', () => {
     expect(response.accessToken).toBe('logged.jwt.token');
     expect(response.user.username).toBe('max');
     expect('password' in response.user).toBe(false);
+  });
+
+  it('returns current user from authenticated request', async () => {
+    const request: AuthenticatedRequest = {
+      user: {
+        userId: 2,
+        username: 'admin',
+        roles: ['ADMIN'],
+      },
+    };
+
+    const response = await controller.me(request);
+
+    expect(response.id).toBe(2);
+    expect(response.username).toBe('admin');
+    expect('password' in response).toBe(false);
   });
 
   it('throws unauthorized when login fails', async () => {
