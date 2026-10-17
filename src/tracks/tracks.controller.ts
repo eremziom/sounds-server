@@ -7,17 +7,23 @@ import {
   Param,
   ParseIntPipe,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../permissions/permissions.guard';
+import { RequirePermissions } from '../permissions/permissions.decorator';
 import type { Track } from './tracks.interfaces';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 
 @Controller('tracks')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
 
   @Get()
+  @RequirePermissions('tracks:read')
   /**
    * Returns an array of all tracks.
    * @returns {Track[]} An array of all tracks.
@@ -27,6 +33,7 @@ export class TracksController {
   }
 
   @Get(':id')
+  @RequirePermissions('tracks:read')
   /**
    * Returns a track by its id.
    * @param {number} id The id of the track to be returned.
@@ -38,6 +45,7 @@ export class TracksController {
   }
 
   @Post()
+  @RequirePermissions('tracks:create')
 
   /**
    * Creates a new track.
@@ -49,6 +57,7 @@ export class TracksController {
   }
 
   @Patch(':id')
+  @RequirePermissions('tracks:update-any')
   /**
    * Updates a track by its id.
    * @param {number} id The id of the track to be updated.
@@ -64,6 +73,7 @@ export class TracksController {
   }
 
   @Delete(':id')
+  @RequirePermissions('tracks:delete-any')
   /**
    * Removes a track by its id.
    * @param {number} id The id of the track to be removed.

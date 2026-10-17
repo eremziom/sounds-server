@@ -11,6 +11,8 @@ import {
 import { AuthService } from './auth.service';
 import type { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { PermissionsGuard } from '../permissions/permissions.guard';
+import { RequirePermissions } from '../permissions/permissions.decorator';
 import type { UserResponse } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -19,6 +21,8 @@ import { LoginUserDto } from './login-user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Get('user/:id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('users:read')
   /**
    * Retrieves a user by their id.
    * @param {number} id The id of the user to be retrieved.
@@ -45,7 +49,8 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('users:read-own')
   @Get('me')
   me(@Req() request: AuthenticatedRequest): Promise<UserResponse> {
     return this.authService.findOne(request.user.userId);

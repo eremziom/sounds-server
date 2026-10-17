@@ -6,9 +6,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesModule } from '../roles/roles.module';
+import { PermissionsModule } from '../permissions/permissions.module';
 
 @Module({
   imports: [
+    PermissionsModule,
     RolesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

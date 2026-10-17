@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PermissionsGuard } from '../permissions/permissions.guard';
 
 jest.mock('@nestjs/jwt', () => ({
   JwtService: class JwtService {},
@@ -140,7 +141,10 @@ describe('AuthController', () => {
           useValue: authService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(PermissionsGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<AuthController>(AuthController);
   });
