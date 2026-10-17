@@ -6,7 +6,11 @@ import {
   Delete,
   Patch,
   Body,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../permissions/permissions.guard';
+import { RequirePermissions } from '../permissions/permissions.decorator';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './update-user.dto';
 import { UpdateUserActiveDto } from './update-user-active.dto';
@@ -14,10 +18,12 @@ import { UpdateUserRoleDto } from './update-user-role.dto';
 import type { UserResponse } from './users.interfaces';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @RequirePermissions('users:read')
   /**
    * Returns an array of all users.
    * @returns {User[]} An array of all users.
@@ -27,6 +33,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @RequirePermissions('users:read')
   /**
    * Returns a user by their id.
    * @param {number} id The id of the user to be retrieved.
@@ -38,6 +45,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @RequirePermissions('users:delete')
   /**
    * Removes a user by their id.
    * @param {number} id The id of the user to be removed.
@@ -49,6 +57,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @RequirePermissions('users:update')
   /**
    * Updates a user by their id.
    * @param {number} id The id of the user to be updated.
@@ -64,6 +73,7 @@ export class UsersController {
   }
 
   @Patch(':id/role')
+  @RequirePermissions('users:set-role')
   updateRole(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserRoleDto: UpdateUserRoleDto,
@@ -72,6 +82,7 @@ export class UsersController {
   }
 
   @Patch(':id/active')
+  @RequirePermissions('users:set-active')
   updateActive(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserActiveDto: UpdateUserActiveDto,
