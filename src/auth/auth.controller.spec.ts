@@ -20,6 +20,7 @@ jest.mock('../prisma/prisma.service', () => ({
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { SessionsService } from './sessions.service';
 import { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -136,6 +137,7 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
+        { provide: SessionsService, useValue: {} },
         {
           provide: AuthService,
           useValue: authService,
@@ -195,6 +197,7 @@ describe('AuthController', () => {
   it('returns current user from authenticated request', async () => {
     const request: AuthenticatedRequest = {
       user: {
+        sessionId: 'test-session',
         userId: 2,
         username: 'admin',
         roles: ['ADMIN'],

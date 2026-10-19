@@ -22,18 +22,42 @@ model Track {
 }
 
 model User {
-  id              Int        @id @default(autoincrement())
-  username        String     @unique
+  id              Int           @id @default(autoincrement())
+  username        String        @unique
   password        String
-  email           String     @unique
+  email           String        @unique
   bio             String?
   avatar          String?
-  isActive        Boolean    @default(true)
+  isActive        Boolean       @default(true)
   emailVerifiedAt DateTime?
   lastLoginAt     DateTime?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   roles           UserRole[]
+  sessions        AuthSession[]
+}
+
+model AuthSession {
+  id            String         @id @default(uuid())
+  userId        Int
+  createdAt     DateTime       @default(now())
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens RefreshToken[]
+
+  @@index([userId, revokedAt])
+}
+
+model RefreshToken {
+  tokenHash String      @id
+  sessionId String
+  createdAt DateTime    @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  session   AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
 }
 
 model Role {

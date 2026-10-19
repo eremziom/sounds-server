@@ -67,12 +67,23 @@ describe('Endpoint permissions (HTTP)', () => {
   const secret = 'endpoint-permissions-test-secret';
   const jwt = new JwtService({ secret });
   // Role names in a token must not bypass permissions stored in the database.
-  const payload = { sub: 42, username: 'tester', roles: ['ADMIN'] };
+  const payload = {
+    sub: 42,
+    sid: 'test-session',
+    username: 'tester',
+    roles: ['ADMIN'],
+  };
   const token = jwt.sign(payload, { expiresIn: '5m' });
   const services: Record<string, Record<string, jest.Mock>> = {};
-  const prisma = { user: { findUnique: jest.fn() } };
+  const prisma = {
+    user: { findUnique: jest.fn() },
+    authSession: { findFirst: jest.fn() },
+  };
 
   const grant = (permissions: string[], isActive = true) => {
+    prisma.authSession.findFirst.mockResolvedValue(
+      isActive ? { id: payload.sid } : null,
+    );
     prisma.user.findUnique.mockResolvedValue({
       isActive,
       roles: [
@@ -191,12 +202,13 @@ describe('Endpoint permissions (HTTP)', () => {
     await request(app.getHttpServer())
       .get('/users')
       .auth(token, { type: 'bearer' })
-      .expect(403);
+      .expect(401);
     prisma.user.findUnique.mockResolvedValue(null);
+    prisma.authSession.findFirst.mockResolvedValue(null);
     await request(app.getHttpServer())
       .get('/users')
       .auth(token, { type: 'bearer' })
-      .expect(403);
+      .expect(401);
     expect(services.users.findAll).not.toHaveBeenCalled();
   });
 

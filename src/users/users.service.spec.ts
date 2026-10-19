@@ -73,6 +73,7 @@ describe('UsersService', () => {
   };
   let prisma: {
     $transaction: jest.Mock;
+    authSession: { updateMany: jest.Mock };
     role: {
       findUnique: jest.Mock;
     };
@@ -95,6 +96,7 @@ describe('UsersService', () => {
       { userId: 2, roleId: 3 },
     ];
     prisma = {
+      authSession: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
       $transaction: jest.fn((callback: (tx: typeof prisma) => unknown) =>
         Promise.resolve(callback(prisma)),
       ),
@@ -269,6 +271,10 @@ describe('UsersService', () => {
     const updated: UserResponse = await service.updateActive(1, false);
 
     expect(updated.isActive).toBe(false);
+    expect(prisma.authSession.updateMany).toHaveBeenCalledWith({
+      where: { userId: 1, revokedAt: null },
+      data: { revokedAt: expect.any(Date) as Date },
+    });
     expect('password' in updated).toBe(false);
   });
 
