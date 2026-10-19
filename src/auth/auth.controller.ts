@@ -7,6 +7,7 @@ import {
   Body,
   Req,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import type { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
@@ -16,10 +17,15 @@ import { RequirePermissions } from '../permissions/permissions.decorator';
 import type { UserResponse } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
+import { RefreshTokenDto } from './refresh-token.dto';
+import { SessionsService } from './sessions.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly sessions: SessionsService,
+  ) {}
   @Get('user/:id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('users:read')
@@ -47,6 +53,25 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto): Promise<AuthResponse> {
     return this.authService.login(loginUserDto);
+  }
+
+  @Post('refresh')
+  @HttpCode(200)
+  refresh(@Body() body: RefreshTokenDto): Promise<AuthResponse> {
+    return this.sessions.refresh(body.refreshToken);
+  }
+
+  @Post('logout')
+  @HttpCode(204)
+  logout(@Body() body: RefreshTokenDto): Promise<void> {
+    return this.sessions.logout(body.refreshToken);
+  }
+
+  @Post('logout-all')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  logoutAll(@Req() request: AuthenticatedRequest): Promise<void> {
+    return this.sessions.logoutAll(request.user.userId);
   }
 
   @UseGuards(JwtAuthGuard, PermissionsGuard)

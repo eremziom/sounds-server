@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesModule } from '../roles/roles.module';
 import { PermissionsModule } from '../permissions/permissions.module';
+import { SessionsService } from './sessions.service';
 
 @Module({
   imports: [
@@ -20,13 +21,13 @@ import { PermissionsModule } from '../permissions/permissions.module';
         signOptions: {
           expiresIn: configService.get<string>(
             'JWT_EXPIRES_IN',
-            '1d',
+            '15m',
           ) as JwtSignOptions['expiresIn'],
         },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, SessionsService],
 })
 export class AuthModule {}

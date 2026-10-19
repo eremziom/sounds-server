@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import { AuthResponse, JwtPayload } from './auth.interfaces';
+import { AuthResponse } from './auth.interfaces';
+import { SessionsService } from './sessions.service';
 import { UserResponse, User } from '../users/users.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rolesService: RolesService,
-    private readonly jwtService: JwtService,
+    private readonly sessions: SessionsService,
   ) {}
 
   private toUserResponse(user: User): UserResponse {
@@ -28,25 +28,6 @@ export class AuthService {
     return {
       ...userResponse,
       roles: roles?.map((userRole) => userRole.role) ?? [],
-    };
-  }
-
-  private createJwtPayload(user: UserResponse): JwtPayload {
-    return {
-      sub: user.id,
-      username: user.username,
-      roles: user.roles.map((role) => role.key),
-    };
-  }
-
-  private signAccessToken(user: UserResponse): Promise<string> {
-    return this.jwtService.signAsync(this.createJwtPayload(user));
-  }
-
-  private async toAuthResponse(user: UserResponse): Promise<AuthResponse> {
-    return {
-      accessToken: await this.signAccessToken(user),
-      user,
     };
   }
 
@@ -89,7 +70,7 @@ export class AuthService {
       throw new InternalServerErrorException('Default user role not found');
     }
 
-    const newUser = await this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({
         data: {
           username: data.username,
@@ -107,13 +88,8 @@ export class AuthService {
         },
       });
 
-      return {
-        ...createdUser,
-        roles: [{ role: userRole }],
-      };
+      return this.sessions.create(createdUser.id, tx);
     });
-
-    return this.toAuthResponse(this.toUserResponse(newUser));
   }
 
   async login(data: LoginUserDto): Promise<AuthResponse> {
@@ -130,7 +106,7 @@ export class AuthService {
       },
     });
 
-    if (!user) {
+    if (!user?.isActive) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -140,7 +116,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const updatedUser = await this.prisma.user.update({
+    await this.prisma.user.update({
       where: { id: user.id },
       include: {
         roles: {
@@ -154,6 +130,6 @@ export class AuthService {
       },
     });
 
-    return this.toAuthResponse(this.toUserResponse(updatedUser));
+    return this.sessions.create(user.id);
   }
 }

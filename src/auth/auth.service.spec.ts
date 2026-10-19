@@ -16,7 +16,7 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { AuthService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
+import { SessionsService } from './sessions.service';
 import { AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -75,13 +75,16 @@ const seedUsers = [
 
 describe('AuthService', () => {
   let service: AuthService;
-  let users: typeof seedUsers;
+  let users: (Omit<(typeof seedUsers)[number], 'bio' | 'avatar'> & {
+    bio: string | null;
+    avatar: string | null;
+  })[];
   let userRoles: { userId: number; roleId: number }[];
   let rolesService: {
     findByKey: jest.Mock;
   };
-  let jwtService: {
-    signAsync: jest.Mock;
+  let sessions: {
+    create: jest.Mock;
   };
   type UserWhereUnique = { where: { id: number } | { email: string } };
   type UserFindFirstArgs = {
@@ -208,8 +211,31 @@ describe('AuthService', () => {
         });
       }),
     };
-    jwtService = {
-      signAsync: jest.fn(() => Promise.resolve('signed.jwt.token')),
+    sessions = {
+      create: jest.fn((id: number) => {
+        const stored = users.find((user) => user.id === id)!;
+        const { password, roles, ...profile } = stored;
+        void password;
+        return Promise.resolve({
+          accessToken: 'signed.jwt.token',
+          refreshToken: 'a'.repeat(64),
+          accessTokenExpiresAt: new Date(Date.now() + 900000),
+          refreshTokenExpiresAt: new Date(Date.now() + 2592000000),
+          user: {
+            ...profile,
+            roles: roles.length
+              ? roles.map((assignment) => assignment.role)
+              : [
+                  {
+                    id: 1,
+                    key: 'USER',
+                    name: 'User',
+                    description: 'Default user role.',
+                  },
+                ],
+          },
+        });
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -224,8 +250,8 @@ describe('AuthService', () => {
           useValue: rolesService,
         },
         {
-          provide: JwtService,
-          useValue: jwtService,
+          provide: SessionsService,
+          useValue: sessions,
         },
       ],
     }).compile();
@@ -269,11 +295,7 @@ describe('AuthService', () => {
         description: 'Default user role.',
       },
     ]);
-    expect(jwtService.signAsync).toHaveBeenCalledWith({
-      sub: response.user.id,
-      username: 'newcomer',
-      roles: ['USER'],
-    });
+    expect(sessions.create).toHaveBeenCalledWith(response.user.id, prisma);
   });
 
   it('throws when default user role is missing', async () => {
@@ -315,15 +337,19 @@ describe('AuthService', () => {
     ]);
     expect(response.user.lastLoginAt).toBeInstanceOf(Date);
     expect('password' in response.user).toBe(false);
-    expect(jwtService.signAsync).toHaveBeenCalledWith({
-      sub: 2,
-      username: 'admin',
-      roles: ['ADMIN'],
-    });
+    expect(sessions.create).toHaveBeenCalledWith(2);
   });
 
   it('fails login with wrong password', async () => {
     const dto: LoginUserDto = { login: 'admin', password: 'wrong' };
     await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('does not issue a session for an inactive user', async () => {
+    users[1].isActive = false;
+    await expect(
+      service.login({ login: 'admin', password: 'Test123!' }),
+    ).rejects.toThrow(UnauthorizedException);
+    expect(sessions.create).not.toHaveBeenCalled();
   });
 });

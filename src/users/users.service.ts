@@ -159,18 +159,20 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-      data: {
-        isActive,
-      },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      // Update first: the user row lock also serializes session issuance/rotation.
+      const updated = await tx.user.update({
+        where: { id },
+        include: { roles: { include: { role: true } } },
+        data: { isActive },
+      });
+      if (!isActive) {
+        await tx.authSession.updateMany({
+          where: { userId: id, revokedAt: null },
+          data: { revokedAt: new Date() },
+        });
+      }
+      return updated;
     });
 
     return this.toUserResponse(updatedUser);
