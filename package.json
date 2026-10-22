@@ -2,7 +2,9 @@
   "name": "sounds",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter api dev",
+    "dev": "pnpm --parallel --filter api --filter ui dev",
+    "dev:api": "pnpm --filter api dev",
+    "dev:ui": "pnpm --filter ui dev",
     "build": "pnpm -r build",
     "format": "pnpm -r format",
     "start": "pnpm --filter api start",
