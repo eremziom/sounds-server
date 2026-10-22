@@ -1,7 +1,8 @@
 ﻿# Sounds
 
 pnpm workspace containing the Sounds applications. The repository currently
-contains only the NestJS backend; no frontend has been added yet.
+contains the NestJS backend and a placeholder directory for the frontend.
+The frontend application has not been initialized yet.
 
 ## Structure
 
@@ -18,6 +19,7 @@ apps/
     tsconfig.json
     tsconfig.build.json
     eslint.config.mjs
+  ui/                    # Frontend placeholder (not initialized yet)
 package.json             # Workspace commands
 pnpm-workspace.yaml      # Workspace packages and dependency build permissions
 pnpm-lock.yaml           # Shared dependency lockfile
