@@ -1,39 +1,39 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+﻿# Sounds
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+pnpm workspace containing the Sounds applications. The repository currently
+contains only the NestJS backend; no frontend has been added yet.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Structure
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ pnpm install
+```text
+apps/
+  api/
+    src/                 # Backend source and generated Prisma Client
+    test/                # End-to-end tests
+    prisma/              # Schema, migrations and RBAC seed
+    scripts/             # Auth session integration checks
+    package.json         # Backend dependencies and scripts
+    prisma.config.ts
+    nest-cli.json
+    tsconfig.json
+    tsconfig.build.json
+    eslint.config.mjs
+package.json             # Workspace commands
+pnpm-workspace.yaml      # Workspace packages and dependency build permissions
+pnpm-lock.yaml           # Shared dependency lockfile
+.prettierrc              # Shared formatting settings
 ```
 
-## Local database setup
+## Setup
 
-Create a `.env` file with a PostgreSQL connection string:
+Use pnpm with support for the workspace `allowBuilds` setting (the migration
+was verified with pnpm 12.9.1). Run commands from the repository root:
+
+```bash
+pnpm install --frozen-lockfile
+```
+
+Create `apps/api/.env` using the example in `apps/api/.env.example`:
 
 ```bash
 DATABASE_URL="postgresql://postgres:<password>@HOST:PORT/DATABASE"
@@ -41,68 +41,49 @@ JWT_SECRET="<strong-random-secret>"
 JWT_EXPIRES_IN="1d"
 ```
 
-Apply database migrations:
+When migrating an existing checkout, move your root `.env` to `apps/api/.env`.
+The API loads its environment from its own working directory, including when
+started through the root scripts.
+
+Apply database migrations, generate Prisma Client and seed the RBAC roles and
+permissions:
 
 ```bash
-$ pnpm exec prisma migrate deploy
+pnpm prisma:migrate
+pnpm prisma:generate
+pnpm seed:rbac
 ```
 
-Generate Prisma Client:
+The RBAC seed is idempotent. Prisma commands are executed inside `apps/api`.
+For other Prisma operations, use `pnpm --filter api exec prisma <command>`.
+
+## Development
 
 ```bash
-$ pnpm exec prisma generate
+pnpm dev                 # API with file watching (port 3000 by default)
+pnpm build               # Build workspace applications
+pnpm start:prod          # Run the compiled API
 ```
 
-Seed base RBAC roles and permissions:
+The existing `start`, `start:dev` and `start:debug` commands also remain
+available from the repository root. To run a command directly for the backend:
 
 ```bash
-$ pnpm run seed:rbac
+pnpm --filter api build
+pnpm --filter api exec jest --runInBand
 ```
 
-The RBAC seed is idempotent, so it can be safely run multiple times.
-
-## Development workflow
-
-Run all local checks:
+## Checks
 
 ```bash
-$ pnpm run devtest
+pnpm devtest             # Backend lint, build and unit tests
+pnpm test                # Unit tests
+pnpm test:cov            # Unit tests with coverage
+pnpm test:e2e            # End-to-end tests (requires database configuration)
+pnpm test:auth-sessions  # Auth integration checks (creates a temporary database)
+pnpm format              # Format backend source and tests
 ```
 
-This runs:
-
-```bash
-$ pnpm run lint
-$ pnpm run build
-$ pnpm exec jest --runInBand
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Build output and test coverage are written to `apps/api/dist` and
+`apps/api/coverage`. Backend dependencies belong in `apps/api/package.json`;
+the root package manages the workspace commands.
