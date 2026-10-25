@@ -11,6 +11,12 @@ in the NestJS API on each server render. Roles come from the API, never from
 unverified JWT claims. Requests are not stored in the shared data cache.
 API outages fail closed with an error instead of granting access.
 
+`src/lib/route-access.ts` contains shared role types, constants and role checks
+that can be imported by client components. `src/lib/session-api.ts` contains
+`fetchSessionUser` and response validation; it is marked `server-only` to prevent
+API session checks from being imported into client components. `src/lib/auth.ts`
+connects these server-side checks to cookies and redirects.
+
 Set `API_URL` in `apps/ui/.env.local` if the API is not at
 `http://localhost:3000` (see `.env.example`). When implementing login/register,
 set the returned `accessToken` from a Server Action or Route Handler in an

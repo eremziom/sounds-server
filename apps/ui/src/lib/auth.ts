@@ -5,10 +5,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   ACCESS_TOKEN_COOKIE,
-  fetchSessionUser,
   hasRequiredRole,
   type Role,
 } from "./route-access";
+import { fetchSessionUser } from "./session-api";
 
 // React cache deduplicates checks within one server render, never across users.
 export const getCurrentUser = cache(async () => {

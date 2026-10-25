@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { register } from "node:module";
 import {
   APP_ROLES,
   ADMIN_ROLES,
-  fetchSessionUser,
   hasRequiredRole,
 } from "../src/lib/route-access.ts";
+
+// Node tests run outside Next.js, which normally resolves the server-only marker.
+register("./helpers/server-only-loader.mjs", import.meta.url);
+const { fetchSessionUser } = await import("../src/lib/session-api.ts");
 
 const userWithRoles = (...keys) => ({
   id: 1,
