@@ -18,6 +18,12 @@ these directives and forward the original cookies and browser language header.
 Do not cache these responses by URL across users or languages. There is no CDN
 configuration in this repository; preserve this policy when adding one.
 
+The shared language selector is available on public, app and admin pages. It
+calls a Server Action that validates and writes only the `locale` cookie (one
+year, `Path=/`, `SameSite=Lax`, `HttpOnly`, `Secure` in production). Cookie changes
+re-render the current view without navigation, keeping the path, query, fragment
+and session intact. Language errors are displayed beside the selector.
+
 The server reads the `accessToken` cookie and validates it with `GET /auth/me`
 in the NestJS API on each server render. Roles come from the API, never from
 unverified JWT claims. Requests are not stored in the shared data cache.

@@ -20,7 +20,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Translations (stages 2–3)
+## Translations (stages 2–4)
 
 The UI uses `next-intl` 4.14.9 with shared URLs for English (`en`), Polish (`pl`)
 and Spanish (`es`). Catalogs live in `messages/{en,pl,es}.json`; English defines
@@ -60,7 +60,21 @@ Browser preferences support regional tags (`pl-PL`, `es-MX`), case-insensitive
 matching and quality weights. Unsupported/malformed entries and `q=0` are
 ignored; equal weights preserve header order. A wildcard alone uses English.
 Invalid cookies fall through to browser preferences. Rendering never writes
-the cookie; the language switcher will be added in stage 4.
+the cookie.
+
+The shared header contains a keyboard-accessible language selector: English,
+Polski, Español. Its label/error are translated on the server and passed as
+props, so the client receives only the two strings it needs. The selected value
+comes from the same next-intl locale as `html lang`.
+
+`src/i18n/actions.ts` validates the selection and sets only the `locale` cookie
+with `Path=/`, `SameSite=Lax`, `HttpOnly`, a one-year max age and `Secure` in
+production. The Server Action cookie update re-renders the current page/layouts
+and updates the client locale without navigation. Path, query, fragment and
+session cookies are preserved. Pending saves ignore further changes while
+retaining keyboard focus. A failed save announces a translated error and allows
+retrying. The saved cookie takes precedence over the browser language on reload
+or when reopening a shared URL.
 
 Server pages, metadata and future actions should use `getLocale()` or
 `getTranslations()` from `next-intl/server`; they share this request configuration.

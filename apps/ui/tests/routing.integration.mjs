@@ -90,6 +90,12 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
           assertPrivate(response);
           const body = await response.text();
           assertLocale(body, locale, rsc);
+          if (!rsc) {
+            assert.ok(body.includes(catalogs[locale].common.language.label));
+            assert.match(body, /<select[^>]*name="locale"/);
+            for (const name of ["English", "Polski", "Español"]) assert.ok(body.includes(name));
+            assert.match(body, new RegExp(`<option(?=[^>]*value="${locale}")(?=[^>]*selected="")[^>]*>`));
+          }
           if (path !== "/register") {
             const messages = catalogs[locale];
             const heading = path === "/login" ? messages.auth.login.title : messages.errors.accessDenied.title;
@@ -154,6 +160,41 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
         assertLocale(body, locale, rsc);
         assert.ok(body.includes(catalogs[locale].auth.login.title), `Negotiated content: ${locale}`);
       }
+    }
+    // Exercise the real Server Action over HTTP, including untrusted input.
+    const manifest = JSON.parse(await readFile(new URL("../.next/server/server-reference-manifest.json", import.meta.url), "utf8"));
+    const actionId = Object.entries(manifest.node).find(([, action]) => action.exportedName === "setLocale")?.[0];
+    assert.ok(actionId, "Built setLocale action must exist");
+    for (const value of ["pl", "es", "en", "de", "pl-PL", "../../pl", null, {}]) {
+      const response = await fetch(`${origin}/login?returnTo=%2Fadmin`, {
+        method: "POST",
+        headers: {
+          "Next-Action": actionId,
+          "Content-Type": "text/plain;charset=UTF-8",
+          Origin: origin,
+          Cookie: "locale=en; accessToken=USER; refreshToken=keep-session",
+          "Accept-Language": "es-MX",
+        },
+        body: JSON.stringify([value]),
+        redirect: "manual",
+      });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get("location"), null);
+      const body = await response.text();
+      const saved = ["en", "pl", "es"].includes(value);
+      assert.ok(body.includes(`"success":${saved}`), `Action result: ${JSON.stringify(value)}`);
+      const cookies = response.headers.getSetCookie();
+      if (saved) {
+        assert.equal(cookies.length, 1, "Only the language cookie may change");
+        assert.match(cookies[0], new RegExp(`^locale=${value};`));
+        for (const attribute of [/Path=\//i, /SameSite=lax/i, /Secure/i, /HttpOnly/i, /Max-Age=31536000/i]) {
+          assert.match(cookies[0], attribute);
+        }
+        const page = await fetchRoute("/login", { Cookie: `locale=${value}`, "Accept-Language": "es-MX" });
+        const html = await page.text();
+        assertLocale(html, value, false);
+        assert.ok(html.includes(catalogs[value].auth.login.title));
+      } else assert.deepEqual(cookies, [], "Invalid locales cannot change cookies");
     }
   } finally {
     next.kill();
