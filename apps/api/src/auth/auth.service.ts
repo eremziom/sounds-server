@@ -13,6 +13,7 @@ import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RolesService } from '../roles/roles.service';
+import { API_ERROR_CODES, codedError } from '../common/api-errors';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +60,12 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Email already in use');
+      throw new ConflictException(
+        codedError(
+          new ConflictException('Email already in use'),
+          API_ERROR_CODES.emailAlreadyInUse,
+        ),
+      );
     }
 
     const userRole = await this.rolesService
@@ -107,13 +113,23 @@ export class AuthService {
     });
 
     if (!user?.isActive) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        codedError(
+          new UnauthorizedException('Invalid credentials'),
+          API_ERROR_CODES.invalidCredentials,
+        ),
+      );
     }
 
     const isPasswordValid = await argon2.verify(user.password, data.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        codedError(
+          new UnauthorizedException('Invalid credentials'),
+          API_ERROR_CODES.invalidCredentials,
+        ),
+      );
     }
 
     await this.prisma.user.update({

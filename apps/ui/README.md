@@ -20,7 +20,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Translations (stages 2–5)
+## Translations (stages 2–6)
 
 The UI uses `next-intl` 4.14.9 with shared URLs for English (`en`), Polish (`pl`)
 and Spanish (`es`). Catalogs live in `messages/{en,pl,es}.json`; English defines
@@ -106,6 +106,39 @@ their calendar day. For future relative dates, pass the same explicit `now` from
 the server to the client. There are no date/number/count views yet; do not add
 sample data solely for formatting. Use complete ICU messages with parameters,
 plural rules and `t.rich` for rich text rather than concatenating sentences.
+
+### API errors
+
+The additive API contract is documented in [API errors](../api/ERRORS.md).
+`src/i18n/api-errors.ts` maps stable API codes to catalog messages and translates
+field rules, without displaying or parsing the backend's free-form `message`.
+The pure `translateApiError(failure, operation, t)` works with next-intl translators.
+Server Actions should use `getApiErrorMessages(failure, operation)` from
+`src/i18n/api-error-messages.ts`; it automatically uses the current request locale.
+
+```ts
+const messages = await getApiErrorMessages(
+  { kind: "http", status: response.status, body: parsedErrorBody },
+  "register",
+);
+// messages.message: safe translated summary
+// messages.fieldErrors.email: translated validation messages, if present
+```
+
+Classify request timeouts as `{kind: "timeout"}`, network failures as
+`{kind: "network"}` and invalid JSON/success payloads as `{kind: "invalid-response"}`.
+All receive safe localized messages. Unknown codes, mismatched code/status pairs
+and codes for another operation fall back to `errors.unexpected`. Legacy responses
+without a code use only known operation/status combinations (e.g. login 401 or
+registration 409); their free-form text is never interpreted. Do not infer a
+username conflict from registration 409.
+
+The mapper accepts only known auth form fields, safe numeric length bounds and
+supported validation rules. It drops unknown fields and arbitrary parameters,
+including token/password values. Missing user, inactive account and wrong password
+share `AUTH_INVALID_CREDENTIALS` and one message. Real auth forms are still pending;
+use this mapper when implementing them. Existing page-level unexpected errors
+continue to use the safe translated error boundary.
 
 All pages render dynamically. HTML/RSC responses must remain `private` and
 `no-store`; any future reverse proxy/CDN must forward `Cookie`/`Accept-Language`

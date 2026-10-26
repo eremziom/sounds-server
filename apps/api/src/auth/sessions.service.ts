@@ -6,6 +6,7 @@ import type { Prisma } from '../generated/prisma/client.cjs';
 import { PrismaService } from '../prisma/prisma.service';
 import type { AuthResponse, JwtPayload } from './auth.interfaces';
 import type { User } from '../users/users.interfaces';
+import { API_ERROR_CODES, codedError } from '../common/api-errors';
 
 @Injectable()
 export class SessionsService {
@@ -82,7 +83,12 @@ export class SessionsService {
         include: { roles: { include: { role: true } } },
       });
       if (!user?.isActive) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException(
+          codedError(
+            new UnauthorizedException('Invalid credentials'),
+            API_ERROR_CODES.invalidCredentials,
+          ),
+        );
       }
       const session = await tx.authSession.create({
         data: {
@@ -134,7 +140,13 @@ export class SessionsService {
       if (consumed.count !== 1) return null;
       return this.createTokenPair(tx, session, session.user);
     });
-    if (!response) throw new UnauthorizedException('Invalid refresh token');
+    if (!response)
+      throw new UnauthorizedException(
+        codedError(
+          new UnauthorizedException('Invalid refresh token'),
+          API_ERROR_CODES.invalidSession,
+        ),
+      );
     return response;
   }
 

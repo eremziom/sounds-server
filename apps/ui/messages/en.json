@@ -39,6 +39,7 @@
     "sessionVerificationFailed": "Could not verify your session. Try again.",
     "invalidSessionResponse": "Could not confirm your session. Try again.",
     "invalidCredentials": "Incorrect login or password.",
+    "invalidInput": "Check the entered details and try again.",
     "emailAlreadyInUse": "This email address is already in use.",
     "serviceUnavailable": "The service is currently unavailable. Try again later.",
     "timeout": "The request took too long. Try again.",
@@ -46,6 +47,7 @@
   },
   "validation": {
     "required": "This field is required.",
+    "invalid": "Check this field.",
     "email": "Enter a valid email address.",
     "length": "Use between {min} and {max} characters.",
     "passwordComplexity": "Include a lowercase letter, an uppercase letter, a number and a special character.",

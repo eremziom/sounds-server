@@ -39,6 +39,7 @@
     "sessionVerificationFailed": "Nie udało się zweryfikować sesji. Spróbuj ponownie.",
     "invalidSessionResponse": "Nie udało się potwierdzić sesji. Spróbuj ponownie.",
     "invalidCredentials": "Nieprawidłowy login lub hasło.",
+    "invalidInput": "Sprawdź wprowadzone dane i spróbuj ponownie.",
     "emailAlreadyInUse": "Ten adres e-mail jest już zajęty.",
     "serviceUnavailable": "Usługa jest obecnie niedostępna. Spróbuj ponownie później.",
     "timeout": "Przekroczono czas oczekiwania. Spróbuj ponownie.",
@@ -46,6 +47,7 @@
   },
   "validation": {
     "required": "To pole jest wymagane.",
+    "invalid": "Sprawdź to pole.",
     "email": "Podaj poprawny adres e-mail.",
     "length": "Użyj od {min} do {max} znaków.",
     "passwordComplexity": "Użyj małej i wielkiej litery, cyfry oraz znaku specjalnego.",

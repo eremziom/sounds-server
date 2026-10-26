@@ -39,6 +39,7 @@
     "sessionVerificationFailed": "No se pudo verificar tu sesión. Inténtalo de nuevo.",
     "invalidSessionResponse": "No se pudo confirmar tu sesión. Inténtalo de nuevo.",
     "invalidCredentials": "El usuario o la contraseña son incorrectos.",
+    "invalidInput": "Revisa los datos introducidos e inténtalo de nuevo.",
     "emailAlreadyInUse": "Esta dirección de correo electrónico ya está en uso.",
     "serviceUnavailable": "El servicio no está disponible en este momento. Inténtalo más tarde.",
     "timeout": "La solicitud ha tardado demasiado. Inténtalo de nuevo.",
@@ -46,6 +47,7 @@
   },
   "validation": {
     "required": "Este campo es obligatorio.",
+    "invalid": "Revisa este campo.",
     "email": "Introduce una dirección de correo electrónico válida.",
     "length": "Usa entre {min} y {max} caracteres.",
     "passwordComplexity": "Incluye una letra minúscula, una mayúscula, un número y un carácter especial.",
