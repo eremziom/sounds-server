@@ -1,0 +1,61 @@
+{
+  "common": {
+    "navigation": { "backHome": "Wróć na stronę główną", "goToLogin": "Przejdź do logowania" },
+    "status": { "checkingAccess": "Sprawdzanie dostępu…", "loading": "Ładowanie…" },
+    "actions": { "retry": "Spróbuj ponownie" },
+    "language": { "label": "Język", "changeFailed": "Nie udało się zapisać wyboru języka. Spróbuj ponownie." }
+  },
+  "auth": {
+    "login": {
+      "title": "Logowanie",
+      "placeholder": "Tutaj pojawi się formularz logowania.",
+      "noAccount": "Nie masz konta?",
+      "action": "Zaloguj się",
+      "pending": "Logowanie…"
+    },
+    "register": {
+      "title": "Rejestracja",
+      "placeholder": "Tutaj pojawi się formularz rejestracji.",
+      "hasAccount": "Masz już konto?",
+      "action": "Zarejestruj się",
+      "pending": "Tworzenie konta…"
+    },
+    "fields": { "username": "Nazwa użytkownika", "email": "E-mail", "password": "Hasło", "confirmPassword": "Powtórz hasło", "login": "E-mail lub nazwa użytkownika" },
+    "password": {
+      "show": "Pokaż hasło",
+      "hide": "Ukryj hasło",
+      "requirements": "Użyj od 8 do 50 znaków, w tym małej i wielkiej litery, cyfry oraz znaku specjalnego."
+    },
+    "session": { "expired": "Sesja wygasła. Zaloguj się ponownie.", "resuming": "Wznawianie sesji…", "resumeFailed": "Nie udało się wznowić sesji. Zaloguj się ponownie." },
+    "logout": { "action": "Wyloguj", "pending": "Wylogowywanie…" },
+    "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń" }
+  },
+  "app": { "home": { "title": "Strona główna aplikacji Sounds" } },
+  "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
+  "errors": {
+    "accessDenied": { "title": "Brak dostępu", "description": "Twoje konto nie ma wymaganej roli, aby otworzyć tę stronę." },
+    "page": { "title": "Wystąpił błąd", "description": "Nie udało się załadować strony. Spróbuj ponownie." },
+    "notFound": { "title": "Nie znaleziono strony", "description": "Strona, której szukasz, nie istnieje." },
+    "sessionVerificationFailed": "Nie udało się zweryfikować sesji. Spróbuj ponownie.",
+    "invalidSessionResponse": "Nie udało się potwierdzić sesji. Spróbuj ponownie.",
+    "invalidCredentials": "Nieprawidłowy login lub hasło.",
+    "emailAlreadyInUse": "Ten adres e-mail jest już zajęty.",
+    "serviceUnavailable": "Usługa jest obecnie niedostępna. Spróbuj ponownie później.",
+    "timeout": "Przekroczono czas oczekiwania. Spróbuj ponownie.",
+    "unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+  },
+  "validation": {
+    "required": "To pole jest wymagane.",
+    "email": "Podaj poprawny adres e-mail.",
+    "length": "Użyj od {min} do {max} znaków.",
+    "passwordComplexity": "Użyj małej i wielkiej litery, cyfry oraz znaku specjalnego.",
+    "passwordMismatch": "Hasła nie są zgodne."
+  },
+  "metadata": {
+    "default": { "title": "Sounds", "description": "Sounds — aplikacja muzyczna." },
+    "login": { "title": "Logowanie | Sounds" },
+    "register": { "title": "Rejestracja | Sounds" },
+    "admin": { "title": "Panel administracyjny | Sounds" },
+    "accessDenied": { "title": "Brak dostępu | Sounds" }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "common": {
+    "navigation": { "backHome": "Back to home", "goToLogin": "Go to sign in" },
+    "status": { "checkingAccess": "Checking access…", "loading": "Loading…" },
+    "actions": { "retry": "Try again" },
+    "language": { "label": "Language", "changeFailed": "Could not save your language preference. Try again." }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "placeholder": "The sign-in form will appear here.",
+      "noAccount": "Don't have an account?",
+      "action": "Sign in",
+      "pending": "Signing in…"
+    },
+    "register": {
+      "title": "Create an account",
+      "placeholder": "The registration form will appear here.",
+      "hasAccount": "Already have an account?",
+      "action": "Create an account",
+      "pending": "Creating your account…"
+    },
+    "fields": { "username": "Username", "email": "Email", "password": "Password", "confirmPassword": "Confirm password", "login": "Email or username" },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password",
+      "requirements": "Use 8–50 characters, including a lowercase letter, an uppercase letter, a number and a special character."
+    },
+    "session": { "expired": "Your session has expired. Sign in again.", "resuming": "Resuming your session…", "resumeFailed": "Could not resume your session. Sign in again." },
+    "logout": { "action": "Sign out", "pending": "Signing out…" },
+    "logoutAll": { "action": "Sign out on all devices" }
+  },
+  "app": { "home": { "title": "Sounds home" } },
+  "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
+  "errors": {
+    "accessDenied": { "title": "Access denied", "description": "Your account does not have the required role to open this page." },
+    "page": { "title": "Something went wrong", "description": "Could not load this page. Try again." },
+    "notFound": { "title": "Page not found", "description": "The page you are looking for does not exist." },
+    "sessionVerificationFailed": "Could not verify your session. Try again.",
+    "invalidSessionResponse": "Could not confirm your session. Try again.",
+    "invalidCredentials": "Incorrect login or password.",
+    "emailAlreadyInUse": "This email address is already in use.",
+    "serviceUnavailable": "The service is currently unavailable. Try again later.",
+    "timeout": "The request took too long. Try again.",
+    "unexpected": "An unexpected error occurred. Try again."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email": "Enter a valid email address.",
+    "length": "Use between {min} and {max} characters.",
+    "passwordComplexity": "Include a lowercase letter, an uppercase letter, a number and a special character.",
+    "passwordMismatch": "Passwords do not match."
+  },
+  "metadata": {
+    "default": { "title": "Sounds", "description": "Sounds — a music application." },
+    "login": { "title": "Sign in | Sounds" },
+    "register": { "title": "Create an account | Sounds" },
+    "admin": { "title": "Admin panel | Sounds" },
+    "accessDenied": { "title": "Access denied | Sounds" }
+  }
+}

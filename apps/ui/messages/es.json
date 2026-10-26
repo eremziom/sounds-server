@@ -1,0 +1,61 @@
+{
+  "common": {
+    "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión" },
+    "status": { "checkingAccess": "Comprobando el acceso…", "loading": "Cargando…" },
+    "actions": { "retry": "Intentar de nuevo" },
+    "language": { "label": "Idioma", "changeFailed": "No se pudo guardar tu preferencia de idioma. Inténtalo de nuevo." }
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "placeholder": "Aquí aparecerá el formulario de inicio de sesión.",
+      "noAccount": "¿No tienes una cuenta?",
+      "action": "Iniciar sesión",
+      "pending": "Iniciando sesión…"
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "placeholder": "Aquí aparecerá el formulario de registro.",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "action": "Crear una cuenta",
+      "pending": "Creando tu cuenta…"
+    },
+    "fields": { "username": "Nombre de usuario", "email": "Correo electrónico", "password": "Contraseña", "confirmPassword": "Confirmar contraseña", "login": "Correo electrónico o nombre de usuario" },
+    "password": {
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña",
+      "requirements": "Usa entre 8 y 50 caracteres, incluyendo una letra minúscula, una mayúscula, un número y un carácter especial."
+    },
+    "session": { "expired": "Tu sesión ha caducado. Inicia sesión de nuevo.", "resuming": "Reanudando tu sesión…", "resumeFailed": "No se pudo reanudar tu sesión. Inicia sesión de nuevo." },
+    "logout": { "action": "Cerrar sesión", "pending": "Cerrando sesión…" },
+    "logoutAll": { "action": "Cerrar sesión en todos los dispositivos" }
+  },
+  "app": { "home": { "title": "Página de inicio de Sounds" } },
+  "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
+  "errors": {
+    "accessDenied": { "title": "Acceso denegado", "description": "Tu cuenta no tiene el rol necesario para abrir esta página." },
+    "page": { "title": "Se ha producido un error", "description": "No se pudo cargar esta página. Inténtalo de nuevo." },
+    "notFound": { "title": "Página no encontrada", "description": "La página que buscas no existe." },
+    "sessionVerificationFailed": "No se pudo verificar tu sesión. Inténtalo de nuevo.",
+    "invalidSessionResponse": "No se pudo confirmar tu sesión. Inténtalo de nuevo.",
+    "invalidCredentials": "El usuario o la contraseña son incorrectos.",
+    "emailAlreadyInUse": "Esta dirección de correo electrónico ya está en uso.",
+    "serviceUnavailable": "El servicio no está disponible en este momento. Inténtalo más tarde.",
+    "timeout": "La solicitud ha tardado demasiado. Inténtalo de nuevo.",
+    "unexpected": "Se ha producido un error inesperado. Inténtalo de nuevo."
+  },
+  "validation": {
+    "required": "Este campo es obligatorio.",
+    "email": "Introduce una dirección de correo electrónico válida.",
+    "length": "Usa entre {min} y {max} caracteres.",
+    "passwordComplexity": "Incluye una letra minúscula, una mayúscula, un número y un carácter especial.",
+    "passwordMismatch": "Las contraseñas no coinciden."
+  },
+  "metadata": {
+    "default": { "title": "Sounds", "description": "Sounds — una aplicación de música." },
+    "login": { "title": "Iniciar sesión | Sounds" },
+    "register": { "title": "Crear una cuenta | Sounds" },
+    "admin": { "title": "Panel de administración | Sounds" },
+    "accessDenied": { "title": "Acceso denegado | Sounds" }
+  }
+}

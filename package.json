@@ -12,6 +12,7 @@
     "start:debug": "pnpm --filter api start:debug",
     "start:prod": "pnpm --filter api start:prod",
     "lint": "pnpm -r lint",
+    "check:messages": "pnpm --filter ui check:messages",
     "devtest": "pnpm --filter api devtest",
     "seed:rbac": "pnpm --filter api seed:rbac",
     "prisma:generate": "pnpm --filter api prisma:generate",
