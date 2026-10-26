@@ -37,18 +37,62 @@ async function main() {
       },
     );
     db = new Pool({ connectionString: testUrl.toString() });
-    await db.query(readFileSync(path.resolve('prisma/seed-rbac.sql'), 'utf8'));
+    const seed = readFileSync(path.resolve('prisma/seed-rbac.sql'), 'utf8');
+    await db.query(seed);
+    async function rbacSnapshot() {
+      const roles = await db.query(
+        'SELECT id, key, name, description FROM "Role" ORDER BY key',
+      );
+      const permissions = await db.query(
+        'SELECT id, key, name, description FROM "Permission" ORDER BY key',
+      );
+      const grants = await db.query(
+        'SELECT "roleId", "permissionId" FROM "RolePermission" ORDER BY "roleId", "permissionId"',
+      );
+      return {
+        roles: roles.rows,
+        permissions: permissions.rows,
+        grants: grants.rows,
+      };
+    }
+    const initialRbac = await rbacSnapshot();
+    assert.deepEqual(
+      initialRbac.roles.map((role) => role.key),
+      ['ADMIN', 'ARTIST', 'USER'],
+    );
+    assert.equal(initialRbac.permissions.length, 19);
+    assert.equal(initialRbac.grants.length, 28);
+    // Reproduce the legacy over-grants and verify that the seed repairs them.
+    const legacyGrants = await db.query(`
+      INSERT INTO "RolePermission" ("roleId", "permissionId")
+      SELECT r.id, p.id FROM "Role" r CROSS JOIN "Permission" p
+      WHERE r.key IN ('USER', 'ARTIST') AND p.key IN ('users:read', 'users:update')
+      ON CONFLICT DO NOTHING
+    `);
+    assert.equal(legacyGrants.rowCount, 4);
+    await db.query(seed);
+    assert.deepEqual(
+      await rbacSnapshot(),
+      initialRbac,
+      'Seed must revoke legacy global profile grants',
+    );
+    await db.query(seed);
+    assert.deepEqual(
+      await rbacSnapshot(),
+      initialRbac,
+      'Repeated seed must preserve RBAC records and assignments',
+    );
 
     const { NestFactory } = require('@nestjs/core');
-    const { ValidationPipe } = require('@nestjs/common');
+    const {
+      createApiValidationPipe,
+    } = require('../dist/src/common/api-validation.pipe.js');
     const { AppModule } = require('../dist/src/app.module.js');
     const { PrismaService } = require('../dist/src/prisma/prisma.service.js');
     const { UsersService } = require('../dist/src/users/users.service.js');
     const { JwtService } = require('@nestjs/jwt');
     app = await NestFactory.create(AppModule, { logger: false });
-    app.useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-    );
+    app.useGlobalPipes(createApiValidationPipe());
     await app.listen(0, '127.0.0.1');
     prisma = app.get(PrismaService);
     const users = app.get(UsersService);
@@ -101,10 +145,86 @@ async function main() {
       201,
     );
     assert.equal('password' in registered.user, false);
+    const badRegistration = await call(
+      'POST',
+      '/auth/register',
+      {
+        username: 'x',
+        email: 'invalid',
+        password: 'short',
+      },
+      null,
+      400,
+    );
+    assert.equal(badRegistration.code, 'VALIDATION_FAILED');
+    assert.ok(
+      badRegistration.fieldErrors.some(
+        (error) => error.field === 'username' && error.code === 'LENGTH',
+      ),
+    );
+    const duplicate = await call(
+      'POST',
+      '/auth/register',
+      {
+        username: 'session-tester',
+        email: 'sessions@example.com',
+        password: 'Test123!',
+      },
+      null,
+      409,
+    );
+    assert.equal(duplicate.code, 'EMAIL_ALREADY_IN_USE');
+    const wrongPassword = await call(
+      'POST',
+      '/auth/login',
+      {
+        login: 'session-tester',
+        password: 'Wrong123!',
+      },
+      null,
+      401,
+    );
+    assert.equal(wrongPassword.code, 'AUTH_INVALID_CREDENTIALS');
     assert.match(registered.refreshToken, /^[a-f0-9]{64}$/);
     const initialPayload = jwt.verify(registered.accessToken);
     assert.equal(initialPayload.exp - initialPayload.iat, 900);
     await me(registered.accessToken);
+    const profileTarget = await call(
+      'POST',
+      '/auth/register',
+      {
+        username: 'profile-target',
+        email: 'profile-target@example.com',
+        password: 'Test123!',
+      },
+      null,
+      201,
+    );
+    async function checkProfileAccess(token, expected) {
+      await call(
+        'GET',
+        `/users/${profileTarget.user.id}`,
+        null,
+        token,
+        expected,
+      );
+      await call(
+        'GET',
+        `/auth/user/${profileTarget.user.id}`,
+        null,
+        token,
+        expected,
+      );
+      await call(
+        'PATCH',
+        `/users/${profileTarget.user.id}`,
+        { bio: 'Admin-managed profile' },
+        token,
+        expected,
+      );
+    }
+    await call('GET', '/users', null, registered.accessToken, 403);
+    await checkProfileAccess(registered.accessToken, 403);
     const stored = await prisma.refreshToken.findUnique({
       where: {
         tokenHash: createHash('sha256')
@@ -262,6 +382,7 @@ async function main() {
     const afterRoles = await refresh(beforeRoles.refreshToken);
     assert.ok(afterRoles.user.roles.some((role) => role.key === 'ARTIST'));
     await call('GET', '/users', null, afterRoles.accessToken, 403);
+    await checkProfileAccess(afterRoles.accessToken, 403);
     const track = await call(
       'POST',
       '/tracks',
@@ -282,6 +403,18 @@ async function main() {
       403,
     );
 
+    const adminRole = await prisma.role.findUnique({ where: { key: 'ADMIN' } });
+    await prisma.userRole.create({
+      data: { userId: registered.user.id, roleId: adminRole.id },
+    });
+    const adminSession = await refresh(afterRoles.refreshToken);
+    assert.ok(adminSession.user.roles.some((role) => role.key === 'ADMIN'));
+    await call('GET', '/users', null, adminSession.accessToken, 200);
+    await checkProfileAccess(adminSession.accessToken, 200);
+    await call('GET', '/roles', null, adminSession.accessToken, 200);
+    await call('GET', '/permissions', null, adminSession.accessToken, 200);
+    await prisma.user.delete({ where: { id: profileTarget.user.id } });
+
     const deleted = await login();
     await prisma.user.delete({ where: { id: registered.user.id } });
     await me(deleted.accessToken, 401);
@@ -289,7 +422,7 @@ async function main() {
     assert.equal(await prisma.authSession.count(), 0);
     assert.equal(await prisma.refreshToken.count(), 0);
     console.log(
-      `Auth sessions: ${checks} HTTP checks passed, including PostgreSQL rotation concurrency.`,
+      `Auth sessions: ${checks} HTTP checks passed, including PostgreSQL rotation concurrency and RBAC. Seed repair/idempotence verified (3 roles, 19 permissions, 28 grants). USER/ARTIST denied cross-profile access; ADMIN allowed.`,
     );
   } finally {
     if (app) await app.close();

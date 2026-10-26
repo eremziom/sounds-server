@@ -11,6 +11,15 @@ pnpm dev:ui
 Open [http://localhost:3001/login](http://localhost:3001/login) for the public UI.
 Protected pages validate sessions against `API_URL` (default port 3000).
 
+The agreed Server Action flow, module boundaries, form result contract and
+translation setup for upcoming auth forms are described in [AUTH.md](AUTH.md).
+
+Backend HTTP calls live in `src/api/`, grouped by domain (`auth.ts` currently
+contains session verification). These modules use `server-only`. Session/access
+policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
+from `src/app/(auth)/actions.ts` when auth forms are implemented. `src/api/` is
+application code, distinct from Next.js HTTP routes under `src/app/api/`.
+
 Pages live in `src/app/`; development changes update automatically.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

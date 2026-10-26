@@ -34,10 +34,11 @@ unverified JWT claims. Requests are not stored in the shared data cache.
 API outages fail closed with an error instead of granting access.
 
 `src/lib/route-access.ts` contains shared role types, constants and role checks
-that can be imported by client components. `src/lib/session-api.ts` contains
+that can be imported by client components. `src/api/auth.ts` contains
 `fetchSessionUser` and response validation; it is marked `server-only` to prevent
 API session checks from being imported into client components. `src/lib/auth.ts`
-connects these server-side checks to cookies and redirects.
+connects these server-side checks to cookies and redirects. Endpoint calls are
+organized under `src/api/`; cookies/session policy remain in `src/lib/`.
 
 Set `API_URL` in `apps/ui/.env.local` if the API is not at
 `http://localhost:3000` (see `.env.example`). When implementing login/register,
@@ -73,3 +74,8 @@ with `pnpm verify:i18n`; see the UI README for browser requirements.
 New text must be added to all catalogs; adding a locale must update the explicit
 catalog loader, selector and test matrices. Locale selection never replaces API
 guards. UI auth forms and their real login/logout/refresh flows remain pending.
+
+The preparation-stage decisions for these forms (server/client boundary,
+Server Actions, safe action results and translations) are recorded in
+[AUTH.md](AUTH.md). Existing layout/page guards remain the access boundary;
+future protected actions must also perform their own checks.

@@ -8,7 +8,7 @@ import {
   hasRequiredRole,
   type Role,
 } from "./route-access";
-import { fetchSessionUser } from "./session-api";
+import { fetchSessionUser } from "../api/auth";
 
 // React cache deduplicates checks within one server render, never across users.
 export const getCurrentUser = cache(async () => {

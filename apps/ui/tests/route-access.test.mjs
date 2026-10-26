@@ -9,7 +9,7 @@ import {
 
 // Node tests run outside Next.js, which normally resolves the server-only marker.
 register("./helpers/server-only-loader.mjs", import.meta.url);
-const { fetchSessionUser } = await import("../src/lib/session-api.ts");
+const { fetchSessionUser } = await import("../src/api/auth.ts");
 
 const userWithRoles = (...keys) => ({
   id: 1,

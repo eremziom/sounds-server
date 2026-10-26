@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionUser } from "./route-access";
+import type { SessionUser } from "../lib/route-access";
 
 function isSessionUser(value: unknown): value is SessionUser {
   if (!value || typeof value !== "object") return false;
