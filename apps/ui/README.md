@@ -1,26 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Sounds frontend built with Next.js App Router, React and next-intl.
 
 ## Getting Started
 
-First, run the development server:
+From the repository root, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev:ui
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3001/login](http://localhost:3001/login) for the public UI.
+Protected pages validate sessions against `API_URL` (default port 3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Pages live in `src/app/`; development changes update automatically.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Translations (stages 2–6)
+## Translations (stages 2–7)
 
 The UI uses `next-intl` 4.14.9 with shared URLs for English (`en`), Polish (`pl`)
 and Spanish (`es`). Catalogs live in `messages/{en,pl,es}.json`; English defines
@@ -40,6 +35,8 @@ The catalog check also runs before every UI build and test run. It rejects
 missing/extra keys, empty values, invalid ICU and mismatched parameters or
 rich-text tags. Update all three catalogs in the same change. Locale-specific
 plural categories may differ; ICU messages must include `other`.
+The three emergency English strings must also match the English source catalog;
+this is checked before builds and tests.
 
 `src/i18n/messages.ts` loads catalogs on the server through explicit imports.
 Missing/blank translated values fall back to English with a warning containing
@@ -150,6 +147,67 @@ be stored globally or in a shared cache. Run `pnpm --filter ui build`, then
 The workspace allows install scripts for `@parcel/watcher` and `@swc/core`,
 which are dependencies of the chosen next-intl version. On Windows the native
 SWC module needs access to its user cache during builds and server startup.
+
+## Full i18n verification
+
+Run from the repository root:
+
+```bash
+pnpm verify:i18n
+```
+
+This is the common local/pre-release/CI procedure. It runs UI lint, catalog checks,
+all UI unit tests, TypeScript, a production build, HTML/RSC tests, browser checks
+and the API Jest suite (including the error contract). It stops at the first
+failure and requires no running API/database. The test suites use isolated mock
+APIs, Next servers on temporary ports, and an isolated browser profile. Real
+registration/login/logout/refresh flows are pending the auth form implementation.
+
+Requirements: Node.js 22.6+, the workspace dependencies/Prisma Client from the
+root setup, and Chrome, Edge or Chromium. The browser test uses Node's built-in
+WebSocket and the browser's debugging protocol; it does not install browser
+automation dependencies. If automatic discovery fails, configure the absolute
+browser executable path, for example in PowerShell:
+
+```powershell
+$env:BROWSER_PATH = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+pnpm verify:i18n
+```
+
+To run only the browser check against the last production build:
+
+```bash
+pnpm --filter ui test:browser
+```
+
+`tests/routing.integration.mjs` covers all role/locale combinations for both
+cookie and browser-header selection, HTML and RSC, invalid/missing sessions,
+fallbacks, private/no-store headers, sequential users at shared URLs, 404s,
+absence of language-prefixed routes and the language action with/without a session.
+
+`tests/i18n.browser.mjs` checks keyboard/focus, translated labels, URL/query/hash,
+history length and back/forward after a language change, persistent preferences,
+anonymous visitors, session preservation, save errors/retry, all page metadata,
+loading/API error/404 states, retry after recovery and no hydration errors.
+It saves 320px screenshots to `apps/ui/.tmp/i18n/` for visual review and removes
+its temporary browser profile. Browsers must be preinstalled in CI; configure
+`BROWSER_PATH` there if needed. No hosting or CI provider is assumed.
+
+### Updating text and adding a language
+
+Use semantic nested keys and update `messages/en.json`, `pl.json` and `es.json`
+in the same PR. Keep interpolation names and rich-text tags identical. Use full
+sentences; add ICU plural/select variants instead of concatenating fragments.
+For emergency messages, update `emergency.en.json` alongside the English source.
+Run `pnpm verify:i18n` before release. Fallbacks never justify incomplete catalogs.
+
+To add a language, add its full catalog, extend `locales` in `src/i18n/config.ts`,
+the explicit loader in `src/i18n/messages.ts`, the native display name in
+`LanguageSwitcher` and the test matrices. Keep English as the base/default;
+do not create language routes or translate role/permission/API identifiers.
+Check complete text, metadata, keyboard focus, screen-reader labels and narrow
+layouts in every language. Current terminology uses Sign in / Logowanie /
+Iniciar sesión and Admin panel / Panel administracyjny / Panel de administración.
 
 ## Next.js resources
 

@@ -10,7 +10,8 @@
     "lint": "eslint",
     "test": "node --experimental-strip-types scripts/check-messages.mjs && node --experimental-strip-types --test tests/*.test.mjs",
     "check:messages": "node --experimental-strip-types scripts/check-messages.mjs",
-    "test:routing": "node --test tests/routing.integration.mjs"
+    "test:routing": "node --test tests/routing.integration.mjs",
+    "test:browser": "node tests/i18n.browser.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

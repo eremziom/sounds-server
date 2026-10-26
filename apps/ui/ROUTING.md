@@ -60,3 +60,16 @@ Run `pnpm --filter ui test` for session validation and role policy tests
 After building the frontend, run `pnpm --filter ui test:routing` for HTTP tests
 of public/protected pages and RSC requests. These start an isolated production
 Next.js server and mock API on temporary ports; no database is needed.
+
+The locale/role matrix runs twice for each HTML/RSC combination: once with the
+locale cookie and once with a regional, weighted browser header. It also checks
+language fallbacks, private responses for shared URLs, translated metadata/404,
+absence of language-prefixed routes and the language action for anonymous and
+authenticated visitors. The browser suite adds real client navigation and
+back/forward, keyboard focus, URL preservation, anonymous preference persistence
+and error/retry states. Run the entire release procedure from the repository root
+with `pnpm verify:i18n`; see the UI README for browser requirements.
+
+New text must be added to all catalogs; adding a locale must update the explicit
+catalog loader, selector and test matrices. Locale selection never replaces API
+guards. UI auth forms and their real login/logout/refresh flows remain pending.

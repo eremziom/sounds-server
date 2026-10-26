@@ -15,6 +15,7 @@
     "check:messages": "pnpm --filter ui check:messages",
     "devtest": "pnpm --filter api devtest",
     "devtest:ui": "pnpm --filter ui test && pnpm --filter ui exec tsc --noEmit",
+    "verify:i18n": "pnpm --filter ui lint && pnpm devtest:ui && pnpm --filter ui build && pnpm --filter ui test:routing && pnpm --filter ui test:browser && pnpm --filter api exec jest --runInBand",
     "seed:rbac": "pnpm --filter api seed:rbac",
     "prisma:generate": "pnpm --filter api prisma:generate",
     "prisma:migrate": "pnpm --filter api prisma:migrate",
