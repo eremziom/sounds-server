@@ -1,25 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Rejestracja | Sounds",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata.register");
+  return { title: t("title"), description: t("description") };
+}
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const t = await getTranslations("auth");
+  const navigation = await getTranslations("common.navigation");
   return (
     <section className="space-y-4">
-      <h1 className="text-3xl font-semibold">Rejestracja</h1>
+      <h1 className="text-3xl font-semibold">{t("register.title")}</h1>
       <p className="text-muted-foreground">
-        Tutaj pojawi się formularz rejestracji.
+        {t("register.placeholder")}
       </p>
       <p>
-        Masz już konto?{" "}
+        {t("register.hasAccount")}{" "}
         <Link href="/login" className="underline underline-offset-4">
-          Zaloguj się
+          {t("login.action")}
         </Link>
       </p>
       <Link href="/" className="inline-block underline underline-offset-4">
-        Wróć na stronę główną
+        {navigation("backHome")}
       </Link>
     </section>
   );

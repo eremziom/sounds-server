@@ -12,12 +12,13 @@ const PASSWORD_COMPLEXITY_REGEX =
 
 export class CreateUserDto {
   @IsString({ message: 'Username must be a string' })
-  @Length(3, 30)
+  @Length(3, 30, { context: { min: 3, max: 30 } })
   username!: string;
 
   @IsString({ message: 'Password must be a string' })
-  @Length(8, 50)
+  @Length(8, 50, { context: { min: 8, max: 50 } })
   @Matches(PASSWORD_COMPLEXITY_REGEX, {
+    context: { code: 'PASSWORD_COMPLEXITY' },
     message:
       'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character',
   })
@@ -28,7 +29,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString({ message: 'Bio must be a string' })
-  @Length(0, 200)
+  @Length(0, 200, { context: { min: 0, max: 200 } })
   bio?: string;
 
   @IsOptional()

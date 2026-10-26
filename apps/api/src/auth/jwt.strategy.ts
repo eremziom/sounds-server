@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthenticatedUser } from './auth.interfaces';
 import { isJwtPayload } from './jwt-payload.helper';
 import { PrismaService } from '../prisma/prisma.service';
+import { API_ERROR_CODES, codedError } from '../common/api-errors';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,7 +23,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: unknown): Promise<AuthenticatedUser> {
     if (!isJwtPayload(payload)) {
-      throw new UnauthorizedException('Invalid access token');
+      throw new UnauthorizedException(
+        codedError(
+          new UnauthorizedException('Invalid access token'),
+          API_ERROR_CODES.invalidSession,
+        ),
+      );
     }
     const session = await this.prisma.authSession.findFirst({
       where: {
@@ -35,7 +41,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       select: { id: true },
     });
     if (!session)
-      throw new UnauthorizedException('Session is no longer active');
+      throw new UnauthorizedException(
+        codedError(
+          new UnauthorizedException('Session is no longer active'),
+          API_ERROR_CODES.invalidSession,
+        ),
+      );
     return {
       sessionId: payload.sid,
       userId: payload.sub,

@@ -6,6 +6,28 @@ Roles are additive: `ADMIN` alone does not grant access to `(app)`.
 Missing/invalid sessions redirect to `/login`; insufficient roles redirect to
 the public `/access-denied` page.
 
+All languages use these same URLs and redirects. Request language is selected
+from a valid `locale` cookie, then weighted `Accept-Language` (including regional
+tags), then English. Language detection does not modify roles, sessions or route
+guards. All current page content and metadata use the request language, including
+login, registration, app/admin, access-denied, loading and not-found states.
+The client error boundary uses the same locale and exposes only a safe message
+and retry button. If the root layout itself fails, the standalone global error
+document falls back to English without relying on request context/providers.
+
+The root layout reads request language and dynamically renders `html lang` with
+the same locale supplied to client components. Cache Components is disabled.
+HTML/RSC responses are `private, no-store`; reverse proxies/CDNs must respect
+these directives and forward the original cookies and browser language header.
+Do not cache these responses by URL across users or languages. There is no CDN
+configuration in this repository; preserve this policy when adding one.
+
+The shared language selector is available on public, app and admin pages. It
+calls a Server Action that validates and writes only the `locale` cookie (one
+year, `Path=/`, `SameSite=Lax`, `HttpOnly`, `Secure` in production). Cookie changes
+re-render the current view without navigation, keeping the path, query, fragment
+and session intact. Language errors are displayed beside the selector.
+
 The server reads the `accessToken` cookie and validates it with `GET /auth/me`
 in the NestJS API on each server render. Roles come from the API, never from
 unverified JWT claims. Requests are not stored in the shared data cache.
@@ -38,3 +60,16 @@ Run `pnpm --filter ui test` for session validation and role policy tests
 After building the frontend, run `pnpm --filter ui test:routing` for HTTP tests
 of public/protected pages and RSC requests. These start an isolated production
 Next.js server and mock API on temporary ports; no database is needed.
+
+The locale/role matrix runs twice for each HTML/RSC combination: once with the
+locale cookie and once with a regional, weighted browser header. It also checks
+language fallbacks, private responses for shared URLs, translated metadata/404,
+absence of language-prefixed routes and the language action for anonymous and
+authenticated visitors. The browser suite adds real client navigation and
+back/forward, keyboard focus, URL preservation, anonymous preference persistence
+and error/retry states. Run the entire release procedure from the repository root
+with `pnpm verify:i18n`; see the UI README for browser requirements.
+
+New text must be added to all catalogs; adding a locale must update the explicit
+catalog loader, selector and test matrices. Locale selection never replaces API
+guards. UI auth forms and their real login/logout/refresh flows remain pending.

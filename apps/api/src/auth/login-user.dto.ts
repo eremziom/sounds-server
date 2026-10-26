@@ -5,12 +5,13 @@ const PASSWORD_COMPLEXITY_REGEX =
 
 export class LoginUserDto {
   @IsString()
-  @Length(3, 100)
+  @Length(3, 100, { context: { min: 3, max: 100 } })
   login!: string;
 
   @IsString()
-  @Length(8, 50)
+  @Length(8, 50, { context: { min: 8, max: 50 } })
   @Matches(PASSWORD_COMPLEXITY_REGEX, {
+    context: { code: 'PASSWORD_COMPLEXITY' },
     message:
       'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character',
   })

@@ -345,6 +345,44 @@ describe('AuthService', () => {
     await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
   });
 
+  it('uses the same credentials code and body for missing, inactive and wrong-password users', async () => {
+    const expected = {
+      statusCode: 401,
+      error: 'Unauthorized',
+      message: 'Invalid credentials',
+      code: 'AUTH_INVALID_CREDENTIALS',
+    };
+    for (const dto of [
+      { login: 'missing', password: 'Test123!' },
+      { login: 'admin', password: 'Wrong123!' },
+    ]) {
+      await expect(service.login(dto)).rejects.toMatchObject({
+        response: expected,
+      });
+    }
+    users[1].isActive = false;
+    await expect(
+      service.login({ login: 'admin', password: 'Test123!' }),
+    ).rejects.toMatchObject({ response: expected });
+  });
+
+  it('adds a stable duplicate-email code while retaining the legacy conflict body', async () => {
+    await expect(
+      service.register({
+        username: 'max',
+        email: 'max@max.pl',
+        password: 'Test123!',
+      }),
+    ).rejects.toMatchObject({
+      response: {
+        statusCode: 409,
+        error: 'Conflict',
+        message: 'Email already in use',
+        code: 'EMAIL_ALREADY_IN_USE',
+      },
+    });
+  });
+
   it('does not issue a session for an inactive user', async () => {
     users[1].isActive = false;
     await expect(
