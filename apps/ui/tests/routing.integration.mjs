@@ -4,8 +4,12 @@ import { createServer } from "node:http";
 import { once } from "node:events";
 import { setTimeout } from "node:timers/promises";
 import { test } from "node:test";
+import { readFile } from "node:fs/promises";
 
-test("route guards enforce roles for documents and RSC navigation", { timeout: 30000 }, async () => {
+test("request languages preserve route guards, redirects and private HTML/RSC", { timeout: 60000 }, async () => {
+  const catalogs = Object.fromEntries(await Promise.all(["en", "pl", "es"].map(async (locale) => [
+    locale, JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8")),
+  ])));
   const api = createServer((request, response) => {
     const role = request.headers.authorization?.replace("Bearer ", "");
     if (request.url !== "/auth/me" || !["USER", "ARTIST", "ADMIN"].includes(role)) {
@@ -48,6 +52,18 @@ test("route guards enforce roles for documents and RSC navigation", { timeout: 3
     return response;
   }
 
+  function assertPrivate(response) {
+    const cacheControl = response.headers.get("cache-control") ?? "";
+    assert.match(cacheControl, /private/);
+    assert.match(cacheControl, /no-store/);
+    assert.doesNotMatch(cacheControl, /s-maxage/);
+  }
+
+  function assertLocale(body, locale, rsc) {
+    if (rsc) assert.ok(body.includes(`"locale":"${locale}"`), `Client locale: ${locale}`);
+    else assert.match(body, new RegExp(`<html[^>]*lang="${locale}"`));
+  }
+
   try {
     let ready = false;
     for (let attempt = 0; attempt < 100; attempt++) {
@@ -59,16 +75,27 @@ test("route guards enforce roles for documents and RSC navigation", { timeout: 3
     }
     assert.ok(ready, output);
 
-    for (const rsc of [false, true]) {
+    const variants = ["en", "pl", "es"].flatMap((locale) => [
+      { locale, rsc: false }, { locale, rsc: true },
+    ]);
+    for (const { locale, rsc } of variants) {
       for (const role of [undefined, "USER", "ARTIST", "ADMIN", "invalid"]) {
-        const headers = {};
-        if (role) headers.Cookie = `accessToken=${role}`;
+        const headers = { Cookie: `locale=${locale}`, "Accept-Language": "de-DE" };
+        if (role) headers.Cookie += `; accessToken=${role}`;
         if (rsc) headers.RSC = "1";
 
         for (const path of ["/login", "/register", "/access-denied"]) {
           const response = await fetchRoute(path, headers);
           assert.equal(response.status, 200, `${path}: ${role}, RSC=${rsc}`);
-          await response.text();
+          assertPrivate(response);
+          const body = await response.text();
+          assertLocale(body, locale, rsc);
+          if (path !== "/register") {
+            const messages = catalogs[locale];
+            const heading = path === "/login" ? messages.auth.login.title : messages.errors.accessDenied.title;
+            assert.ok(body.includes(heading), `${path}: ${locale}, RSC=${rsc}`);
+            assert.ok(body.includes(path === "/login" ? messages.metadata.login.title : messages.metadata.accessDenied.title));
+          }
         }
 
         for (const [path, allowedRoles, heading] of [
@@ -80,6 +107,8 @@ test("route guards enforce roles for documents and RSC navigation", { timeout: 3
           const context = `${path}: ${role}, RSC=${rsc}`;
           if (allowedRoles.includes(role)) {
             assert.equal(response.status, 200, context);
+            assertPrivate(response);
+            assertLocale(body, locale, rsc);
             assert.ok(body.includes(heading), context);
             assert.ok(!body.includes("NEXT_REDIRECT"), context);
           } else {
@@ -90,8 +119,40 @@ test("route guards enforce roles for documents and RSC navigation", { timeout: 3
             );
             // Metadata can include the admin title; the guarded page body must not render.
             assert.ok(!body.includes(path === "/" ? heading : "Tutaj pojawią się narzędzia"), context);
+            const destination = await fetchRoute(target, headers);
+            assert.equal(destination.status, 200, context);
+            const destinationBody = await destination.text();
+            const messages = catalogs[locale];
+            assert.ok(destinationBody.includes(target === "/login" ? messages.auth.login.title : messages.errors.accessDenied.title), context);
+            assertLocale(destinationBody, locale, rsc);
           }
         }
+      }
+    }
+    // Reuse exactly the same URL while alternating users/languages to catch cache leaks.
+    for (const rsc of [false, true]) {
+      for (const [cookie, language, locale] of [
+        ["locale=pl", "es-MX", "pl"],
+        ["locale=es", "pl-PL", "es"],
+        ["locale=en", "pl-PL", "en"],
+        [undefined, "de-DE, es-MX;q=0.8, pl-PL;q=0.9", "pl"],
+        ["locale=invalid", "es-MX", "es"],
+        [undefined, "pl;q=0, es;q=0.8", "es"],
+        [undefined, "broken;q=bad", "en"],
+        ["locale=de", "de-DE", "en"],
+        [undefined, undefined, "en"],
+        ["locale=pl", undefined, "pl"],
+      ]) {
+        const headers = {};
+        if (cookie) headers.Cookie = cookie;
+        if (language) headers["Accept-Language"] = language;
+        if (rsc) headers.RSC = "1";
+        const response = await fetchRoute("/login", headers);
+        assert.equal(response.status, 200);
+        assertPrivate(response);
+        const body = await response.text();
+        assertLocale(body, locale, rsc);
+        assert.ok(body.includes(catalogs[locale].auth.login.title), `Negotiated content: ${locale}`);
       }
     }
   } finally {

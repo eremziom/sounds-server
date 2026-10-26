@@ -6,6 +6,18 @@ Roles are additive: `ADMIN` alone does not grant access to `(app)`.
 Missing/invalid sessions redirect to `/login`; insufficient roles redirect to
 the public `/access-denied` page.
 
+All languages use these same URLs and redirects. Request language is selected
+from a valid `locale` cookie, then weighted `Accept-Language` (including regional
+tags), then English. Language detection does not modify roles, sessions or route
+guards. Login and access-denied content use the request language.
+
+The root layout reads request language and dynamically renders `html lang` with
+the same locale supplied to client components. Cache Components is disabled.
+HTML/RSC responses are `private, no-store`; reverse proxies/CDNs must respect
+these directives and forward the original cookies and browser language header.
+Do not cache these responses by URL across users or languages. There is no CDN
+configuration in this repository; preserve this policy when adding one.
+
 The server reads the `accessToken` cookie and validates it with `GET /auth/me`
 in the NestJS API on each server render. Roles come from the API, never from
 unverified JWT claims. Requests are not stored in the shared data cache.

@@ -20,7 +20,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Translations (stage 2)
+## Translations (stages 2–3)
 
 The UI uses `next-intl` 4.14.9 with shared URLs for English (`en`), Polish (`pl`)
 and Spanish (`es`). Catalogs live in `messages/{en,pl,es}.json`; English defines
@@ -32,6 +32,8 @@ Run from the repository root:
 pnpm --filter ui check:messages
 pnpm --filter ui test
 pnpm --filter ui exec tsc --noEmit
+# Unit tests, catalog validation and TypeScript together:
+pnpm devtest:ui
 ```
 
 The catalog check also runs before every UI build and test run. It rejects
@@ -52,10 +54,31 @@ component with an explicit `namespaces` selection, e.g. `["auth", "validation"]`
 only these namespaces are sent to the client. Do not import the catalog loader
 into client components.
 
-This stage prepares the catalogs and plugin. The request configuration currently
-uses English; cookie/header detection, the language switcher and translating
-existing pages are subsequent stages. Existing routes and rendering settings
-remain in place. No language prefixes or rewrites are configured.
+Request language is resolved by `src/i18n/locale.ts`: a valid `locale` cookie
+(`en`, `pl`, `es`) wins over `Accept-Language`, then falls back to English.
+Browser preferences support regional tags (`pl-PL`, `es-MX`), case-insensitive
+matching and quality weights. Unsupported/malformed entries and `q=0` are
+ignored; equal weights preserve header order. A wildcard alone uses English.
+Invalid cookies fall through to browser preferences. Rendering never writes
+the cookie; the language switcher will be added in stage 4.
+
+Server pages, metadata and future actions should use `getLocale()` or
+`getTranslations()` from `next-intl/server`; they share this request configuration.
+The root layout sets `html lang` and provides the same locale/time zone to
+client components without sending catalogs globally. Use `ClientMessages`
+with explicit namespaces wherever a client needs messages.
+
+Login, access-denied and default metadata use the selected language. Other page
+texts will be connected in stage 5. No language prefixes, URL parameters or
+rewrites are configured. Cache Components is disabled and partial prefetching
+removed so the initial HTML uses the request language.
+
+All pages render dynamically. HTML/RSC responses must remain `private` and
+`no-store`; any future reverse proxy/CDN must forward `Cookie`/`Accept-Language`
+and respect these directives, without overriding them with a shared URL cache.
+Catalog modules may be reused by locale; user language/session values must never
+be stored globally or in a shared cache. Run `pnpm --filter ui build`, then
+`pnpm --filter ui test:routing` to check HTML/RSC locale isolation and RBAC.
 
 The workspace allows install scripts for `@parcel/watcher` and `@swc/core`,
 which are dependencies of the chosen next-intl version. On Windows the native
