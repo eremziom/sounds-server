@@ -6,6 +6,7 @@ import type Messages from "../../messages/en.json";
 import { timeZone } from "./config";
 import { loadMessages } from "./messages";
 import { pickNamespaces } from "./catalog";
+import { formats } from "./formats";
 
 // Callers must explicitly select what crosses the server/client boundary.
 export async function ClientMessages({
@@ -18,7 +19,7 @@ export async function ClientMessages({
   const locale = await getLocale();
   const messages = pickNamespaces(await loadMessages(locale), namespaces);
   return (
-    <NextIntlClientProvider locale={locale} timeZone={timeZone} messages={messages}>
+    <NextIntlClientProvider locale={locale} timeZone={timeZone} formats={formats} messages={messages}>
       {children}
     </NextIntlClientProvider>
   );

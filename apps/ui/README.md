@@ -20,7 +20,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Translations (stages 2–4)
+## Translations (stages 2–5)
 
 The UI uses `next-intl` 4.14.9 with shared URLs for English (`en`), Polish (`pl`)
 and Spanish (`es`). Catalogs live in `messages/{en,pl,es}.json`; English defines
@@ -78,14 +78,34 @@ or when reopening a shared URL.
 
 Server pages, metadata and future actions should use `getLocale()` or
 `getTranslations()` from `next-intl/server`; they share this request configuration.
-The root layout sets `html lang` and provides the same locale/time zone to
-client components without sending catalogs globally. Use `ClientMessages`
-with explicit namespaces wherever a client needs messages.
+The root layout sets `html lang` and provides the same locale/time zone/formats
+to client components. It sends only `errors.page` and `common.actions` for the
+client error boundary. Use `ClientMessages` with explicit namespaces elsewhere.
 
-Login, access-denied and default metadata use the selected language. Other page
-texts will be connected in stage 5. No language prefixes, URL parameters or
-rewrites are configured. Cache Components is disabled and partial prefetching
-removed so the initial HTML uses the request language.
+All current pages, access checks, loading and not-found states use the selected
+language. Page titles and descriptions are localized; existing URLs are shared
+without language prefixes, URL parameters or rewrites. Cache Components is
+disabled and partial prefetching removed so the initial HTML uses the request
+language. Login and registration are still translated placeholders; their real
+forms belong to `docs/ui-auth-plan.md` and must use the existing auth/validation
+catalog keys when implemented.
+
+`app/error.tsx` uses the root provider's selected language and the installed
+Next.js `retry()` prop to re-fetch after an error; it never displays exception
+details. `app/global-error.tsx` replaces the entire document if the root layout
+fails. Since request context/providers may be unavailable, it uses English,
+`lang="en"`, and only the three strings in `messages/emergency.en.json`.
+A test checks that this minimal emergency catalog matches the English source.
+
+`src/i18n/formats.ts` defines shared named Intl formats: `releaseDate`, `decimal`
+and `bpm`. They are configured for both server `getFormatter()` and client
+`useFormatter()`. Plain code may call `formatDate`, `formatNumber` or
+`formatCalendarDate` from `src/i18n/format.ts`, always passing the resolved locale.
+All dates use UTC; `formatCalendarDate` validates YYYY-MM-DD values and preserves
+their calendar day. For future relative dates, pass the same explicit `now` from
+the server to the client. There are no date/number/count views yet; do not add
+sample data solely for formatting. Use complete ICU messages with parameters,
+plural rules and `t.rich` for rich text rather than concatenating sentences.
 
 All pages render dynamically. HTML/RSC responses must remain `private` and
 `no-store`; any future reverse proxy/CDN must forward `Cookie`/`Accept-Language`

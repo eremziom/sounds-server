@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.accessDenied");
-  return { title: t("title") };
+  return { title: t("title"), description: t("description") };
 }
 
 export default async function AccessDeniedPage() {

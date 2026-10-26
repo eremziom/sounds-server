@@ -9,7 +9,11 @@ the public `/access-denied` page.
 All languages use these same URLs and redirects. Request language is selected
 from a valid `locale` cookie, then weighted `Accept-Language` (including regional
 tags), then English. Language detection does not modify roles, sessions or route
-guards. Login and access-denied content use the request language.
+guards. All current page content and metadata use the request language, including
+login, registration, app/admin, access-denied, loading and not-found states.
+The client error boundary uses the same locale and exposes only a safe message
+and retry button. If the root layout itself fails, the standalone global error
+document falls back to English without relying on request context/providers.
 
 The root layout reads request language and dynamically renders `html lang` with
 the same locale supplied to client components. Cache Components is disabled.

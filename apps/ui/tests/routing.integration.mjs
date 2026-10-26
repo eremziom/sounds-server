@@ -96,17 +96,19 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
             for (const name of ["English", "Polski", "Español"]) assert.ok(body.includes(name));
             assert.match(body, new RegExp(`<option(?=[^>]*value="${locale}")(?=[^>]*selected="")[^>]*>`));
           }
-          if (path !== "/register") {
-            const messages = catalogs[locale];
-            const heading = path === "/login" ? messages.auth.login.title : messages.errors.accessDenied.title;
-            assert.ok(body.includes(heading), `${path}: ${locale}, RSC=${rsc}`);
-            assert.ok(body.includes(path === "/login" ? messages.metadata.login.title : messages.metadata.accessDenied.title));
-          }
+          const messages = catalogs[locale];
+          const heading = path === "/access-denied" ? messages.errors.accessDenied.title
+            : path === "/register" ? messages.auth.register.title : messages.auth.login.title;
+          const metadata = path === "/access-denied" ? messages.metadata.accessDenied
+            : path === "/register" ? messages.metadata.register : messages.metadata.login;
+          assert.ok(body.includes(heading), `${path}: ${locale}, RSC=${rsc}`);
+          assert.ok(body.includes(metadata.title));
+          assert.ok(body.includes(metadata.description));
         }
 
         for (const [path, allowedRoles, heading] of [
-          ["/", ["USER", "ARTIST"], "Strona główna aplikacji Sounds"],
-          ["/admin", ["ADMIN"], "Panel administracyjny"],
+          ["/", ["USER", "ARTIST"], catalogs[locale].app.home.title],
+          ["/admin", ["ADMIN"], catalogs[locale].admin.home.title],
         ]) {
           const response = await fetchRoute(path, headers);
           const body = await response.text();
@@ -116,6 +118,9 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
             assertPrivate(response);
             assertLocale(body, locale, rsc);
             assert.ok(body.includes(heading), context);
+            const metadata = path === "/" ? catalogs[locale].metadata.default : catalogs[locale].metadata.admin;
+            assert.ok(body.includes(metadata.title), context);
+            assert.ok(body.includes(metadata.description), context);
             assert.ok(!body.includes("NEXT_REDIRECT"), context);
           } else {
             const target = !role || role === "invalid" ? "/login" : "/access-denied";
@@ -124,7 +129,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
               `Expected redirect to ${target}: ${context}`,
             );
             // Metadata can include the admin title; the guarded page body must not render.
-            assert.ok(!body.includes(path === "/" ? heading : "Tutaj pojawią się narzędzia"), context);
+            assert.ok(!body.includes(path === "/" ? heading : catalogs[locale].admin.home.placeholder), context);
             const destination = await fetchRoute(target, headers);
             assert.equal(destination.status, 200, context);
             const destinationBody = await destination.text();
@@ -134,6 +139,14 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
           }
         }
       }
+      const missing = await fetchRoute("/does-not-exist", { Cookie: `locale=${locale}`, ...(rsc ? { RSC: "1" } : {}) });
+      assert.ok([200, 404].includes(missing.status)); // A streamed not-found can keep HTTP 200.
+      const body = await missing.text();
+      assertLocale(body, locale, rsc);
+      assert.ok(body.includes(catalogs[locale].errors.notFound.title));
+      assert.ok(body.includes(catalogs[locale].errors.notFound.description));
+      assert.ok(body.includes(catalogs[locale].common.navigation.backHome));
+      assert.ok(body.includes("noindex"));
     }
     // Reuse exactly the same URL while alternating users/languages to catch cache leaks.
     for (const rsc of [false, true]) {

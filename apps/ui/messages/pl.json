@@ -53,9 +53,9 @@
   },
   "metadata": {
     "default": { "title": "Sounds", "description": "Sounds — aplikacja muzyczna." },
-    "login": { "title": "Logowanie | Sounds" },
-    "register": { "title": "Rejestracja | Sounds" },
-    "admin": { "title": "Panel administracyjny | Sounds" },
-    "accessDenied": { "title": "Brak dostępu | Sounds" }
+    "login": { "title": "Logowanie | Sounds", "description": "Zaloguj się na swoje konto Sounds." },
+    "register": { "title": "Rejestracja | Sounds", "description": "Utwórz konto w Sounds." },
+    "admin": { "title": "Panel administracyjny | Sounds", "description": "Zarządzaj aplikacją Sounds." },
+    "accessDenied": { "title": "Brak dostępu | Sounds", "description": "Twoje konto nie ma dostępu do tej strony." }
   }
 }

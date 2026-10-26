@@ -53,9 +53,9 @@
   },
   "metadata": {
     "default": { "title": "Sounds", "description": "Sounds — a music application." },
-    "login": { "title": "Sign in | Sounds" },
-    "register": { "title": "Create an account | Sounds" },
-    "admin": { "title": "Admin panel | Sounds" },
-    "accessDenied": { "title": "Access denied | Sounds" }
+    "login": { "title": "Sign in | Sounds", "description": "Sign in to your Sounds account." },
+    "register": { "title": "Create an account | Sounds", "description": "Create your Sounds account." },
+    "admin": { "title": "Admin panel | Sounds", "description": "Manage the Sounds application." },
+    "accessDenied": { "title": "Access denied | Sounds", "description": "Your account does not have access to this page." }
   }
 }
