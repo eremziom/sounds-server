@@ -36,15 +36,20 @@ return the successful API session (which contains tokens) to a Client Component.
 
 Registration is implemented at `/register`: username, email, password and password
 confirmation, password visibility, client/server validation, pending/errors and
-automatic sign-in followed by `/`. Login, logout and automatic refresh remain for
-subsequent stages. Validation uses the same validator version and password regex
+automatic sign-in followed by `/`. Login at `/login` accepts username or email,
+validates login length 3–100 and password requirements on client/server, and sets
+the same session cookies. USER/ARTIST → `/`, ADMIN alone → `/admin`, other roles
+→ `/access-denied`; API roles decide, with app priority for combined roles.
+No returnTo parameter is implemented. Wrong passwords, missing and inactive
+accounts share one safe localized message. Logout and automatic refresh remain
+for subsequent stages. Validation uses the same validator version and password regex
 as CreateUserDto, including Unicode length rules, without trimming credentials.
 The form receives auth/validation/errors through ClientMessages, preserves input
 on language changes and hides server errors from a different request locale.
 Passwords are cleared on submission and never returned by the action.
 
 Build the UI first, then run `pnpm test:auth-api` from the repository root
-to exercise the UI client and browser registration against real NestJS/PostgreSQL
+to exercise the UI client and browser registration/login against real NestJS/PostgreSQL
 in en/pl/es in a disposable database.
 It requires the API DATABASE_URL and CREATE DATABASE privilege, and does not
 modify application data. This database check is separate from `pnpm verify:i18n`.
@@ -121,8 +126,8 @@ All current pages, access checks, loading and not-found states use the selected
 language. Page titles and descriptions are localized; existing URLs are shared
 without language prefixes, URL parameters or rewrites. Cache Components is
 disabled and partial prefetching removed so the initial HTML uses the request
-language. Login still has a translated placeholder. Registration uses the existing
-auth/validation/error keys; auth.register.placeholder was removed from en/pl/es.
+language. Login and registration use the existing auth/validation/error keys;
+auth.login.placeholder and auth.register.placeholder were removed from en/pl/es.
 The remaining auth work belongs to `docs/ui-auth-plan.md`.
 
 `app/error.tsx` uses the root provider's selected language and the installed
@@ -171,8 +176,8 @@ username conflict from registration 409.
 The mapper accepts only known auth form fields, safe numeric length bounds and
 supported validation rules. It drops unknown fields and arbitrary parameters,
 including token/password values. Missing user, inactive account and wrong password
-share `AUTH_INVALID_CREDENTIALS` and one message. Registration uses this mapper;
-the upcoming login form will use it too. Existing page-level unexpected errors
+share `AUTH_INVALID_CREDENTIALS` and one message. Registration and login use this
+mapper. Existing page-level unexpected errors
 continue to use the safe translated error boundary.
 
 All pages render dynamically. HTML/RSC responses must remain `private` and
@@ -198,8 +203,9 @@ This is the common local/pre-release/CI procedure. It runs UI lint, catalog chec
 all UI unit tests, TypeScript, a production build, HTML/RSC tests, browser checks
 and the API Jest suite (including the error contract). It stops at the first
 failure and requires no running API/database. The test suites use isolated mock
-APIs, Next servers on temporary ports, and an isolated browser profile. Real
-registration/login/logout/refresh flows are pending the auth form implementation.
+APIs, Next servers on temporary ports, and an isolated browser profile. After the
+UI build, pnpm test:auth-api separately verifies registration/login with real
+NestJS/PostgreSQL in an isolated disposable database. Logout/refresh UI remain pending.
 
 Requirements: Node.js 22.6+, the workspace dependencies/Prisma Client from the
 root setup, and Chrome, Edge or Chromium. The browser test uses Node's built-in
@@ -230,6 +236,13 @@ loading/API error/404 states, retry after recovery and no hydration errors.
 It saves 320px screenshots to `apps/ui/.tmp/i18n/` for visual review and removes
 its temporary browser profile. Browsers must be preinstalled in CI; configure
 `BROWSER_PATH` there if needed. No hosting or CI provider is assumed.
+
+`tests/register.browser.mjs` and `tests/login.browser.mjs` cover localized client
+validation, API errors, password visibility, focus, pending, language changes,
+HttpOnly cookies and protected navigation. Login additionally checks all role
+redirects, username/email, network/timeout failures and public RSC navigation while
+signed in. Shared browser setup lives in `tests/helpers/auth-browser.mjs`.
+Screenshots at 320px are saved to `.tmp/registration/` and `.tmp/login/`.
 
 ### Updating text and adding a language
 

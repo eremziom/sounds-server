@@ -8,7 +8,6 @@
   "auth": {
     "login": {
       "title": "Iniciar sesión",
-      "placeholder": "Aquí aparecerá el formulario de inicio de sesión.",
       "noAccount": "¿No tienes una cuenta?",
       "action": "Iniciar sesión",
       "pending": "Iniciando sesión…"

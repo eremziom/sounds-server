@@ -5,7 +5,7 @@ import { once } from "node:events";
 import { setTimeout as delay } from "node:timers/promises";
 import { startChromium } from "./chromium.mjs";
 
-export async function withRegistrationBrowser(apiUrl, run) {
+export async function withAuthBrowser(apiUrl, run) {
   const reservation = createServer();
   reservation.listen(0, "127.0.0.1");
   await once(reservation, "listening");
@@ -46,7 +46,7 @@ export async function withRegistrationBrowser(apiUrl, run) {
     };
     const waitFor = async (expression) => {
       for (let attempt = 0; attempt < 120; attempt++) {
-        if (await evaluate(expression)) return;
+        if (await evaluate(`Boolean(${expression})`)) return;
         await delay(100);
       }
       throw Error(`Timeout: ${expression}; ${await evaluate("document.body.innerText")}`);
@@ -66,12 +66,13 @@ export async function withRegistrationBrowser(apiUrl, run) {
       await evaluate(`(() => {const select=document.querySelector('select[name=locale]');select.value=${JSON.stringify(locale)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
       await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('select').getAttribute('aria-disabled')!=='true'`);
     };
-    const open = async (locale) => {
+    const open = async (locale, pathname = "/register") => {
       await send("Network.deleteCookies", { name: "accessToken", url: origin });
       await send("Network.deleteCookies", { name: "refreshToken", url: origin });
       await send("Network.setCookie", { name: "locale", value: locale, url: origin, path: "/" });
-      await send("Page.navigate", { url: `${origin}/register` });
-      await waitFor(`document.querySelector('input[name=username]') && document.documentElement.lang===${JSON.stringify(locale)}`);
+      await send("Page.navigate", { url: `${origin}${pathname}` });
+      const field = pathname.startsWith("/login") ? "login" : "username";
+      await waitFor(`document.querySelector('input[name=${field}]') && document.documentElement.lang===${JSON.stringify(locale)}`);
       await delay(150);
     };
     await run({ send, listeners, evaluate, waitFor, fill, submit, choose, open, origin });

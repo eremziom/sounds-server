@@ -8,7 +8,6 @@
   "auth": {
     "login": {
       "title": "Sign in",
-      "placeholder": "The sign-in form will appear here.",
       "noAccount": "Don't have an account?",
       "action": "Sign in",
       "pending": "Signing in…"

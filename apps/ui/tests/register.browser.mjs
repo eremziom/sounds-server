@@ -4,7 +4,7 @@ import { once } from "node:events";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import { authSession } from "./helpers/auth-fixtures.mjs";
-import { withRegistrationBrowser } from "./helpers/register-browser.mjs";
+import { withAuthBrowser } from "./helpers/auth-browser.mjs";
 
 let mode = "duplicate";
 let calls = 0;
@@ -31,7 +31,7 @@ const api = createServer(async (req, res) => {
 api.listen(0, "127.0.0.1");
 await once(api, "listening");
 try {
-  await withRegistrationBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, fill, submit, choose, open, origin }) => {
+  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, fill, submit, choose, open, origin }) => {
     for (const locale of ["en", "pl", "es"]) {
       const m = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
       mode = "duplicate";

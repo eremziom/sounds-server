@@ -2,9 +2,9 @@
 
 Ustalenia etapu 1 planu `docs/ui-auth-plan.md`, 26.10.2026. To kontrakt dla
 kolejnych etapów. W etapie 2 dodano wywołania endpointów auth, walidację sesji,
-helpery cookies i bezpiecznego stanu akcji. Etap 3 dodaje formularz rejestracji
-i registerAction. Logowanie i wylogowanie pozostają w kolejnych etapach,
-automatyczny refresh w etapie 7.
+helpery cookies i bezpiecznego stanu akcji. Etapy 3–4 dodają formularze
+RegisterForm/LoginForm i registerAction/loginAction. Wylogowanie pozostaje
+w etapie 6, automatyczny refresh w etapie 7.
 
 ## Przepływ i moduły
 
@@ -20,8 +20,8 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/api/auth.ts` | Etap 2 wdrożony | server-only: login/register/refresh/logout/logoutAll/getSessionUser, walidacja tokenów, dat i bezpiecznego DTO użytkownika |
 | `src/api/client.ts` | Etap 2 wdrożony | server-only: wspólny transport, no-store, timeout, odrzucanie redirectów i oczyszczone błędy |
 | `src/lib/auth-cookies.ts` | Etap 2 wdrożony | server-only: setAuthCookies/getAuthCookies/clearAuthCookies, wyłącznie para tokenów |
-| `src/app/(auth)/actions.ts` | Etap 3 wdrożony | use server: registerAction; login/logout w kolejnych etapach |
-| `src/components/auth/` | Etap 3 wdrożony | RegisterForm: pola, walidacja, fokus, pending, wyniki akcji i zmiana języka |
+| `src/app/(auth)/actions.ts` | Etapy 3–4 wdrożone | use server: registerAction/loginAction; logout w etapie 6 |
+| `src/components/auth/` | Etapy 3–4 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, wyniki akcji i zmiana języka |
 | `src/components/auth/form-state.ts` | Etap 2 wdrożony | AuthActionState i initialAuthState(locale), bez importów serwerowych |
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
 | `src/i18n/api-error-messages.ts` | Istnieje | Mapowanie błędów w języku bieżącego żądania |
@@ -32,6 +32,15 @@ auth. Moduły API mają import server-only; nazwa folderu
 nie zastępuje tej ochrony. `src/api/` nie tworzy endpointów Next.js ani tras
 `/api/*`. Obsługa cookies, odczytu sesji i decyzji o dostępie pozostaje w `src/lib/`,
 a Server Actions w `src/app/(auth)/actions.ts`.
+
+LoginForm używa login-validation.ts (login 3–100 znaków) i wspólnego
+password-validation.ts (8–50 znaków i regex obu DTO). Nie zmieniamy ani nie
+przycinamy danych. loginAction otrzymuje tylko FormData; nieużywany poprzedni
+stan useActionState jest ignorowany w komponencie. Do API trafiają wyłącznie
+login/password, a do wyniku formularza tylko login i bezpieczne komunikaty.
+Po zapisaniu cookies cel wynika z ról odpowiedzi API: najpierw APP_ROLES,
+następnie ADMIN_ROLES, w pozostałych przypadkach /access-denied. Nie dodano
+parametru powrotu; returnTo z URL lub formularza nie wpływa na cel.
 
 Plik use server eksportuje wyłącznie asynchroniczne akcje; typy i stan początkowy
 mają osobny moduł. Do klienta trafia referencja Server Action, a nie implementacja

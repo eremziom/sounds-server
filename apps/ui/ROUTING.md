@@ -43,8 +43,8 @@ New auth actions should use the result/status directly when implementing refresh
 SameSite=Lax, Path=/ and Secure in production. Expiries come from a validated API
 session; clearing affects only the two tokens and preserves locale. Cookie writes
 are allowed only in Server Actions/Route Handlers. The helpers and API functions
-are implemented. Registration now uses these helpers in registerAction; login,
-logout and automatic refresh remain pending.
+are implemented. Registration and login use these helpers in registerAction and
+loginAction; logout and automatic refresh remain pending.
 
 `src/lib/route-access.ts` contains shared role types, constants and role checks
 that can be imported by client components. `src/api/auth.ts` contains
@@ -55,9 +55,13 @@ organized under `src/api/`; cookies/session policy remain in `src/lib/`.
 
 Set `API_URL` in `apps/ui/.env.local` if the API is not at
 `http://localhost:3000` (see `.env.example`). Successful registerAction sets both
-token cookies with the API expiry timestamps and redirects to `/`. Registration
-stays public for signed-in users. Login and automatic refresh are not implemented
-yet; without a valid access cookie protected pages redirect to login.
+token cookies with the API expiry timestamps and redirects to `/`. loginAction
+sets the same cookies, then routes USER/ARTIST to `/`, ADMIN-only to `/admin`,
+and other roles to `/access-denied`. App roles take priority for combined roles.
+These decisions use the API response, not decoded JWT claims or submitted roles.
+No returnTo destination is used. Both forms stay public for signed-in users.
+Automatic refresh remains pending; without a valid access cookie protected pages
+redirect to login.
 
 Layouts guard the section UI. Each protected page must also call
 `requireRoles(APP_ROLES)` or `requireRoles(ADMIN_ROLES)` before fetching protected
@@ -84,8 +88,9 @@ with `pnpm verify:i18n`; see the UI README for browser requirements.
 
 New text must be added to all catalogs; adding a locale must update the explicit
 catalog loader, selector and test matrices. Locale selection never replaces API
-guards. Browser tests cover registration in en/pl/es, validation, API errors,
-language changes, cookies and protected navigation. Login/logout/refresh remain pending.
+guards. Browser tests cover registration/login in en/pl/es, validation, API errors,
+language changes, cookies, role redirects and protected navigation. Logout/refresh
+remain pending. Real API/browser tests use an isolated disposable PostgreSQL database.
 
 The preparation-stage decisions for these forms (server/client boundary,
 Server Actions, safe action results and translations) are recorded in

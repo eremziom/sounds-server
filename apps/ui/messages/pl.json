@@ -8,7 +8,6 @@
   "auth": {
     "login": {
       "title": "Logowanie",
-      "placeholder": "Tutaj pojawi się formularz logowania.",
       "noAccount": "Nie masz konta?",
       "action": "Zaloguj się",
       "pending": "Logowanie…"

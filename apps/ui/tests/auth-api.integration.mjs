@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { withRegistrationBrowser } from "./helpers/register-browser.mjs";
+import { withAuthBrowser } from "./helpers/auth-browser.mjs";
 
 async function main() {
   const root = fileURLToPath(new URL("../../..", import.meta.url));
@@ -125,7 +125,26 @@ async function main() {
       (await auth.getSessionUser(loggedIn.data.accessToken, options)).status,
       401,
     );
-    await withRegistrationBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, origin }) => {
+    // All role mutations below affect only the disposable database created above.
+    const loginAccounts = [];
+    for (const [name, roles, target] of [
+      ["user", ["USER"], "/"], ["artist", ["ARTIST"], "/"],
+      ["admin", ["ADMIN"], "/admin"], ["combined", ["USER", "ARTIST", "ADMIN"], "/"],
+      ["no-role", [], "/access-denied"], ["inactive", ["USER"], null],
+    ]) {
+      const account = { username: `login-${name}`, email: `login-${name}@example.com`, password: "Secret123!" };
+      const result = await auth.register(account, options);
+      assert.ok(result.ok);
+      const userId = result.data.user.id;
+      await prisma.userRole.deleteMany({ where: { userId } });
+      for (const key of roles) {
+        const role = await prisma.role.findUniqueOrThrow({ where: { key } });
+        await prisma.userRole.create({ data: { userId, roleId: role.id } });
+      }
+      if (name === "inactive") await prisma.user.update({ where: { id: userId }, data: { isActive: false } });
+      loginAccounts.push({ ...account, target });
+    }
+    await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, origin }) => {
       for (const locale of ["en", "pl", "es"]) {
         await open(locale);
         const email = `ui-browser-${locale}@example.com`;
@@ -146,6 +165,47 @@ async function main() {
         const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
         await waitFor(`document.querySelector('[role=alert]')?.textContent.includes(${JSON.stringify(messages.errors.emailAlreadyInUse)})`);
         console.log(`Real UI → Next action → NestJS/PostgreSQL registration, session and duplicate email: ${locale} OK`);
+
+        for (const login of [`browser-${locale}`, email]) {
+          await open(locale, "/login");
+          await fill({ login, password: "Secret123!" });
+          await submit();
+          await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(messages.app.home.title)}`);
+          assert.equal(await evaluate("document.documentElement.lang"), locale);
+        }
+        for (const [login, password] of [
+          [email, "Wrong123!"], ["nonexistent-account", "Secret123!"],
+          ["login-inactive", "Secret123!"],
+        ]) {
+          await open(locale, "/login");
+          await fill({ login, password });
+          await submit();
+          await waitFor(`document.querySelector('[role=alert]')?.textContent.includes(${JSON.stringify(messages.errors.invalidCredentials)})`);
+          assert.equal(await evaluate("document.querySelector('input[name=password]').value"), "");
+          const cookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
+          assert.ok(!cookies.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
+          assert.equal(cookies.find((cookie) => cookie.name === "locale").value, locale);
+        }
+        for (const account of loginAccounts.filter((account) => account.target)) {
+          await open(locale, "/login?returnTo=%2F%2Fexample.com");
+          await fill({ login: account.username, password: account.password });
+          await submit();
+          const target = account.target;
+          const heading = target === "/" ? messages.app.home.title
+            : target === "/admin" ? messages.admin.home.title : messages.errors.accessDenied.title;
+          await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)}`);
+          const cookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
+          assert.equal(cookies.find((cookie) => cookie.name === "locale").value, locale);
+          const access = cookies.find((cookie) => cookie.name === "accessToken");
+          assert.ok(access.httpOnly && access.secure && access.sameSite === "Lax");
+          const current = await auth.getSessionUser(access.value, options);
+          if (target === "/access-denied") assert.equal(current.status, 403);
+          else assert.ok(current.ok);
+          assert.ok(!(await evaluate("document.documentElement.outerHTML")).includes(access.value));
+          await send("Page.reload");
+          await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
+        }
+        console.log(`Real UI login by username/email, wrong password, missing/inactive account, USER/ARTIST/ADMIN/combined/no-role redirects: ${locale} OK`);
       }
     });
     console.log(
