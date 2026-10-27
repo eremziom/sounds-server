@@ -24,6 +24,7 @@
     "test:cov": "pnpm --filter api test:cov",
     "test:debug": "pnpm --filter api test:debug",
     "test:e2e": "pnpm --filter api test:e2e",
-    "test:auth-sessions": "pnpm --filter api test:auth-sessions"
+    "test:auth-sessions": "pnpm --filter api test:auth-sessions",
+    "test:auth-api": "pnpm --filter api build && pnpm --filter ui test:auth-api"
   }
 }

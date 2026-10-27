@@ -33,6 +33,18 @@ in the NestJS API on each server render. Roles come from the API, never from
 unverified JWT claims. Requests are not stored in the shared data cache.
 API outages fail closed with an error instead of granting access.
 
+`src/api/client.ts` centralizes no-store requests, a 5s timeout (including body
+reads), redirect rejection and safe technical failures. `getSessionUser()` keeps
+401/403 distinguishable even if an error body is invalid. The existing
+`fetchSessionUser()` adapter preserves the current guards' null/redirect policy.
+New auth actions should use the result/status directly when implementing refresh.
+
+`src/lib/auth-cookies.ts` provides server-only token cookie helpers with HttpOnly,
+SameSite=Lax, Path=/ and Secure in production. Expiries come from a validated API
+session; clearing affects only the two tokens and preserves locale. Cookie writes
+are allowed only in Server Actions/Route Handlers. The helpers and API functions
+are implemented, while forms/actions and automatic refresh are still pending.
+
 `src/lib/route-access.ts` contains shared role types, constants and role checks
 that can be imported by client components. `src/api/auth.ts` contains
 `fetchSessionUser` and response validation; it is marked `server-only` to prevent

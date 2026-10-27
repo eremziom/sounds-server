@@ -87,6 +87,7 @@ pnpm test                # Unit tests
 pnpm test:cov            # Unit tests with coverage
 pnpm test:e2e            # End-to-end tests (requires database configuration)
 pnpm test:auth-sessions  # Auth integration checks (creates a temporary database)
+pnpm test:auth-api       # UI auth API client against NestJS in a temporary database
 pnpm format              # Format backend source and tests
 ```
 

@@ -20,6 +20,26 @@ policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
 from `src/app/(auth)/actions.ts` when auth forms are implemented. `src/api/` is
 application code, distinct from Next.js HTTP routes under `src/app/api/`.
 
+The auth API module supports login, register, refresh, logout, logout-all and
+session verification. `src/api/client.ts` returns typed success/failure results,
+preserves HTTP status and strips raw backend error text/input values. It disables
+caching/redirects and enforces a 5s timeout through response-body reads.
+Session responses validate token formats, UTC expiry timestamps and user/roles,
+returning only a safe user DTO. See [AUTH.md](AUTH.md) for the full contract.
+
+Server Actions can use `setAuthCookies`, `getAuthCookies`, `clearAuthCookies` from
+`src/lib/auth-cookies.ts`; writes require an action/Route Handler context. Only
+token cookies are modified. For failures, `getAuthActionError` from
+`src/lib/auth-action-state.ts` produces translated form state with the request
+locale; `initialAuthState(locale)` is safe to import into a client form. Never
+return the successful API session (which contains tokens) to a Client Component.
+
+The API/cookie libraries are implemented; auth forms and their public actions
+remain for subsequent stages. Run `pnpm test:auth-api` from the repository root
+to exercise the UI client against real NestJS/PostgreSQL in a disposable database.
+It requires the API DATABASE_URL and CREATE DATABASE privilege, and does not
+modify application data. This database check is separate from `pnpm verify:i18n`.
+
 Pages live in `src/app/`; development changes update automatically.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
