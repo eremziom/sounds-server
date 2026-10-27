@@ -9,6 +9,12 @@ export function resolve(specifier, context, nextResolve) {
       shortCircuit: true,
     };
   }
+  if (specifier === "next/navigation") {
+    return {
+      url: "data:text/javascript,export function redirect(path){const error=new Error('NEXT_REDIRECT');error.path=path;throw error;}",
+      shortCircuit: true,
+    };
+  }
   if (specifier === "next-intl/server") {
     return {
       url: "data:text/javascript,export async function getLocale(){return globalThis.__authTestContext.locale;} export async function getTranslations(){return globalThis.__authTestContext.translator;}",

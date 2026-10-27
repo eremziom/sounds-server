@@ -1,8 +1,9 @@
 ﻿# Sounds
 
 pnpm workspace containing the NestJS API and Next.js frontend for Sounds.
-The UI supports English, Polish and Spanish at shared URLs. Login/register
-currently show translated placeholders; real auth forms are a separate task.
+The UI supports English, Polish and Spanish at shared URLs. Registration creates
+an account and signs the user in through a Server Action. Login still shows a
+translated placeholder; login, logout and refresh are subsequent stages.
 
 ## Structure
 
@@ -87,7 +88,7 @@ pnpm test                # Unit tests
 pnpm test:cov            # Unit tests with coverage
 pnpm test:e2e            # End-to-end tests (requires database configuration)
 pnpm test:auth-sessions  # Auth integration checks (creates a temporary database)
-pnpm test:auth-api       # UI auth API client against NestJS in a temporary database
+pnpm test:auth-api       # Auth client + browser registration against NestJS in a temporary database (build UI first)
 pnpm format              # Format backend source and tests
 ```
 

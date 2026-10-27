@@ -15,7 +15,6 @@
     },
     "register": {
       "title": "Crear una cuenta",
-      "placeholder": "Aquí aparecerá el formulario de registro.",
       "hasAccount": "¿Ya tienes una cuenta?",
       "action": "Crear una cuenta",
       "pending": "Creando tu cuenta…"

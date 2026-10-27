@@ -15,7 +15,6 @@
     },
     "register": {
       "title": "Rejestracja",
-      "placeholder": "Tutaj pojawi się formularz rejestracji.",
       "hasAccount": "Masz już konto?",
       "action": "Zarejestruj się",
       "pending": "Tworzenie konta…"

@@ -15,7 +15,6 @@
     },
     "register": {
       "title": "Create an account",
-      "placeholder": "The registration form will appear here.",
       "hasAccount": "Already have an account?",
       "action": "Create an account",
       "pending": "Creating your account…"

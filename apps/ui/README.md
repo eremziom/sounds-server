@@ -12,12 +12,12 @@ Open [http://localhost:3001/login](http://localhost:3001/login) for the public U
 Protected pages validate sessions against `API_URL` (default port 3000).
 
 The agreed Server Action flow, module boundaries, form result contract and
-translation setup for upcoming auth forms are described in [AUTH.md](AUTH.md).
+translation setup for auth forms are described in [AUTH.md](AUTH.md).
 
 Backend HTTP calls live in `src/api/`, grouped by domain (`auth.ts` currently
 contains session verification). These modules use `server-only`. Session/access
 policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
-from `src/app/(auth)/actions.ts` when auth forms are implemented. `src/api/` is
+from `src/app/(auth)/actions.ts`. `src/api/` is
 application code, distinct from Next.js HTTP routes under `src/app/api/`.
 
 The auth API module supports login, register, refresh, logout, logout-all and
@@ -34,9 +34,18 @@ token cookies are modified. For failures, `getAuthActionError` from
 locale; `initialAuthState(locale)` is safe to import into a client form. Never
 return the successful API session (which contains tokens) to a Client Component.
 
-The API/cookie libraries are implemented; auth forms and their public actions
-remain for subsequent stages. Run `pnpm test:auth-api` from the repository root
-to exercise the UI client against real NestJS/PostgreSQL in a disposable database.
+Registration is implemented at `/register`: username, email, password and password
+confirmation, password visibility, client/server validation, pending/errors and
+automatic sign-in followed by `/`. Login, logout and automatic refresh remain for
+subsequent stages. Validation uses the same validator version and password regex
+as CreateUserDto, including Unicode length rules, without trimming credentials.
+The form receives auth/validation/errors through ClientMessages, preserves input
+on language changes and hides server errors from a different request locale.
+Passwords are cleared on submission and never returned by the action.
+
+Build the UI first, then run `pnpm test:auth-api` from the repository root
+to exercise the UI client and browser registration against real NestJS/PostgreSQL
+in en/pl/es in a disposable database.
 It requires the API DATABASE_URL and CREATE DATABASE privilege, and does not
 modify application data. This database check is separate from `pnpm verify:i18n`.
 
@@ -112,9 +121,9 @@ All current pages, access checks, loading and not-found states use the selected
 language. Page titles and descriptions are localized; existing URLs are shared
 without language prefixes, URL parameters or rewrites. Cache Components is
 disabled and partial prefetching removed so the initial HTML uses the request
-language. Login and registration are still translated placeholders; their real
-forms belong to `docs/ui-auth-plan.md` and must use the existing auth/validation
-catalog keys when implemented.
+language. Login still has a translated placeholder. Registration uses the existing
+auth/validation/error keys; auth.register.placeholder was removed from en/pl/es.
+The remaining auth work belongs to `docs/ui-auth-plan.md`.
 
 `app/error.tsx` uses the root provider's selected language and the installed
 Next.js `retry()` prop to re-fetch after an error; it never displays exception
@@ -162,8 +171,8 @@ username conflict from registration 409.
 The mapper accepts only known auth form fields, safe numeric length bounds and
 supported validation rules. It drops unknown fields and arbitrary parameters,
 including token/password values. Missing user, inactive account and wrong password
-share `AUTH_INVALID_CREDENTIALS` and one message. Real auth forms are still pending;
-use this mapper when implementing them. Existing page-level unexpected errors
+share `AUTH_INVALID_CREDENTIALS` and one message. Registration uses this mapper;
+the upcoming login form will use it too. Existing page-level unexpected errors
 continue to use the safe translated error boundary.
 
 All pages render dynamically. HTML/RSC responses must remain `private` and

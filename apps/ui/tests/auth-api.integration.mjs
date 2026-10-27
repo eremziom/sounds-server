@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { withRegistrationBrowser } from "./helpers/register-browser.mjs";
 
 async function main() {
   const root = fileURLToPath(new URL("../../..", import.meta.url));
@@ -124,6 +125,29 @@ async function main() {
       (await auth.getSessionUser(loggedIn.data.accessToken, options)).status,
       401,
     );
+    await withRegistrationBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, origin }) => {
+      for (const locale of ["en", "pl", "es"]) {
+        await open(locale);
+        const email = `ui-browser-${locale}@example.com`;
+        await fill({ username: `browser-${locale}`, email, password: "Secret123!", confirmPassword: "Secret123!" });
+        await submit();
+        await waitFor("location.pathname==='/' && document.querySelector('h1')?.textContent.includes('Sounds')");
+        const cookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
+        assert.equal(cookies.find((cookie) => cookie.name === "locale").value, locale);
+        const access = cookies.find((cookie) => cookie.name === "accessToken");
+        assert.ok(access.httpOnly && access.secure && access.sameSite === "Lax");
+        assert.ok((await auth.getSessionUser(access.value, options)).ok);
+        assert.ok(!(await evaluate("document.documentElement.outerHTML")).includes(access.value));
+        await send("Page.reload");
+        await waitFor(`location.pathname==='/' && document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('h1')?.textContent.includes('Sounds')`);
+        await open(locale);
+        await fill({ username: `browser-${locale}`, email, password: "Secret123!", confirmPassword: "Secret123!" });
+        await submit();
+        const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
+        await waitFor(`document.querySelector('[role=alert]')?.textContent.includes(${JSON.stringify(messages.errors.emailAlreadyInUse)})`);
+        console.log(`Real UI → Next action → NestJS/PostgreSQL registration, session and duplicate email: ${locale} OK`);
+      }
+    });
     console.log(
       "UI auth client against real NestJS/PostgreSQL: register, login, me, refresh, logout, logout-all, validation and HTTP error codes passed.",
     );
