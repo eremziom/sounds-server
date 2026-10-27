@@ -21,7 +21,7 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/api/client.ts` | Etap 2 wdrożony | server-only: wspólny transport, no-store, timeout, odrzucanie redirectów i oczyszczone błędy |
 | `src/lib/auth-cookies.ts` | Etap 2 wdrożony | server-only: setAuthCookies/getAuthCookies/clearAuthCookies, wyłącznie para tokenów |
 | `src/app/(auth)/actions.ts` | Etapy 3–4 wdrożone | use server: registerAction/loginAction; logout w etapie 6 |
-| `src/components/auth/` | Etapy 3–4 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, wyniki akcji i zmiana języka |
+| `src/components/auth/` | Etapy 3–5 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, dostępność, wyniki akcji i zmiana języka |
 | `src/components/auth/form-state.ts` | Etap 2 wdrożony | AuthActionState i initialAuthState(locale), bez importów serwerowych |
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
 | `src/i18n/api-error-messages.ts` | Istnieje | Mapowanie błędów w języku bieżącego żądania |
@@ -41,6 +41,15 @@ login/password, a do wyniku formularza tylko login i bezpieczne komunikaty.
 Po zapisaniu cookies cel wynika z ról odpowiedzi API: najpierw APP_ROLES,
 następnie ADMIN_ROLES, w pozostałych przypadkach /access-denied. Nie dodano
 parametru powrotu; returnTo z URL lub formularza nie wpływa na cel.
+
+Etap 5: formularze mają przetłumaczone nazwy dostępności i atomowe alerty błędów.
+Region statusu role=status/aria-live=polite jest osobnym elementem poza formularzem
+z aria-busy, żeby stan oczekiwania nie był wstrzymywany przez zajęty region.
+Przycisk pokazywania hasła ma opis wskazujący etykietę kontrolowanego pola,
+co odróżnia hasło od jego powtórzenia. Pending blokuje submit i edycję pól.
+Test auth-forms.browser.mjs sprawdza rzeczywiste zdarzenia Tab/Enter/Spacja,
+widoczny fokus, drzewo dostępności Chrome, zmianę języka podczas udanego POST,
+chronione RSC ze świeżymi cookies, błędy sesji/API i długie komunikaty przy 320 px.
 
 Plik use server eksportuje wyłącznie asynchroniczne akcje; typy i stan początkowy
 mają osobny moduł. Do klienta trafia referencja Server Action, a nie implementacja

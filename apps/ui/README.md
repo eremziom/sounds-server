@@ -244,6 +244,17 @@ redirects, username/email, network/timeout failures and public RSC navigation wh
 signed in. Shared browser setup lives in `tests/helpers/auth-browser.mjs`.
 Screenshots at 320px are saved to `.tmp/registration/` and `.tmp/login/`.
 
+`tests/auth-forms.browser.mjs` completes stage 5 for both forms in en/pl/es:
+Tab/Enter/Space keyboard interaction, visible focus, translated labels and
+descriptions in Chrome's accessibility tree, local-error retranslation without
+remounting, and a language change while a successful auth response is held.
+It checks one auth POST, current destination language, fresh-cookie private RSC,
+protected Link navigation, 401/403 guard policy, fail-closed API errors and long
+multi-field messages at 320px. Screenshots live in `.tmp/auth-forms/`.
+The pending live region sits outside the busy form so its announcement is not
+deferred. Accessibility checks inspect Chrome's tree and live-region semantics;
+they do not automate speech output from a separate screen reader.
+
 ### Updating text and adding a language
 
 Use semantic nested keys and update `messages/en.json`, `pl.json` and `es.json`

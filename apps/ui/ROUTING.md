@@ -92,6 +92,13 @@ guards. Browser tests cover registration/login in en/pl/es, validation, API erro
 language changes, cookies, role redirects and protected navigation. Logout/refresh
 remain pending. Real API/browser tests use an isolated disposable PostgreSQL database.
 
+Stage 5 additionally checks protected RSC with freshly issued cookies, private
+no-store responses and Link navigation after sign-in. Both public auth forms
+remain available with a session. The getSessionUser result retains 401/403;
+the fetchSessionUser adapter continues to redirect guards to login for either.
+503 and malformed session responses produce rendering errors without protected
+content, raw backend text or an automatic refresh attempt.
+
 The preparation-stage decisions for these forms (server/client boundary,
 Server Actions, safe action results and translations) are recorded in
 [AUTH.md](AUTH.md). Existing layout/page guards remain the access boundary;

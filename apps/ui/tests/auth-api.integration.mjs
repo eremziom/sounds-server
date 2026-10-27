@@ -202,6 +202,15 @@ async function main() {
           if (target === "/access-denied") assert.equal(current.status, 403);
           else assert.ok(current.ok);
           assert.ok(!(await evaluate("document.documentElement.outerHTML")).includes(access.value));
+          const rsc = await evaluate(`fetch(${JSON.stringify(`${target}?stage5=real-api`)}, {headers:{RSC:'1'},cache:'no-store'}).then(async response => ({
+            status:response.status, type:response.headers.get('content-type'), cache:response.headers.get('cache-control'), body:await response.text()
+          }))`);
+          assert.equal(rsc.status, 200);
+          assert.match(rsc.type, /text\/x-component/);
+          assert.match(rsc.cache, /private/);
+          assert.match(rsc.cache, /no-store/);
+          assert.ok(rsc.body.includes(JSON.stringify(heading)));
+          assert.ok(!rsc.body.includes(access.value));
           await send("Page.reload");
           await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
         }
