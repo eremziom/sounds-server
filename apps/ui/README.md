@@ -41,15 +41,25 @@ validates login length 3–100 and password requirements on client/server, and s
 the same session cookies. USER/ARTIST → `/`, ADMIN alone → `/admin`, other roles
 → `/access-denied`; API roles decide, with app priority for combined roles.
 No returnTo parameter is implemented. Wrong passwords, missing and inactive
-accounts share one safe localized message. Logout and automatic refresh remain
-for subsequent stages. Validation uses the same validator version and password regex
+accounts share one safe localized message. Automatic refresh remains for stage 7.
+Validation uses the same validator version and password regex
 as CreateUserDto, including Unicode length rules, without trimming credentials.
 The form receives auth/validation/errors through ClientMessages, preserves input
 on language changes and hides server errors from a different request locale.
 Passwords are cleared on submission and never returned by the action.
 
+The header shows sign-out controls whenever either auth cookie exists, including
+when access has expired or the API is down. Current sign-out uses the server-side
+refresh cookie; all-device sign-out uses the access cookie and API authentication,
+without an ADMIN or app-role requirement. Both run as POST Server Actions and
+clear only the two token cookies, preserving locale, then redirect to /login.
+An API failure still clears local cookies and shows a translated local-only
+notice (auth.logout.localOnly / auth.logoutAll.localOnly). The URL contains only
+an allowlisted technical outcome, never backend text or tokens. The all-device
+button is offered when an access cookie exists. Pending disables both buttons.
+
 Build the UI first, then run `pnpm test:auth-api` from the repository root
-to exercise the UI client and browser registration/login against real NestJS/PostgreSQL
+to exercise the UI client and browser registration/login/logout against real NestJS/PostgreSQL
 in en/pl/es in a disposable database.
 It requires the API DATABASE_URL and CREATE DATABASE privilege, and does not
 modify application data. This database check is separate from `pnpm verify:i18n`.
@@ -205,7 +215,7 @@ and the API Jest suite (including the error contract). It stops at the first
 failure and requires no running API/database. The test suites use isolated mock
 APIs, Next servers on temporary ports, and an isolated browser profile. After the
 UI build, pnpm test:auth-api separately verifies registration/login with real
-NestJS/PostgreSQL in an isolated disposable database. Logout/refresh UI remain pending.
+NestJS/PostgreSQL in an isolated disposable database. Automatic refresh remains pending.
 
 Requirements: Node.js 22.6+, the workspace dependencies/Prisma Client from the
 root setup, and Chrome, Edge or Chromium. The browser test uses Node's built-in
@@ -254,6 +264,20 @@ multi-field messages at 320px. Screenshots live in `.tmp/auth-forms/`.
 The pending live region sits outside the busy form so its announcement is not
 deferred. Accessibility checks inspect Chrome's tree and live-region semantics;
 they do not automate speech output from a separate screen reader.
+
+`tests/logout.browser.mjs` covers current/all sign-out, refresh-only sign-out after
+access expiry, pending, language changes on success/failure, 320px notices,
+local cookie removal during an API outage, back navigation, protected RSC and
+Origin/Host rejection. It also sends the same captured action with a trusted
+Origin to confirm the rejection is caused by Origin protection. Screenshots:
+.tmp/logout/. The real API suite checks revoked access/refresh tokens and that
+current sign-out preserves a second session while all-device sign-out revokes it.
+
+To check development-only React warnings with an existing dev server, run
+`node tests/logout-dev.browser.mjs` from apps/ui (UI_DEV_URL defaults to
+http://localhost:3001). It renders controls in a disposable browser profile with
+fake cookies and does not invoke sign-out. Button names are reserved by React
+for function formAction; pending labels use useFormStatus().action instead.
 
 ### Updating text and adding a language
 

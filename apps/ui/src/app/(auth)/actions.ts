@@ -2,7 +2,7 @@
 
 import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { login, register } from "../../api/auth.ts";
+import { login, register, logout, logoutAll } from "../../api/auth.ts";
 import type { AuthActionState } from "../../components/auth/form-state.ts";
 import {
   readRegisterValues,
@@ -10,13 +10,49 @@ import {
   validateRegistration,
 } from "../../components/auth/register-validation.ts";
 import { getAuthActionError } from "../../lib/auth-action-state.ts";
-import { setAuthCookies } from "../../lib/auth-cookies.ts";
+import { setAuthCookies, getAuthCookies, clearAuthCookies } from "../../lib/auth-cookies.ts";
 import {
   readLoginValues,
   translateLoginIssues,
   validateLogin,
 } from "../../components/auth/login-validation.ts";
 import { APP_ROLES, ADMIN_ROLES, hasRequiredRole } from "../../lib/route-access.ts";
+
+// Temporary switch for previewing the unconfirmed logout notices locally.
+const SIMULATE_LOGOUT_FAILURE = false;
+
+async function endSession(scope: "current" | "all"): Promise<never> {
+  const { accessToken, refreshToken } = await getAuthCookies();
+  const hasTokens = Boolean(accessToken || refreshToken);
+  let confirmed = !hasTokens;
+  try {
+    if (SIMULATE_LOGOUT_FAILURE && process.env.NODE_ENV === "development" && hasTokens) {
+      throw new Error("Temporary simulated logout API failure");
+    }
+    if (scope === "all" && hasTokens) {
+      // The API checks the active session with JwtAuthGuard. No application
+      // role or read-own permission is required to revoke one's own sessions.
+      confirmed = (await logoutAll(accessToken ?? "")).ok;
+    } else if (refreshToken) {
+      confirmed = (await logout(refreshToken)).ok;
+    }
+  } catch {
+    // Unexpected transport failures must not prevent local sign-out either.
+    confirmed = false;
+  }
+
+  await clearAuthCookies();
+  const notice = scope === "all" ? "all-unconfirmed" : "local";
+  redirect(confirmed ? "/logout?status=success" : `/logout?status=${notice}`);
+}
+
+export async function logoutAction(): Promise<never> {
+  return endSession("current");
+}
+
+export async function logoutAllAction(): Promise<never> {
+  return endSession("all");
+}
 
 export async function loginAction(formData: FormData): Promise<AuthActionState> {
   const locale = await getLocale();

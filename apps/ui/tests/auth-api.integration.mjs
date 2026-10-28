@@ -159,6 +159,11 @@ async function main() {
         assert.ok(!(await evaluate("document.documentElement.outerHTML")).includes(access.value));
         await send("Page.reload");
         await waitFor(`location.pathname==='/' && document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('h1')?.textContent.includes('Sounds')`);
+        const registrationRefresh = cookies.find((cookie) => cookie.name === "refreshToken").value;
+        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]') && !document.querySelector('form[data-auth-logout]')");
+        assert.equal((await auth.getSessionUser(access.value, options)).status, 401);
+        assert.equal((await auth.refresh(registrationRefresh, options)).status, 401);
         await open(locale);
         await fill({ username: `browser-${locale}`, email, password: "Secret123!", confirmPassword: "Secret123!" });
         await submit();
@@ -213,8 +218,40 @@ async function main() {
           assert.ok(!rsc.body.includes(access.value));
           await send("Page.reload");
           await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
+          const secondary = await auth.login({ login: account.username, password: account.password }, options);
+          assert.ok(secondary.ok);
+          const scope = account.username === "login-artist" ? "current" : "all";
+          await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').click()`);
+          await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]') && !document.querySelector('form[data-auth-logout]')");
+          const afterLogout = (await send("Network.getCookies", { urls: [origin] })).cookies;
+          assert.ok(!afterLogout.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
+          assert.equal(afterLogout.find((cookie) => cookie.name === "locale").value, locale);
+          assert.equal((await auth.getSessionUser(access.value, options)).status, 401);
+          assert.equal((await auth.refresh(cookies.find((cookie) => cookie.name === "refreshToken").value, options)).status, 401);
+          const otherSession = await auth.getSessionUser(secondary.data.accessToken, options);
+          if (scope === "all") {
+            assert.equal(otherSession.status, 401);
+            assert.equal((await auth.refresh(secondary.data.refreshToken, options)).status, 401);
+          } else {
+            assert.ok(otherSession.ok, "Current logout must preserve the other session");
+            await auth.logout(secondary.data.refreshToken, options);
+          }
         }
-        console.log(`Real UI login by username/email, wrong password, missing/inactive account, USER/ARTIST/ADMIN/combined/no-role redirects: ${locale} OK`);
+        await open(locale, "/login");
+        await fill({ login: email, password: "Secret123!" });
+        await submit();
+        await waitFor("location.pathname==='/' && document.querySelector('form[data-auth-logout]')");
+        const expiredCookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
+        await send("Network.deleteCookies", { name: "accessToken", url: origin });
+        await send("Page.navigate", { url: `${origin}/login` });
+        await waitFor("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]')");
+        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await waitFor("location.pathname==='/login' && !document.querySelector('form[data-auth-logout]')");
+        assert.equal((await auth.refresh(expiredCookies.find((cookie) => cookie.name === "refreshToken").value, options)).status, 401);
+        const afterExpired = (await send("Network.getCookies", { urls: [origin] })).cookies;
+        assert.ok(!afterExpired.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
+        assert.equal(afterExpired.find((cookie) => cookie.name === "locale").value, locale);
+        console.log(`Real UI register/logout/login, username/email, inactive accounts, role redirects, current/all session revocation and expired-access logout: ${locale} OK`);
       }
     });
     console.log(

@@ -25,8 +25,8 @@
       "requirements": "Usa entre 8 y 50 caracteres, incluyendo una letra minúscula, una mayúscula, un número y un carácter especial."
     },
     "session": { "expired": "Tu sesión ha caducado. Inicia sesión de nuevo.", "resuming": "Reanudando tu sesión…", "resumeFailed": "No se pudo reanudar tu sesión. Inicia sesión de nuevo." },
-    "logout": { "action": "Cerrar sesión", "pending": "Cerrando sesión…" },
-    "logoutAll": { "action": "Cerrar sesión en todos los dispositivos" }
+    "logout": { "success": "Sesión cerrada correctamente", "ok": "OK", "action": "Cerrar sesión", "pending": "Cerrando sesión…", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar que la sesión haya finalizado en el servidor." },
+    "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": { "home": { "title": "Página de inicio de Sounds" } },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },

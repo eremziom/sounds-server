@@ -61,7 +61,7 @@ export async function withAuthBrowser(apiUrl, run) {
         }
       })()`);
     };
-    const submit = () => evaluate("document.querySelector('button[type=submit]').click()");
+    const submit = () => evaluate("document.querySelector('form:not([data-auth-logout]) button[type=submit]').click()");
     const choose = async (locale) => {
       await evaluate(`(() => {const select=document.querySelector('select[name=locale]');select.value=${JSON.stringify(locale)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
       await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('select').getAttribute('aria-disabled')!=='true'`);
@@ -77,6 +77,7 @@ export async function withAuthBrowser(apiUrl, run) {
     };
     await run({ send, listeners, evaluate, waitFor, fill, submit, choose, open, origin });
     assert.deepEqual(errors, [], "No browser exceptions, hydration or translation errors");
+    assert.doesNotMatch(output, /Cannot specify a "name" prop.*formAction/, "No reserved button name warning in server output");
   } finally {
     await browser?.close();
     if (next.exitCode === null) {

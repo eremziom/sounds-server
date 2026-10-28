@@ -25,8 +25,8 @@
       "requirements": "Use 8–50 characters, including a lowercase letter, an uppercase letter, a number and a special character."
     },
     "session": { "expired": "Your session has expired. Sign in again.", "resuming": "Resuming your session…", "resumeFailed": "Could not resume your session. Sign in again." },
-    "logout": { "action": "Sign out", "pending": "Signing out…" },
-    "logoutAll": { "action": "Sign out on all devices" }
+    "logout": { "success": "Successfully signed out", "ok": "OK", "action": "Sign out", "pending": "Signing out…", "localOnly": "You have been signed out on this browser. We could not confirm that the session was ended on the server." },
+    "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": { "home": { "title": "Sounds home" } },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },

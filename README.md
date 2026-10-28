@@ -4,7 +4,8 @@ pnpm workspace containing the NestJS API and Next.js frontend for Sounds.
 The UI supports English, Polish and Spanish at shared URLs. Registration and
 login use Server Actions, validate credentials and set HttpOnly session cookies.
 Login routes USER/ARTIST to the app and ADMIN-only accounts to the admin panel.
-Logout and automatic refresh are subsequent stages.
+Sign-out revokes the current session or all devices and clears local auth cookies.
+Automatic refresh is the next stage.
 
 ## Structure
 
@@ -89,7 +90,7 @@ pnpm test                # Unit tests
 pnpm test:cov            # Unit tests with coverage
 pnpm test:e2e            # End-to-end tests (requires database configuration)
 pnpm test:auth-sessions  # Auth integration checks (creates a temporary database)
-pnpm test:auth-api       # Auth client + browser registration/login against NestJS in a temporary database (build UI first)
+pnpm test:auth-api       # Auth client + browser registration/login/logout against NestJS in a temporary database (build UI first)
 pnpm format              # Format backend source and tests
 ```
 

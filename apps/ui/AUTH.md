@@ -3,8 +3,8 @@
 Ustalenia etapu 1 planu `docs/ui-auth-plan.md`, 26.10.2026. To kontrakt dla
 kolejnych etapów. W etapie 2 dodano wywołania endpointów auth, walidację sesji,
 helpery cookies i bezpiecznego stanu akcji. Etapy 3–4 dodają formularze
-RegisterForm/LoginForm i registerAction/loginAction. Wylogowanie pozostaje
-w etapie 6, automatyczny refresh w etapie 7.
+RegisterForm/LoginForm i registerAction/loginAction. Etap 6 dodaje wylogowanie
+bieżącej i wszystkich sesji. Automatyczny refresh pozostaje w etapie 7.
 
 ## Przepływ i moduły
 
@@ -20,11 +20,12 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/api/auth.ts` | Etap 2 wdrożony | server-only: login/register/refresh/logout/logoutAll/getSessionUser, walidacja tokenów, dat i bezpiecznego DTO użytkownika |
 | `src/api/client.ts` | Etap 2 wdrożony | server-only: wspólny transport, no-store, timeout, odrzucanie redirectów i oczyszczone błędy |
 | `src/lib/auth-cookies.ts` | Etap 2 wdrożony | server-only: setAuthCookies/getAuthCookies/clearAuthCookies, wyłącznie para tokenów |
-| `src/app/(auth)/actions.ts` | Etapy 3–4 wdrożone | use server: registerAction/loginAction; logout w etapie 6 |
+| `src/app/(auth)/actions.ts` | Etapy 3–6 wdrożone | use server: registerAction/loginAction/logoutAction/logoutAllAction |
 | `src/components/auth/` | Etapy 3–5 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, dostępność, wyniki akcji i zmiana języka |
 | `src/components/auth/form-state.ts` | Etap 2 wdrożony | AuthActionState i initialAuthState(locale), bez importów serwerowych |
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
 | `src/i18n/api-error-messages.ts` | Istnieje | Mapowanie błędów w języku bieżącego żądania |
+| `src/components/auth/auth-controls.tsx`, `logout-controls.tsx` | Etap 6 wdrożony | serwerowy wybór etykiet i widoczności, klientowy formularz POST z pending |
 
 Wywołania NestJS organizujemy domenowo w `src/api/`: obecnie `auth.ts`,
 w przyszłości np. `users.ts`. Wspólny `client.ts` obsługuje HTTP dla endpointów
@@ -50,6 +51,30 @@ co odróżnia hasło od jego powtórzenia. Pending blokuje submit i edycję pól
 Test auth-forms.browser.mjs sprawdza rzeczywiste zdarzenia Tab/Enter/Spacja,
 widoczny fokus, drzewo dostępności Chrome, zmianę języka podczas udanego POST,
 chronione RSC ze świeżymi cookies, błędy sesji/API i długie komunikaty przy 320 px.
+
+Etap 6: AuthControls w głównej belce odczytuje tylko obecność cookies, bez
+zapytania o profil, żeby umożliwić wylogowanie również przy awarii API lub
+wygasłym access tokenie. Do klienta trafiają etykiety i boolean canLogoutAll,
+bez tokenów i nowych przestrzeni wiadomości w root providerze. LogoutControls
+używa formularza POST, dwóch odrębnych Server Actions i wspólnego useFormStatus.
+Pending blokuje oba przyciski; useFormStatus().action wskazuje akcję, dla której
+wyświetlamy tekst oczekiwania. Przyciski nie ustawiają zarezerwowanego name
+przy funkcyjnym formAction; data-logout-scope jest tylko identyfikatorem w DOM.
+
+logoutAction pobiera refresh token z cookies, logoutAllAction access token.
+Ten drugi endpoint wymaga aktywnej sesji przez JwtAuthGuard w API, bez roli ADMIN
+i bez dodatkowego users:read-own (więc działa również dla konta bez ról).
+W obu przypadkach po próbie API usuwane są tylko cookies tokenów; język zostaje.
+Redirect do /logout jest poza catch. Błąd/timeout/niepewny wynik nie są ponawiane;
+użytkownik trafia do /logout?status=local lub status=all-unconfirmed. Ten widok
+pokazuje dotychczasowy komunikat aż do kliknięcia OK, które prowadzi do /login.
+Sukces (status=success) wyświetla „Udane wylogowanie” przez 2 sekundy i przechodzi
+do /login automatycznie. Ekran jest wyśrodkowany jak loading; LoginPage nie pokazuje
+już komunikatów wylogowania. Komunikat błędu potwierdza wyłącznie lokalne wylogowanie.
+Tymczasowy SIMULATE_LOGOUT_FAILURE jest włączony w development; ustaw false,
+aby przywrócić rzeczywiste wywołania API przy lokalnym testowaniu.
+Bez cookies nie ma zapytania do API; przy samym access tokenie wylogowanie
+bieżącej sesji jest lokalne. Własnych Route Handlers ani wyjątków Origin nie dodano.
 
 Plik use server eksportuje wyłącznie asynchroniczne akcje; typy i stan początkowy
 mają osobny moduł. Do klienta trafia referencja Server Action, a nie implementacja

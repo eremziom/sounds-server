@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { timeZone } from "@/i18n/config";
 import { formats } from "@/i18n/formats";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { AuthControls } from "@/components/auth/auth-controls";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,8 +37,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           errors: { page: messages.errors.page },
           common: { actions: messages.common.actions },
         }}>
-          <header className="flex justify-end border-b px-4 py-3 sm:px-6">
+          <header className="flex flex-wrap items-center justify-end gap-3 border-b px-4 py-3 sm:px-6">
             <LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />
+            <AuthControls />
           </header>
           {children}
         </NextIntlClientProvider>

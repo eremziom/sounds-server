@@ -44,7 +44,8 @@ SameSite=Lax, Path=/ and Secure in production. Expiries come from a validated AP
 session; clearing affects only the two tokens and preserves locale. Cookie writes
 are allowed only in Server Actions/Route Handlers. The helpers and API functions
 are implemented. Registration and login use these helpers in registerAction and
-loginAction; logout and automatic refresh remain pending.
+loginAction. logoutAction/logoutAllAction clear them after revocation attempts;
+automatic refresh remains pending.
 
 `src/lib/route-access.ts` contains shared role types, constants and role checks
 that can be imported by client components. `src/api/auth.ts` contains
@@ -89,8 +90,23 @@ with `pnpm verify:i18n`; see the UI README for browser requirements.
 New text must be added to all catalogs; adding a locale must update the explicit
 catalog loader, selector and test matrices. Locale selection never replaces API
 guards. Browser tests cover registration/login in en/pl/es, validation, API errors,
-language changes, cookies, role redirects and protected navigation. Logout/refresh
-remain pending. Real API/browser tests use an isolated disposable PostgreSQL database.
+language changes, cookies, role redirects, logout and protected navigation.
+Automatic refresh remains pending. Real API/browser tests use an isolated disposable PostgreSQL database.
+
+The shared header offers logout even with expired credentials or an API outage.
+POST logoutAction uses the refresh cookie, so it needs no valid access token or
+app role. logoutAllAction delegates active-session authentication to the API's
+JWT guard; it adds no ADMIN or read-own permission requirement. Both clear only
+auth cookies and redirect to /logout?status=success, local or all-unconfirmed.
+The full-screen result view matches the loading screen convention. Success stays
+visible for 2 seconds before replacing the route with /login. Unconfirmed server
+revocation shows a translated notice until the user clicks OK. LoginPage does not
+display logout notices. A missing/unknown status redirects to /login.
+The temporary SIMULATE_LOGOUT_FAILURE switch in actions.ts is enabled only in
+development; set it to false to restore real API logout calls locally.
+Locale persists through sign-out and language changes while the POST is pending.
+GET links never run logout. Default Server Action Origin/Host protection stays on.
+Back navigation and subsequent protected RSC requests are checked after logout.
 
 Stage 5 additionally checks protected RSC with freshly issued cookies, private
 no-store responses and Link navigation after sign-in. Both public auth forms
