@@ -6,6 +6,21 @@ Roles are additive: `ADMIN` alone does not grant access to `(app)`.
 Missing/invalid sessions redirect to `/login`; insufficient roles redirect to
 the public `/access-denied` page.
 
+Both protected sections now live under `src/app/(protected)/`, with unchanged
+URLs. Its shared layout verifies the session before mounting ApplicationRuntime;
+section layouts and pages retain their own role checks. The runtime lives outside
+section/page loading and error boundaries and owns a persistent audio element,
+animation host and client session context. Its identity depends only on the
+verified account ID, never pathname, token or locale. Changing accounts or leaving
+the protected area tears down media; ordinary section navigation/cookie writes
+preserve the instances. Animation engines using requestAnimationFrame/WebGL must
+register their stop callback through useMediaRuntime and unregister on teardown.
+The local active/refreshing/ended controller is groundwork only: no background
+refresh POST, timer or cross-tab/server coordination is wired yet. Access expiry
+still redirects to login. The future renewal adapter must use a shared server
+coordinator, write cookies and handle session termination; the UI controller
+alone never authorizes requests or changes cookies.
+
 All languages use these same URLs and redirects. Request language is selected
 from a valid `locale` cookie, then weighted `Accept-Language` (including regional
 tags), then English. Language detection does not modify roles, sessions or route

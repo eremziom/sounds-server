@@ -48,6 +48,18 @@ The form receives auth/validation/errors through ClientMessages, preserves input
 on language changes and hides server errors from a different request locale.
 Passwords are cleared on submission and never returned by the action.
 
+Stage 7 groundwork puts app/admin under one `(protected)` layout without changing
+URLs. ApplicationRuntime owns the client session and exposes useApplicationSession.
+It composes MediaRuntime, which owns the persistent audio element, animation host,
+useMediaRuntime and media cleanup outside the sections' loading boundaries.
+Navigation and cookie changes preserve the instances;
+switching accounts or leaving the protected area stops and releases them.
+The client session controller supports active/refreshing/ended, but the actual
+background refresh POST and timers await the shared server refresh coordinator.
+Build first, then run `pnpm --filter ui test:runtime` from the repository root
+for the audio/animation lifecycle regression in en/pl/es. This uses generated
+silent audio and Web Animations, not a finished music player or streaming service.
+
 The header shows sign-out controls whenever either auth cookie exists, including
 when access has expired or the API is down. Current sign-out uses the server-side
 refresh cookie; all-device sign-out uses the access cookie and API authentication,

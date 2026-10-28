@@ -26,6 +26,10 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
 | `src/i18n/api-error-messages.ts` | Istnieje | Mapowanie błędów w języku bieżącego żądania |
 | `src/components/auth/auth-controls.tsx`, `logout-controls.tsx` | Etap 6 wdrożony | serwerowy wybór etykiet i widoczności, klientowy formularz POST z pending |
+| `src/app/(protected)/layout.tsx` | Podstawy etapu 7 | Wspólny layout sekcji app/admin, sesja z API przed utworzeniem runtime |
+| `src/components/application/application-runtime.tsx` | Podstawy etapu 7 | Kontekst sesji i składanie runtime aplikacji |
+| `src/components/application/media-runtime.tsx` | Podstawy etapu 7 | Trwały element audio/host animacji, kontekst mediów, zatrzymanie i sprzątanie |
+| `src/lib/application-session.ts` | Podstawy etapu 7 | Lokalny stan active/refreshing/ended i ochrona przed spóźnionym wynikiem; bez serwerowej rotacji |
 
 Wywołania NestJS organizujemy domenowo w `src/api/`: obecnie `auth.ts`,
 w przyszłości np. `users.ts`. Wspólny `client.ts` obsługuje HTTP dla endpointów
@@ -119,6 +123,15 @@ Domyślna ochrona Origin/Host dla Server Actions pozostaje włączona.
 
 ## Kontrola dostępu i przekierowania
 
+- `(app)` i `(admin)` są teraz zagnieżdżone w `(protected)`; URL nie zmieniają się.
+  Layout wspólny potwierdza sesję przed utworzeniem ApplicationRuntime. Kontrola
+  ról sekcji/stron nadal odbywa się niezależnie. Runtime jest poza ich Suspense
+  i zachowuje audio/host animacji przy nawigacji oraz zmianie cookies. Klucz id
+  użytkownika celowo resetuje go po zmianie konta. Wyjście na publiczny widok
+  usuwa runtime i zatrzymuje jego aktywności. Hooki useMediaRuntime oraz
+  useApplicationSession są dostępne tylko wewnątrz chronionej części.
+  Kontroler klienta nie autoryzuje danych, nie rotuje tokenów i nie zastępuje
+  koordynatora refresh. POST, timery i synchronizacja kart pozostają do wdrożenia.
 - Login/register pozostają publiczne również dla zalogowanych użytkowników.
 - `(app)` ma RouteGuard(APP_ROLES), a każda chroniona strona dodatkowo wywołuje
   requireRoles(APP_ROLES). `(admin)/admin` analogicznie używa ADMIN_ROLES.
