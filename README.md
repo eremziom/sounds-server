@@ -6,8 +6,9 @@ login use Server Actions, validate credentials and set HttpOnly session cookies.
 Login routes USER/ARTIST to the app and ADMIN-only accounts to the admin panel.
 Sign-out revokes the current session or all devices and clears local auth cookies.
 The protected runtime refreshes access tokens one minute before their actual
-expiry and checks again when the tab resumes. Request integration, cross-tab
-coordination and the full session termination flow remain in stage 7.
+expiry and checks again when the tab resumes. Protected operations and the
+admin-to-app link wait for renewal before dispatch. Cross-tab coordination and
+the full session termination flow remain in stage 7.
 
 ## Structure
 

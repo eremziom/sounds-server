@@ -1,6 +1,6 @@
 {
   "common": {
-    "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión" },
+    "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión", "admin": "Admin" },
     "status": { "checkingAccess": "Comprobando el acceso…", "loading": "Cargando…" },
     "actions": { "retry": "Intentar de nuevo" },
     "language": { "label": "Idioma", "changeFailed": "No se pudo guardar tu preferencia de idioma. Inténtalo de nuevo." }

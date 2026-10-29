@@ -32,6 +32,7 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/lib/application-session.ts` | Podstawy etapu 7 | Lokalny stan active/refreshing/ended i ochrona przed spóźnionym wynikiem; bez serwerowej rotacji |
 | `src/lib/session-refresh.ts` | Punkt 2 etapu 7 | Timer według rzeczywistego expiry i wspólne ensureFresh dla powrotu do karty/chronionych żądań |
 | `src/lib/access-token-expiry.ts` | Punkt 2 etapu 7 | Serwerowy odczyt exp wyłącznie do planowania, bez autoryzacji na podstawie claims |
+| `src/lib/protected-request.ts`, `src/components/application/protected-link.tsx` | Punkt 3 etapu 7 | Oczekiwanie przed operacją, brak ponowień i link bez prefetch |
 
 Wywołania NestJS organizujemy domenowo w `src/api/`: obecnie `auth.ts`,
 w przyszłości np. `users.ts`. Wspólny `client.ts` obsługuje HTTP dla endpointów
@@ -105,9 +106,19 @@ minutę ważności, następna rotacja następuje w połowie pozostałego czasu, 
 tworzyć pętli natychmiastowych odnowień. Brak poprawnego exp nie planuje timera;
 API nadal sprawdza każde chronione żądanie.
 Hook `useApplicationSession()` udostępnia `ensureFresh(): Promise<boolean>`:
-sprawdzenie przed żądaniem i oczekiwanie na ewentualne odnowienie. Obecnie brak
-chronionych klientowych zapytań o dane; podłączenie żądań/nawigacji do sprawdzenia
-pozostaje punktem 3. Timer i zdarzenia korzystają ze wspólnego pending w renew().
+sprawdzenie przed żądaniem i oczekiwanie na ewentualne odnowienie. Punkt 3 dodaje
+`runProtected(() => operation())`: czeka na ensureFresh i dopiero po sukcesie
+wywołuje operację jeden raz. Zwraca `{ executed: false }` przy nieudanym odnowieniu
+lub zakończeniu sesji, a po wykonaniu `{ executed: true, value }`. Błąd wykonanej
+operacji propaguje się bez ponowienia, a odpowiedzi HTTP (także 401/403) trafiają
+do wywołującego bez automatycznego refresh. Akcje serwerowe nadal wywoływać
+w startTransition. Timer i zdarzenia korzystają ze wspólnego pending w renew().
+`ProtectedLink` zastępuje istniejący link admin → app: wyłącza prefetch i czeka
+przed router.push/replace. Nowe chronione linki mają używać ProtectedLink,
+a programowe żądania/nawigacja runProtected. Historia przeglądarki, nowe karty,
+pełne wejścia oraz niezależne akcje języka/wylogowania zachowują dotychczasową
+obsługę. Obecnie brak klientowych zapytań o chronione dane; kontrole serwerowe
+sesji/ról nadal obowiązują. Renderowanie Server Components nie zapisuje cookies.
 Koordynacja między kartami, pełne usuwanie cookies/przejście do logowania po utracie
 sesji i powiadomienia o wylogowaniu pozostają punktami 4–6.
 

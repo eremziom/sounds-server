@@ -16,11 +16,13 @@ async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
   // Section/page guards still perform their own current role checks.
   const { accessToken } = await getAuthCookies();
   const t = await getTranslations("auth.session");
+  const navigation = await getTranslations("common.navigation");
   return (
     <ApplicationRuntime
       key={user.id}
       accessTokenExpiresAt={readAccessTokenExpiry(accessToken)}
       footerLabels={{ expiresIn: t("expiresIn"), refreshing: t("resuming"), ended: t("expired") }}
+      adminLabel={navigation("admin")}
     >
       {children}
     </ApplicationRuntime>

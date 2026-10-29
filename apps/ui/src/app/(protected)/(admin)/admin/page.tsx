@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { ProtectedLink } from "@/components/application/protected-link";
 import { requireRoles } from "@/lib/auth";
 import { ADMIN_ROLES } from "@/lib/route-access";
 import { getTranslations } from "next-intl/server";
@@ -19,9 +19,9 @@ export default async function AdminPage() {
       <p className="text-muted-foreground">
         {t("placeholder")}
       </p>
-      <Link href="/" className="inline-block underline underline-offset-4">
+      <ProtectedLink href="/" className="inline-block underline underline-offset-4">
         {navigation("backHome")}
-      </Link>
+      </ProtectedLink>
     </main>
   );
 }

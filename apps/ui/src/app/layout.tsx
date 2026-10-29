@@ -38,6 +38,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           common: { actions: messages.common.actions },
         }}>
           <header className="flex flex-wrap items-center justify-end gap-3 border-b px-4 py-3 sm:px-6">
+            <div id="application-navigation" className="mr-auto" />
             <LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />
             <AuthControls />
           </header>

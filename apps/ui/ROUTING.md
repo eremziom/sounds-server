@@ -22,8 +22,14 @@ verification; renewal returns the next expiry from the API. Token lifetime is
 not hardcoded. Renewed tokens valid for at most a minute are scheduled halfway
 through their remaining lifetime to avoid a rotation loop.
 `useApplicationSession().ensureFresh()` exposes the deadline check for protected
-client requests and shares pending renewal. Integrating those callers/navigation,
-cross-tab concurrency and full session termination remains pending. A cold load
+client requests and shares pending renewal. `runProtected(operation)` waits for
+that check before executing an operation once; failure/session end prevents
+dispatch, and operation errors/401/403 do not trigger retries or refresh.
+The admin-to-app `ProtectedLink` disables prefetch and waits before client
+navigation. Use `ProtectedLink` for new protected links and `runProtected` for
+programmatic protected navigation/data requests. Browser history, modified clicks,
+locale/sign-out actions and document loads retain their existing behavior.
+Cross-tab concurrency and full session termination remain pending. A cold load
 or unguarded navigation with an expired access cookie still redirects to login.
 The UI controller never authorizes API operations.
 

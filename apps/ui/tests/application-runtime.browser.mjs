@@ -6,7 +6,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { withAuthBrowser } from "./helpers/auth-browser.mjs";
 import { authSession } from "./helpers/auth-fixtures.mjs";
 
-const token = (expiresAt) => `header.${Buffer.from(JSON.stringify({ exp: Math.floor(expiresAt / 1000) })).toString("base64url")}.signature`;
+const token = (expiresAt, jti = "initial") => `header.${Buffer.from(JSON.stringify({ exp: Math.floor(expiresAt / 1000), jti })).toString("base64url")}.signature`;
 
 let userId = 1;
 let mode = "active";
@@ -14,15 +14,20 @@ let gate;
 let release;
 let refreshCalls = 0;
 let rotated;
+let refreshGate;
+let releaseRefresh;
+let rejectedAccess;
+let rotationLifetime = 120_000;
 const api = createServer(async (req, res) => {
   if (req.url === "/auth/refresh") {
     refreshCalls++;
     let body = "";
     for await (const chunk of req) body += chunk;
     assert.match(JSON.parse(body).refreshToken, /^[a-f0-9]{64}$/);
-    const expiresAt = Math.floor((Date.now() + (refreshCalls % 2 === 1 ? 120_000 : 600_000)) / 1000) * 1000;
+    if (refreshGate) await refreshGate;
+    const expiresAt = Math.floor((Date.now() + rotationLifetime) / 1000) * 1000;
     rotated = authSession({
-      accessToken: token(expiresAt),
+      accessToken: token(expiresAt, String(refreshCalls)),
       accessTokenExpiresAt: new Date(expiresAt).toISOString(),
       refreshToken: refreshCalls.toString(16).padStart(64, "0"),
       user: { id: userId, username: "User", email: "user@example.com", isActive: true, roles: [{ key: "USER" }, { key: "ADMIN" }] },
@@ -32,7 +37,7 @@ const api = createServer(async (req, res) => {
   }
   if (req.url !== "/auth/me") return res.writeHead(404).end();
   if (mode === "held") await gate;
-  if (mode === "ended" || !req.headers.authorization) {
+  if (mode === "ended" || !req.headers.authorization || req.headers.authorization === `Bearer ${rejectedAccess}`) {
     return res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
   }
   res.setHeader("Content-Type", "application/json");
@@ -42,7 +47,12 @@ api.listen(0, "127.0.0.1");
 await once(api, "listening");
 
 try {
-  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, choose, origin }) => {
+  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, listeners, evaluate, waitFor, choose, origin }) => {
+    const homeRequests = [];
+    listeners.set("Network.requestWillBeSent", ({ request }) => {
+      if (request.method === "GET" && new URL(request.url).origin === origin &&
+          new URL(request.url).pathname === "/") homeRequests.push(request);
+    });
     const catalogs = Object.fromEntries(await Promise.all(["en", "pl", "es"].map(async (locale) => [
       locale, JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8")),
     ])));
@@ -52,6 +62,8 @@ try {
 
     for (const locale of ["en", "pl", "es"]) {
       const callsBefore = refreshCalls;
+      rejectedAccess = undefined;
+      rotationLifetime = 120_000;
       mode = "active";
       userId = 1;
       await send("Network.setCookies", { cookies: [
@@ -91,14 +103,14 @@ try {
       await waitFor("document.querySelector('[data-session-countdown]').textContent!==initialCountdown");
       assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-session-footer]')).fontSize"), "12px");
 
-      async function assertContinuous(before) {
+      async function assertContinuous(before, status = "active") {
         assert.equal(await evaluate("runtimeRoot===document.querySelector('[data-application-runtime]')"), true);
         assert.equal(await evaluate("runtimeAudio===document.querySelector('[data-persistent-media] audio')"), true);
         assert.equal(await evaluate("runtimeStage===document.querySelector('[data-animation-host]')"), true);
         assert.equal(await evaluate("runtimeAnimation.playState"), "running");
         assert.equal(await evaluate("runtimeAudio.paused"), false);
         assert.ok(await evaluate(`runtimeAudio.currentTime>=${before}`));
-        assert.equal(await evaluate("document.querySelector('[data-application-runtime]').dataset.sessionStatus"), "active");
+        assert.equal(await evaluate("document.querySelector('[data-application-runtime]').dataset.sessionStatus"), status);
       }
 
       async function waitForRotation(expectedCalls) {
@@ -123,6 +135,7 @@ try {
       await assertContinuous(beforeRenewal);
       // Model a suspended tab: advance only its wall clock, then send the real
       // visibility event. The server and cookie expiration keep their real clock.
+      rotationLifetime = 600_000;
       await evaluate("window.runtimeRealNow=Date.now; Date.now=()=>runtimeRealNow()+61000; document.dispatchEvent(new Event('visibilitychange'))");
       await waitForRotation(callsBefore + 2);
       await evaluate("Date.now=runtimeRealNow; window.dispatchEvent(new Event('focus'))");
@@ -137,9 +150,33 @@ try {
       await evaluate("window.next.router.push('/')");
       await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(catalogs[locale].app.home.title)}`);
       await assertContinuous(beforeNavigation);
-      await evaluate("window.next.router.push('/admin')");
+      await waitFor("document.querySelector('header a[href=\"/admin\"]')");
+      assert.equal(await evaluate("document.querySelector('header a[href=\"/admin\"]').textContent"), catalogs[locale].common.navigation.admin);
+      await evaluate("document.querySelector('header a[href=\"/admin\"]').click()");
       await waitFor(`location.pathname==='/admin' && document.querySelector('h1')?.textContent===${JSON.stringify(catalogs[locale].admin.home.title)}`);
       await assertContinuous(beforeNavigation);
+
+      // Click the product's protected link after the deadline with refresh held.
+      // No target GET/prefetch may run until the action has replaced the cookies.
+      refreshGate = new Promise((resolve) => { releaseRefresh = resolve; });
+      rejectedAccess = rotated.accessToken;
+      const homeCount = homeRequests.length;
+      await evaluate("Date.now=()=>runtimeRealNow()+541000; document.querySelector('main a[href=\"/\"]').click()");
+      await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='refreshing'");
+      await delay(150);
+      assert.equal(homeRequests.length, homeCount, "Navigation must wait for cookie rotation");
+      assert.equal(refreshCalls, callsBefore + 3);
+      assert.equal(await evaluate("location.pathname"), "/admin");
+      await assertContinuous(beforeNavigation, "refreshing");
+      await evaluate("Date.now=runtimeRealNow");
+      refreshGate = undefined;
+      releaseRefresh();
+      await waitForRotation(callsBefore + 3);
+      await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(catalogs[locale].app.home.title)}`);
+      assert.ok(homeRequests.length > homeCount, "Navigation resumes after refresh");
+      await assertContinuous(beforeNavigation);
+      await evaluate("window.next.router.push('/admin')");
+      await waitFor(`location.pathname==='/admin' && document.querySelector('h1')?.textContent===${JSON.stringify(catalogs[locale].admin.home.title)}`);
 
       // Replacing a token cookie and writing locale re-render server layouts,
       // while a slow guard exercises Suspense without remounting media.
@@ -170,13 +207,15 @@ try {
       await evaluate("window.next.router.refresh()");
       await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
       assert.equal(await evaluate("!!document.querySelector('[data-application-runtime]')"), false);
+      assert.equal(await evaluate("!!document.querySelector('header a[href=\"/admin\"]')"), false);
       assert.equal(await evaluate("!!window.runtimeDocument"), true);
       await evaluate("URL.revokeObjectURL(runtimeAudioUrl)");
-      assert.equal(refreshCalls, callsBefore + 2, "Only the scheduled and resume renewals should run");
+      assert.equal(refreshCalls, callsBefore + 3, "Timer, resume and protected navigation each renew once");
       console.log(`Application runtime ${locale}: timer/resume rotate cookies without resetting audio/animation; navigation, account reset and session end OK`);
     }
   });
 } finally {
   release?.();
+  releaseRefresh?.();
   await new Promise((resolve) => api.close(resolve));
 }

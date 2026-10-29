@@ -73,9 +73,20 @@ the access token countdown; the refresh session's absolute lifetime is separate.
 `useApplicationSession().ensureFresh()` checks the same deadline before a
 protected client request and resolves after cookie rotation. It shares in-flight
 work through the existing session controller and returns false after session end.
-Callers must check that result before sending the request. Wiring protected
-requests/navigation to that check belongs to stage 7 point 3; the current product
-has no protected client data requests. Server-side role checks remain unchanged.
+`useApplicationSession().runProtected(() => operation())` performs that check and
+waits before invoking a request/Server Action exactly once. It returns
+`{ executed: false }` when renewal fails/the session ends, or
+`{ executed: true, value }` with the operation's result. Operation exceptions
+propagate; HTTP responses (including 401/403) are returned without refresh/retry.
+Call Server Actions inside a React transition as usual.
+
+The admin-to-app link uses `ProtectedLink`: prefetch is disabled, and client
+navigation waits for cookie rotation before calling the Next router. New protected
+links should use this component; programmatic navigation/requests must go through
+`runProtected`. Modified clicks/new tabs, browser history and full document loads
+retain normal Next/server guard behavior. Language preference and sign-out actions
+retain their existing independent flows. The current product has no protected
+client data requests; server-side data/role checks remain unchanged.
 Cross-tab concurrency, cookie cleanup/redirect on session loss and sign-out
 notifications remain pending. A cold load with an expired access cookie still
 uses the existing login redirect.

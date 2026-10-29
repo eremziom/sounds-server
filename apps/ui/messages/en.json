@@ -1,6 +1,6 @@
 {
   "common": {
-    "navigation": { "backHome": "Back to home", "goToLogin": "Go to sign in" },
+    "navigation": { "backHome": "Back to home", "goToLogin": "Go to sign in", "admin": "Admin" },
     "status": { "checkingAccess": "Checking access…", "loading": "Loading…" },
     "actions": { "retry": "Try again" },
     "language": { "label": "Language", "changeFailed": "Could not save your language preference. Try again." }
