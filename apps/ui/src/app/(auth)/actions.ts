@@ -2,7 +2,7 @@
 
 import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { login, register, logout, logoutAll } from "../../api/auth.ts";
+import { login, register, refresh, logout, logoutAll } from "../../api/auth.ts";
 import type { AuthActionState } from "../../components/auth/form-state.ts";
 import {
   readRegisterValues,
@@ -20,6 +20,19 @@ import { APP_ROLES, ADMIN_ROLES, hasRequiredRole } from "../../lib/route-access.
 
 // Temporary switch for previewing the unconfirmed logout notices locally.
 const SIMULATE_LOGOUT_FAILURE = false;
+
+// Invoked as a Next.js POST Server Action. Credentials come only from HttpOnly
+// cookies; the serialized result never includes tokens or the API response.
+export async function refreshAction(): Promise<{ ok: boolean }> {
+  const { refreshToken } = await getAuthCookies();
+  if (!refreshToken) return { ok: false };
+
+  const result = await refresh(refreshToken);
+  if (!result.ok) return { ok: false };
+
+  await setAuthCookies(result.data);
+  return { ok: true };
+}
 
 async function endSession(scope: "current" | "all"): Promise<never> {
   const { accessToken, refreshToken } = await getAuthCookies();

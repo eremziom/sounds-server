@@ -20,7 +20,7 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/api/auth.ts` | Etap 2 wdrożony | server-only: login/register/refresh/logout/logoutAll/getSessionUser, walidacja tokenów, dat i bezpiecznego DTO użytkownika |
 | `src/api/client.ts` | Etap 2 wdrożony | server-only: wspólny transport, no-store, timeout, odrzucanie redirectów i oczyszczone błędy |
 | `src/lib/auth-cookies.ts` | Etap 2 wdrożony | server-only: setAuthCookies/getAuthCookies/clearAuthCookies, wyłącznie para tokenów |
-| `src/app/(auth)/actions.ts` | Etapy 3–6 wdrożone | use server: registerAction/loginAction/logoutAction/logoutAllAction |
+| `src/app/(auth)/actions.ts` | Etapy 3–6 i punkt 1 etapu 7 wdrożone | use server: registerAction/loginAction/logoutAction/logoutAllAction/refreshAction |
 | `src/components/auth/` | Etapy 3–5 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, dostępność, wyniki akcji i zmiana języka |
 | `src/components/auth/form-state.ts` | Etap 2 wdrożony | AuthActionState i initialAuthState(locale), bez importów serwerowych |
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
@@ -86,6 +86,15 @@ klienta API, cookie helpers ani konfiguracja środowiska. Pola FormData wybieram
 jawnie: cały Object.fromEntries(formData) może zawierać także techniczne `$ACTION_*`.
 
 ## Kontrakt wyniku akcji
+
+`refreshAction()` jest operacją POST Server Action: odczytuje wyłącznie serwerowe
+cookie refresh tokenu, wywołuje istniejące `refresh()` i po sukcesie zapisuje całą
+parę przez `setAuthCookies()`. Zwraca tylko `{ ok: true }` lub `{ ok: false }`,
+bez tokenów, użytkownika i surowych błędów API. Nie wymaga ważnego access tokenu.
+Brak refresh cookie nie wywołuje API. Błąd API nie zmienia cookies ani nie ponawia
+rotacji; błąd zapisu cookies propaguje się. Locale pozostaje bez zmian.
+Automatyczne wyzwalanie, koordynacja równoległości i obsługa utraty sesji pozostają
+kolejnymi punktami etapu 7; sam eksport akcji nie uruchamia odświeżania w tle.
 
 Formularze będą używać `useActionState`. Zaimplementowany typ stanu i wyniku błędu:
 

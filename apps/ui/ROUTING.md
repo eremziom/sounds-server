@@ -15,8 +15,9 @@ verified account ID, never pathname, token or locale. Changing accounts or leavi
 the protected area tears down media; ordinary section navigation/cookie writes
 preserve the instances. Animation engines using requestAnimationFrame/WebGL must
 register their stop callback through useMediaRuntime and unregister on teardown.
-The local active/refreshing/ended controller is groundwork only: no background
-refresh POST, timer or cross-tab/server coordination is wired yet. Access expiry
+The local active/refreshing/ended controller is groundwork only. A POST Server
+Action `refreshAction()` can rotate the HttpOnly cookies through the API, but
+automatic triggers, timers and cross-tab/server coordination remain pending. Access expiry
 still redirects to login. The future renewal adapter must use a shared server
 coordinator, write cookies and handle session termination; the UI controller
 alone never authorizes requests or changes cookies.
