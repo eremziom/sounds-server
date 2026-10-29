@@ -13,12 +13,13 @@ type ProtectedLinkProps = Omit<ComponentProps<typeof Link>, "href" | "onNavigate
 // Modified clicks/new tabs retain Link's normal browser behavior and server guards.
 export function ProtectedLink({ href, replace, scroll, ...props }: ProtectedLinkProps) {
   const router = useRouter();
-  const { runProtected } = useApplicationSession();
+  const { runProtected, status } = useApplicationSession();
 
   return (
     <Link {...props} href={href} replace={replace} scroll={scroll} prefetch={false}
       onNavigate={(event) => {
         event.preventDefault();
+        if (status === "unavailable" || status === "ended") return;
         startTransition(async () => {
           await runProtected(() => {
             if (replace) router.replace(href, { scroll });

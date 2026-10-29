@@ -11,8 +11,9 @@
     "test": "node --experimental-strip-types scripts/check-messages.mjs && node --experimental-strip-types --test tests/*.test.mjs",
     "check:messages": "node --experimental-strip-types scripts/check-messages.mjs",
     "test:routing": "node --test tests/routing.integration.mjs",
-    "test:browser": "node tests/i18n.browser.mjs && node tests/register.browser.mjs && node tests/login.browser.mjs && node tests/auth-forms.browser.mjs && node tests/logout.browser.mjs && node tests/application-runtime.browser.mjs",
+    "test:browser": "node tests/i18n.browser.mjs && node tests/register.browser.mjs && node tests/login.browser.mjs && node tests/auth-forms.browser.mjs && node tests/logout.browser.mjs && node tests/application-runtime.browser.mjs && node tests/session-ending.browser.mjs",
     "test:runtime": "node tests/application-runtime.browser.mjs",
+    "test:session-ending": "node tests/session-ending.browser.mjs",
     "test:auth-api": "node --experimental-strip-types tests/auth-api.integration.mjs"
   },
   "dependencies": {

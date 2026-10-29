@@ -11,6 +11,7 @@ export function createProtectedRequest(
   ensureFresh: () => Promise<boolean>,
 ) {
   return async function runProtected<T>(request: () => Promise<T> | T): Promise<ProtectedRequestResult<T>> {
+    if (session.getSnapshot() === "ended" || session.getSnapshot() === "unavailable") return { executed: false };
     if (!await ensureFresh() || session.getSnapshot() === "ended") {
       return { executed: false };
     }

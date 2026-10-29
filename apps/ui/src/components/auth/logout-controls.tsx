@@ -3,6 +3,7 @@
 import { useFormStatus } from "react-dom";
 import { logoutAction, logoutAllAction } from "../../app/(auth)/actions";
 import { Button } from "../ui/button";
+import { notifyLogout } from "../../lib/logout-event";
 
 type LogoutLabels = {
   action: string;
@@ -37,7 +38,7 @@ function LogoutButtons({ action, pending: pendingLabel, all, canLogoutAll }: Log
 
 export function LogoutControls(props: LogoutLabels) {
   return (
-    <form action={logoutAction} aria-label={props.action} data-auth-logout>
+    <form action={logoutAction} onSubmitCapture={notifyLogout} aria-label={props.action} data-auth-logout>
       <LogoutButtons {...props} />
     </form>
   );

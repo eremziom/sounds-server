@@ -19,9 +19,10 @@ export function useMediaRuntime() {
 }
 
 // Internal client component, composed by ApplicationRuntime.
-export function MediaRuntime({ children, session }: {
+export function MediaRuntime({ children, session, blocked = false }: {
   children: ReactNode;
   session: ApplicationSession;
+  blocked?: boolean;
 }) {
   const audio = useRef<HTMLAudioElement>(null);
   const animationHost = useRef<HTMLDivElement>(null);
@@ -51,7 +52,7 @@ export function MediaRuntime({ children, session }: {
       }
     }
     const unsubscribe = session.subscribe(() => {
-      if (session.getSnapshot() === "ended") stop();
+      if (session.getSnapshot() === "ended" || session.getSnapshot() === "unavailable") stop();
     });
     return () => {
       unsubscribe();
@@ -61,7 +62,7 @@ export function MediaRuntime({ children, session }: {
 
   return (
     <MediaContext.Provider value={media}>
-      <div data-persistent-media>
+      <div data-persistent-media hidden={blocked}>
         <audio ref={audio} preload="none" />
         <div ref={animationHost} data-animation-host />
       </div>

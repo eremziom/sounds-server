@@ -78,19 +78,20 @@ test("missing refresh cookie returns failure without calling the API or writing 
 test("rejected or uncertain refresh returns only failure, without retry or cookie changes", async () => {
   const originalFetch = globalThis.fetch;
   try {
-    for (const request of [
-      async () => Response.json({ code: "AUTH_SESSION_INVALID", message: "private details" }, { status: 401 }),
-      async () => Response.json({ code: "ACCESS_DENIED" }, { status: 403 }),
-      async () => new Response("private details", { status: 503 }),
-      async () => new Response("invalid JSON", { status: 200 }),
-      async () => Response.json(authSession({ refreshToken: "invalid" })),
-      async () => { throw new TypeError("private network details"); },
-      async () => { throw new DOMException("private timeout details", "TimeoutError"); },
+    for (const [request, expected] of [
+      [async () => Response.json({ code: "AUTH_SESSION_INVALID", message: "private details" }, { status: 401 }), { ok: false }],
+      [async () => Response.json({ code: "VALIDATION_FAILED" }, { status: 400 }), { ok: false }],
+      [async () => Response.json({ code: "ACCESS_DENIED" }, { status: 403 }), { ok: false, reason: "unavailable" }],
+      [async () => new Response("private details", { status: 503 }), { ok: false, reason: "unavailable" }],
+      [async () => new Response("invalid JSON", { status: 200 }), { ok: false, reason: "unavailable" }],
+      [async () => Response.json(authSession({ refreshToken: "invalid" })), { ok: false, reason: "unavailable" }],
+      [async () => { throw new TypeError("private network details"); }, { ok: false, reason: "unavailable" }],
+      [async () => { throw new DOMException("private timeout details", "TimeoutError"); }, { ok: false, reason: "unavailable" }],
     ]) {
       const state = context();
       let calls = 0;
       globalThis.fetch = (...args) => { calls++; return request(...args); };
-      assert.deepEqual(await refreshAction(), { ok: false });
+      assert.deepEqual(await refreshAction(), expected);
       assert.equal(calls, 1);
       assert.deepEqual(state.writes, []);
       assert.equal(state.values.get("refreshToken"), "b".repeat(64));

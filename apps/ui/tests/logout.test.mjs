@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { register } from "node:module";
 
 register("./helpers/auth-environment-loader.mjs", import.meta.url);
-const { logoutAction, logoutAllAction } = await import("../src/app/(auth)/actions.ts");
+const { logoutAction, logoutAllAction, expireSessionAction } = await import("../src/app/(auth)/actions.ts");
 
 function context(tokens = { accessToken: "cookie-access", refreshToken: "a".repeat(64) }) {
   const values = new Map(Object.entries({ locale: "pl", preference: "keep", ...tokens }));
@@ -31,6 +31,17 @@ function assertCleared({ values, writes }) {
   assert.equal(values.get("preference"), "keep");
 }
 
+test("session expiry clears only auth cookies and redirects to login without calling the API", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = () => assert.fail("Expiry cleanup must not depend on API availability");
+    const state = context();
+    const untrusted = new FormData();
+    untrusted.set("returnTo", "https://example.com");
+    await assertRedirect(() => expireSessionAction(untrusted), "/login");
+    assertCleared(state);
+  } finally { globalThis.fetch = originalFetch; delete globalThis.__authTestContext; }
+});
 async function assertRedirect(action, path) {
   await assert.rejects(action(), (error) => error.message === "NEXT_REDIRECT" && error.path === path);
 }

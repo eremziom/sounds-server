@@ -24,7 +24,7 @@
       "hide": "Hide password",
       "requirements": "Use 8–50 characters, including a lowercase letter, an uppercase letter, a number and a special character."
     },
-    "session": { "expiresIn": "Session", "expired": "Your session has expired. Sign in again.", "resuming": "Resuming your session…", "resumeFailed": "Could not resume your session. Sign in again." },
+    "session": { "expiresIn": "Session", "expired": "Your session has expired. Sign in again.", "resuming": "Resuming your session…", "resumeFailed": "Could not resume your session. Sign in again.", "unavailable": "We could not confirm your session. Check your connection and try again." },
     "logout": { "success": "Successfully signed out", "ok": "OK", "action": "Sign out", "pending": "Signing out…", "localOnly": "You have been signed out on this browser. We could not confirm that the session was ended on the server." },
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },

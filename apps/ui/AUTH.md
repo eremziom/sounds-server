@@ -29,7 +29,7 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/app/(protected)/layout.tsx` | Podstawy etapu 7 | Wspólny layout sekcji app/admin, sesja z API przed utworzeniem runtime |
 | `src/components/application/application-runtime.tsx` | Podstawy etapu 7 | Kontekst sesji i składanie runtime aplikacji |
 | `src/components/application/media-runtime.tsx` | Podstawy etapu 7 | Trwały element audio/host animacji, kontekst mediów, zatrzymanie i sprzątanie |
-| `src/lib/application-session.ts` | Podstawy etapu 7 | Lokalny stan active/refreshing/ended i ochrona przed spóźnionym wynikiem; bez serwerowej rotacji |
+| `src/lib/application-session.ts` | Punkty 2–5 etapu 7 | Lokalny stan active/refreshing/unavailable/ended, wspólne oczekiwanie i ochrona przed spóźnionym wynikiem |
 | `src/lib/session-refresh.ts` | Punkt 2 etapu 7 | Timer według rzeczywistego expiry i wspólne ensureFresh dla powrotu do karty/chronionych żądań |
 | `src/lib/access-token-expiry.ts` | Punkt 2 etapu 7 | Serwerowy odczyt exp wyłącznie do planowania, bez autoryzacji na podstawie claims |
 | `src/lib/protected-request.ts`, `src/components/application/protected-link.tsx` | Punkt 3 etapu 7 | Oczekiwanie przed operacją, brak ponowień i link bez prefetch |
@@ -93,7 +93,8 @@ jawnie: cały Object.fromEntries(formData) może zawierać także techniczne `$A
 `refreshAction()` jest operacją POST Server Action: odczytuje wyłącznie serwerowe
 cookie refresh tokenu, wywołuje istniejące `refresh()` i po sukcesie zapisuje całą
 parę przez `setAuthCookies()`. Zwraca tylko `{ ok: true, accessTokenExpiresAt }`
-(liczbowy timestamp w milisekundach) lub `{ ok: false }`,
+(liczbowy timestamp w milisekundach) lub `{ ok: false }` dla brakującego cookie
+i HTTP 401/400. Pozostałe błędy zwracają `{ ok: false, reason: "unavailable" }`,
 bez tokenów, użytkownika i surowych błędów API. Nie wymaga ważnego access tokenu.
 Brak refresh cookie nie wywołuje API. Błąd API nie zmienia cookies ani nie ponawia
 rotacji; błąd zapisu cookies propaguje się. Locale pozostaje bez zmian.
@@ -126,8 +127,19 @@ i nowy refresh token w tym oknie zwracają te same tokeny, bez nowej rotacji ani
 przedłużania okna. API nadal sprawdza wylogowanie, wygaśnięcie i aktywność konta;
 profil i role odpowiedzi pochodzą z aktualnego użytkownika. Ponowne użycie zużytego
 tokenu poza oknem unieważnia sesję. Brak dodatkowego magazynu lub blokad w UI.
-Pełne usuwanie cookies/przejście do logowania po utracie sesji i powiadomienia
-o wylogowaniu pozostają punktami 5–6.
+Punkt 5 domyka zakończenie w zamontowanym runtime: odrzucony refresh kończy stan
+sesji, zatrzymuje media i uruchamia expireSessionAction (wyczyszczenie tylko
+cookies auth, zachowanie locale, redirect /login). Wylogowanie wysyła zdarzenie
+tylko w bieżącym dokumencie na onSubmitCapture i kończy runtime natychmiast.
+Nie uruchamia wówczas expireSessionAction, aby zachować istniejący ekran wyniku
+logout. Kolejka akcji Next.js zapewnia, że logout/cleanup nastąpi po trwającym
+refresh i odczyta aktualne cookies. Spóźniony sukces lub błąd nie zmienia ended.
+Niepewny wynik odnowienia przechodzi do unavailable zamiast usuwać cookies:
+chroniona zawartość/żądania są blokowane, media zatrzymane, instancje runtime
+zachowane. Jawne ponowienie z przetłumaczonego widoku może przywrócić active.
+Timer, focus i linki nie ponawiają automatycznie niepewnej rotacji. Odtwarzanie
+po awarii nie wznawia się automatycznie. Powiadomienia innych kart pozostają
+punktem 6; pełne wejścia bez ważnego access cookie nadal używają starego redirectu.
 
 Formularze będą używać `useActionState`. Zaimplementowany typ stanu i wyniku błędu:
 

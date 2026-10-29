@@ -54,10 +54,11 @@ It composes MediaRuntime, which owns the persistent audio element, animation hos
 useMediaRuntime and media cleanup outside the sections' loading boundaries.
 Navigation and cookie changes preserve the instances;
 switching accounts or leaving the protected area stops and releases them.
-The client session controller supports active/refreshing/ended. The POST Server
+The client session controller supports active/refreshing/unavailable/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
 both rotated cookies and returns only success and the new access expiry timestamp
-(or `{ ok: false }`). The runtime schedules renewal one minute before the actual
+(or `{ ok: false }` for a rejected session, with `reason: "unavailable"` for an
+uncertain API/transport failure). The runtime schedules renewal one minute before the actual
 expiry, checks on visibility/focus/pageshow and renews even while idle. Initial
 expiry comes from the server-decoded JWT `exp` after API session verification;
 only the timestamp reaches the client. Every renewal uses the API response's
@@ -94,12 +95,27 @@ lives in one nullable AuthSession field, shared across API instances; no fronten
 session store or cross-tab lock is added. Reuse of a consumed token after the
 overlap still revokes the session. Apply migrations and regenerate Prisma Client
 before starting the updated API.
-Cookie cleanup/redirect on session loss and cross-tab sign-out notifications
-remain pending. A cold load with an expired access cookie still
+Rejected renewal (401/400 or missing refresh cookie) ends the runtime, hides
+protected content, stops media and calls `expireSessionAction()` to clear only
+auth cookies and redirect to `/login`. Locale is preserved. API/transport errors,
+403 or malformed responses instead enter `unavailable`: protected UI/requests
+are blocked and media stopped, but cookies/runtime instances remain. An explicit
+localized retry can recover; focus, timers and links do not blindly retry an
+uncertain rotation.
+
+Logout's submit capture sends a same-document event and calls `session.end()`
+before waiting for the API. The existing logout actions retain their result
+screen and local-only notices. Next dispatches these actions after an in-flight
+refresh, so logout reads the latest cookies and clears them last. Late success
+or failure cannot reactivate an ended controller. Cross-tab sign-out
+notifications remain pending. A cold load with an expired access cookie still
 uses the existing login redirect.
 Build first, then run `pnpm --filter ui test:runtime` from the repository root
 for the audio/animation lifecycle regression in en/pl/es. This uses generated
 silent audio and Web Animations, not a finished music player or streaming service.
+`pnpm --filter ui test:session-ending` additionally covers rejected renewal,
+outage/recovery and current/all logout racing a held refresh in en/pl/es, with
+real audio/animation cleanup and cookie checks. It is included in `test:browser`.
 
 The header shows sign-out controls whenever either auth cookie exists, including
 when access has expired or the API is down. Current sign-out uses the server-side

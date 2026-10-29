@@ -85,3 +85,10 @@ test("an uncertain mutation failure propagates without repeating a possibly comp
   }), TypeError);
   assert.equal(writes, 1);
 });
+
+test("unavailable sessions block requests without automatically retrying an uncertain refresh", async () => {
+  const session = createApplicationSession();
+  await session.renew(async () => "unavailable");
+  const run = createProtectedRequest(session, () => assert.fail("Recovery requires an explicit retry"));
+  assert.deepEqual(await run(() => assert.fail("Request must not run")), { executed: false });
+});

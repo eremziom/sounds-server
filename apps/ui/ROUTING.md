@@ -34,7 +34,15 @@ receive the same tokens, backed by one encrypted result on AuthSession and the
 existing PostgreSQL user lock. The window is fixed, not extended by duplicates;
 revoked/expired sessions are checked before replaying the result. Reuse after
 the overlap still revokes the session. No UI session store is introduced.
-Full session termination and cross-tab sign-out notifications remain pending. A cold load
+Rejected renewal ends the runtime and calls expireSessionAction to clear auth
+cookies and redirect to login. Logout ends the local runtime on submit, while
+the existing logout actions clear cookies and retain the logout result screen.
+Within one tab, Next queues cleanup/logout after an in-flight refresh so a late
+response cannot leave replacement cookies behind or reactivate the controller.
+Uncertain refresh failures (network/timeout/API outage/403/invalid response)
+instead block protected UI and stop media in `unavailable`, preserving cookies
+and runtime instances for an explicit retry. No automatic retries run in that
+state. Cross-tab sign-out notifications remain pending. A cold load
 or unguarded navigation with an expired access cookie still redirects to login.
 The UI controller never authorizes API operations.
 

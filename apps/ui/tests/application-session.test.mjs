@@ -47,16 +47,17 @@ test("ending before dispatch prevents renewal from starting", async () => {
   assert.equal(await result, false);
 });
 
-test("rejection, a synchronous throw and an unconfirmed result end the runtime without retry", async () => {
-  for (const operation of [
-    () => Promise.resolve(false),
-    () => Promise.reject(new Error("private transport details")),
-    () => { throw new Error("private synchronous details"); },
+test("only a definitive rejection ends the runtime; uncertain failures block it without retry", async () => {
+  for (const [operation, status] of [
+    [() => Promise.resolve(false), "ended"],
+    [() => Promise.resolve("unavailable"), "unavailable"],
+    [() => Promise.reject(new Error("private transport details")), "unavailable"],
+    [() => { throw new Error("private synchronous details"); }, "unavailable"],
   ]) {
     const session = createApplicationSession();
     let calls = 0;
     assert.equal(await session.renew(() => { calls++; return operation(); }), false);
-    assert.equal(session.getSnapshot(), "ended");
+    assert.equal(session.getSnapshot(), status);
     assert.equal(calls, 1);
   }
 });
@@ -68,4 +69,28 @@ test("sessions in separate runtimes do not share state or renewal results", asyn
   assert.equal(await second.renew(async () => true), true);
   assert.equal(first.getSnapshot(), "ended");
   assert.equal(second.getSnapshot(), "active");
+});
+
+test("uncertain failure can recover, while a recovery attempt stays blocked until confirmed", async () => {
+  const session = createApplicationSession();
+  assert.equal(await session.renew(async () => "unavailable"), false);
+  const gate = deferred();
+  const recovery = session.renew(() => gate.promise);
+  assert.equal(session.getSnapshot(), "unavailable");
+  await Promise.resolve();
+  gate.resolve(true);
+  assert.equal(await recovery, true);
+  assert.equal(session.getSnapshot(), "active");
+});
+
+test("a late failed refresh cannot change ended to unavailable", async () => {
+  const session = createApplicationSession();
+  let reject;
+  const gate = new Promise((_, fail) => { reject = fail; });
+  const pending = session.renew(() => gate);
+  await Promise.resolve();
+  session.end();
+  reject(new TypeError("offline"));
+  assert.equal(await pending, false);
+  assert.equal(session.getSnapshot(), "ended");
 });

@@ -7,6 +7,8 @@ export type SessionFooterLabels = {
   expiresIn: string;
   refreshing: string;
   ended: string;
+  unavailable: string;
+  retry: string;
 };
 
 function formatRemainingTime(expiry: number | null, now: number | null) {

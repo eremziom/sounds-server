@@ -2,7 +2,7 @@ import type { ApplicationSession } from "./application-session.ts";
 
 export type RefreshResult =
   | { ok: true; accessTokenExpiresAt: number }
-  | { ok: false };
+  | { ok: false; reason?: "unavailable" };
 
 const REFRESH_AHEAD_MS = 60_000;
 const MAX_TIMER_MS = 2_147_483_647;
@@ -25,7 +25,7 @@ function scheduleTimer(
   onDue: () => Promise<boolean>,
 ) {
   clearTimer(state);
-  if (!state.running || state.dueAt === null || session.getSnapshot() === "ended") return;
+  if (!state.running || state.dueAt === null || session.getSnapshot() !== "active") return;
   const delay = Math.min(MAX_TIMER_MS, Math.max(0, state.dueAt - Date.now()));
   state.timer = setTimeout(() => { void onDue(); }, delay);
 }
@@ -38,11 +38,11 @@ function getNextRefreshTime(expiry: number, now: number): number {
   return expiry - headroom;
 }
 
-async function renewToken(state: RefreshState, refresh: () => Promise<RefreshResult>) {
+async function renewToken(state: RefreshState, refresh: () => Promise<RefreshResult>): Promise<boolean | "unavailable"> {
   const result = await refresh();
   const now = Date.now();
-  if (!result.ok || !Number.isFinite(result.accessTokenExpiresAt) ||
-      result.accessTokenExpiresAt <= now) return false;
+  if (!result.ok) return result.reason === "unavailable" ? "unavailable" : false;
+  if (!Number.isFinite(result.accessTokenExpiresAt) || result.accessTokenExpiresAt <= now) return "unavailable";
   state.expiry = result.accessTokenExpiresAt;
   state.dueAt = getNextRefreshTime(state.expiry, now);
   return true;
@@ -67,7 +67,7 @@ export function createSessionRefresh(
 
   async function ensureFresh(): Promise<boolean> {
     if (session.getSnapshot() === "ended") return false;
-    if (session.getSnapshot() !== "refreshing" && (state.dueAt === null || Date.now() < state.dueAt)) {
+    if (session.getSnapshot() === "active" && (state.dueAt === null || Date.now() < state.dueAt)) {
       schedule();
       return true;
     }
@@ -87,7 +87,7 @@ export function createSessionRefresh(
   function start() {
     state.running = true;
     const unsubscribe = session.subscribe(() => {
-      if (session.getSnapshot() === "ended") clearTimer(state);
+      if (session.getSnapshot() !== "active") clearTimer(state);
     });
     schedule();
     return () => {

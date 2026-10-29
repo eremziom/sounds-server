@@ -9,7 +9,9 @@ The protected runtime refreshes access tokens one minute before their actual
 expiry and checks again when the tab resumes. Protected operations and the
 admin-to-app link wait for renewal before dispatch. The API tolerates overlapping
 refreshes for five seconds, returning the same token pair to concurrent tabs.
-The full session termination flow and cross-tab sign-out remain in stage 7.
+Rejected renewal ends the runtime, stops media and clears cookies before login.
+Temporary API failures block the UI with an explicit retry. Cross-tab sign-out
+notifications remain in stage 7.
 
 ## Structure
 

@@ -106,15 +106,19 @@ test("new server expiry reschedules; cleanup and ended sessions prevent later re
   stopAgain();
 });
 
-test("failed renewal ends the local session and never schedules a retry", async (t) => {
+test("rejected renewal ends the session; uncertain failure blocks it without scheduling a retry", async (t) => {
   t.mock.timers.enable({ apis: ["Date", "setTimeout"], now: 1_000_000 });
-  for (const result of [{ ok: false }, { ok: true, accessTokenExpiresAt: Date.now() - 1 }]) {
+  for (const [result, status] of [
+    [{ ok: false }, "ended"],
+    [{ ok: false, reason: "unavailable" }, "unavailable"],
+    [{ ok: true, accessTokenExpiresAt: Date.now() - 1 }, "unavailable"],
+  ]) {
     const session = createApplicationSession();
     let calls = 0;
     const renewal = createSessionRefresh(session, Date.now(), async () => { calls++; return result; });
     const stop = renewal.start();
     assert.equal(await renewal.ensureFresh(), false);
-    assert.equal(session.getSnapshot(), "ended");
+    assert.equal(session.getSnapshot(), status);
     t.mock.timers.tick(600_000);
     await flush();
     assert.equal(calls, 1);

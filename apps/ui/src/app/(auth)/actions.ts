@@ -29,10 +29,18 @@ export async function refreshAction(): Promise<RefreshResult> {
   if (!refreshToken) return { ok: false };
 
   const result = await refresh(refreshToken);
-  if (!result.ok) return { ok: false };
+  if (!result.ok) {
+    if (result.status === 401 || result.status === 400) return { ok: false };
+    return { ok: false, reason: "unavailable" };
+  }
 
   await setAuthCookies(result.data);
   return { ok: true, accessTokenExpiresAt: Date.parse(result.data.accessTokenExpiresAt) };
+}
+
+export async function expireSessionAction(): Promise<never> {
+  await clearAuthCookies();
+  redirect("/login");
 }
 
 async function endSession(scope: "current" | "all"): Promise<never> {
