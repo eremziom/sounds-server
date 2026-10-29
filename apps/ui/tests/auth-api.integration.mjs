@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { setTimeout as delay } from "node:timers/promises";
 import { withAuthBrowser } from "./helpers/auth-browser.mjs";
 
 async function main() {
@@ -145,6 +146,84 @@ async function main() {
       loginAccounts.push({ ...account, target });
     }
     await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, origin }) => {
+      // Two real tabs share cookies, but have separate schedulers/pending work.
+      const combined = loginAccounts.find((account) => account.username === "login-combined");
+      const tabLogin = await auth.login({ login: combined.username, password: combined.password }, options);
+      assert.ok(tabLogin.ok);
+      await send("Network.setCookies", { cookies: [
+        { name: "accessToken", value: tabLogin.data.accessToken, url: origin, path: "/", httpOnly: true },
+        { name: "refreshToken", value: tabLogin.data.refreshToken, url: origin, path: "/", httpOnly: true },
+        { name: "locale", value: "en", url: origin, path: "/" },
+      ] });
+      await send("Page.navigate", { url: `${origin}/admin` });
+      await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+      const { targetId } = await send("Target.createTarget", { url: `${origin}/admin` });
+      const { sessionId: secondTab } = await send("Target.attachToTarget", { targetId, flatten: true });
+      await send("Runtime.enable", {}, secondTab);
+      const evaluateSecond = async (expression) => {
+        const response = await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true }, secondTab);
+        assert.equal(response.exceptionDetails, undefined);
+        return response.result.value;
+      };
+      for (let attempt = 0; ; attempt++) {
+        if (await evaluateSecond("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'")) break;
+        assert.ok(attempt < 100, "Second tab must mount the protected runtime");
+        await delay(100);
+      }
+      const { SessionsService } = requireApi(path.join(apiDirectory, "dist/src/auth/sessions.service.js"));
+      const sessions = app.get(SessionsService);
+      const originalRefresh = sessions.refresh.bind(sessions);
+      const submittedTokens = [];
+      const rotationResults = [];
+      let releaseRefresh;
+      const refreshGate = new Promise((resolve) => { releaseRefresh = resolve; });
+      sessions.refresh = async (token) => {
+        submittedTokens.push(token);
+        await refreshGate;
+        const result = await originalRefresh(token);
+        rotationResults.push(result);
+        return result;
+      };
+      try {
+        const expiry = Date.parse(tabLogin.data.accessTokenExpiresAt);
+        // Accelerate the browser clocks into the renewal window while the API
+        // keeps its real clock. Hold responses so both requests use old cookies.
+        const trigger = `Object.defineProperty(document,'visibilityState',{configurable:true,get:()=> 'visible'}); window.realNow=Date.now; Date.now=()=>${expiry - 30_000}; window.dispatchEvent(new Event('focus'))`;
+        await evaluate(trigger);
+        await evaluateSecond(trigger);
+        for (let attempt = 0; submittedTokens.length < 2; attempt++) {
+          assert.ok(attempt < 100, "Both tabs must start renewal before either response returns");
+          await delay(100);
+        }
+        assert.deepEqual(submittedTokens, [tabLogin.data.refreshToken, tabLogin.data.refreshToken]);
+        await evaluate("Date.now=realNow");
+        await evaluateSecond("Date.now=realNow");
+        releaseRefresh();
+        for (let attempt = 0; ; attempt++) {
+          const firstActive = await evaluate("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+          const secondActive = await evaluateSecond("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+          if (rotationResults.length === 2 && firstActive && secondActive) break;
+          assert.ok(attempt < 100, "Both tabs must resume after rotation");
+          await delay(100);
+        }
+        assert.deepEqual(rotationResults[0], rotationResults[1]);
+        const cookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
+        const access = cookies.find((cookie) => cookie.name === "accessToken");
+        const refresh = cookies.find((cookie) => cookie.name === "refreshToken");
+        assert.equal(access.value, rotationResults[0].accessToken);
+        assert.equal(refresh.value, rotationResults[0].refreshToken);
+        assert.ok(access.httpOnly && refresh.httpOnly);
+        assert.ok((await auth.getSessionUser(access.value, options)).ok);
+        const next = await auth.refresh(refresh.value, options);
+        assert.ok(next.ok, "The cookie left by two tabs must remain usable");
+        assert.equal(next.data.refreshToken, refresh.value);
+        await auth.logout(next.data.refreshToken, options);
+        console.log("Two real tabs: concurrent Next actions return the same pair, preserve valid HttpOnly cookies and keep both runtimes active OK");
+      } finally {
+        releaseRefresh();
+        sessions.refresh = originalRefresh;
+        await send("Target.closeTarget", { targetId });
+      }
       for (const locale of ["en", "pl", "es"]) {
         await open(locale);
         const email = `ui-browser-${locale}@example.com`;

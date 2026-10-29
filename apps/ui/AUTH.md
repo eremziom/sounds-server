@@ -119,8 +119,15 @@ a programowe żądania/nawigacja runProtected. Historia przeglądarki, nowe kart
 pełne wejścia oraz niezależne akcje języka/wylogowania zachowują dotychczasową
 obsługę. Obecnie brak klientowych zapytań o chronione dane; kontrole serwerowe
 sesji/ról nadal obowiązują. Renderowanie Server Components nie zapisuje cookies.
-Koordynacja między kartami, pełne usuwanie cookies/przejście do logowania po utracie
-sesji i powiadomienia o wylogowaniu pozostają punktami 4–6.
+Punkt 4 jest wdrożony po stronie API: istniejąca blokada użytkownika w PostgreSQL
+serializuje rotację, a jedno opcjonalne pole AuthSession.rotationResult przechowuje
+zaszyfrowaną parę i stały, pięciosekundowy termin jej ponownego zwrócenia. Poprzedni
+i nowy refresh token w tym oknie zwracają te same tokeny, bez nowej rotacji ani
+przedłużania okna. API nadal sprawdza wylogowanie, wygaśnięcie i aktywność konta;
+profil i role odpowiedzi pochodzą z aktualnego użytkownika. Ponowne użycie zużytego
+tokenu poza oknem unieważnia sesję. Brak dodatkowego magazynu lub blokad w UI.
+Pełne usuwanie cookies/przejście do logowania po utracie sesji i powiadomienia
+o wylogowaniu pozostają punktami 5–6.
 
 Formularze będą używać `useActionState`. Zaimplementowany typ stanu i wyniku błędu:
 

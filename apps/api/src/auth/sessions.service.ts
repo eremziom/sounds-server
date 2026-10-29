@@ -7,10 +7,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import type { AuthResponse, JwtPayload } from './auth.interfaces';
 import type { User } from '../users/users.interfaces';
 import { API_ERROR_CODES, codedError } from '../common/api-errors';
+import {
+  readRotationResult,
+  sealRotationResult,
+  ROTATION_GRACE_MS,
+} from './rotation-result';
 
 @Injectable()
 export class SessionsService {
   private readonly sessionLifetimeMs: number;
+  private readonly jwtSecret: string;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -24,6 +30,7 @@ export class SessionsService {
       );
     }
     this.sessionLifetimeMs = days * 86_400_000;
+    this.jwtSecret = config.getOrThrow<string>('JWT_SECRET');
   }
 
   private hash(token: string): string {
@@ -32,6 +39,55 @@ export class SessionsService {
 
   private async lockUser(tx: Prisma.TransactionClient, userId: number) {
     await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
+  }
+
+  private userResponse(user: User) {
+    const { password, roles, ...profile } = user;
+    void password;
+    return {
+      ...profile,
+      roles: roles?.map((assignment) => assignment.role) ?? [],
+    };
+  }
+
+  private reuseRotation(
+    session: { id: string; rotationResult: string | null },
+    tokenHash: string,
+    now: Date,
+  ) {
+    const previous = session.rotationResult
+      ? readRotationResult(session.rotationResult, this.jwtSecret, session.id)
+      : null;
+    if (!previous || previous.validUntil <= now.getTime()) return null;
+    if (previous.tokens.accessTokenExpiresAt <= now) return null;
+    const replacementHash = this.hash(previous.tokens.refreshToken);
+    return previous.previousTokenHash === tokenHash ||
+      replacementHash === tokenHash
+      ? previous.tokens
+      : null;
+  }
+
+  private async rememberRotation(
+    tx: Prisma.TransactionClient,
+    sessionId: string,
+    tokenHash: string,
+    result: AuthResponse,
+  ) {
+    const { user, ...tokens } = result;
+    void user;
+    const rotationResult = sealRotationResult(
+      {
+        previousTokenHash: tokenHash,
+        validUntil: Date.now() + ROTATION_GRACE_MS,
+        tokens,
+      },
+      this.jwtSecret,
+      sessionId,
+    );
+    await tx.authSession.update({
+      where: { id: sessionId },
+      data: { rotationResult },
+    });
   }
 
   private async createTokenPair(
@@ -47,12 +103,7 @@ export class SessionsService {
         expiresAt: session.expiresAt,
       },
     });
-    const { password, roles, ...profile } = user;
-    void password;
-    const userResponse = {
-      ...profile,
-      roles: roles?.map((assignment) => assignment.role) ?? [],
-    };
+    const userResponse = this.userResponse(user);
     const payload: JwtPayload = {
       sub: user.id,
       sid: session.id,
@@ -124,7 +175,7 @@ export class SessionsService {
       const now = new Date();
       if (!current || current.session.revokedAt) return null;
       const session = current.session;
-      if (current.usedAt || !session.user.isActive) {
+      if (!session.user.isActive) {
         await tx.authSession.update({
           where: { id: session.id },
           data: { revokedAt: now },
@@ -133,12 +184,29 @@ export class SessionsService {
       }
       if (current.expiresAt <= now || session.expiresAt <= now) return null;
 
+      // During the overlap return one stable pair for either the previous or
+      // replacement token. This prevents response ordering from rolling cookies
+      // back to an already consumed token when two tabs renew together.
+      const previous = this.reuseRotation(session, tokenHash, now);
+      if (previous) {
+        return { ...previous, user: this.userResponse(session.user) };
+      }
+      if (current.usedAt) {
+        await tx.authSession.update({
+          where: { id: session.id },
+          data: { revokedAt: now },
+        });
+        return null;
+      }
+
       const consumed = await tx.refreshToken.updateMany({
         where: { tokenHash, usedAt: null, expiresAt: { gt: now } },
         data: { usedAt: now },
       });
       if (consumed.count !== 1) return null;
-      return this.createTokenPair(tx, session, session.user);
+      const result = await this.createTokenPair(tx, session, session.user);
+      await this.rememberRotation(tx, session.id, tokenHash, result);
+      return result;
     });
     if (!response)
       throw new UnauthorizedException(

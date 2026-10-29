@@ -98,6 +98,17 @@ async function main() {
     const users = app.get(UsersService);
     const baseUrl = await app.getUrl();
     const jwt = new JwtService({ secret: process.env.JWT_SECRET });
+    const { readRotationResult, sealRotationResult } = require('../dist/src/auth/rotation-result.js');
+    async function expireRotation(sessionId) {
+      const session = await prisma.authSession.findUniqueOrThrow({ where: { id: sessionId } });
+      const result = readRotationResult(session.rotationResult, process.env.JWT_SECRET, sessionId);
+      assert.ok(result);
+      result.validUntil = Date.now() - 1;
+      await prisma.authSession.update({
+        where: { id: sessionId },
+        data: { rotationResult: sealRotationResult(result, process.env.JWT_SECRET, sessionId) },
+      });
+    }
 
     async function call(method, route, body, token, expected) {
       const response = await fetch(`${baseUrl}${route}`, {
@@ -266,6 +277,9 @@ async function main() {
       registered.refreshTokenExpiresAt,
     );
     await me(rotated.accessToken);
+    assert.deepEqual(await refresh(registered.refreshToken), rotated, 'A duplicate within grace returns the original pair');
+    assert.deepEqual(await refresh(rotated.refreshToken), rotated, 'The replacement cannot rotate again during grace');
+    await expireRotation(initialPayload.sid);
     await refresh(registered.refreshToken, 401);
     await me(rotated.accessToken, 401);
     await me(registered.accessToken, 401);
@@ -297,20 +311,54 @@ async function main() {
       call('POST', '/auth/refresh', { refreshToken: concurrent.refreshToken }),
       call('POST', '/auth/refresh', { refreshToken: concurrent.refreshToken }),
     ]);
-    assert.deepEqual(attempts.map((entry) => entry.status).sort(), [200, 401]);
+    assert.deepEqual(attempts.map((entry) => entry.status), [200, 200]);
+    assert.deepEqual(attempts[0].data, attempts[1].data);
     const concurrencySession = await prisma.authSession.findUnique({
       where: { id: jwt.verify(concurrent.accessToken).sid },
     });
-    assert.ok(concurrencySession.revokedAt);
+    assert.equal(concurrencySession.revokedAt, null);
+    assert.ok(concurrencySession.rotationResult);
+    assert.ok(!concurrencySession.rotationResult.includes(attempts[0].data.refreshToken));
     const issued = await prisma.refreshToken.findMany({
       where: { sessionId: concurrencySession.id },
     });
     assert.equal(issued.length, 2);
     assert.equal(issued.filter((entry) => entry.usedAt).length, 1);
-    const winner = attempts.find((entry) => entry.status === 200).data;
-    await me(winner.accessToken, 401);
-    await refresh(winner.refreshToken, 401);
-    await me(concurrent.accessToken, 401);
+    const winner = attempts[0].data;
+    await me(winner.accessToken);
+    await me(concurrent.accessToken);
+    assert.deepEqual(await refresh(winner.refreshToken), winner);
+    // A separate service instance reads the same result from PostgreSQL.
+    const { SessionsService } = require('../dist/src/auth/sessions.service.js');
+    const { ConfigService } = require('@nestjs/config');
+    const otherInstance = new SessionsService(prisma, app.get(JwtService), app.get(ConfigService));
+    const duplicateRotation = await otherInstance.refresh(concurrent.refreshToken);
+    assert.deepEqual(JSON.parse(JSON.stringify(duplicateRotation)), winner);
+    await expireRotation(concurrencySession.id);
+    const following = await refresh(winner.refreshToken);
+    assert.notEqual(following.refreshToken, winner.refreshToken);
+    await me(following.accessToken);
+    await refresh(concurrent.refreshToken, 401);
+    await me(following.accessToken, 401);
+
+    // Cached success must not bypass logout, expiry or deactivation.
+    const cachedLogout = await login();
+    const cachedPair = await refresh(cachedLogout.refreshToken);
+    await logout(cachedLogout.refreshToken);
+    await refresh(cachedLogout.refreshToken, 401);
+    await refresh(cachedPair.refreshToken, 401);
+    const cachedLogoutAll = await login();
+    const allPair = await refresh(cachedLogoutAll.refreshToken);
+    await call('POST', '/auth/logout-all', null, allPair.accessToken, 204);
+    await refresh(cachedLogoutAll.refreshToken, 401);
+    await refresh(allPair.refreshToken, 401);
+    const cachedExpiry = await login();
+    await refresh(cachedExpiry.refreshToken);
+    await prisma.authSession.update({
+      where: { id: jwt.verify(cachedExpiry.accessToken).sid },
+      data: { expiresAt: new Date(0) },
+    });
+    await refresh(cachedExpiry.refreshToken, 401);
 
     const expired = await login();
     await prisma.authSession.update({
@@ -347,6 +395,7 @@ async function main() {
 
     // Logout and refresh use the same lock; logout must leave no live session.
     const logoutRace = await login();
+    await refresh(logoutRace.refreshToken);
     const [raceRefresh] = await Promise.all([
       call('POST', '/auth/refresh', { refreshToken: logoutRace.refreshToken }),
       logout(logoutRace.refreshToken),
@@ -359,6 +408,7 @@ async function main() {
     }
 
     const beforeDeactivation = await login();
+    await refresh(beforeDeactivation.refreshToken);
     await users.updateActive(registered.user.id, false);
     await me(beforeDeactivation.accessToken, 401);
     await refresh(beforeDeactivation.refreshToken, 401);

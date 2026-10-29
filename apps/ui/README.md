@@ -87,8 +87,15 @@ links should use this component; programmatic navigation/requests must go throug
 retain normal Next/server guard behavior. Language preference and sign-out actions
 retain their existing independent flows. The current product has no protected
 client data requests; server-side data/role checks remain unchanged.
-Cross-tab concurrency, cookie cleanup/redirect on session loss and sign-out
-notifications remain pending. A cold load with an expired access cookie still
+The API serializes rotation in PostgreSQL and returns the same pair for the
+previous/replacement refresh token within a fixed five-second overlap. Requests
+inside that overlap do not extend it or create another token. The encrypted result
+lives in one nullable AuthSession field, shared across API instances; no frontend
+session store or cross-tab lock is added. Reuse of a consumed token after the
+overlap still revokes the session. Apply migrations and regenerate Prisma Client
+before starting the updated API.
+Cookie cleanup/redirect on session loss and cross-tab sign-out notifications
+remain pending. A cold load with an expired access cookie still
 uses the existing login redirect.
 Build first, then run `pnpm --filter ui test:runtime` from the repository root
 for the audio/animation lifecycle regression in en/pl/es. This uses generated

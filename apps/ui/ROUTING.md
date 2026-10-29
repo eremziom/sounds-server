@@ -29,7 +29,12 @@ The admin-to-app `ProtectedLink` disables prefetch and waits before client
 navigation. Use `ProtectedLink` for new protected links and `runProtected` for
 programmatic protected navigation/data requests. Browser history, modified clicks,
 locale/sign-out actions and document loads retain their existing behavior.
-Cross-tab concurrency and full session termination remain pending. A cold load
+Concurrent tabs are handled by the API's five-second rotation overlap: both
+receive the same tokens, backed by one encrypted result on AuthSession and the
+existing PostgreSQL user lock. The window is fixed, not extended by duplicates;
+revoked/expired sessions are checked before replaying the result. Reuse after
+the overlap still revokes the session. No UI session store is introduced.
+Full session termination and cross-tab sign-out notifications remain pending. A cold load
 or unguarded navigation with an expired access cookie still redirects to login.
 The UI controller never authorizes API operations.
 

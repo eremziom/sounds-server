@@ -38,13 +38,14 @@ model User {
 }
 
 model AuthSession {
-  id            String         @id @default(uuid())
-  userId        Int
-  createdAt     DateTime       @default(now())
-  expiresAt     DateTime
-  revokedAt     DateTime?
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refreshTokens RefreshToken[]
+  id             String         @id @default(uuid())
+  userId         Int
+  createdAt      DateTime       @default(now())
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  rotationResult String?
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens  RefreshToken[]
 
   @@index([userId, revokedAt])
 }
