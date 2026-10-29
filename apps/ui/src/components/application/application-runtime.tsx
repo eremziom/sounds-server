@@ -11,7 +11,7 @@ import { createSessionRefresh, type RefreshResult } from "../../lib/session-refr
 import { SessionFooter, type SessionFooterLabels } from "./session-footer";
 import { createProtectedRequest } from "../../lib/protected-request";
 import { ApplicationNavigation } from "./application-navigation";
-import { LOGOUT_EVENT } from "../../lib/logout-event";
+import { LOGOUT_EVENT, broadcastLogout, subscribeToLogout } from "../../lib/logout-event";
 import { SessionRecovery } from "./session-recovery";
 
 const SessionContext = createContext<{
@@ -57,6 +57,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
   useEffect(() => {
     let loggingOut = false;
     let expiring = false;
+    let remoteLogout = false;
     const onLogout = () => {
       loggingOut = true;
       session.end();
@@ -64,13 +65,19 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
     const unsubscribe = session.subscribe(() => {
       if (session.getSnapshot() !== "ended" || loggingOut || expiring) return;
       expiring = true;
+      if (!remoteLogout) broadcastLogout();
       // Next queues this after any in-flight refresh action. Cookie cleanup is
       // therefore last, even if that refresh has just written a replacement pair.
       startTransition(async () => { await expireSessionAction(); });
     });
+    const stopListening = subscribeToLogout(() => {
+      remoteLogout = true;
+      session.end();
+    });
     window.addEventListener(LOGOUT_EVENT, onLogout);
     return () => {
       unsubscribe();
+      stopListening();
       window.removeEventListener(LOGOUT_EVENT, onLogout);
     };
   }, [session]);

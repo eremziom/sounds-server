@@ -12,6 +12,7 @@ let mode = "active";
 let refreshCalls = 0;
 let logoutCalls = 0;
 let sequence = 0;
+let allowPreviousLogout = false;
 let refreshGate, releaseRefresh, logoutGate, releaseLogout;
 function newSession(lifetime = 900_000) {
   const expiry = Math.floor((Date.now() + lifetime) / 1000) * 1000;
@@ -29,18 +30,21 @@ const api = createServer(async (req, res) => {
   if (req.url === "/auth/refresh") {
     refreshCalls++;
     assert.equal(JSON.parse(body).refreshToken, session.refreshToken);
-    if (refreshGate) await refreshGate;
     if (mode === "unavailable") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR" }));
     if (mode === "invalid" || !active) return res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
     session = newSession();
-    return res.end(JSON.stringify(session));
+    const result = session;
+    if (refreshGate) await refreshGate;
+    return res.end(JSON.stringify(result));
   }
   if (req.url === "/auth/logout" || req.url === "/auth/logout-all") {
     logoutCalls++;
-    if (req.url === "/auth/logout") assert.equal(JSON.parse(body).refreshToken, session.refreshToken);
-    else assert.equal(req.headers.authorization, `Bearer ${session.accessToken}`);
-    active = false;
+    if (req.url === "/auth/logout") {
+      if (!allowPreviousLogout) assert.equal(JSON.parse(body).refreshToken, session.refreshToken);
+    } else assert.equal(req.headers.authorization, `Bearer ${session.accessToken}`);
     if (logoutGate) await logoutGate;
+    if (mode === "logout-error") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR" }));
+    active = false;
     return res.writeHead(204).end();
   }
   if (req.url === "/auth/me" && active) {
@@ -62,6 +66,7 @@ try {
   await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, origin }) => {
     async function enter(locale) {
       mode = "active";
+      allowPreviousLogout = false;
       active = true;
       refreshGate = logoutGate = undefined;
       session = newSession(180_000);
@@ -72,6 +77,9 @@ try {
       ] });
       await send("Page.navigate", { url: `${origin}/admin` });
       await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+      await startMedia();
+    }
+    async function startMedia(targetSession) {
       const played = await send("Runtime.evaluate", {
         userGesture: true, awaitPromise: true, returnByValue: true,
         expression: `(async()=>{
@@ -81,7 +89,7 @@ try {
           endingAudio.src=${JSON.stringify(`data:audio/wav;base64,${wav.toString("base64")}`)};
           endingAudio.loop=true; await endingAudio.play(); return true;
         })()`,
-      });
+      }, targetSession);
       assert.equal(played.exceptionDetails, undefined);
       assert.equal(played.result.value, true);
     }
@@ -152,7 +160,82 @@ try {
         await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
         await assertCookiesCleared(locale);
       }
+      for (const scope of locale === "en" ? ["current", "all", "local", "race"] : ["current", "all", "local"]) {
+        await enter(locale);
+        const { targetId } = await send("Target.createTarget", { url: `${origin}/admin` });
+        const { sessionId: peer } = await send("Target.attachToTarget", { targetId, flatten: true });
+        await send("Runtime.enable", {}, peer);
+        const peerEvaluate = async (expression) => {
+          const response = await send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true }, peer);
+          assert.equal(response.exceptionDetails, undefined);
+          return response.result.value;
+        };
+        const peerWait = async (expression) => {
+          for (let attempt = 0; ; attempt++) {
+            if (await peerEvaluate(expression)) return;
+            assert.ok(attempt < 100, `Peer timeout: ${expression}`);
+            await delay(100);
+          }
+        };
+        try {
+          await peerWait("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+          await startMedia(peer);
+          await peerEvaluate("window.logoutMessages=[]; window.observer=new BroadcastChannel('sounds:auth'); observer.onmessage=e=>logoutMessages.push(e.data)");
+          if (scope === "race") {
+            allowPreviousLogout = true;
+            refreshGate = new Promise((resolve) => { releaseRefresh = resolve; });
+            await peerEvaluate(`Object.defineProperty(document,'visibilityState',{configurable:true,get:()=> 'visible'}); window.realNow=Date.now; Date.now=()=>${Date.parse(session.accessTokenExpiresAt) + 1000}; window.dispatchEvent(new Event('focus'))`);
+            await peerWait("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='refreshing'");
+            await delay(100);
+          }
+          logoutGate = new Promise((resolve) => { releaseLogout = resolve; });
+          const beforeLogout = logoutCalls;
+          await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope === "all" ? "all" : "current"}]').click()`);
+          for (let attempt = 0; logoutCalls === beforeLogout; attempt++) {
+            assert.ok(attempt < 100);
+            await delay(100);
+          }
+          assert.equal(await peerEvaluate("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus"), scope === "race" ? "refreshing" : "active", "Do not broadcast before the source action reads cookies");
+          if (scope === "local") mode = "logout-error";
+          releaseLogout();
+          if (scope === "race") {
+            await peerWait("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='ended'");
+            assert.equal(await peerEvaluate("endingAudio.paused && endingAnimation.playState==='idle'"), true);
+            await peerEvaluate("Date.now=realNow");
+            releaseRefresh();
+          }
+          await peerWait("location.pathname==='/login' && !!document.querySelector('input[name=login]')");
+          assert.equal(await peerEvaluate("endingAudio.paused && !endingAudio.hasAttribute('src') && endingAnimation.playState==='idle'"), true);
+          await assertCookiesCleared(locale);
+          await delay(150);
+          assert.deepEqual(await peerEvaluate("logoutMessages"), ["logout"], "No tokens or echo messages");
+          if (scope === "local") {
+            await waitFor("document.querySelector('[data-logout-result] button')");
+            await evaluate("document.querySelector('[data-logout-result] button').click()");
+          }
+          await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
+          await assertCookiesCleared(locale);
+          if (locale === "en" && scope === "current") {
+            await enter(locale);
+            await send("Page.navigate", { url: `${origin}/admin` }, peer);
+            await peerWait("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+            await peerEvaluate("window.logoutMessages=[]; window.observer=new BroadcastChannel('sounds:auth'); observer.onmessage=e=>logoutMessages.push(e.data)");
+            await waitFor("window.next?.router");
+            await evaluate("window.next.router.push('/logout?status=success')");
+            await waitFor("!!document.querySelector('[data-logout-result]')");
+            await delay(200);
+            assert.equal(await peerEvaluate("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus"), "active", "Revisiting a result page must not end a newer session");
+            assert.deepEqual(await peerEvaluate("logoutMessages"), []);
+          }
+          await peerEvaluate("observer.close()");
+        } finally {
+          releaseRefresh?.();
+          releaseLogout?.();
+          await send("Target.closeTarget", { targetId });
+        }
+      }
       console.log(`Session end ${locale}: rejected refresh cleans cookies; outage blocks/retries without sign-out; current/all logout wins over late refresh OK`);
+      console.log(`Cross-tab logout ${locale}: current/all/local sign-out stops peer media, clears cookies and redirects without tokens or echoes OK`);
     }
   });
 } finally {

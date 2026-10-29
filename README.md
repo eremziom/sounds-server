@@ -10,8 +10,8 @@ expiry and checks again when the tab resumes. Protected operations and the
 admin-to-app link wait for renewal before dispatch. The API tolerates overlapping
 refreshes for five seconds, returning the same token pair to concurrent tabs.
 Rejected renewal ends the runtime, stops media and clears cookies before login.
-Temporary API failures block the UI with an explicit retry. Cross-tab sign-out
-notifications remain in stage 7.
+Temporary API failures block the UI with an explicit retry. Sign-out notifies
+other tabs through BroadcastChannel so they stop media and return to login.
 
 ## Structure
 

@@ -107,8 +107,16 @@ Logout's submit capture sends a same-document event and calls `session.end()`
 before waiting for the API. The existing logout actions retain their result
 screen and local-only notices. Next dispatches these actions after an in-flight
 refresh, so logout reads the latest cookies and clears them last. Late success
-or failure cannot reactivate an ended controller. Cross-tab sign-out
-notifications remain pending. A cold load with an expired access cookie still
+or failure cannot reactivate an ended controller. After the logout action clears
+cookies, LogoutResult sends the string `"logout"` over BroadcastChannel
+`sounds:auth`. Other mounted runtimes end locally, stop media and clear cookies
+through their own queued expireSessionAction before login. They do not rebroadcast.
+Automatic session loss also notifies peers; API outages do not. A same-document
+intent flag prevents plain visits/reloads of an old result page from broadcasting
+again. No tokens, identity data or persistent session store are involved. This
+works between tabs/windows of the same origin/profile, not across devices.
+If BroadcastChannel is unavailable, local logout still works.
+A cold load with an expired access cookie still
 uses the existing login redirect.
 Build first, then run `pnpm --filter ui test:runtime` from the repository root
 for the audio/animation lifecycle regression in en/pl/es. This uses generated

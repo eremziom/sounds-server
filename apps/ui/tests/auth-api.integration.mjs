@@ -217,7 +217,18 @@ async function main() {
         const next = await auth.refresh(refresh.value, options);
         assert.ok(next.ok, "The cookie left by two tabs must remain usable");
         assert.equal(next.data.refreshToken, refresh.value);
-        await auth.logout(next.data.refreshToken, options);
+        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        for (let attempt = 0; ; attempt++) {
+          if (await evaluateSecond("location.pathname==='/login' && !!document.querySelector('input[name=login]')")) break;
+          assert.ok(attempt < 100, "The other tab must receive logout and leave the protected runtime");
+          await delay(100);
+        }
+        await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
+        const afterLogout = (await send("Network.getCookies", { urls: [origin] })).cookies;
+        assert.ok(!afterLogout.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
+        assert.equal((await auth.getSessionUser(access.value, options)).status, 401);
+        assert.equal((await auth.refresh(refresh.value, options)).status, 401);
+        console.log("Two real tabs: UI logout revokes the API session, clears cookies and redirects the peer tab OK");
         console.log("Two real tabs: concurrent Next actions return the same pair, preserve valid HttpOnly cookies and keep both runtimes active OK");
       } finally {
         releaseRefresh();

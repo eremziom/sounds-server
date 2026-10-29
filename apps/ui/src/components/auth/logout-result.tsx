@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { Button } from "../ui/button";
+import { completeLogout } from "../../lib/logout-event";
 
 export function LogoutResult({ success, message, okLabel }: {
   success: boolean;
@@ -11,6 +12,8 @@ export function LogoutResult({ success, message, okLabel }: {
   okLabel: string;
 }) {
   const router = useRouter();
+
+  useEffect(() => { completeLogout(); }, []);
 
   useEffect(() => {
     if (!success) return;

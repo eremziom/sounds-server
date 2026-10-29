@@ -138,8 +138,16 @@ Niepewny wynik odnowienia przechodzi do unavailable zamiast usuwać cookies:
 chroniona zawartość/żądania są blokowane, media zatrzymane, instancje runtime
 zachowane. Jawne ponowienie z przetłumaczonego widoku może przywrócić active.
 Timer, focus i linki nie ponawiają automatycznie niepewnej rotacji. Odtwarzanie
-po awarii nie wznawia się automatycznie. Powiadomienia innych kart pozostają
-punktem 6; pełne wejścia bez ważnego access cookie nadal używają starego redirectu.
+po awarii nie wznawia się automatycznie. Punkt 6 dodaje BroadcastChannel sounds:auth
+z komunikatem "logout" bez tokenów/danych użytkownika. LogoutResult wysyła go po
+zakończeniu akcji i usunięciu cookies; źródłowa akcja zdąży więc odczytać poświadczenia.
+Lokalna flaga intencji w logout-event.ts blokuje ponowne wysyłanie po zwykłym wejściu
+lub powrocie do starego wyniku. Odbiorca kończy sesję i kolejkuje istniejący cleanup
+po swoim trwającym refresh, bez rozsyłania wiadomości dalej. Definitywna utrata sesji
+również informuje inne karty; unavailable nie. Subskrypcja kanału jest zamykana przy
+usunięciu runtime. To komunikacja kart/okien tego samego origin/profilu, bez trwałego
+magazynu i bez synchronizacji urządzeń. Brak BroadcastChannel nie blokuje lokalnego
+logout. Pełne wejścia bez ważnego access cookie nadal używają starego redirectu.
 
 Formularze będą używać `useActionState`. Zaimplementowany typ stanu i wyniku błędu:
 

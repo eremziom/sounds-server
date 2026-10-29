@@ -42,7 +42,14 @@ response cannot leave replacement cookies behind or reactivate the controller.
 Uncertain refresh failures (network/timeout/API outage/403/invalid response)
 instead block protected UI and stop media in `unavailable`, preserving cookies
 and runtime instances for an explicit retry. No automatic retries run in that
-state. Cross-tab sign-out notifications remain pending. A cold load
+state. Completed logout publishes a token-free `"logout"` message through
+BroadcastChannel; other runtimes end and queue their existing cookie cleanup/login
+flow without rebroadcasting. The source sends after cookie cleanup, so peer cleanup
+cannot erase credentials before the source's revocation request. A pending refresh
+in a receiver finishes before its final cookie cleanup. Automatic session loss
+also notifies peers; an unavailable API does not. Old result-page visits do not
+broadcast without a local logout intent. Communication is limited to the same
+origin/browser profile and adds no persistent session store. A cold load
 or unguarded navigation with an expired access cookie still redirects to login.
 The UI controller never authorizes API operations.
 
