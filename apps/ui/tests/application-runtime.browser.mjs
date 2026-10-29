@@ -4,14 +4,32 @@ import { once } from "node:events";
 import { readFile } from "node:fs/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import { withAuthBrowser } from "./helpers/auth-browser.mjs";
+import { authSession } from "./helpers/auth-fixtures.mjs";
+
+const token = (expiresAt) => `header.${Buffer.from(JSON.stringify({ exp: Math.floor(expiresAt / 1000) })).toString("base64url")}.signature`;
 
 let userId = 1;
 let mode = "active";
 let gate;
 let release;
 let refreshCalls = 0;
+let rotated;
 const api = createServer(async (req, res) => {
-  if (req.url === "/auth/refresh") refreshCalls++;
+  if (req.url === "/auth/refresh") {
+    refreshCalls++;
+    let body = "";
+    for await (const chunk of req) body += chunk;
+    assert.match(JSON.parse(body).refreshToken, /^[a-f0-9]{64}$/);
+    const expiresAt = Math.floor((Date.now() + (refreshCalls % 2 === 1 ? 120_000 : 600_000)) / 1000) * 1000;
+    rotated = authSession({
+      accessToken: token(expiresAt),
+      accessTokenExpiresAt: new Date(expiresAt).toISOString(),
+      refreshToken: refreshCalls.toString(16).padStart(64, "0"),
+      user: { id: userId, username: "User", email: "user@example.com", isActive: true, roles: [{ key: "USER" }, { key: "ADMIN" }] },
+    });
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify(rotated));
+  }
   if (req.url !== "/auth/me") return res.writeHead(404).end();
   if (mode === "held") await gate;
   if (mode === "ended" || !req.headers.authorization) {
@@ -33,10 +51,11 @@ try {
     assert.equal(await evaluate("!!document.querySelector('[data-application-runtime]')"), false);
 
     for (const locale of ["en", "pl", "es"]) {
+      const callsBefore = refreshCalls;
       mode = "active";
       userId = 1;
       await send("Network.setCookies", { cookies: [
-        { name: "accessToken", value: "server-cookie-only", url: origin, path: "/", httpOnly: true },
+        { name: "accessToken", value: token(Date.now() + 65_000), url: origin, path: "/", httpOnly: true },
         { name: "refreshToken", value: "a".repeat(64), url: origin, path: "/", httpOnly: true },
         { name: "locale", value: locale, url: origin, path: "/" },
       ] });
@@ -66,6 +85,11 @@ try {
       ` });
       assert.equal(started.result.value, true, JSON.stringify(started.exceptionDetails));
       await waitFor("runtimeAudio.currentTime>0");
+      await waitFor("/^\\d{2}:\\d{2}$/.test(document.querySelector('[data-session-countdown]')?.textContent)");
+      assert.ok((await evaluate("document.querySelector('[data-session-footer]').textContent")).includes(catalogs[locale].auth.session.expiresIn));
+      await evaluate("window.initialCountdown=document.querySelector('[data-session-countdown]').textContent");
+      await waitFor("document.querySelector('[data-session-countdown]').textContent!==initialCountdown");
+      assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-session-footer]')).fontSize"), "12px");
 
       async function assertContinuous(before) {
         assert.equal(await evaluate("runtimeRoot===document.querySelector('[data-application-runtime]')"), true);
@@ -76,6 +100,36 @@ try {
         assert.ok(await evaluate(`runtimeAudio.currentTime>=${before}`));
         assert.equal(await evaluate("document.querySelector('[data-application-runtime]').dataset.sessionStatus"), "active");
       }
+
+      async function waitForRotation(expectedCalls) {
+        for (let attempt = 0; attempt < 120; attempt++) {
+          const { cookies } = await send("Network.getCookies", { urls: [origin] });
+          if (refreshCalls === expectedCalls && cookies.find((cookie) => cookie.name === "refreshToken")?.value === rotated.refreshToken) {
+            assert.equal(cookies.find((cookie) => cookie.name === "accessToken")?.value, rotated.accessToken);
+            assert.ok(cookies.filter((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)).every((cookie) => cookie.httpOnly));
+            assert.equal(cookies.find((cookie) => cookie.name === "locale")?.value, locale);
+            await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active'");
+            return;
+          }
+          await delay(100);
+        }
+        assert.fail(`Expected refresh ${expectedCalls}, got ${refreshCalls}`);
+      }
+
+      // Actual background POST, cookie rotation and RSC re-render preserve media.
+      const beforeRenewal = await evaluate("runtimeAudio.currentTime");
+      await waitForRotation(callsBefore + 1);
+      await waitFor("document.querySelector('[data-session-countdown]')?.textContent.startsWith('01:')");
+      await assertContinuous(beforeRenewal);
+      // Model a suspended tab: advance only its wall clock, then send the real
+      // visibility event. The server and cookie expiration keep their real clock.
+      await evaluate("window.runtimeRealNow=Date.now; Date.now=()=>runtimeRealNow()+61000; document.dispatchEvent(new Event('visibilitychange'))");
+      await waitForRotation(callsBefore + 2);
+      await evaluate("Date.now=runtimeRealNow; window.dispatchEvent(new Event('focus'))");
+      await waitFor("/^0[89]:/.test(document.querySelector('[data-session-countdown]')?.textContent)");
+      await assertContinuous(beforeRenewal);
+      await delay(150);
+      assert.equal(refreshCalls, callsBefore + 2, "Fresh tokens need no extra rotation on focus");
 
       // Test-only Next router access drives real client transitions without
       // introducing navigation controls or test routes into the product.
@@ -101,6 +155,7 @@ try {
       release();
       await change;
       await assertContinuous(beforeNavigation);
+      assert.ok((await evaluate("document.querySelector('[data-session-footer]').textContent")).includes(catalogs[nextLocale].auth.session.expiresIn));
 
       // Switching accounts must intentionally discard the previous account's
       // runtime even if the route and document remain unchanged.
@@ -117,8 +172,8 @@ try {
       assert.equal(await evaluate("!!document.querySelector('[data-application-runtime]')"), false);
       assert.equal(await evaluate("!!window.runtimeDocument"), true);
       await evaluate("URL.revokeObjectURL(runtimeAudioUrl)");
-      assert.equal(refreshCalls, 0, "This foundation must not rotate tokens without the shared coordinator");
-      console.log(`Application runtime ${locale}: persistent audio/animation across section navigation, cookie writes and slow guards; account reset and session end OK`);
+      assert.equal(refreshCalls, callsBefore + 2, "Only the scheduled and resume renewals should run");
+      console.log(`Application runtime ${locale}: timer/resume rotate cookies without resetting audio/animation; navigation, account reset and session end OK`);
     }
   });
 } finally {

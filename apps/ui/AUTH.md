@@ -4,7 +4,7 @@ Ustalenia etapu 1 planu `docs/ui-auth-plan.md`, 26.10.2026. To kontrakt dla
 kolejnych etapów. W etapie 2 dodano wywołania endpointów auth, walidację sesji,
 helpery cookies i bezpiecznego stanu akcji. Etapy 3–4 dodają formularze
 RegisterForm/LoginForm i registerAction/loginAction. Etap 6 dodaje wylogowanie
-bieżącej i wszystkich sesji. Automatyczny refresh pozostaje w etapie 7.
+bieżącej i wszystkich sesji. Punkty 1–2 etapu 7 dodają POST i wyzwalanie refresh.
 
 ## Przepływ i moduły
 
@@ -20,7 +20,7 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/api/auth.ts` | Etap 2 wdrożony | server-only: login/register/refresh/logout/logoutAll/getSessionUser, walidacja tokenów, dat i bezpiecznego DTO użytkownika |
 | `src/api/client.ts` | Etap 2 wdrożony | server-only: wspólny transport, no-store, timeout, odrzucanie redirectów i oczyszczone błędy |
 | `src/lib/auth-cookies.ts` | Etap 2 wdrożony | server-only: setAuthCookies/getAuthCookies/clearAuthCookies, wyłącznie para tokenów |
-| `src/app/(auth)/actions.ts` | Etapy 3–6 i punkt 1 etapu 7 wdrożone | use server: registerAction/loginAction/logoutAction/logoutAllAction/refreshAction |
+| `src/app/(auth)/actions.ts` | Etapy 3–6 i punkty 1–2 etapu 7 wdrożone | use server: registerAction/loginAction/logoutAction/logoutAllAction/refreshAction |
 | `src/components/auth/` | Etapy 3–5 wdrożone | RegisterForm/LoginForm: pola, walidacja, fokus, pending, dostępność, wyniki akcji i zmiana języka |
 | `src/components/auth/form-state.ts` | Etap 2 wdrożony | AuthActionState i initialAuthState(locale), bez importów serwerowych |
 | `src/lib/auth-action-state.ts` | Etap 2 wdrożony | getAuthActionError: tłumaczone komunikaty i locale, bez wyniku API/tokenów |
@@ -30,6 +30,8 @@ osobnych Route Handlers ani zmian CORS wyłącznie dla tych formularzy.
 | `src/components/application/application-runtime.tsx` | Podstawy etapu 7 | Kontekst sesji i składanie runtime aplikacji |
 | `src/components/application/media-runtime.tsx` | Podstawy etapu 7 | Trwały element audio/host animacji, kontekst mediów, zatrzymanie i sprzątanie |
 | `src/lib/application-session.ts` | Podstawy etapu 7 | Lokalny stan active/refreshing/ended i ochrona przed spóźnionym wynikiem; bez serwerowej rotacji |
+| `src/lib/session-refresh.ts` | Punkt 2 etapu 7 | Timer według rzeczywistego expiry i wspólne ensureFresh dla powrotu do karty/chronionych żądań |
+| `src/lib/access-token-expiry.ts` | Punkt 2 etapu 7 | Serwerowy odczyt exp wyłącznie do planowania, bez autoryzacji na podstawie claims |
 
 Wywołania NestJS organizujemy domenowo w `src/api/`: obecnie `auth.ts`,
 w przyszłości np. `users.ts`. Wspólny `client.ts` obsługuje HTTP dla endpointów
@@ -89,12 +91,25 @@ jawnie: cały Object.fromEntries(formData) może zawierać także techniczne `$A
 
 `refreshAction()` jest operacją POST Server Action: odczytuje wyłącznie serwerowe
 cookie refresh tokenu, wywołuje istniejące `refresh()` i po sukcesie zapisuje całą
-parę przez `setAuthCookies()`. Zwraca tylko `{ ok: true }` lub `{ ok: false }`,
+parę przez `setAuthCookies()`. Zwraca tylko `{ ok: true, accessTokenExpiresAt }`
+(liczbowy timestamp w milisekundach) lub `{ ok: false }`,
 bez tokenów, użytkownika i surowych błędów API. Nie wymaga ważnego access tokenu.
 Brak refresh cookie nie wywołuje API. Błąd API nie zmienia cookies ani nie ponawia
 rotacji; błąd zapisu cookies propaguje się. Locale pozostaje bez zmian.
-Automatyczne wyzwalanie, koordynacja równoległości i obsługa utraty sesji pozostają
-kolejnymi punktami etapu 7; sam eksport akcji nie uruchamia odświeżania w tle.
+Runtime uruchamia akcję minutę przed rzeczywistym terminem oraz sprawdza termin
+po visibilitychange/focus/pageshow. Odświeża także podczas bezczynności. Początkowy
+termin pochodzi z exp cookie JWT odczytanego tylko na serwerze po potwierdzeniu
+sesji przez API. Następne terminy pochodzą z odpowiedzi refresh, więc zmiana czasu
+życia access tokenu w backendzie nie wymaga zmiany UI. Gdy nowy token ma najwyżej
+minutę ważności, następna rotacja następuje w połowie pozostałego czasu, aby nie
+tworzyć pętli natychmiastowych odnowień. Brak poprawnego exp nie planuje timera;
+API nadal sprawdza każde chronione żądanie.
+Hook `useApplicationSession()` udostępnia `ensureFresh(): Promise<boolean>`:
+sprawdzenie przed żądaniem i oczekiwanie na ewentualne odnowienie. Obecnie brak
+chronionych klientowych zapytań o dane; podłączenie żądań/nawigacji do sprawdzenia
+pozostaje punktem 3. Timer i zdarzenia korzystają ze wspólnego pending w renew().
+Koordynacja między kartami, pełne usuwanie cookies/przejście do logowania po utracie
+sesji i powiadomienia o wylogowaniu pozostają punktami 4–6.
 
 Formularze będą używać `useActionState`. Zaimplementowany typ stanu i wyniku błędu:
 
@@ -139,8 +154,9 @@ Domyślna ochrona Origin/Host dla Server Actions pozostaje włączona.
   użytkownika celowo resetuje go po zmianie konta. Wyjście na publiczny widok
   usuwa runtime i zatrzymuje jego aktywności. Hooki useMediaRuntime oraz
   useApplicationSession są dostępne tylko wewnątrz chronionej części.
-  Kontroler klienta nie autoryzuje danych, nie rotuje tokenów i nie zastępuje
-  koordynatora refresh. POST, timery i synchronizacja kart pozostają do wdrożenia.
+  Kontroler klienta nie autoryzuje danych. Scheduler wywołuje POST Server Action
+  zapisującą cookies bez wymiany instancji runtime. Synchronizacja kart pozostaje
+  do wdrożenia.
 - Login/register pozostają publiczne również dla zalogowanych użytkowników.
 - `(app)` ma RouteGuard(APP_ROLES), a każda chroniona strona dodatkowo wywołuje
   requireRoles(APP_ROLES). `(admin)/admin` analogicznie używa ADMIN_ROLES.

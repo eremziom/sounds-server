@@ -24,7 +24,7 @@
       "hide": "Ukryj hasło",
       "requirements": "Użyj od 8 do 50 znaków, w tym małej i wielkiej litery, cyfry oraz znaku specjalnego."
     },
-    "session": { "expired": "Sesja wygasła. Zaloguj się ponownie.", "resuming": "Wznawianie sesji…", "resumeFailed": "Nie udało się wznowić sesji. Zaloguj się ponownie." },
+    "session": { "expiresIn": "Sesja", "expired": "Sesja wygasła. Zaloguj się ponownie.", "resuming": "Wznawianie sesji…", "resumeFailed": "Nie udało się wznowić sesji. Zaloguj się ponownie." },
     "logout": { "success": "Udane wylogowanie", "ok": "OK", "action": "Wyloguj", "pending": "Wylogowywanie…", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić zakończenia sesji na serwerze." },
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },

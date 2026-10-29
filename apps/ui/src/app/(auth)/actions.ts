@@ -17,13 +17,14 @@ import {
   validateLogin,
 } from "../../components/auth/login-validation.ts";
 import { APP_ROLES, ADMIN_ROLES, hasRequiredRole } from "../../lib/route-access.ts";
+import type { RefreshResult } from "../../lib/session-refresh.ts";
 
 // Temporary switch for previewing the unconfirmed logout notices locally.
 const SIMULATE_LOGOUT_FAILURE = false;
 
 // Invoked as a Next.js POST Server Action. Credentials come only from HttpOnly
 // cookies; the serialized result never includes tokens or the API response.
-export async function refreshAction(): Promise<{ ok: boolean }> {
+export async function refreshAction(): Promise<RefreshResult> {
   const { refreshToken } = await getAuthCookies();
   if (!refreshToken) return { ok: false };
 
@@ -31,7 +32,7 @@ export async function refreshAction(): Promise<{ ok: boolean }> {
   if (!result.ok) return { ok: false };
 
   await setAuthCookies(result.data);
-  return { ok: true };
+  return { ok: true, accessTokenExpiresAt: Date.parse(result.data.accessTokenExpiresAt) };
 }
 
 async function endSession(scope: "current" | "all"): Promise<never> {

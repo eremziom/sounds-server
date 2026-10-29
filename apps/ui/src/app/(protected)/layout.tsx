@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { ApplicationRuntime } from "@/components/application/application-runtime";
 import Loading from "@/app/loading";
+import { getAuthCookies } from "@/lib/auth-cookies";
+import { readAccessTokenExpiry } from "@/lib/access-token-expiry";
+import { getTranslations } from "next-intl/server";
 
 async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
   const user = await getCurrentUser();
@@ -11,7 +14,17 @@ async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
   // Changing accounts intentionally resets media. Navigation, locale changes and
   // replacement of token cookies for the same account must preserve the runtime.
   // Section/page guards still perform their own current role checks.
-  return <ApplicationRuntime key={user.id}>{children}</ApplicationRuntime>;
+  const { accessToken } = await getAuthCookies();
+  const t = await getTranslations("auth.session");
+  return (
+    <ApplicationRuntime
+      key={user.id}
+      accessTokenExpiresAt={readAccessTokenExpiry(accessToken)}
+      footerLabels={{ expiresIn: t("expiresIn"), refreshing: t("resuming"), ended: t("expired") }}
+    >
+      {children}
+    </ApplicationRuntime>
+  );
 }
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {

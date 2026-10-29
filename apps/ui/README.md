@@ -41,7 +41,7 @@ validates login length 3–100 and password requirements on client/server, and s
 the same session cookies. USER/ARTIST → `/`, ADMIN alone → `/admin`, other roles
 → `/access-denied`; API roles decide, with app priority for combined roles.
 No returnTo parameter is implemented. Wrong passwords, missing and inactive
-accounts share one safe localized message. Automatic refresh remains for stage 7.
+accounts share one safe localized message. Background renewal is described below.
 Validation uses the same validator version and password regex
 as CreateUserDto, including Unicode length rules, without trimming credentials.
 The form receives auth/validation/errors through ClientMessages, preserves input
@@ -56,8 +56,29 @@ Navigation and cookie changes preserve the instances;
 switching accounts or leaving the protected area stops and releases them.
 The client session controller supports active/refreshing/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
-both rotated cookies and returns only `{ ok: boolean }`. Automatic triggers,
-timers and concurrency handling remain pending.
+both rotated cookies and returns only success and the new access expiry timestamp
+(or `{ ok: false }`). The runtime schedules renewal one minute before the actual
+expiry, checks on visibility/focus/pageshow and renews even while idle. Initial
+expiry comes from the server-decoded JWT `exp` after API session verification;
+only the timestamp reaches the client. Every renewal uses the API response's
+expiry; there is no hardcoded token lifetime. For renewed tokens lasting one
+minute or less, renewal is scheduled halfway through the remaining lifetime to
+avoid an immediate rotation loop.
+
+The protected layout includes a small session footer showing the access token's
+remaining lifetime, updated every second. It resets to the new expiry after a
+successful refresh and displays renewal/session-end status in en/pl/es. This is
+the access token countdown; the refresh session's absolute lifetime is separate.
+
+`useApplicationSession().ensureFresh()` checks the same deadline before a
+protected client request and resolves after cookie rotation. It shares in-flight
+work through the existing session controller and returns false after session end.
+Callers must check that result before sending the request. Wiring protected
+requests/navigation to that check belongs to stage 7 point 3; the current product
+has no protected client data requests. Server-side role checks remain unchanged.
+Cross-tab concurrency, cookie cleanup/redirect on session loss and sign-out
+notifications remain pending. A cold load with an expired access cookie still
+uses the existing login redirect.
 Build first, then run `pnpm --filter ui test:runtime` from the repository root
 for the audio/animation lifecycle regression in en/pl/es. This uses generated
 silent audio and Web Animations, not a finished music player or streaming service.
@@ -229,7 +250,9 @@ and the API Jest suite (including the error contract). It stops at the first
 failure and requires no running API/database. The test suites use isolated mock
 APIs, Next servers on temporary ports, and an isolated browser profile. After the
 UI build, pnpm test:auth-api separately verifies registration/login with real
-NestJS/PostgreSQL in an isolated disposable database. Automatic refresh remains pending.
+NestJS/PostgreSQL in an isolated disposable database. The runtime browser suite
+separately checks timed and resume renewal against a mock API in en/pl/es,
+including cookie replacement and uninterrupted audio/animation.
 
 Requirements: Node.js 22.6+, the workspace dependencies/Prisma Client from the
 root setup, and Chrome, Edge or Chromium. The browser test uses Node's built-in

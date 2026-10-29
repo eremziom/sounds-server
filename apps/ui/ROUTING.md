@@ -15,12 +15,17 @@ verified account ID, never pathname, token or locale. Changing accounts or leavi
 the protected area tears down media; ordinary section navigation/cookie writes
 preserve the instances. Animation engines using requestAnimationFrame/WebGL must
 register their stop callback through useMediaRuntime and unregister on teardown.
-The local active/refreshing/ended controller is groundwork only. A POST Server
-Action `refreshAction()` can rotate the HttpOnly cookies through the API, but
-automatic triggers, timers and cross-tab/server coordination remain pending. Access expiry
-still redirects to login. The future renewal adapter must use a shared server
-coordinator, write cookies and handle session termination; the UI controller
-alone never authorizes requests or changes cookies.
+The runtime calls POST Server Action `refreshAction()` one minute before the
+actual access expiry and rechecks on visibility/focus/pageshow. It keeps renewing
+while idle. The server supplies only the JWT expiry timestamp after API session
+verification; renewal returns the next expiry from the API. Token lifetime is
+not hardcoded. Renewed tokens valid for at most a minute are scheduled halfway
+through their remaining lifetime to avoid a rotation loop.
+`useApplicationSession().ensureFresh()` exposes the deadline check for protected
+client requests and shares pending renewal. Integrating those callers/navigation,
+cross-tab concurrency and full session termination remains pending. A cold load
+or unguarded navigation with an expired access cookie still redirects to login.
+The UI controller never authorizes API operations.
 
 All languages use these same URLs and redirects. Request language is selected
 from a valid `locale` cookie, then weighted `Accept-Language` (including regional
@@ -61,7 +66,7 @@ session; clearing affects only the two tokens and preserves locale. Cookie write
 are allowed only in Server Actions/Route Handlers. The helpers and API functions
 are implemented. Registration and login use these helpers in registerAction and
 loginAction. logoutAction/logoutAllAction clear them after revocation attempts;
-automatic refresh remains pending.
+refreshAction rotates both cookies after a successful background renewal.
 
 `src/lib/route-access.ts` contains shared role types, constants and role checks
 that can be imported by client components. `src/api/auth.ts` contains
@@ -77,8 +82,8 @@ sets the same cookies, then routes USER/ARTIST to `/`, ADMIN-only to `/admin`,
 and other roles to `/access-denied`. App roles take priority for combined roles.
 These decisions use the API response, not decoded JWT claims or submitted roles.
 No returnTo destination is used. Both forms stay public for signed-in users.
-Automatic refresh remains pending; without a valid access cookie protected pages
-redirect to login.
+Background renewal runs in the mounted protected runtime; without a valid access
+cookie on initial page load, protected pages still redirect to login.
 
 Layouts guard the section UI. Each protected page must also call
 `requireRoles(APP_ROLES)` or `requireRoles(ADMIN_ROLES)` before fetching protected
@@ -107,7 +112,8 @@ New text must be added to all catalogs; adding a locale must update the explicit
 catalog loader, selector and test matrices. Locale selection never replaces API
 guards. Browser tests cover registration/login in en/pl/es, validation, API errors,
 language changes, cookies, role redirects, logout and protected navigation.
-Automatic refresh remains pending. Real API/browser tests use an isolated disposable PostgreSQL database.
+The runtime browser suite tests background timer/resume renewal against a mock API.
+Real API/browser tests use an isolated disposable PostgreSQL database.
 
 The shared header offers logout even with expired credentials or an API outage.
 POST logoutAction uses the refresh cookie, so it needs no valid access token or
