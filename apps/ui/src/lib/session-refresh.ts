@@ -2,7 +2,7 @@ import type { ApplicationSession } from "./application-session.ts";
 
 export type RefreshResult =
   | { ok: true; accessTokenExpiresAt: number }
-  | { ok: false; reason?: "unavailable" };
+  | { ok: false; reason?: "unavailable"; rateLimited?: boolean };
 
 const REFRESH_AHEAD_MS = 60_000;
 const MAX_TIMER_MS = 2_147_483_647;

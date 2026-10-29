@@ -11,5 +11,10 @@ export async function getAuthActionError(
 ): Promise<AuthActionState> {
   const locale = await getLocale();
   const messages = await getApiErrorMessages(failure, operation);
+  if (operation === "login" && failure.kind === "http" && failure.status === 401 &&
+      failure.body && typeof failure.body === "object" && "code" in failure.body &&
+      failure.body.code === "AUTH_LAST_LOGIN_ATTEMPT") {
+    return { status: "error", locale, ...messages, lastLoginAttempt: true };
+  }
   return { status: "error", locale, ...messages };
 }

@@ -9,6 +9,7 @@ export type ApiOptions = {
   apiUrl?: string;
   request?: typeof fetch;
   timeoutMs?: number;
+  authSource?: string;
 };
 
 export class ApiRequestError extends Error {
@@ -89,6 +90,7 @@ type ApiRequestConfig<T> = {
   body?: object;
   accessToken?: string;
   parse: (value: unknown) => T | undefined;
+  authSource?: string;
 };
 
 function resolveRequestOptions(options: ApiOptions) {
@@ -121,6 +123,7 @@ function createRequestInit<T>(
   return {
     method: config.method,
     headers: {
+      ...(config.authSource ? { "X-Sounds-Client-Source": config.authSource } : {}),
       ...(config.body ? { "Content-Type": "application/json" } : {}),
       ...(config.accessToken
         ? { Authorization: `Bearer ${config.accessToken}` }
@@ -197,7 +200,7 @@ export async function apiRequest<T>(
   try {
     const response = await (options.request ?? fetch)(
       `${resolved.url.href.replace(/\/+$/, "")}${route}`,
-      createRequestInit(config, signal),
+      createRequestInit({ ...config, authSource: options.authSource }, signal),
     );
     return await parseApiResponse(response, config, signal);
   } catch (error) {

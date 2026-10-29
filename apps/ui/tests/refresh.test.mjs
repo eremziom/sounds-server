@@ -82,6 +82,7 @@ test("rejected or uncertain refresh returns only failure, without retry or cooki
       [async () => Response.json({ code: "AUTH_SESSION_INVALID", message: "private details" }, { status: 401 }), { ok: false }],
       [async () => Response.json({ code: "VALIDATION_FAILED" }, { status: 400 }), { ok: false }],
       [async () => Response.json({ code: "ACCESS_DENIED" }, { status: 403 }), { ok: false, reason: "unavailable" }],
+      [async () => Response.json({ code: "AUTH_RATE_LIMITED" }, { status: 429 }), { ok: false, reason: "unavailable", rateLimited: true }],
       [async () => new Response("private details", { status: 503 }), { ok: false, reason: "unavailable" }],
       [async () => new Response("invalid JSON", { status: 200 }), { ok: false, reason: "unavailable" }],
       [async () => Response.json(authSession({ refreshToken: "invalid" })), { ok: false, reason: "unavailable" }],

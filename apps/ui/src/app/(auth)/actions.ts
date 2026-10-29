@@ -18,6 +18,8 @@ import {
 } from "../../components/auth/login-validation.ts";
 import { APP_ROLES, ADMIN_ROLES, hasRequiredRole } from "../../lib/route-access.ts";
 import type { RefreshResult } from "../../lib/session-refresh.ts";
+import { authSource } from "../../lib/auth-source.ts";
+import { isRecord } from "../../api/client.ts";
 
 // Temporary switch for previewing the unconfirmed logout notices locally.
 const SIMULATE_LOGOUT_FAILURE = false;
@@ -28,9 +30,12 @@ export async function refreshAction(): Promise<RefreshResult> {
   const { refreshToken } = await getAuthCookies();
   if (!refreshToken) return { ok: false };
 
-  const result = await refresh(refreshToken);
+  const result = await refresh(refreshToken, { authSource: await authSource() });
   if (!result.ok) {
     if (result.status === 401 || result.status === 400) return { ok: false };
+    if (result.status === 429 && result.error.kind === "http" && isRecord(result.error.body) && result.error.body.code === "AUTH_RATE_LIMITED") {
+      return { ok: false, reason: "unavailable", rateLimited: true };
+    }
     return { ok: false, reason: "unavailable" };
   }
 
@@ -94,7 +99,7 @@ export async function loginAction(formData: FormData): Promise<AuthActionState> 
     };
   }
 
-  const result = await login({ login: input.login, password: input.password });
+  const result = await login({ login: input.login, password: input.password }, { authSource: await authSource() });
   if (!result.ok)
     return { ...(await getAuthActionError(result.error, "login")), values };
 
@@ -130,7 +135,7 @@ export async function registerAction(
     username: input.username,
     email: input.email,
     password: input.password,
-  });
+  }, { authSource: await authSource() });
   if (!result.ok)
     return { ...(await getAuthActionError(result.error, "register")), values };
 

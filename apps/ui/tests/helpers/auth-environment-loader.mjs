@@ -5,7 +5,7 @@ export function resolve(specifier, context, nextResolve) {
     return { url: "data:text/javascript,export {};", shortCircuit: true };
   if (specifier === "next/headers") {
     return {
-      url: "data:text/javascript,export async function cookies(){return globalThis.__authTestContext.cookies();}",
+      url: "data:text/javascript,export async function cookies(){return globalThis.__authTestContext.cookies();} export async function headers(){return new Headers(globalThis.__authTestContext.headers);}",
       shortCircuit: true,
     };
   }

@@ -30,7 +30,7 @@ const reservation = createServer();
 const port = await listen(reservation);
 await new Promise(r => reservation.close(r));
 const origin = `http://127.0.0.1:${port}`;
-const next = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
+const next = spawn(process.execPath, ['server.mjs', '--hostname', '127.0.0.1', '--port', String(port)], {
   cwd: uiDirectory, env: { ...process.env, API_URL: `http://127.0.0.1:${apiPort}` }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
 });
 let output = '';

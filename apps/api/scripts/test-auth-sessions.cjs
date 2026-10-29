@@ -1,6 +1,6 @@
 /* Runs against a freshly created temporary database, never against app data. */
 const assert = require('node:assert/strict');
-const { randomUUID, createHash } = require('node:crypto');
+const { randomUUID, createHash, createHmac } = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { readFileSync } = require('node:fs');
 const path = require('node:path');
@@ -26,6 +26,7 @@ async function main() {
     created = true;
     process.env.DATABASE_URL = testUrl.toString();
     process.env.JWT_SECRET = randomUUID();
+    process.env.AUTH_PROXY_SECRET = randomUUID();
     process.env.JWT_EXPIRES_IN = '15m';
     process.env.REFRESH_SESSION_DAYS = '30';
     execFileSync(
@@ -110,10 +111,11 @@ async function main() {
       });
     }
 
-    async function call(method, route, body, token, expected) {
+    async function call(method, route, body, token, expected, extraHeaders = {}) {
       const response = await fetch(`${baseUrl}${route}`, {
         method,
         headers: {
+          ...extraHeaders,
           ...(body ? { 'Content-Type': 'application/json' } : {}),
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -144,6 +146,10 @@ async function main() {
         201,
       );
 
+    const sourceHeaders = (ip) => {
+      const payload = `${Date.now()}.${Buffer.from(ip).toString('base64url')}`;
+      return { 'X-Sounds-Client-Source': `${payload}.${createHmac('sha256', process.env.AUTH_PROXY_SECRET).update(payload).digest('hex')}` };
+    };
     const registered = await call(
       'POST',
       '/auth/register',
@@ -471,6 +477,48 @@ async function main() {
     await refresh(deleted.refreshToken, 401);
     assert.equal(await prisma.authSession.count(), 0);
     assert.equal(await prisma.refreshToken.count(), 0);
+
+    const limitAccount = await call('POST', '/auth/register', {
+      username: 'limit-account', email: 'limits@example.com', password: 'Secret123!',
+    }, null, 201);
+    const limitedLogin = (login, password, status) => call('POST', '/auth/login', { login, password }, null, status);
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      const failure = await limitedLogin(attempt % 2 ? 'limit-account' : 'limits@example.com', 'Wrong123!', 401);
+      assert.equal(failure.code, attempt === 4 ? 'AUTH_LAST_LOGIN_ATTEMPT' : 'AUTH_INVALID_CREDENTIALS');
+    }
+    await limitedLogin('limits@example.com', 'Secret123!', 201); // Fifth may succeed, resets failures.
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      const failure = await limitedLogin('limit-account', 'Wrong123!', attempt === 5 ? 429 : 401);
+      assert.equal(failure.code, attempt === 5 ? 'AUTH_LOGIN_LOCKED' : attempt === 4 ? 'AUTH_LAST_LOGIN_ATTEMPT' : 'AUTH_INVALID_CREDENTIALS');
+    }
+    const loginKey = createHash('sha256').update(`login-account\0user:${limitAccount.user.id}`).digest('hex');
+    const blocked = await prisma.authRateLimit.findUniqueOrThrow({ where: { key: loginKey } });
+    const locked = await limitedLogin('limits@example.com', 'Secret123!', 429);
+    assert.equal(locked.code, 'AUTH_LOGIN_LOCKED');
+    assert.ok(locked.retryAfterSeconds > 0 && locked.retryAfterSeconds <= 900);
+    assert.equal((await prisma.authRateLimit.findUniqueOrThrow({ where: { key: loginKey } })).resetAt.getTime(), blocked.resetAt.getTime(), 'Retries must not extend the lock');
+    await prisma.authRateLimit.update({ where: { key: loginKey }, data: { resetAt: new Date(0) } });
+    await limitedLogin('limit-account', 'Secret123!', 201);
+    const parallel = await Promise.all(Array.from({ length: 10 }, () => call('POST', '/auth/login', { login: 'limit-account', password: 'Wrong123!' })));
+    assert.equal(parallel.filter((response) => response.status === 401).length, 4);
+    assert.equal(parallel.filter((response) => response.status === 429).length, 6);
+    assert.equal((await prisma.authRateLimit.findUniqueOrThrow({ where: { key: loginKey } })).count, 5);
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      const failure = await limitedLogin('missing-limit-account', 'Wrong123!', attempt === 5 ? 429 : 401);
+      assert.equal(failure.code, attempt === 5 ? 'AUTH_LOGIN_LOCKED' : attempt === 4 ? 'AUTH_LAST_LOGIN_ATTEMPT' : 'AUTH_INVALID_CREDENTIALS');
+    }
+    // Limits are independent of frontend state/cookies and shared by API instances.
+    const { AuthLimitsService } = require('../dist/src/auth/auth-limits.service.js');
+    const anotherLimits = new AuthLimitsService(prisma);
+    await assert.rejects(anotherLimits.login(`user:${limitAccount.user.id}`, () => assert.fail('Locked credentials must not be checked')),
+      (error) => error.getStatus() === 429);
+    for (const [operation, limit] of [['login', 100], ['register', 20], ['refresh', 120]]) {
+      const headers = sourceHeaders('192.0.2.101');
+      for (let attempt = 0; attempt < limit; attempt++) await call('POST', `/auth/${operation}`, {}, null, 400, headers);
+      const limited = await call('POST', `/auth/${operation}`, {}, null, 429, headers);
+      assert.equal(limited.code, 'AUTH_RATE_LIMITED');
+      await call('POST', `/auth/${operation}`, {}, null, 400, sourceHeaders('192.0.2.102'));
+    }
     console.log(
       `Auth sessions: ${checks} HTTP checks passed, including PostgreSQL rotation concurrency and RBAC. Seed repair/idempotence verified (3 roles, 19 permissions, 28 grants). USER/ARTIST denied cross-profile access; ADMIN allowed.`,
     );

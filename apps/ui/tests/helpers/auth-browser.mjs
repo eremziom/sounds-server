@@ -12,7 +12,7 @@ export async function withAuthBrowser(apiUrl, run) {
   const port = reservation.address().port;
   await new Promise((resolve) => reservation.close(resolve));
   const origin = `http://127.0.0.1:${port}`;
-  const next = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
+  const next = spawn(process.execPath, ["server.mjs", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: new URL("../..", import.meta.url), windowsHide: true,
     env: { ...process.env, API_URL: apiUrl }, stdio: ["ignore", "pipe", "pipe"],
   });

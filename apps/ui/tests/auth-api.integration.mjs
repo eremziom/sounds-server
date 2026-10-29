@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { createRequire, register } from "node:module";
 import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -145,7 +146,7 @@ async function main() {
       if (name === "inactive") await prisma.user.update({ where: { id: userId }, data: { isActive: false } });
       loginAccounts.push({ ...account, target });
     }
-    await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, origin }) => {
+    await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, choose, origin }) => {
       // Two real tabs share cookies, but have separate schedulers/pending work.
       const combined = loginAccounts.find((account) => account.username === "login-combined");
       const tabLogin = await auth.login({ login: combined.username, password: combined.password }, options);
@@ -236,6 +237,43 @@ async function main() {
         await send("Target.closeTarget", { targetId });
       }
       for (const locale of ["en", "pl", "es"]) {
+        const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
+        const limitLogin = `limit-${locale}`;
+        const limitAccount = await auth.register({ username: limitLogin, email: `${limitLogin}@example.com`, password: "Secret123!" }, options);
+        assert.ok(limitAccount.ok);
+        const limitKey = createHash('sha256').update(`login-account\0user:${limitAccount.data.user.id}`).digest('hex');
+        await open(locale, "/login");
+        async function failedAttempt(attempt) {
+          await fill({ login: limitLogin, password: "Wrong123!" });
+          await submit();
+          for (let i = 0; ; i++) {
+            if ((await prisma.authRateLimit.findUnique({ where: { key: limitKey } }))?.count === attempt) break;
+            assert.ok(i < 100, "Backend must record the failed attempt");
+            await delay(100);
+          }
+          await waitFor("document.querySelector('form[aria-busy]')?.getAttribute('aria-busy')==='false' && document.querySelector('input[name=password]')?.value==='' && document.querySelector('[role=alert]')");
+        }
+        for (let attempt = 1; attempt <= 4; attempt++) {
+          await failedAttempt(attempt);
+          assert.equal(await evaluate("!!document.querySelector('[data-login-warning]')"), attempt === 4);
+        }
+        assert.equal(await evaluate("document.querySelector('[data-login-warning]').textContent"), messages.auth.login.lastAttempt);
+        await fill({ password: "Secret123!" });
+        assert.equal(await evaluate("!!document.querySelector('[data-login-warning]')"), true, "Warning remains while entering the last attempt");
+        const alternate = locale === "en" ? "pl" : "en";
+        await choose(alternate);
+        await choose(locale);
+        assert.equal(await evaluate("document.querySelector('[data-login-warning]').textContent"), messages.auth.login.lastAttempt);
+        await submit();
+        await waitFor("location.pathname==='/' && document.querySelector('[data-application-runtime]')");
+        assert.equal((await prisma.authRateLimit.findUniqueOrThrow({ where: { key: limitKey } })).count, 0, "A correct fifth attempt resets the counter");
+        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
+        for (let attempt = 1; attempt <= 5; attempt++) await failedAttempt(attempt);
+        await waitFor(`document.querySelector('[role=alert]')?.textContent===${JSON.stringify(messages.errors.loginLocked)}`);
+        assert.equal(await evaluate("!!document.querySelector('[data-login-warning]')"), false);
+        await prisma.authRateLimit.update({ where: { key: limitKey }, data: { resetAt: new Date(0) } });
+        console.log(`Real login limit ${locale}: warning after four failures persists across editing/language changes; correct fifth resets; fifth failure blocks OK`);
         await open(locale);
         const email = `ui-browser-${locale}@example.com`;
         await fill({ username: `browser-${locale}`, email, password: "Secret123!", confirmPassword: "Secret123!" });
@@ -257,7 +295,6 @@ async function main() {
         await open(locale);
         await fill({ username: `browser-${locale}`, email, password: "Secret123!", confirmPassword: "Secret123!" });
         await submit();
-        const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
         await waitFor(`document.querySelector('[role=alert]')?.textContent.includes(${JSON.stringify(messages.errors.emailAlreadyInUse)})`);
         console.log(`Real UI → Next action → NestJS/PostgreSQL registration, session and duplicate email: ${locale} OK`);
 

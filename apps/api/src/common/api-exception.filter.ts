@@ -32,7 +32,23 @@ export class ApiExceptionFilter implements ExceptionFilter {
     };
     const { httpAdapter } = this.adapterHost;
     const response: unknown = host.switchToHttp().getResponse();
-    if (httpAdapter.isHeadersSent(response)) httpAdapter.end(response);
-    else httpAdapter.reply(response, body, status);
+    if (httpAdapter.isHeadersSent(response)) {
+      httpAdapter.end(response);
+      return;
+    }
+    if (
+      status === 429 &&
+      typeof original === 'object' &&
+      'retryAfterSeconds' in original &&
+      Number.isSafeInteger(original.retryAfterSeconds) &&
+      Number(original.retryAfterSeconds) > 0
+    ) {
+      httpAdapter.setHeader(
+        response,
+        'Retry-After',
+        String(original.retryAfterSeconds),
+      );
+    }
+    httpAdapter.reply(response, body, status);
   }
 }

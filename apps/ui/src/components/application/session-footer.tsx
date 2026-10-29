@@ -8,6 +8,7 @@ export type SessionFooterLabels = {
   refreshing: string;
   ended: string;
   unavailable: string;
+  rateLimited: string;
   retry: string;
 };
 

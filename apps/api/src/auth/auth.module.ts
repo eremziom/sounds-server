@@ -8,6 +8,8 @@ import { JwtStrategy } from './jwt.strategy';
 import { RolesModule } from '../roles/roles.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { SessionsService } from './sessions.service';
+import { AuthLimitsService } from './auth-limits.service';
+import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 
 @Module({
   imports: [
@@ -28,6 +30,12 @@ import { SessionsService } from './sessions.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, SessionsService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    SessionsService,
+    AuthLimitsService,
+    AuthRateLimitGuard,
+  ],
 })
 export class AuthModule {}

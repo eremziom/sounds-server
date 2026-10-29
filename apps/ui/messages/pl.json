@@ -10,7 +10,8 @@
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",
       "action": "Zaloguj się",
-      "pending": "Logowanie…"
+      "pending": "Logowanie…",
+      "lastAttempt": "Pozostała ostatnia próba logowania. Kolejna nieudana próba zablokuje logowanie na 15 minut."
     },
     "register": {
       "title": "Rejestracja",
@@ -41,7 +42,9 @@
     "emailAlreadyInUse": "Ten adres e-mail jest już zajęty.",
     "serviceUnavailable": "Usługa jest obecnie niedostępna. Spróbuj ponownie później.",
     "timeout": "Przekroczono czas oczekiwania. Spróbuj ponownie.",
-    "unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+    "unexpected": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+    "loginLocked": "Zbyt wiele nieudanych prób logowania. Logowanie jest tymczasowo zablokowane na maksymalnie 15 minut.",
+    "rateLimited": "Zbyt wiele żądań. Spróbuj ponownie później."
   },
   "validation": {
     "required": "To pole jest wymagane.",

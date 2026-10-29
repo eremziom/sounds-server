@@ -11,6 +11,7 @@ jest.mock('../prisma/prisma.service', () => ({
 
 import { AppModule } from '../app.module';
 import { AuthService } from '../auth/auth.service';
+import { AuthLimitsService } from '../auth/auth-limits.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RolesService } from '../roles/roles.service';
 import { TracksService } from '../tracks/tracks.service';
@@ -104,7 +105,9 @@ describe('Endpoint permissions (HTTP)', () => {
         get: (_key: string, defaultValue: string) => defaultValue,
       })
       .overrideProvider(PrismaService)
-      .useValue(prisma);
+      .useValue(prisma)
+      .overrideProvider(AuthLimitsService)
+      .useValue({ consume: async () => {}, cleanup: async () => {} });
 
     const providers = {
       users: UsersService,

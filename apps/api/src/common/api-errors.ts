@@ -2,6 +2,9 @@ import { HttpException } from '@nestjs/common';
 
 export const API_ERROR_CODES = {
   invalidCredentials: 'AUTH_INVALID_CREDENTIALS',
+  lastLoginAttempt: 'AUTH_LAST_LOGIN_ATTEMPT',
+  loginLocked: 'AUTH_LOGIN_LOCKED',
+  rateLimited: 'AUTH_RATE_LIMITED',
   emailAlreadyInUse: 'EMAIL_ALREADY_IN_USE',
   authenticationRequired: 'AUTH_REQUIRED',
   invalidSession: 'AUTH_SESSION_INVALID',

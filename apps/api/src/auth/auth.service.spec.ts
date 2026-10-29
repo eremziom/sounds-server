@@ -17,6 +17,8 @@ jest.mock('../prisma/prisma.service', () => ({
 
 import { AuthService } from './auth.service';
 import { SessionsService } from './sessions.service';
+import { AuthLimitsService } from './auth-limits.service';
+import { API_ERROR_CODES, codedError } from '../common/api-errors';
 import { AuthResponse } from './auth.interfaces';
 import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
@@ -242,6 +244,25 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
+          provide: AuthLimitsService,
+          useValue: {
+            login: async (
+              _identity: string,
+              verify: (tx: unknown) => Promise<AuthResponse | null>,
+            ) => {
+              const result = await verify(prisma);
+              if (!result)
+                throw new UnauthorizedException(
+                  codedError(
+                    new UnauthorizedException('Invalid credentials'),
+                    API_ERROR_CODES.invalidCredentials,
+                  ),
+                );
+              return result;
+            },
+          },
+        },
+        {
           provide: PrismaService,
           useValue: prisma,
         },
@@ -337,7 +358,7 @@ describe('AuthService', () => {
     ]);
     expect(response.user.lastLoginAt).toBeInstanceOf(Date);
     expect('password' in response.user).toBe(false);
-    expect(sessions.create).toHaveBeenCalledWith(2);
+    expect(sessions.create).toHaveBeenCalledWith(2, prisma);
   });
 
   it('fails login with wrong password', async () => {

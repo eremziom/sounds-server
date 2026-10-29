@@ -46,7 +46,12 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
   adminLabel: string;
 }) {
   const [session] = useState(createApplicationSession);
-  const [renewal] = useState(() => createSessionRefresh(session, accessTokenExpiresAt, renewSession));
+  const [rateLimited, setRateLimited] = useState(false);
+  const [renewal] = useState(() => createSessionRefresh(session, accessTokenExpiresAt, async () => {
+    const result = await renewSession();
+    setRateLimited(!result.ok && result.rateLimited === true);
+    return result;
+  }));
   const [context] = useState(() => ({
     session,
     ensureFresh: renewal.ensureFresh,
@@ -106,7 +111,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
           <MediaRuntime session={session} blocked={status === "unavailable"}>
             <ApplicationNavigation adminLabel={adminLabel} />
             <div className={status === "unavailable" ? "hidden" : "flex flex-1 flex-col"} data-application-page>{children}</div>
-            {status === "unavailable" && <SessionRecovery message={footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
+            {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
           </MediaRuntime>
         )}
         <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} status={status} labels={footerLabels} />

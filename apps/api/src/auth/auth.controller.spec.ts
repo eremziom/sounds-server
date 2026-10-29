@@ -19,6 +19,7 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { AuthController } from './auth.controller';
+import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 import { AuthService } from './auth.service';
 import { SessionsService } from './sessions.service';
 import { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
@@ -145,6 +146,8 @@ describe('AuthController', () => {
       ],
     })
       .overrideGuard(PermissionsGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(AuthRateLimitGuard)
       .useValue({ canActivate: () => true })
       .compile();
 

@@ -19,6 +19,9 @@ For example, a duplicate email still returns HTTP 409:
 | Code | Status | Meaning |
 | --- | --- | --- |
 | `AUTH_INVALID_CREDENTIALS` | 401 | Same response for missing user, wrong password and inactive account |
+| `AUTH_LAST_LOGIN_ATTEMPT` | 401 | Fourth failed login; same invalid-credentials message plus a final-attempt warning |
+| `AUTH_LOGIN_LOCKED` | 429 | Fifth failed login or an attempt during the 15-minute account block |
+| `AUTH_RATE_LIMITED` | 429 | Login, registration or refresh source limit exceeded |
 | `EMAIL_ALREADY_IN_USE` | 409 | Registration email conflict |
 | `AUTH_REQUIRED` | 401 | Authentication guard rejected the request |
 | `AUTH_SESSION_INVALID` | 401 | Invalid/revoked/expired session or refresh token detected by the session logic |
@@ -34,6 +37,13 @@ The global HTTP exception filter adds generic codes where no business code was
 provided. Unexpected exceptions still use Nest's safe default error handling;
 clients must tolerate errors without a code and future unknown codes. No response
 depends on `Accept-Language`, cookies or translated error text.
+
+Auth HTTP 429 responses contain a positive integer `retryAfterSeconds` and the
+matching `Retry-After` header (seconds). Blocked requests do not extend the window.
+Known, missing and inactive accounts follow the same login error sequence. A
+successful login before the block resets the account counter. The UI translates
+these codes and never displays raw backend text; refresh throttling is temporary
+unavailability, not evidence that the session has ended.
 
 The global validation pipe retains whitelist/forbidNonWhitelisted and the existing
 `message` array, adding structured field errors:

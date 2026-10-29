@@ -10,7 +10,8 @@
       "title": "Sign in",
       "noAccount": "Don't have an account?",
       "action": "Sign in",
-      "pending": "Signing in…"
+      "pending": "Signing in…",
+      "lastAttempt": "One sign-in attempt remains. Another failed attempt will block sign-in for 15 minutes."
     },
     "register": {
       "title": "Create an account",
@@ -41,7 +42,9 @@
     "emailAlreadyInUse": "This email address is already in use.",
     "serviceUnavailable": "The service is currently unavailable. Try again later.",
     "timeout": "The request took too long. Try again.",
-    "unexpected": "An unexpected error occurred. Try again."
+    "unexpected": "An unexpected error occurred. Try again.",
+    "loginLocked": "Too many failed sign-in attempts. Sign-in is temporarily blocked for up to 15 minutes.",
+    "rateLimited": "Too many requests. Please try again later."
   },
   "validation": {
     "required": "This field is required.",

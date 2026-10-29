@@ -18,11 +18,12 @@ async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
   const t = await getTranslations("auth.session");
   const navigation = await getTranslations("common.navigation");
   const actions = await getTranslations("common.actions");
+  const errors = await getTranslations("errors");
   return (
     <ApplicationRuntime
       key={user.id}
       accessTokenExpiresAt={readAccessTokenExpiry(accessToken)}
-      footerLabels={{ expiresIn: t("expiresIn"), refreshing: t("resuming"), ended: t("expired"), unavailable: t("unavailable"), retry: actions("retry") }}
+      footerLabels={{ expiresIn: t("expiresIn"), refreshing: t("resuming"), ended: t("expired"), unavailable: t("unavailable"), retry: actions("retry"), rateLimited: errors("rateLimited") }}
       adminLabel={navigation("admin")}
     >
       {children}

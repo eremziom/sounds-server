@@ -10,7 +10,8 @@
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
       "action": "Iniciar sesión",
-      "pending": "Iniciando sesión…"
+      "pending": "Iniciando sesión…",
+      "lastAttempt": "Queda un intento de inicio de sesión. Otro intento fallido bloqueará el inicio de sesión durante 15 minutos."
     },
     "register": {
       "title": "Crear una cuenta",
@@ -41,7 +42,9 @@
     "emailAlreadyInUse": "Esta dirección de correo electrónico ya está en uso.",
     "serviceUnavailable": "El servicio no está disponible en este momento. Inténtalo más tarde.",
     "timeout": "La solicitud ha tardado demasiado. Inténtalo de nuevo.",
-    "unexpected": "Se ha producido un error inesperado. Inténtalo de nuevo."
+    "unexpected": "Se ha producido un error inesperado. Inténtalo de nuevo.",
+    "loginLocked": "Demasiados intentos fallidos. El inicio de sesión está bloqueado temporalmente durante un máximo de 15 minutos.",
+    "rateLimited": "Demasiadas solicitudes. Inténtalo de nuevo más tarde."
   },
   "validation": {
     "required": "Este campo es obligatorio.",

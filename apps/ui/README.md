@@ -11,6 +11,20 @@ pnpm dev:ui
 Open [http://localhost:3001/login](http://localhost:3001/login) for the public UI.
 Protected pages validate sessions against `API_URL` (default port 3000).
 
+Create `.env` from `.env.example` and set `AUTH_PROXY_SECRET` to the same random
+value (at least 32 characters) as the API. The `dev` and `start` scripts use
+`server.mjs` to sign each request's socket address before auth actions forward it
+to the API. Do not replace these scripts with direct `next dev`/`next start`.
+`UI_TRUSTED_PROXIES` is empty by default; when deploying behind a reverse proxy,
+list only its actual IP addresses. See the root [authentication limits](../../README.md#authentication-limits)
+for defaults, source validation and deployment requirements.
+
+Login warns after four failed attempts that the next attempt is the last. Five
+failures block login for 15 minutes. A successful final attempt resets the
+counter. Warnings and limit errors are translated in en/pl/es; the API, not the
+form, owns the counters. Refresh throttling shows session recovery and preserves
+auth cookies.
+
 The agreed Server Action flow, module boundaries, form result contract and
 translation setup for auth forms are described in [AUTH.md](AUTH.md).
 
@@ -383,8 +397,9 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Production deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Build with `pnpm --filter ui build`, then run `pnpm --filter ui start` with the
+shared signing secret configured. This application's custom Node server must be
+part of the deployment; direct `next start`, standalone output and serverless
+hosting do not run its request-source signing.

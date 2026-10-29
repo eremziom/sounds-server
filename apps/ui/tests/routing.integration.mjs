@@ -28,7 +28,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
   const port = portReservation.address().port;
   await new Promise((resolve) => portReservation.close(resolve));
 
-  const next = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
+  const next = spawn(process.execPath, ["server.mjs", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: new URL("..", import.meta.url),
     env: { ...process.env, API_URL: `http://127.0.0.1:${api.address().port}` },
     windowsHide: true,

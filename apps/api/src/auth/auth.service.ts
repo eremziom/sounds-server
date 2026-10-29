@@ -14,6 +14,7 @@ import { LoginUserDto } from './login-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RolesService } from '../roles/roles.service';
 import { API_ERROR_CODES, codedError } from '../common/api-errors';
+import { AuthLimitsService } from './auth-limits.service';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly rolesService: RolesService,
     private readonly sessions: SessionsService,
+    private readonly limits: AuthLimitsService,
   ) {}
 
   private toUserResponse(user: User): UserResponse {
@@ -112,40 +114,25 @@ export class AuthService {
       },
     });
 
-    if (!user?.isActive) {
-      throw new UnauthorizedException(
-        codedError(
-          new UnauthorizedException('Invalid credentials'),
-          API_ERROR_CODES.invalidCredentials,
-        ),
-      );
-    }
-
-    const isPasswordValid = await argon2.verify(user.password, data.password);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException(
-        codedError(
-          new UnauthorizedException('Invalid credentials'),
-          API_ERROR_CODES.invalidCredentials,
-        ),
-      );
-    }
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-      data: {
-        lastLoginAt: new Date(),
-      },
+    const identity = user
+      ? `user:${user.id}`
+      : `login:${data.login.trim().toLowerCase()}`;
+    return this.limits.login(identity, async (tx) => {
+      if (
+        !user?.isActive ||
+        !(await argon2.verify(user.password, data.password))
+      )
+        return null;
+      await tx.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() },
+      });
+      try {
+        return await this.sessions.create(user.id, tx);
+      } catch (error) {
+        if (error instanceof UnauthorizedException) return null;
+        throw error;
+      }
     });
-
-    return this.sessions.create(user.id);
   }
 }

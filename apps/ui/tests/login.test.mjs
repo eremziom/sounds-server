@@ -101,6 +101,9 @@ test("login API errors are localized without exposing account details, tokens or
         [403, { code: "ACCESS_DENIED" }, messages.errors.accessDenied.description],
         [400, { code: "VALIDATION_FAILED", fieldErrors: [{ field: "login", code: "LENGTH", params: { min: 3, max: 100 }, value: valid.password }] }, messages.errors.invalidInput],
         [503, { code: "INTERNAL_ERROR", message: valid.password }, messages.errors.serviceUnavailable],
+        [401, { code: "AUTH_LAST_LOGIN_ATTEMPT" }, messages.errors.invalidCredentials],
+        [429, { code: "AUTH_LOGIN_LOCKED" }, messages.errors.loginLocked],
+        [429, { code: "AUTH_RATE_LIMITED" }, messages.errors.rateLimited],
         [201, { accessToken: "private-token", password: valid.password }, messages.errors.unexpected],
       ]) {
         globalThis.fetch = async () => Response.json(body, { status });
@@ -108,6 +111,7 @@ test("login API errors are localized without exposing account details, tokens or
         assert.equal(result.status, "error");
         assert.equal(result.message, expected);
         assert.equal(result.locale, locale);
+        assert.equal(result.lastLoginAttempt, body.code === "AUTH_LAST_LOGIN_ATTEMPT" ? true : undefined);
         assert.deepEqual(result.values, { login: valid.login });
         assert.ok(!JSON.stringify(result).includes(valid.password));
         assert.ok(!JSON.stringify(result).includes("private-token"));

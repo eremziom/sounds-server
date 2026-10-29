@@ -31,6 +31,7 @@ const api = createServer(async (req, res) => {
     refreshCalls++;
     assert.equal(JSON.parse(body).refreshToken, session.refreshToken);
     if (mode === "unavailable") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR" }));
+    if (mode === "rate-limited") return res.writeHead(429).end(JSON.stringify({ code: "AUTH_RATE_LIMITED" }));
     if (mode === "invalid" || !active) return res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
     session = newSession();
     const result = session;
@@ -135,6 +136,14 @@ try {
       await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active' && !document.querySelector('[data-session-recovery]')");
       assert.equal(await evaluate("endingRoot===document.querySelector('[data-application-runtime]')"), true);
       assert.equal(await evaluate("endingAudio===document.querySelector('[data-persistent-media] audio')"), true);
+
+      await enter(locale);
+      mode = "rate-limited";
+      const rateLimitedRefresh = session.refreshToken;
+      await triggerRefresh();
+      await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='unavailable'");
+      assert.equal(await evaluate("document.querySelector('[data-session-recovery] [role=alert]').textContent"), messages.errors.rateLimited);
+      assert.equal((await send("Network.getCookies", { urls: [origin] })).cookies.find((cookie) => cookie.name === "refreshToken")?.value, rateLimitedRefresh);
 
       for (const scope of ["current", "all"]) {
         await enter(locale);

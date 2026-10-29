@@ -94,6 +94,11 @@ export function LoginForm() {
             {message}
           </p>
         )}
+        {state.lastLoginAttempt && state.values?.login === values.login && (
+          <p role="alert" aria-atomic="true" className="text-sm text-amber-500" data-login-warning>
+            {t("login.lastAttempt")}
+          </p>
+        )}
         {loginFields.map((field) => {
           const passwordField = field === "password";
           const inputId = `${id}-${field}`;

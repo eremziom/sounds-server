@@ -5,6 +5,7 @@ export type AuthActionState = {
   status: "idle" | "error";
   locale: Locale;
   message?: string;
+  lastLoginAttempt?: boolean;
   fieldErrors: ApiErrorMessages["fieldErrors"];
   values?: Partial<Record<"username" | "email" | "login", string>>;
 };
