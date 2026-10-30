@@ -16,7 +16,7 @@ import {
   translateLoginIssues,
   validateLogin,
 } from "../../components/auth/login-validation.ts";
-import { APP_ROLES, ADMIN_ROLES, hasRequiredRole } from "../../lib/route-access.ts";
+import { sessionHome } from "../../lib/route-access.ts";
 import type { RefreshResult } from "../../lib/session-refresh.ts";
 import { authSource } from "../../lib/auth-source.ts";
 import { isRecord } from "../../api/client.ts";
@@ -109,10 +109,7 @@ export async function loginAction(formData: FormData): Promise<AuthActionState> 
     return { ...(await getAuthActionError(result.error, "login")), values };
 
   await setAuthCookies(result.data);
-  const user = result.data.user;
-  if (hasRequiredRole(user, APP_ROLES)) redirect("/");
-  if (hasRequiredRole(user, ADMIN_ROLES)) redirect("/admin");
-  redirect("/access-denied");
+  redirect(sessionHome(result.data.user));
 }
 
 export async function registerAction(

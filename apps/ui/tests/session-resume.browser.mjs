@@ -6,6 +6,7 @@ import { authSession } from "./helpers/auth-fixtures.mjs";
 import { withAuthBrowser } from "./helpers/auth-browser.mjs";
 
 let mode = "success", session, refreshCalls = 0, sequence = 0;
+let roles = ["ADMIN"];
 let gate, release;
 function newSession() {
   const expiry = Math.floor((Date.now() + 900_000) / 1000) * 1000;
@@ -17,6 +18,10 @@ function newSession() {
 }
 const api = createServer(async (req, res) => {
   res.setHeader("Content-Type", "application/json");
+  if (req.url === "/auth/me" && mode.startsWith("me-") && mode !== "me-invalid") {
+    if (mode === "me-malformed") return res.end("private malformed session");
+    return res.writeHead(mode === "me-limited" ? 429 : 503).end("private backend details");
+  }
   if (req.url === "/auth/refresh") {
     refreshCalls++;
     let body = "";
@@ -30,7 +35,7 @@ const api = createServer(async (req, res) => {
     return res.end(JSON.stringify(session));
   }
   if (req.url === "/auth/me" && req.headers.authorization === `Bearer ${session.accessToken}` && mode !== "me-invalid") {
-    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] }));
+    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: (mode === "denied" ? ["USER"] : roles).map(key => ({ key })) }));
   }
   res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
 });
@@ -41,8 +46,9 @@ try {
   await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, origin }) => {
     for (const locale of ["en", "pl", "es"]) {
       const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
-      async function enter(nextMode, target = "/admin?view=users", expired = false) {
+      async function enter(nextMode, target = "/admin?view=users", expired = false, nextRoles = ["ADMIN"]) {
         mode = nextMode;
+        roles = nextRoles;
         session = newSession();
         refreshCalls = 0;
         gate = nextMode === "pending" ? new Promise((resolve) => { release = resolve; }) : undefined;
@@ -50,7 +56,7 @@ try {
         await send("Network.setCookies", { cookies: [
           { name: "refreshToken", value: session.refreshToken, url: origin, path: "/", httpOnly: true },
           { name: "locale", value: locale, url: origin, path: "/" },
-          ...(expired ? [{ name: "accessToken", value: "expired.token.signature", url: origin, path: "/", httpOnly: true }] : []),
+          ...(expired ? [{ name: "accessToken", value: expired === "valid" ? session.accessToken : "expired.token.signature", url: origin, path: "/", httpOnly: true }] : []),
         ] });
         await send("Page.navigate", { url: `${origin}${target}` });
       }
@@ -107,6 +113,59 @@ try {
       });
       const body = await response.text();
       assert.ok(response.headers.get("location")?.includes("returnTo=%2Fadmin%3Fview%3Dusers") || body.includes("returnTo=%2Fadmin%3Fview%3Dusers"));
+
+      // Login chooses a home using API roles both before and after renewal.
+      for (const [nextRoles, target] of [
+        [["USER"], "/"], [["ARTIST"], "/"], [["ADMIN"], "/admin"],
+        [["ADMIN", "USER"], "/"], [[], "/access-denied"], [["OTHER"], "/access-denied"],
+      ]) {
+        for (const access of ["valid", false, true]) {
+          await enter("success", "/login?returnTo=https://evil.test", access, nextRoles);
+          await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1') && !location.search.includes('__session_resumed')`);
+          assert.equal(await evaluate("!!document.querySelector('input[name=login]')"), false);
+          assert.equal(refreshCalls, access === "valid" ? 0 : 1);
+          assert.equal(await evaluate("document.documentElement.lang"), locale);
+          if (target === "/access-denied") {
+            assert.equal(await evaluate("document.querySelectorAll('a, button, select, header').length"), 0);
+            assert.ok((await send("Network.getCookies", { urls: [origin] })).cookies.some(c => c.name === "refreshToken"));
+            await send("Page.navigate", { url: `${origin}/register` });
+            await waitFor("document.querySelector('input[name=username]')");
+            await evaluate("document.querySelector('a[href=\"/login\"]').click()");
+            await waitFor("location.pathname==='/access-denied' && !document.querySelector('header')");
+            await evaluate("history.back()");
+            await waitFor("location.pathname==='/register' && document.querySelector('header')");
+          }
+        }
+      }
+
+      for (const failure of ["outage", "limited", "invalid"]) {
+        await enter(failure, "/login");
+        if (failure === "invalid") {
+          await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
+          assert.equal(refreshCalls, 1, "Rejected refresh does not cause a redirect loop");
+        } else {
+          await waitFor("document.querySelector('[data-session-resume] button:not(:disabled)')");
+          assert.equal(refreshCalls, 1);
+          mode = "success";
+          await evaluate("document.querySelector('[data-session-resume] button').click()");
+          await waitFor("location.pathname==='/admin' && document.querySelector('[data-application-runtime]')");
+          assert.equal(refreshCalls, 2);
+        }
+      }
+
+      for (const failure of ["me-outage", "me-limited", "me-malformed"]) {
+        await enter(failure, "/login", "valid");
+        await waitFor("document.querySelector('[data-session-check] button:not(:disabled)')");
+        assert.equal(refreshCalls, 0);
+        assert.equal(await evaluate("!!document.querySelector('input[name=login]')"), false);
+        const message = failure === "me-limited" ? messages.errors.rateLimited : messages.auth.session.unavailable;
+        assert.equal(await evaluate("document.querySelector('[data-session-check] [role=alert]').textContent"), message);
+        assert.equal((await send("Network.getCookies", { urls: [origin] })).cookies.find(c => c.name === "refreshToken").value, session.refreshToken);
+        mode = "success";
+        await evaluate("document.querySelector('[data-session-check] button').click()");
+        await waitFor("location.pathname==='/admin' && document.querySelector('[data-application-runtime]')");
+        assert.equal(refreshCalls, 0);
+      }
     }
   });
   console.log("Session entry recovery passed in en/pl/es: expired/missing access, outages, rate limits, retries, invalid refresh, roles and loop prevention.");

@@ -181,7 +181,7 @@ try {
 
         // Fresh cookies must work for RSC reads as well as full document reloads.
         for (const [path, heading] of [["/", nextMessages.app.home.title], ["/admin", nextMessages.admin.home.title],
-          ["/login", nextMessages.auth.login.title], ["/register", nextMessages.auth.register.title]]) {
+          ["/register", nextMessages.auth.register.title]]) {
           const response = await rsc(`${path}?stage5=${flow}`);
           assert.equal(response.status, 200);
           assert.match(response.type, /text\/x-component/);
@@ -193,8 +193,10 @@ try {
         await send("Page.reload");
         await waitFor(`document.querySelector('h1')?.textContent===${JSON.stringify(nextMessages.app.home.title)}`);
         await send("Page.navigate", { url: `${origin}/login` });
-        await waitFor("document.querySelector('input[name=login]')");
-        await evaluate("window.stage5Document=true; document.querySelector('a[href=\"/\"]').click()");
+        await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(nextMessages.app.home.title)}`);
+        await send("Page.navigate", { url: `${origin}/register` });
+        await waitFor("document.querySelector('input[name=username]')");
+        await evaluate("window.stage5Document=true; document.querySelector('a[href=\"/login\"]').click()");
         await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(nextMessages.app.home.title)}`);
         assert.equal(await evaluate("window.stage5Document"), true, "Protected Link navigation must preserve the document");
 

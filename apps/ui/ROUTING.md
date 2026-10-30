@@ -1,6 +1,24 @@
 # Route access
 
-`(auth)` routes (`/login`, `/register`) are public, including for signed-in users.
+`/register` is public, including for signed-in users. `/login` checks the session
+with GET `/auth/me` before rendering a form. A confirmed active session goes to
+`/` for USER/ARTIST (including combined ADMIN roles), `/admin` for ADMIN alone,
+or `/access-denied` for other roles. Cookie presence and decoded JWT roles never
+authorize this redirect. Missing/rejected access with a refresh cookie uses
+`/resume?mode=login`: the POST rotates cookies, checks current API roles and
+chooses the same home. Rejected refresh clears auth cookies and shows login.
+API failures, malformed responses and rate limits preserve cookies and show a
+translated manual retry instead of a login form; checking never rotates cookies.
+A failed protected guard after recovery carries `__session_resumed=1` to login
+to suppress another automatic recovery. The marker cannot grant access.
+`/access-denied` displays only its translated information and metadata. It has
+no header, links, navigation buttons, automatic redirect or logout. Browser Back
+uses the normal guards on the previous destination. The header follows client
+navigation with usePathname because root layouts persist between routes.
+`/auth/me` requires a live JWT session and active account, without a role or
+`users:read-own` requirement. It returns only the authenticated account; other
+profile/data endpoints retain their permission guards. This lets accounts with
+no application roles reach access-denied without losing their valid session.
 `(app)` requires a `USER` or `ARTIST` role; `(admin)/admin` requires `ADMIN`.
 Roles are additive: `ADMIN` alone does not grant access to `(app)`.
 Missing/invalid sessions without a refresh cookie redirect to `/login`; insufficient roles redirect to
@@ -89,7 +107,8 @@ these directives and forward the original cookies and browser language header.
 Do not cache these responses by URL across users or languages. There is no CDN
 configuration in this repository; preserve this policy when adding one.
 
-The shared language selector is available on public, app and admin pages. It
+The shared language selector is available on public, app and admin pages, except
+the informational `/access-denied` screen. It
 calls a Server Action that validates and writes only the `locale` cookie (one
 year, `Path=/`, `SameSite=Lax`, `HttpOnly`, `Secure` in production). Cookie changes
 re-render the current view without navigation, keeping the path, query, fragment
@@ -127,7 +146,8 @@ token cookies with the API expiry timestamps and redirects to `/`. loginAction
 sets the same cookies, then routes USER/ARTIST to `/`, ADMIN-only to `/admin`,
 and other roles to `/access-denied`. App roles take priority for combined roles.
 These decisions use the API response, not decoded JWT claims or submitted roles.
-No returnTo destination is used. Both forms stay public for signed-in users.
+No returnTo destination is used for login. Only registration keeps its form
+available for signed-in users; login applies the session check described above.
 Background renewal runs in the mounted protected runtime; without a valid access
 cookie on initial page load, protected pages use the recovery flow above.
 
@@ -177,8 +197,8 @@ GET links never run logout. Default Server Action Origin/Host protection stays o
 Back navigation and subsequent protected RSC requests are checked after logout.
 
 Stage 5 additionally checks protected RSC with freshly issued cookies, private
-no-store responses and Link navigation after sign-in. Both public auth forms
-remain available with a session. The getSessionUser result retains 401/403;
+no-store responses and Link navigation after sign-in. Registration remains available with a session; login redirects according to
+current API roles. The getSessionUser result retains 401/403;
 the fetchSessionUser adapter returns null to guards for either, allowing recovery
 when a refresh cookie exists.
 503 and malformed session responses produce rendering errors without protected

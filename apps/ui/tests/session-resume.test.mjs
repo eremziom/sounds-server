@@ -18,7 +18,7 @@ test("recovery accepts only local protected destinations and preserves their que
 test("recovery rotates cookies, checks current roles and distinguishes rejection from outage", async () => {
   const originalFetch = globalThis.fetch;
   try {
-    for (const mode of ["success", "denied", "invalid", "missing", "outage", "limited", "me-outage", "me-invalid"]) {
+    for (const mode of ["success", "denied", "invalid", "missing", "outage", "limited", "me-outage", "me-limited", "me-invalid", "inactive"]) {
       const session = authSession();
       const values = new Map([["locale", "pl"], ...(mode === "missing" ? [] : [["refreshToken", "b".repeat(64)]])]);
       const writes = [];
@@ -39,19 +39,20 @@ test("recovery rotates cookies, checks current roles and distinguishes rejection
         }
         assert.equal(init.headers.Authorization, `Bearer ${session.accessToken}`);
         if (mode === "me-outage") return new Response("", { status: 503 });
+        if (mode === "me-limited") return new Response("", { status: 429 });
         if (mode === "me-invalid") return new Response("", { status: 401 });
-        return Response.json({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
+        return Response.json({ ...session.user, isActive: mode !== "inactive", sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
       };
-      if (["outage", "limited", "me-outage"].includes(mode)) {
+      if (["outage", "limited", "me-outage", "me-limited"].includes(mode)) {
         const result = await resumeSessionAction("/admin?view=users");
         assert.equal(result.reason, "unavailable");
-        assert.equal(result.rateLimited === true, mode === "limited");
+        assert.equal(result.rateLimited === true, mode === "limited" || mode === "me-limited");
         assert.ok(values.get("refreshToken"));
-        if (mode !== "me-outage") assert.equal(writes.length, 0);
+        if (!mode.startsWith("me-")) assert.equal(writes.length, 0);
       } else {
         const expected = mode === "success" ? "/admin?view=users&__session_resumed=1" : mode === "denied" ? "/access-denied" : "/login";
         await assert.rejects(resumeSessionAction("/admin?view=users"), (error) => error.path === expected);
-        if (["missing", "invalid", "me-invalid"].includes(mode)) {
+        if (["missing", "invalid", "me-invalid", "inactive"].includes(mode)) {
           assert.equal(values.get("refreshToken"), "");
           assert.equal(values.get("accessToken"), "");
         } else {

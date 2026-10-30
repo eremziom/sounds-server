@@ -54,7 +54,13 @@ automatic sign-in followed by `/`. Login at `/login` accepts username or email,
 validates login length 3–100 and password requirements on client/server, and sets
 the same session cookies. USER/ARTIST → `/`, ADMIN alone → `/admin`, other roles
 → `/access-denied`; API roles decide, with app priority for combined roles.
-No returnTo parameter is implemented. Wrong passwords, missing and inactive
+Opening `/login` with an active API-verified session selects the same destination
+without rendering the form. Missing/invalid access with refresh cookies first
+uses POST `/resume?mode=login`, selecting the home from renewed API roles.
+Rejected refresh clears auth cookies; outages/rate limits preserve them and show
+translated manual retry. `/access-denied` is informational, with no header,
+navigation, automatic redirect or sign-out. Browser Back uses ordinary guards.
+No returnTo parameter is implemented for login. Wrong passwords, missing and inactive
 accounts share one safe localized message. Background renewal is described below.
 Validation uses the same validator version and password regex
 as CreateUserDto, including Unicode length rules, without trimming credentials.
@@ -377,8 +383,12 @@ its temporary browser profile. Browsers must be preinstalled in CI; configure
 `tests/register.browser.mjs` and `tests/login.browser.mjs` cover localized client
 validation, API errors, password visibility, focus, pending, language changes,
 HttpOnly cookies and protected navigation. Login additionally checks all role
-redirects, username/email, network/timeout failures and public RSC navigation while
-signed in. Shared browser setup lives in `tests/helpers/auth-browser.mjs`.
+redirects, username/email, network/timeout failures and session-aware login entry.
+Registration remains public with a session. `tests/session-resume.browser.mjs`
+also covers login entry with valid/missing/expired access, current role selection,
+rejected refresh, API failures/rate limits, manual retry and the informational
+access-denied screen, including client navigation and Back, in en/pl/es.
+Shared browser setup lives in `tests/helpers/auth-browser.mjs`.
 Screenshots at 320px are saved to `.tmp/registration/` and `.tmp/login/`.
 
 `tests/auth-forms.browser.mjs` completes stage 5 for both forms in en/pl/es:

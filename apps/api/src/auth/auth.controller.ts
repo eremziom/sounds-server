@@ -78,8 +78,9 @@ export class AuthController {
     return this.sessions.logoutAll(request.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequirePermissions('users:read-own')
+  // Session discovery must also work for accounts without application roles.
+  // JwtAuthGuard verifies the live session and active account in the database.
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(
     @Req() request: AuthenticatedRequest,

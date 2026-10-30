@@ -32,7 +32,7 @@
   "app": { "home": { "title": "Página de inicio de Sounds" } },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
   "errors": {
-    "accessDenied": { "title": "Acceso denegado", "description": "Tu cuenta no tiene el rol necesario para abrir esta página." },
+    "accessDenied": { "title": "Acceso denegado", "description": "No tienes los permisos necesarios" },
     "page": { "title": "Se ha producido un error", "description": "No se pudo cargar esta página. Inténtalo de nuevo." },
     "notFound": { "title": "Página no encontrada", "description": "La página que buscas no existe." },
     "sessionVerificationFailed": "No se pudo verificar tu sesión. Inténtalo de nuevo.",
