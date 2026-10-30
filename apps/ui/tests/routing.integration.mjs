@@ -17,7 +17,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
       return;
     }
     response.setHeader("Content-Type", "application/json");
-    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, roles: [{ key: role }] }));
+    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
   });
   api.listen(0, "127.0.0.1");
   await once(api, "listening");
@@ -28,7 +28,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
   const port = portReservation.address().port;
   await new Promise((resolve) => portReservation.close(resolve));
 
-  const next = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
+  const next = spawn(process.execPath, ["server.mjs", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: new URL("..", import.meta.url),
     env: { ...process.env, API_URL: `http://127.0.0.1:${api.address().port}` },
     windowsHide: true,

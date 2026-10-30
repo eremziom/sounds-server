@@ -25,6 +25,7 @@ import { PrismaService } from '../prisma/prisma.service';
 describe('JwtStrategy', () => {
   const findFirst = jest.fn();
   let strategy: JwtStrategy;
+  const sessionExpiresAt = new Date(Date.now() + 60_000);
   const payload: JwtPayload = {
     sub: 1,
     sid: 'session-id',
@@ -36,7 +37,9 @@ describe('JwtStrategy', () => {
     const configService = {
       getOrThrow: jest.fn(() => 'test-secret'),
     } as unknown as ConfigService;
-    findFirst.mockReset().mockResolvedValue({ id: payload.sid });
+    findFirst
+      .mockReset()
+      .mockResolvedValue({ id: payload.sid, expiresAt: sessionExpiresAt });
     strategy = new JwtStrategy(configService, {
       authSession: { findFirst },
     } as unknown as PrismaService);
@@ -45,6 +48,7 @@ describe('JwtStrategy', () => {
   it('maps a JWT to the authenticated user after checking its session', async () => {
     await expect(strategy.validate(payload)).resolves.toEqual({
       sessionId: payload.sid,
+      sessionExpiresAt,
       userId: 1,
       username: 'max',
       roles: ['USER'],
@@ -57,7 +61,7 @@ describe('JwtStrategy', () => {
         expiresAt: { gt: expect.any(Date) as Date },
         user: { isActive: true },
       },
-      select: { id: true },
+      select: { id: true, expiresAt: true },
     });
   });
 

@@ -19,6 +19,7 @@ import { CreateUserDto } from './create-user.dto';
 import { LoginUserDto } from './login-user.dto';
 import { RefreshTokenDto } from './refresh-token.dto';
 import { SessionsService } from './sessions.service';
+import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +41,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @UseGuards(AuthRateLimitGuard)
   /**
    * Registers a new user with the given data.
    * @param {CreateUserDto} createUserDto The data of the user to be registered.
@@ -51,11 +53,13 @@ export class AuthController {
   }
 
   @Post('login')
+  @UseGuards(AuthRateLimitGuard)
   async login(@Body() loginUserDto: LoginUserDto): Promise<AuthResponse> {
     return this.authService.login(loginUserDto);
   }
 
   @Post('refresh')
+  @UseGuards(AuthRateLimitGuard)
   @HttpCode(200)
   refresh(@Body() body: RefreshTokenDto): Promise<AuthResponse> {
     return this.sessions.refresh(body.refreshToken);
@@ -77,7 +81,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('users:read-own')
   @Get('me')
-  me(@Req() request: AuthenticatedRequest): Promise<UserResponse> {
-    return this.authService.findOne(request.user.userId);
+  async me(
+    @Req() request: AuthenticatedRequest,
+  ): Promise<UserResponse & { sessionExpiresAt: Date }> {
+    const user = await this.authService.findOne(request.user.userId);
+    return { ...user, sessionExpiresAt: request.user.sessionExpiresAt };
   }
 }

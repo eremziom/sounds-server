@@ -19,6 +19,7 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { AuthController } from './auth.controller';
+import { AuthRateLimitGuard } from './auth-rate-limit.guard';
 import { AuthService } from './auth.service';
 import { SessionsService } from './sessions.service';
 import { AuthenticatedRequest, AuthResponse } from './auth.interfaces';
@@ -146,6 +147,8 @@ describe('AuthController', () => {
     })
       .overrideGuard(PermissionsGuard)
       .useValue({ canActivate: () => true })
+      .overrideGuard(AuthRateLimitGuard)
+      .useValue({ canActivate: () => true })
       .compile();
 
     controller = module.get<AuthController>(AuthController);
@@ -198,6 +201,7 @@ describe('AuthController', () => {
     const request: AuthenticatedRequest = {
       user: {
         sessionId: 'test-session',
+        sessionExpiresAt: new Date(Date.now() + 60_000),
         userId: 2,
         username: 'admin',
         roles: ['ADMIN'],
@@ -208,6 +212,7 @@ describe('AuthController', () => {
 
     expect(response.id).toBe(2);
     expect(response.username).toBe('admin');
+    expect(response.sessionExpiresAt).toBe(request.user.sessionExpiresAt);
     expect('password' in response).toBe(false);
   });
 

@@ -7,6 +7,7 @@ type MessageKey =
   | "errors.invalidCredentials" | "errors.emailAlreadyInUse"
   | "errors.accessDenied.description" | "errors.invalidInput"
   | "errors.serviceUnavailable" | "errors.timeout" | "errors.unexpected"
+  | "errors.loginLocked" | "errors.rateLimited"
   | "auth.session.expired" | "validation.required" | "validation.email"
   | "validation.length" | "validation.passwordComplexity" | "validation.invalid";
 
@@ -29,7 +30,14 @@ function generalMessage(failure: ApiFailure, operation: ApiOperation): MessageKe
   if (isRecord(body) && Object.hasOwn(body, "code")) {
     switch (body.code) {
       case "AUTH_INVALID_CREDENTIALS":
+      case "AUTH_LAST_LOGIN_ATTEMPT":
         if (status === 401 && operation === "login") return "errors.invalidCredentials";
+        break;
+      case "AUTH_LOGIN_LOCKED":
+        if (status === 429 && operation === "login") return "errors.loginLocked";
+        break;
+      case "AUTH_RATE_LIMITED":
+        if (status === 429) return "errors.rateLimited";
         break;
       case "EMAIL_ALREADY_IN_USE":
         if (status === 409 && operation === "register") return "errors.emailAlreadyInUse";

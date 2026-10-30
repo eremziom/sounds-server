@@ -10,6 +10,14 @@ datasource db {
   provider = "postgresql"
 }
 
+model AuthRateLimit {
+  key     String   @id
+  count   Int      @default(0)
+  resetAt DateTime
+
+  @@index([resetAt])
+}
+
 model Track {
   id          Int      @id @default(autoincrement())
   title       String
@@ -38,13 +46,14 @@ model User {
 }
 
 model AuthSession {
-  id            String         @id @default(uuid())
-  userId        Int
-  createdAt     DateTime       @default(now())
-  expiresAt     DateTime
-  revokedAt     DateTime?
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  refreshTokens RefreshToken[]
+  id             String         @id @default(uuid())
+  userId         Int
+  createdAt      DateTime       @default(now())
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  rotationResult String?
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens  RefreshToken[]
 
   @@index([userId, revokedAt])
 }

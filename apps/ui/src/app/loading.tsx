@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
+import { LoadingIndicator } from "@/components/loading-indicator";
 
 export default async function Loading() {
   const t = await getTranslations("common.status");
-  return <p className="p-6" role="status">{t("loading")}</p>;
+  return <LoadingIndicator label={t("loading")} />;
 }

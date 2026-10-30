@@ -1,3 +1,5 @@
+BEGIN;
+
 WITH roles_to_seed(key, name, description) AS (
   VALUES
     ('USER', 'User', 'Default user role.'),
@@ -83,3 +85,13 @@ FROM role_permissions_to_seed
 JOIN inserted_roles roles ON roles."key" = role_permissions_to_seed.role_key
 JOIN inserted_permissions permissions ON permissions."key" = role_permissions_to_seed.permission_key
 ON CONFLICT ("roleId", "permissionId") DO NOTHING;
+
+-- Re-seeding must also revoke legacy global profile grants for these roles.
+DELETE FROM "RolePermission" AS rp
+USING "Role" AS r, "Permission" AS p
+WHERE rp."roleId" = r."id"
+  AND rp."permissionId" = p."id"
+  AND r."key" IN ('USER', 'ARTIST')
+  AND p."key" IN ('users:read', 'users:update');
+
+COMMIT;

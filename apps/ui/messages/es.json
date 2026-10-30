@@ -1,6 +1,6 @@
 {
   "common": {
-    "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión" },
+    "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión", "admin": "Admin" },
     "status": { "checkingAccess": "Comprobando el acceso…", "loading": "Cargando…" },
     "actions": { "retry": "Intentar de nuevo" },
     "language": { "label": "Idioma", "changeFailed": "No se pudo guardar tu preferencia de idioma. Inténtalo de nuevo." }
@@ -8,14 +8,13 @@
   "auth": {
     "login": {
       "title": "Iniciar sesión",
-      "placeholder": "Aquí aparecerá el formulario de inicio de sesión.",
       "noAccount": "¿No tienes una cuenta?",
       "action": "Iniciar sesión",
-      "pending": "Iniciando sesión…"
+      "pending": "Iniciando sesión…",
+      "lastAttempt": "Queda un intento de inicio de sesión. Otro intento fallido bloqueará el inicio de sesión durante 15 minutos."
     },
     "register": {
       "title": "Crear una cuenta",
-      "placeholder": "Aquí aparecerá el formulario de registro.",
       "hasAccount": "¿Ya tienes una cuenta?",
       "action": "Crear una cuenta",
       "pending": "Creando tu cuenta…"
@@ -26,9 +25,9 @@
       "hide": "Ocultar contraseña",
       "requirements": "Usa entre 8 y 50 caracteres, incluyendo una letra minúscula, una mayúscula, un número y un carácter especial."
     },
-    "session": { "expired": "Tu sesión ha caducado. Inicia sesión de nuevo.", "resuming": "Reanudando tu sesión…", "resumeFailed": "No se pudo reanudar tu sesión. Inicia sesión de nuevo." },
-    "logout": { "action": "Cerrar sesión", "pending": "Cerrando sesión…" },
-    "logoutAll": { "action": "Cerrar sesión en todos los dispositivos" }
+    "session": { "expiresIn": "Sesión", "remainingDays": "{value, plural, one {# día} other {# días}}", "remainingHours": "{value}h", "remainingMinutes": "{value}min", "expired": "Tu sesión ha caducado. Inicia sesión de nuevo.", "resuming": "Reanudando tu sesión…", "resumeFailed": "No se pudo reanudar tu sesión. Inicia sesión de nuevo.", "unavailable": "No pudimos confirmar tu sesión. Comprueba tu conexión e inténtalo de nuevo." },
+    "logout": { "success": "Sesión cerrada correctamente", "ok": "OK", "action": "Cerrar sesión", "pending": "Cerrando sesión…", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar que la sesión haya finalizado en el servidor." },
+    "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": { "home": { "title": "Página de inicio de Sounds" } },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
@@ -43,7 +42,9 @@
     "emailAlreadyInUse": "Esta dirección de correo electrónico ya está en uso.",
     "serviceUnavailable": "El servicio no está disponible en este momento. Inténtalo más tarde.",
     "timeout": "La solicitud ha tardado demasiado. Inténtalo de nuevo.",
-    "unexpected": "Se ha producido un error inesperado. Inténtalo de nuevo."
+    "unexpected": "Se ha producido un error inesperado. Inténtalo de nuevo.",
+    "loginLocked": "Demasiados intentos fallidos. El inicio de sesión está bloqueado temporalmente durante un máximo de 15 minutos.",
+    "rateLimited": "Demasiadas solicitudes. Inténtalo de nuevo más tarde."
   },
   "validation": {
     "required": "Este campo es obligatorio.",

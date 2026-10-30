@@ -3,6 +3,7 @@ export type Role = "USER" | "ARTIST" | "ADMIN";
 export const APP_ROLES: readonly Role[] = ["USER", "ARTIST"];
 export const ADMIN_ROLES: readonly Role[] = ["ADMIN"];
 export const ACCESS_TOKEN_COOKIE = "accessToken";
+export const REFRESH_TOKEN_COOKIE = "refreshToken";
 
 export type SessionUser = {
   id: number;

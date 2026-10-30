@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { RegisterForm } from "@/components/auth/register-form";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.register");
@@ -13,9 +15,9 @@ export default async function RegisterPage() {
   return (
     <section className="space-y-4">
       <h1 className="text-3xl font-semibold">{t("register.title")}</h1>
-      <p className="text-muted-foreground">
-        {t("register.placeholder")}
-      </p>
+      <ClientMessages namespaces={["auth", "validation", "errors"]}>
+        <RegisterForm />
+      </ClientMessages>
       <p>
         {t("register.hasAccount")}{" "}
         <Link href="/login" className="underline underline-offset-4">

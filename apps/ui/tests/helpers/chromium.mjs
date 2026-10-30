@@ -88,7 +88,7 @@ export async function startChromium() {
       }
       pending.clear();
     });
-    function send(method, params = {}) {
+    function send(method, params = {}, sessionId) {
       if (spawnError) return Promise.reject(spawnError);
       return new Promise((resolve, reject) => {
         const id = ++counter;
@@ -97,7 +97,7 @@ export async function startChromium() {
           reject(Error(`Browser command timed out: ${method}`));
         }, 10000);
         pending.set(id, { resolve, reject, timer });
-        socket.send(JSON.stringify({ id, method, params }));
+        socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
       });
     }
     return { send, listeners, close };

@@ -11,6 +11,184 @@ pnpm dev:ui
 Open [http://localhost:3001/login](http://localhost:3001/login) for the public UI.
 Protected pages validate sessions against `API_URL` (default port 3000).
 
+Create `.env` from `.env.example` and set `AUTH_PROXY_SECRET` to the same random
+value (at least 32 characters) as the API. The `dev` and `start` scripts use
+`server.mjs` to sign each request's socket address before auth actions forward it
+to the API. Do not replace these scripts with direct `next dev`/`next start`.
+`UI_TRUSTED_PROXIES` is empty by default; when deploying behind a reverse proxy,
+list only its actual IP addresses. See the root [authentication limits](../../README.md#authentication-limits)
+for defaults, source validation and deployment requirements.
+
+Login warns after four failed attempts that the next attempt is the last. Five
+failures block login for 15 minutes. A successful final attempt resets the
+counter. Warnings and limit errors are translated in en/pl/es; the API, not the
+form, owns the counters. Refresh throttling shows session recovery and preserves
+auth cookies.
+
+The agreed Server Action flow, module boundaries, form result contract and
+translation setup for auth forms are described in [AUTH.md](AUTH.md).
+
+Backend HTTP calls live in `src/api/`, grouped by domain (`auth.ts` currently
+contains session verification). These modules use `server-only`. Session/access
+policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
+from `src/app/(auth)/actions.ts`. `src/api/` is
+application code, distinct from Next.js HTTP routes under `src/app/api/`.
+
+The auth API module supports login, register, refresh, logout, logout-all and
+session verification. `src/api/client.ts` returns typed success/failure results,
+preserves HTTP status and strips raw backend error text/input values. It disables
+caching/redirects and enforces a 5s timeout through response-body reads.
+Session responses validate token formats, UTC expiry timestamps and user/roles,
+returning only a safe user DTO. See [AUTH.md](AUTH.md) for the full contract.
+
+Server Actions can use `setAuthCookies`, `getAuthCookies`, `clearAuthCookies` from
+`src/lib/auth-cookies.ts`; writes require an action/Route Handler context. Only
+token cookies are modified. For failures, `getAuthActionError` from
+`src/lib/auth-action-state.ts` produces translated form state with the request
+locale; `initialAuthState(locale)` is safe to import into a client form. Never
+return the successful API session (which contains tokens) to a Client Component.
+
+Registration is implemented at `/register`: username, email, password and password
+confirmation, password visibility, client/server validation, pending/errors and
+automatic sign-in followed by `/`. Login at `/login` accepts username or email,
+validates login length 3–100 and password requirements on client/server, and sets
+the same session cookies. USER/ARTIST → `/`, ADMIN alone → `/admin`, other roles
+→ `/access-denied`; API roles decide, with app priority for combined roles.
+No returnTo parameter is implemented. Wrong passwords, missing and inactive
+accounts share one safe localized message. Background renewal is described below.
+Validation uses the same validator version and password regex
+as CreateUserDto, including Unicode length rules, without trimming credentials.
+The form receives auth/validation/errors through ClientMessages, preserves input
+on language changes and hides server errors from a different request locale.
+Passwords are cleared on submission and never returned by the action.
+
+Stage 7 groundwork puts app/admin under one `(protected)` layout without changing
+URLs. ApplicationRuntime owns the client session and exposes useApplicationSession.
+It composes MediaRuntime, which owns the persistent audio element, animation host,
+useMediaRuntime and media cleanup outside the sections' loading boundaries.
+Navigation and cookie changes preserve the instances;
+switching accounts or leaving the protected area stops and releases them.
+Cold loads/reloads with a missing or rejected access token and a refresh cookie
+go through `/resume?returnTo=...`. A POST action renews cookies, verifies the API
+user and destination roles, then returns to `/` or `/admin` with the original
+query and locale. Invalid refresh clears auth cookies and opens login; API
+outages/rate limits preserve cookies and offer manual retry in en/pl/es. Protected
+content and media remain unmounted while recovering. GET/render never writes
+token cookies. A one-use URL marker prevents recovery redirect loops and is
+removed once the authenticated runtime mounts. See [ROUTING.md](ROUTING.md) for
+the target allowlist and custom server header contract.
+After building, run `pnpm --filter ui test:session-resume` for browser coverage
+of this flow in en/pl/es.
+
+The client session controller supports active/refreshing/unavailable/ended. The POST Server
+Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
+both rotated cookies and returns only success and the new access expiry timestamp
+(or `{ ok: false }` for a rejected session, with `reason: "unavailable"` for an
+uncertain API/transport failure). The runtime schedules renewal one minute before the actual
+expiry, checks on visibility/focus/pageshow and renews even while idle. Initial
+expiry comes from the server-decoded JWT `exp` after API session verification;
+only the timestamp reaches the client. Every renewal uses the API response's
+expiry; there is no hardcoded token lifetime. For renewed tokens lasting one
+minute or less, renewal is scheduled halfway through the remaining lifetime to
+avoid an immediate rotation loop.
+
+The protected layout includes a small session footer showing remaining access
+token lifetime beside the existing label. On the same line, absolute session lifetime
+uses one localized unit: whole days when at least a day remains (e.g. `30 dni`),
+whole hours below a day (`23h`), or whole minutes below an hour (`59min`). Seconds
+are omitted. The underlying clock keeps updating. The access countdown resets after
+successful refresh while the session deadline stays fixed. Renewal/session-end
+status uses en/pl/es.
+The display clock schedules the next second boundary of either deadline rather
+than restarting an interval on session status changes. New deadlines and their
+clock reading update together. Focus/pageshow/visibility resume resynchronizes
+against real time after browser suspension. After building, `test:countdown`
+checks both displays across an actual token renewal.
+
+The API's `/auth/me` additionally returns `sessionExpiresAt` from the validated
+database session. The layout passes only this timestamp to the runtime; refresh
+actions use the fixed `refreshTokenExpiresAt` as the same absolute deadline.
+A separate timer ends the local session at that deadline even if the access JWT
+is still valid, renewal is in flight, or recovery is `unavailable`. Resume events
+and protected requests also check the deadline because background timers may be
+delayed. Ending stops media, hides protected content, broadcasts to peer tabs,
+and queues cookie cleanup/login after any in-flight action. Renewals and server
+re-renders cannot extend the runtime's known deadline. Backend validation remains
+independent of the browser clock. Build/deploy the updated API before the UI:
+missing/malformed session deadlines fail closed. No database migration is needed.
+Run `pnpm --filter ui test:session-deadline` after building for en/pl/es browser
+checks of idle expiry, expiry after renewal, outage/resume and late refresh.
+
+`useApplicationSession().ensureFresh()` checks the same deadline before a
+protected client request and resolves after cookie rotation. It shares in-flight
+work through the existing session controller and returns false after session end.
+`useApplicationSession().runProtected(() => operation())` performs that check and
+waits before invoking a request/Server Action exactly once. It returns
+`{ executed: false }` when renewal fails/the session ends, or
+`{ executed: true, value }` with the operation's result. Operation exceptions
+propagate; HTTP responses (including 401/403) are returned without refresh/retry.
+Call Server Actions inside a React transition as usual.
+
+The admin-to-app link uses `ProtectedLink`: prefetch is disabled, and client
+navigation waits for cookie rotation before calling the Next router. New protected
+links should use this component; programmatic navigation/requests must go through
+`runProtected`. Modified clicks/new tabs, browser history and full document loads
+retain normal Next/server guard behavior. Language preference and sign-out actions
+retain their existing independent flows. The current product has no protected
+client data requests; server-side data/role checks remain unchanged.
+The API serializes rotation in PostgreSQL and returns the same pair for the
+previous/replacement refresh token within a fixed five-second overlap. Requests
+inside that overlap do not extend it or create another token. The encrypted result
+lives in one nullable AuthSession field, shared across API instances; no frontend
+session store or cross-tab lock is added. Reuse of a consumed token after the
+overlap still revokes the session. Apply migrations and regenerate Prisma Client
+before starting the updated API.
+Rejected renewal (401/400 or missing refresh cookie) ends the runtime, hides
+protected content, stops media and calls `expireSessionAction()` to clear only
+auth cookies and redirect to `/login`. Locale is preserved. API/transport errors,
+403 or malformed responses instead enter `unavailable`: protected UI/requests
+are blocked and media stopped, but cookies/runtime instances remain. An explicit
+localized retry can recover; focus, timers and links do not blindly retry an
+uncertain rotation.
+
+Logout's submit capture sends a same-document event and calls `session.end()`
+before waiting for the API. The existing logout actions retain their result
+screen and local-only notices. Next dispatches these actions after an in-flight
+refresh, so logout reads the latest cookies and clears them last. Late success
+or failure cannot reactivate an ended controller. After the logout action clears
+cookies, LogoutResult sends the string `"logout"` over BroadcastChannel
+`sounds:auth`. Other mounted runtimes end locally, stop media and clear cookies
+through their own queued expireSessionAction before login. They do not rebroadcast.
+Automatic session loss also notifies peers; API outages do not. A same-document
+intent flag prevents plain visits/reloads of an old result page from broadcasting
+again. No tokens, identity data or persistent session store are involved. This
+works between tabs/windows of the same origin/profile, not across devices.
+If BroadcastChannel is unavailable, local logout still works.
+A cold load with an expired access cookie still
+uses the existing login redirect.
+Build first, then run `pnpm --filter ui test:runtime` from the repository root
+for the audio/animation lifecycle regression in en/pl/es. This uses generated
+silent audio and Web Animations, not a finished music player or streaming service.
+`pnpm --filter ui test:session-ending` additionally covers rejected renewal,
+outage/recovery and current/all logout racing a held refresh in en/pl/es, with
+real audio/animation cleanup and cookie checks. It is included in `test:browser`.
+
+The header shows sign-out controls whenever either auth cookie exists, including
+when access has expired or the API is down. Current sign-out uses the server-side
+refresh cookie; all-device sign-out uses the access cookie and API authentication,
+without an ADMIN or app-role requirement. Both run as POST Server Actions and
+clear only the two token cookies, preserving locale, then redirect to /login.
+An API failure still clears local cookies and shows a translated local-only
+notice (auth.logout.localOnly / auth.logoutAll.localOnly). The URL contains only
+an allowlisted technical outcome, never backend text or tokens. The all-device
+button is offered when an access cookie exists. Pending disables both buttons.
+
+Build the UI first, then run `pnpm test:auth-api` from the repository root
+to exercise the UI client and browser registration/login/logout against real NestJS/PostgreSQL
+in en/pl/es in a disposable database.
+It requires the API DATABASE_URL and CREATE DATABASE privilege, and does not
+modify application data. This database check is separate from `pnpm verify:i18n`.
+
 Pages live in `src/app/`; development changes update automatically.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
@@ -83,9 +261,9 @@ All current pages, access checks, loading and not-found states use the selected
 language. Page titles and descriptions are localized; existing URLs are shared
 without language prefixes, URL parameters or rewrites. Cache Components is
 disabled and partial prefetching removed so the initial HTML uses the request
-language. Login and registration are still translated placeholders; their real
-forms belong to `docs/ui-auth-plan.md` and must use the existing auth/validation
-catalog keys when implemented.
+language. Login and registration use the existing auth/validation/error keys;
+auth.login.placeholder and auth.register.placeholder were removed from en/pl/es.
+The remaining auth work belongs to `docs/ui-auth-plan.md`.
 
 `app/error.tsx` uses the root provider's selected language and the installed
 Next.js `retry()` prop to re-fetch after an error; it never displays exception
@@ -133,8 +311,8 @@ username conflict from registration 409.
 The mapper accepts only known auth form fields, safe numeric length bounds and
 supported validation rules. It drops unknown fields and arbitrary parameters,
 including token/password values. Missing user, inactive account and wrong password
-share `AUTH_INVALID_CREDENTIALS` and one message. Real auth forms are still pending;
-use this mapper when implementing them. Existing page-level unexpected errors
+share `AUTH_INVALID_CREDENTIALS` and one message. Registration and login use this
+mapper. Existing page-level unexpected errors
 continue to use the safe translated error boundary.
 
 All pages render dynamically. HTML/RSC responses must remain `private` and
@@ -160,8 +338,11 @@ This is the common local/pre-release/CI procedure. It runs UI lint, catalog chec
 all UI unit tests, TypeScript, a production build, HTML/RSC tests, browser checks
 and the API Jest suite (including the error contract). It stops at the first
 failure and requires no running API/database. The test suites use isolated mock
-APIs, Next servers on temporary ports, and an isolated browser profile. Real
-registration/login/logout/refresh flows are pending the auth form implementation.
+APIs, Next servers on temporary ports, and an isolated browser profile. After the
+UI build, pnpm test:auth-api separately verifies registration/login with real
+NestJS/PostgreSQL in an isolated disposable database. The runtime browser suite
+separately checks timed and resume renewal against a mock API in en/pl/es,
+including cookie replacement and uninterrupted audio/animation.
 
 Requirements: Node.js 22.6+, the workspace dependencies/Prisma Client from the
 root setup, and Chrome, Edge or Chromium. The browser test uses Node's built-in
@@ -193,6 +374,38 @@ It saves 320px screenshots to `apps/ui/.tmp/i18n/` for visual review and removes
 its temporary browser profile. Browsers must be preinstalled in CI; configure
 `BROWSER_PATH` there if needed. No hosting or CI provider is assumed.
 
+`tests/register.browser.mjs` and `tests/login.browser.mjs` cover localized client
+validation, API errors, password visibility, focus, pending, language changes,
+HttpOnly cookies and protected navigation. Login additionally checks all role
+redirects, username/email, network/timeout failures and public RSC navigation while
+signed in. Shared browser setup lives in `tests/helpers/auth-browser.mjs`.
+Screenshots at 320px are saved to `.tmp/registration/` and `.tmp/login/`.
+
+`tests/auth-forms.browser.mjs` completes stage 5 for both forms in en/pl/es:
+Tab/Enter/Space keyboard interaction, visible focus, translated labels and
+descriptions in Chrome's accessibility tree, local-error retranslation without
+remounting, and a language change while a successful auth response is held.
+It checks one auth POST, current destination language, fresh-cookie private RSC,
+protected Link navigation, 401/403 guard policy, fail-closed API errors and long
+multi-field messages at 320px. Screenshots live in `.tmp/auth-forms/`.
+The pending live region sits outside the busy form so its announcement is not
+deferred. Accessibility checks inspect Chrome's tree and live-region semantics;
+they do not automate speech output from a separate screen reader.
+
+`tests/logout.browser.mjs` covers current/all sign-out, refresh-only sign-out after
+access expiry, pending, language changes on success/failure, 320px notices,
+local cookie removal during an API outage, back navigation, protected RSC and
+Origin/Host rejection. It also sends the same captured action with a trusted
+Origin to confirm the rejection is caused by Origin protection. Screenshots:
+.tmp/logout/. The real API suite checks revoked access/refresh tokens and that
+current sign-out preserves a second session while all-device sign-out revokes it.
+
+To check development-only React warnings with an existing dev server, run
+`node tests/logout-dev.browser.mjs` from apps/ui (UI_DEV_URL defaults to
+http://localhost:3001). It renders controls in a disposable browser profile with
+fake cookies and does not invoke sign-out. Button names are reserved by React
+for function formAction; pending labels use useFormStatus().action instead.
+
 ### Updating text and adding a language
 
 Use semantic nested keys and update `messages/en.json`, `pl.json` and `es.json`
@@ -218,8 +431,9 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Production deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Build with `pnpm --filter ui build`, then run `pnpm --filter ui start` with the
+shared signing secret configured. This application's custom Node server must be
+part of the deployment; direct `next start`, standalone output and serverless
+hosting do not run its request-source signing.
