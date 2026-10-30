@@ -9,7 +9,7 @@ type MessageKey =
   | "errors.serviceUnavailable" | "errors.timeout" | "errors.unexpected"
   | "errors.loginLocked" | "errors.rateLimited"
   | "auth.session.expired" | "validation.required" | "validation.email"
-  | "validation.length" | "validation.passwordComplexity" | "validation.invalid";
+  | "validation.length" | "validation.usernameNoAt" | "validation.passwordComplexity" | "validation.invalid";
 
 type Message = { key: MessageKey; values?: { min: number; max: number } };
 const formFields = ["username", "email", "password", "confirmPassword", "login"] as const;
@@ -78,6 +78,7 @@ function generalMessage(failure: ApiFailure, operation: ApiOperation): MessageKe
 function fieldMessage(error: Record<string, unknown>): Message {
   if (error.code === "REQUIRED") return { key: "validation.required" };
   if (error.code === "EMAIL" && error.field === "email") return { key: "validation.email" };
+  if (error.code === "USERNAME_NO_AT" && error.field === "username") return { key: "validation.usernameNoAt" };
   if (error.code === "PASSWORD_COMPLEXITY" && error.field === "password") return { key: "validation.passwordComplexity" };
   if (error.code === "LENGTH" && isRecord(error.params)) {
     const { min, max } = error.params;

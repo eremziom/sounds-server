@@ -88,9 +88,8 @@ describe('AuthService', () => {
   let sessions: {
     create: jest.Mock;
   };
-  type UserWhereUnique = { where: { id: number } | { email: string } };
-  type UserFindFirstArgs = {
-    where: { OR: { email?: string; username?: string }[] };
+  type UserWhereUnique = {
+    where: { id: number } | { email: string } | { username: string };
   };
   type UserCreateArgs = {
     data: CreateUserDto;
@@ -106,7 +105,6 @@ describe('AuthService', () => {
     };
     user: {
       findUnique: jest.Mock;
-      findFirst: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
     };
@@ -155,19 +153,10 @@ describe('AuthService', () => {
             );
           }
 
-          return Promise.resolve(null);
+          return Promise.resolve(
+            users.find((user) => user.username === where.username) ?? null,
+          );
         }),
-        findFirst: jest.fn(({ where: { OR } }: UserFindFirstArgs) =>
-          Promise.resolve(
-            users.find((user) =>
-              OR.some(
-                (condition: { email?: string; username?: string }) =>
-                  user.email === condition.email ||
-                  user.username === condition.username,
-              ),
-            ) ?? null,
-          ),
-        ),
         create: jest.fn(({ data }: UserCreateArgs) => {
           const created = {
             id: users.length + 1,
@@ -364,6 +353,30 @@ describe('AuthService', () => {
   it('fails login with wrong password', async () => {
     const dto: LoginUserDto = { login: 'admin', password: 'wrong' };
     await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('logs in to the same account by email and username', async () => {
+    for (const login of ['max', 'max@max.pl']) {
+      const response = await service.login({ login, password: 'Test123!' });
+      expect(response.user.id).toBe(1);
+    }
+  });
+
+  it('treats a login containing @ exclusively as email despite a legacy name collision', async () => {
+    // The colliding name precedes the email owner in storage.
+    users[0].username = users[1].email;
+    users[0].password = await argon2.hash('Other123!');
+    const response = await service.login({
+      login: users[1].email,
+      password: 'Test123!',
+    });
+    expect(response.user.id).toBe(2);
+    await expect(
+      service.login({
+        login: users[1].email,
+        password: 'Other123!',
+      }),
+    ).rejects.toThrow(UnauthorizedException);
   });
 
   it('uses the same credentials code and body for missing, inactive and wrong-password users', async () => {

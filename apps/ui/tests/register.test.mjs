@@ -51,6 +51,22 @@ test("FormData accepts only single string fields without modifying credentials",
   assert.equal(readRegisterValues(form).username, "");
 });
 
+test("registration rejects @ names in every locale before calling the API", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = () => { throw Error("Must not call API"); };
+  try {
+    for (const locale of ["en", "pl", "es"]) {
+      const { messages, writes } = await context(locale);
+      for (const username of ["a@b", "name@example.com", "@name", "name@", "name@\n"]) {
+        assert.equal(validateRegistration({ ...valid, username }).username.key, "usernameNoAt");
+        const result = await registerAction({}, data({ ...valid, username }));
+        assert.deepEqual(result.fieldErrors.username, [messages.validation.usernameNoAt]);
+      }
+      assert.deepEqual(writes, []);
+    }
+  } finally { globalThis.fetch = originalFetch; delete globalThis.__authTestContext; }
+});
+
 test("server validation uses request locale and rejects invalid input before calling API", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = () => { throw Error("Must not call API"); };

@@ -13,6 +13,10 @@ const PASSWORD_COMPLEXITY_REGEX =
 export class CreateUserDto {
   @IsString({ message: 'Username must be a string' })
   @Length(3, 30, { context: { min: 3, max: 30 } })
+  @Matches(/^[^@]*$/, {
+    context: { code: 'USERNAME_NO_AT' },
+    message: 'Username must not contain @',
+  })
   username!: string;
 
   @IsString({ message: 'Password must be a string' })

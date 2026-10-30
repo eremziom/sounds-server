@@ -47,6 +47,7 @@
     "rateLimited": "Too many requests. Please try again later."
   },
   "validation": {
+    "usernameNoAt": "Username must not contain the @ character.",
     "required": "This field is required.",
     "invalid": "Check this field.",
     "email": "Enter a valid email address.",

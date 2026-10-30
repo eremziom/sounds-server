@@ -34,6 +34,7 @@ test("validation uses allowlisted fields/rules and only safe numeric interpolati
     const t = createTranslator({ locale, messages });
     const failure = http(400, "VALIDATION_FAILED", { message: ["private-password-token"], fieldErrors: [
       { field: "username", code: "LENGTH", params: { min: 3, max: 30, password: "private" } },
+      { field: "username", code: "USERNAME_NO_AT" },
       { field: "email", code: "EMAIL" },
       { field: "password", code: "PASSWORD_COMPLEXITY" },
       { field: "login", code: "REQUIRED" },
@@ -46,7 +47,7 @@ test("validation uses allowlisted fields/rules and only safe numeric interpolati
     assert.deepEqual(translateApiError(failure, "register", t), {
       message: t("errors.invalidInput"),
       fieldErrors: {
-        username: [t("validation.length", { min: 3, max: 30 })],
+        username: [t("validation.length", { min: 3, max: 30 }), t("validation.usernameNoAt")],
         email: [t("validation.email")], password: [t("validation.passwordComplexity")],
         login: [t("validation.required")], confirmPassword: [t("validation.invalid")],
       },

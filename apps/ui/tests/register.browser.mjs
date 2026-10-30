@@ -54,7 +54,12 @@ try {
       await mkdir(screenshotDirectory, { recursive: true });
       const screenshot = await send("Page.captureScreenshot", { format: "png" });
       await writeFile(new URL(`${locale}.png`, screenshotDirectory), Buffer.from(screenshot.data, "base64"));
-      await fill({ email: "test@example.com", confirmPassword: secret });
+      await fill({ username: "test@example.com", email: "test@example.com", confirmPassword: secret });
+      await submit();
+      await waitFor(`document.querySelector('form').innerText.includes(${JSON.stringify(m.validation.usernameNoAt)})`);
+      assert.equal(await evaluate("document.activeElement.name"), "username");
+      assert.equal(calls, before, "Names containing @ must not call the API");
+      await fill({ username: "Tester" });
       await evaluate("document.querySelector('button[aria-controls$=password]').click()");
       assert.equal(await evaluate("document.querySelector('input[name=password]').type"), "text");
       await submit();

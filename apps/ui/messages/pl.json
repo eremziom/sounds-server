@@ -47,6 +47,7 @@
     "rateLimited": "Zbyt wiele żądań. Spróbuj ponownie później."
   },
   "validation": {
+    "usernameNoAt": "Nazwa użytkownika nie może zawierać znaku @.",
     "required": "To pole jest wymagane.",
     "invalid": "Sprawdź to pole.",
     "email": "Podaj poprawny adres e-mail.",
