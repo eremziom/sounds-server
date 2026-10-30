@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { checkLoginSession } from "@/lib/login-session";
 import { RESUMED_PARAM } from "@/lib/session-resume";
 import { SessionCheckRetry } from "@/components/auth/session-check-retry";
+import Hyperspeed from "@/components/ui/hyperspeed";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.login");
@@ -26,20 +27,48 @@ export default async function LoginPage({ searchParams }: {
   const t = await getTranslations("auth");
   const navigation = await getTranslations("common.navigation");
   return (
-    <section className="space-y-4">
-      <h1 className="text-3xl font-semibold">{t("login.title")}</h1>
-      <ClientMessages namespaces={["auth", "validation", "errors"]}>
-        <LoginForm />
-      </ClientMessages>
-      <p>
-        {t("login.noAccount")}{" "}
-        <Link href="/register" className="underline underline-offset-4">
-          {t("register.action")}
+    <>
+      <div aria-hidden="true" className="fixed inset-0 z-0">
+        <Hyperspeed
+          curve="racing"
+          curvature={1}
+          speed={1}
+          boost={2.5}
+          fov={53}
+          boostFov={131}
+          lanes={4}
+          roadWidth={10}
+          medianWidth={2}
+          density={40}
+          trailLength={1.3}
+          lightSize={1}
+          poles={6}
+          dust={100}
+          glow={0.45}
+          reflections={0.5}
+          roadOpacity={0.1}
+          steer={0.25}
+          tailColors={["#d856bf", "#6750a2", "#c247ac"]}
+          headColors={["#03b3c3", "#0e5ea5", "#324555"]}
+          poleColors={["#03b3c3"]}
+          interactive
+        />
+      </div>
+      <section className="relative z-10 space-y-4">
+        <h1 className="text-3xl font-semibold">{t("login.title")}</h1>
+        <ClientMessages namespaces={["auth", "validation", "errors"]}>
+          <LoginForm />
+        </ClientMessages>
+        <p>
+          {t("login.noAccount")}{" "}
+          <Link href="/register" className="underline underline-offset-4">
+            {t("register.action")}
+          </Link>
+        </p>
+        <Link href="/" className="inline-block underline underline-offset-4">
+          {navigation("backHome")}
         </Link>
-      </p>
-      <Link href="/" className="inline-block underline underline-offset-4">
-        {navigation("backHome")}
-      </Link>
-    </section>
+      </section>
+    </>
   );
 }

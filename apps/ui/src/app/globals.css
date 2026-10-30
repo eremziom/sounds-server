@@ -4,6 +4,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer utilities {
+  input[data-variant="auth"]:autofill {
+    background-clip: text;
+    box-shadow:
+      inset 0 0 0 1000px color-mix(in srgb, var(--color-fuchsia-900) 50%, transparent),
+      var(--tw-ring-shadow, 0 0 #0000);
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
