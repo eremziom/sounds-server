@@ -112,6 +112,23 @@ async function main() {
       options,
     );
     assert.ok(loggedIn.ok, "Real API login must validate");
+    assert.equal(loggedIn.data.user.id, registered.data.user.id);
+    const emailLogin = await auth.login(
+      { login: input.email, password: input.password }, options,
+    );
+    assert.ok(emailLogin.ok, "Email login must remain supported");
+    assert.equal(emailLogin.data.user.id, loggedIn.data.user.id);
+    const invalidName = await auth.register(
+      { ...input, username: input.email, email: 'other@example.com' }, options,
+    );
+    assert.equal(invalidName.status, 400);
+    assert.ok(invalidName.error.body.fieldErrors.some(
+      (error) => error.field === 'username' && error.code === 'USERNAME_NO_AT',
+    ));
+    await assert.rejects(
+      db.query('UPDATE "User" SET username = $1 WHERE id = $2', [input.email, loggedIn.data.user.id]),
+      (error) => error.code === '23514' && error.constraint === 'User_username_no_at',
+    );
     const refreshed = await auth.refresh(registered.data.refreshToken, options);
     assert.ok(refreshed.ok, "Real API refresh must validate");
     assert.equal(
@@ -147,6 +164,25 @@ async function main() {
       if (name === "inactive") await prisma.user.update({ where: { id: userId }, data: { isActive: false } });
       loginAccounts.push({ ...account, target });
     }
+    const adminAccount = loginAccounts.find((account) => account.username === 'login-admin');
+    const adminLogin = await auth.login({ login: adminAccount.username, password: adminAccount.password }, options);
+    assert.ok(adminLogin.ok);
+    const rename = (username) => fetch(`${options.apiUrl}/users/${loggedIn.data.user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminLogin.data.accessToken}` },
+      body: JSON.stringify({ username }),
+    });
+    const rejectedRename = await rename(input.email);
+    assert.equal(rejectedRename.status, 400);
+    assert.ok((await rejectedRename.json()).fieldErrors.some(
+      (error) => error.field === 'username' && error.code === 'USERNAME_NO_AT',
+    ));
+    assert.equal((await rename('renamed-user')).status, 200);
+    const renamedLogin = await auth.login({ login: 'renamed-user', password: input.password }, options);
+    assert.ok(renamedLogin.ok, 'Login with a changed username must work');
+    assert.equal(renamedLogin.data.user.id, loggedIn.data.user.id);
+    assert.equal((await auth.login({ login: input.username, password: input.password }, options)).status, 401);
+    assert.ok((await auth.login({ login: input.email, password: input.password }, options)).ok);
     await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, choose, origin }) => {
       // Two real tabs share cookies, but have separate schedulers/pending work.
       const combined = loginAccounts.find((account) => account.username === "login-combined");

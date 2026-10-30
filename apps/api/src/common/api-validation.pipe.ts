@@ -48,9 +48,10 @@ export function normalizeValidationErrors(
           context &&
           typeof context === 'object' &&
           'code' in context &&
-          context.code === 'PASSWORD_COMPLEXITY'
+          (context.code === 'PASSWORD_COMPLEXITY' ||
+            context.code === 'USERNAME_NO_AT')
         ) {
-          return { field, code: 'PASSWORD_COMPLEXITY' };
+          return { field, code: context.code };
         }
         return {
           field,

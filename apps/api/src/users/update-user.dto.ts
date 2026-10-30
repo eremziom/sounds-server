@@ -1,9 +1,13 @@
-import { IsOptional, IsString, Length, IsUrl } from 'class-validator';
+import { IsOptional, IsString, Length, IsUrl, Matches } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
   @IsString({ message: 'Username must be a string' })
   @Length(3, 30)
+  @Matches(/^[^@]*$/, {
+    context: { code: 'USERNAME_NO_AT' },
+    message: 'Username must not contain @',
+  })
   username?: string;
 
   @IsOptional()

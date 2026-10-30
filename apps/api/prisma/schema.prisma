@@ -31,6 +31,7 @@ model Track {
 
 model User {
   id              Int           @id @default(autoincrement())
+  /// Must not contain @; enforced by the User_username_no_at SQL CHECK constraint.
   username        String        @unique
   password        String
   email           String        @unique

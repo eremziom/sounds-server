@@ -8,7 +8,7 @@ export const registerFields = [
 export type RegisterField = (typeof registerFields)[number];
 export type RegisterValues = Record<RegisterField, string>;
 type ValidationIssue = {
-  key: "required" | "email" | "length" | "passwordComplexity" | "passwordMismatch";
+  key: "required" | "email" | "length" | "usernameNoAt" | "passwordComplexity" | "passwordMismatch";
   values?: { min: number; max: number };
 };
 export type RegisterIssues = Partial<Record<RegisterField, ValidationIssue>>;
@@ -35,6 +35,8 @@ export function validateRegistration(values: RegisterValues): RegisterIssues {
   }
   if (!issues.username && !isLength(values.username, { min: 3, max: 30 }))
     issues.username = { key: "length", values: { min: 3, max: 30 } };
+  if (!issues.username && values.username.includes("@"))
+    issues.username = { key: "usernameNoAt" };
   if (!issues.email && !isEmail(values.email)) issues.email = { key: "email" };
   const passwordIssue = validatePassword(values.password);
   if (passwordIssue) issues.password = passwordIssue;
