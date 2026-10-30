@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Michroma, Smooch_Sans, Geist_Mono } from "next/font/google";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { timeZone } from "@/i18n/config";
@@ -9,9 +9,16 @@ import { AuthControls } from "@/components/auth/auth-controls";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const michroma = Michroma({
+  variable: "--font-michroma",
+  weight: "400",
+  subsets: ["latin", "latin-ext"],
+});
+
+const smoochSans = Smooch_Sans({
+  variable: "--font-smooch-sans",
+  subsets: ["latin", "latin-ext"],
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
@@ -31,7 +38,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${michroma.className} ${michroma.variable} ${smoochSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale} timeZone={timeZone} formats={formats} messages={{

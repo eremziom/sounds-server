@@ -103,17 +103,13 @@ export function LoginForm() {
           const passwordField = field === "password";
           const inputId = `${id}-${field}`;
           const errorId = `${inputId}-error`;
-          const hintId = `${id}-password-hint`;
           const messages = fieldErrors[field];
-          const describedBy = [
-            passwordField ? hintId : undefined,
-            messages?.length ? errorId : undefined,
-          ].filter(Boolean).join(" ") || undefined;
           return (
             <div key={field} className="space-y-2">
               <Label id={`${inputId}-label`} htmlFor={inputId}>{t(`fields.${field}`)}</Label>
               <div className="relative">
                 <Input
+                  variant="auth"
                   id={inputId}
                   name={field}
                   type={passwordField && !visible ? "password" : "text"}
@@ -125,7 +121,7 @@ export function LoginForm() {
                   value={values[field]}
                   onChange={(event) => changeField(field, event.target.value)}
                   aria-invalid={Boolean(messages?.length)}
-                  aria-describedby={describedBy}
+                  aria-describedby={messages?.length ? errorId : undefined}
                   className={passwordField ? "h-11 pr-12" : "h-11"}
                 />
                 {passwordField && (
@@ -133,7 +129,7 @@ export function LoginForm() {
                     aria-label={t(visible ? "password.hide" : "password.show")}
                     aria-describedby={`${inputId}-label`}
                     aria-controls={inputId} aria-pressed={visible}
-                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg focus-visible:outline-2 focus-visible:outline-ring">
+                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-fuchsia-50 focus-visible:outline-2 focus-visible:outline-fuchsia-400">
                     <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
                       <circle cx="12" cy="12" r="3" />
@@ -142,9 +138,6 @@ export function LoginForm() {
                   </button>
                 )}
               </div>
-              {passwordField && (
-                <p id={hintId} className="text-sm text-muted-foreground">{t("password.requirements")}</p>
-              )}
               {messages?.length ? (
                 <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
                   {messages.map((text) => <li key={text}>{text}</li>)}
@@ -153,7 +146,8 @@ export function LoginForm() {
             </div>
           );
         })}
-        <Button type="submit" disabled={pending} className="h-auto min-h-11 w-full whitespace-normal px-4 py-2">
+        <div aria-hidden="true" className="relative left-1/2 h-[2px] w-screen -translate-x-1/2 bg-fuchsia-900" />
+        <Button variant="auth" type="submit" disabled={pending} className="h-auto min-h-11 w-full whitespace-normal px-4 py-2">
           {t(pending ? "login.pending" : "login.action")}
         </Button>
       </form>

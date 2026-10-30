@@ -64,7 +64,7 @@ try {
       await submit();
       await waitFor(`document.querySelector('form').innerText.includes(${JSON.stringify(m.validation.passwordComplexity)})`);
       assert.equal(await evaluate("document.activeElement.name"), "password");
-      assert.equal(await evaluate("document.activeElement.getAttribute('aria-describedby').split(' ').length"), 2);
+      assert.equal(await evaluate("document.activeElement.getAttribute('aria-describedby').split(' ').length"), 1);
       await choose(other);
       assert.equal(await evaluate("document.querySelector('input[name=password]').value"), "lowercase123!");
       assert.equal(calls, before, "Local validation and locale changes must not call API");
