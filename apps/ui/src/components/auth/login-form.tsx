@@ -3,10 +3,9 @@
 import { useActionState, useEffect, useId, useRef, useState, type SubmitEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { loginAction } from "../../app/(auth)/actions";
-import { Button } from "../ui/button";
+import { AuthSubmitButton } from "./auth-submit-button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import WarpText from "../ui/warp-text";
 import { initialAuthState, type AuthActionState } from "./form-state";
 import {
   loginFields,
@@ -139,6 +138,14 @@ export function LoginForm() {
                   </button>
                 )}
               </div>
+              {passwordField && (
+                <p className="text-xs text-muted-foreground">
+                  {t("login.forgotPassword")}{" "}
+                  <a role="link" aria-disabled="true" className="cursor-pointer text-foreground underline underline-offset-4">
+                    {t("login.remindPassword")}
+                  </a>
+                </p>
+              )}
               {messages?.length ? (
                 <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
                   {messages.map((text) => <li key={text}>{text}</li>)}
@@ -147,32 +154,7 @@ export function LoginForm() {
             </div>
           );
         })}
-        <div aria-hidden="true" className="relative left-1/2 h-[2px] w-screen -translate-x-1/2 bg-fuchsia-900" />
-        <Button variant="auth" type="submit" disabled={pending} className="h-auto min-h-11 w-full whitespace-normal px-4 py-2">
-          <span className="sr-only">{t(pending ? "login.pending" : "login.action")}</span>
-          <span aria-hidden="true" className="w-full">
-            <WarpText
-              text={t(pending ? "login.pending" : "login.action")}
-              warpStrength={0}
-              warpScale={2.8}
-              speed={1.5}
-              lens="swirl"
-              pointerInfluence={0.75}
-              pointerStrength={0.56}
-              refraction={0.03}
-              chromatic={0.8}
-              idleDrift={1}
-              ripple
-              clickRipple
-              intro
-              fontSize={104}
-              fontWeight={700}
-              style={{ minHeight: 28 }}
-              color="var(--color-white)"
-              letterSpacing="-0.02em"
-            />
-          </span>
-        </Button>
+        <AuthSubmitButton label={t(pending ? "login.pending" : "login.action")} pending={pending} />
       </form>
       <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {pending ? t("login.pending") : ""}
