@@ -11,9 +11,6 @@ export async function resumeSessionAction(target: string) {
   // All arguments are untrusted, even though the page also sanitizes the URL.
   const destination = resumeTarget(target);
 
-  // Temporary delay for previewing the session recovery screen. Remove after testing.
-  await new Promise((resolve) => setTimeout(resolve, 15_000));
-
   const result = await refreshAction();
   if (!result.ok) {
     if (result.reason === "unavailable") return result;
