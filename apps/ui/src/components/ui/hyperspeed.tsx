@@ -7,6 +7,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 export type HyperspeedCurve = 'straight' | 'gentle' | 'winding' | 'hills' | 'racing' | 'deep';
+export type HyperspeedPoleShape = 'pole' | 'tree' | 'mushroom';
 
 export type HyperspeedProps = {
   curve?: HyperspeedCurve;
@@ -22,6 +23,7 @@ export type HyperspeedProps = {
   trailLength?: number;
   lightSize?: number;
   poles?: number;
+  poleShape?: HyperspeedPoleShape;
   poleHeight?: number;
   dust?: number;
   glow?: number;
@@ -30,6 +32,8 @@ export type HyperspeedProps = {
   tailColors?: string[];
   headColors?: string[];
   poleColors?: string[];
+  /** Palette transitions per second; 0 keeps each object's color static. */
+  poleColorSpeed?: number;
   roadColor?: string;
   roadOpacity?: number;
   lineColor?: string;
@@ -72,6 +76,7 @@ type Settings = {
   trailLength: number;
   lightSize: number;
   poles: number;
+  poleShape: HyperspeedPoleShape;
   poleHeight: number;
   dust: number;
   glow: number;
@@ -80,6 +85,7 @@ type Settings = {
   tailColors: string[];
   headColors: string[];
   poleColors: string[];
+  poleColorSpeed: number;
   roadColor: string;
   roadOpacity: number;
   lineColor: string;
@@ -250,6 +256,8 @@ const POLE_VERTEX = /* glsl */ `
   uniform float uCount;
   uniform float uEdge;
   uniform float uHeight;
+  uniform float uOutline;
+  uniform float uColorTime;
   uniform float uRadiusScale;
   uniform float uMirror;
   uniform vec3 uColors[${MAX_COLORS}];
@@ -262,9 +270,9 @@ const POLE_VERTEX = /* glsl */ `
   varying float vHeight;
   varying float vThin;
   void main() {
-    vHeight = position.y + 0.5;
+    vHeight = clamp(position.y + 0.5, 0.0, 1.0);
     float width = mix(0.08, 0.22, aSeed.y);
-    float height = mix(1.3, 1.9, aSeed.z) * uHeight;
+    float height = mix(mix(1.3, 1.9, aSeed.z), mix(6.0, 9.0, aSeed.z), uOutline) * uHeight;
     float spacing = uTravel / max(uCount, 1.0);
     vec3 center = vec3(
       aSide * uEdge,
@@ -275,7 +283,7 @@ const POLE_VERTEX = /* glsl */ `
     center.y = mix(center.y, -center.y * 1.6, uMirror);
     center += bend(abs(center.z / uTravel));
     float depth = max(0.1, -(modelViewMatrix * vec4(center, 1.0)).z);
-    float wanted = width * uRadiusScale;
+    float wanted = mix(width * uRadiusScale, height, uOutline);
     float shown = max(wanted, depth * uPixel * 0.75);
     vThin = wanted / shown;
     vec3 p = center + vec3(position.x * shown, 0.0, position.z * shown);
@@ -283,7 +291,14 @@ const POLE_VERTEX = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     vNormal = normalize(normalMatrix * normal);
     vView = -mv.xyz;
-    vColor = uColors[int(min(floor(aSeed.w * uColorCount), uColorCount - 1.0))];
+    float colorPhase = aSeed.w * uColorCount + uColorTime;
+    float colorIndex = mod(floor(colorPhase), uColorCount);
+    float nextColorIndex = mod(colorIndex + 1.0, uColorCount);
+    vColor = mix(
+      uColors[int(colorIndex)],
+      uColors[int(nextColorIndex)],
+      smoothstep(0.0, 1.0, fract(colorPhase)) * step(0.0001, uColorTime)
+    );
     vFog = smoothstep(uFogNear, uFogFar, -mv.z);
   }
 `;
@@ -478,6 +493,57 @@ const instanced = (source: THREE.BufferGeometry) => {
   return geometry;
 };
 
+// Tube outlines share the neon core, bloom and road reflections used by poles.
+const neonOutline = (paths: Vec3[][]) => {
+  const positions: number[] = [];
+  const normals: number[] = [];
+  const segments = paths.flatMap(points => points.slice(1).map((point, index) => [points[index], point]));
+  for (const [start, end] of segments) {
+    const tube = new THREE.TubeGeometry(
+      new THREE.LineCurve3(new THREE.Vector3(...start), new THREE.Vector3(...end)),
+      1, 0.008, 6, false
+    );
+    const flat = tube.toNonIndexed();
+    positions.push(...flat.getAttribute('position').array);
+    normals.push(...flat.getAttribute('normal').array);
+    flat.dispose();
+    tube.dispose();
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  return geometry;
+};
+
+const treeOutline = () => neonOutline([
+  [
+    [0, 0.5, 0], [-0.16, 0.23, 0], [-0.07, 0.23, 0],
+    [-0.24, -0.04, 0], [-0.12, -0.04, 0], [-0.32, -0.34, 0],
+    [0.32, -0.34, 0], [0.12, -0.04, 0], [0.24, -0.04, 0],
+    [0.07, 0.23, 0], [0.16, 0.23, 0], [0, 0.5, 0]
+  ],
+  [[0, -0.5, 0], [0, -0.34, 0]]
+]);
+
+const mushroomOutline = () => {
+  const cap: Vec3[] = Array.from({ length: 25 }, (_, index) => {
+    const angle = Math.PI * index / 24;
+    return [Math.cos(angle) * 0.38, 0.08 + Math.sin(angle) * 0.42, 0];
+  });
+  cap.push(cap[0]);
+  const spots: Vec3[][] = ([-0.19, 0, 0.19]).map(x =>
+    Array.from({ length: 13 }, (_, index): Vec3 => {
+      const angle = Math.PI * 2 * index / 12;
+      return [x + Math.cos(angle) * 0.035, (x === 0 ? 0.36 : 0.24) + Math.sin(angle) * 0.035, 0];
+    })
+  );
+  return neonOutline([
+    cap,
+    [[-0.09, 0.08, 0], [-0.12, -0.5, 0], [0.12, -0.5, 0], [0.09, 0.08, 0]],
+    ...spots
+  ]);
+};
+
 const nsin = (value: number) => Math.sin(value) * 0.5 + 0.5;
 const windX = (q: number, t: number) => Math.cos(Math.PI * q * 4 + t) * 25 + Math.cos(Math.PI * q * 8 + t * 2) ** 2 * 5;
 const windY = (q: number, t: number) => -nsin(Math.PI * q * 8 + t) * 10 - nsin(Math.PI * q + t / 8) ** 5 * 10;
@@ -536,6 +602,7 @@ const Hyperspeed = ({
   trailLength = 1,
   lightSize = 1,
   poles = 20,
+  poleShape = 'pole',
   poleHeight = 1,
   dust = 100,
   glow = 0.6,
@@ -544,6 +611,7 @@ const Hyperspeed = ({
   tailColors,
   headColors,
   poleColors,
+  poleColorSpeed = 0,
   roadColor,
   roadOpacity = 0.1,
   lineColor,
@@ -573,6 +641,7 @@ const Hyperspeed = ({
     trailLength: Math.max(0.05, trailLength),
     lightSize: Math.max(0.1, lightSize),
     poles: Math.min(MAX_POLES, Math.max(0, Math.round(poles))),
+    poleShape,
     poleHeight: Math.max(0.1, poleHeight),
     dust: Math.min(MAX_DUST, Math.max(0, Math.round(dust))),
     glow: Math.max(0, glow),
@@ -581,6 +650,7 @@ const Hyperspeed = ({
     tailColors: tailColors?.length ? tailColors : palette.tail,
     headColors: headColors?.length ? headColors : palette.head,
     poleColors: poleColors?.length ? poleColors : palette.poles,
+    poleColorSpeed: Math.max(0, poleColorSpeed),
     roadColor: roadColor ?? palette.road,
     roadOpacity: Math.min(1, Math.max(0, roadOpacity)),
     lineColor: lineColor ?? palette.lines,
@@ -766,10 +836,25 @@ const Hyperspeed = ({
     poleGeometry.setAttribute('aSide', new THREE.InstancedBufferAttribute(poleSide, 1));
     poleGeometry.instanceCount = 0;
     disposables.push(poleGeometry);
+    const tree = treeOutline();
+    const treeGeometry = instanced(tree);
+    const mushroom = mushroomOutline();
+    const mushroomGeometry = instanced(mushroom);
+    const poleGeometries = { pole: poleGeometry, tree: treeGeometry, mushroom: mushroomGeometry };
+    [treeGeometry, mushroomGeometry].forEach(geometry => {
+      ['aSeed', 'aIndex', 'aSide'].forEach(name =>
+        geometry.setAttribute(name, poleGeometry.getAttribute(name))
+      );
+      geometry.instanceCount = 0;
+    });
+    disposables.push(tree, treeGeometry, mushroom, mushroomGeometry);
+    const poleMeshes: THREE.Mesh[] = [];
     const poleUniforms = {
       uCount: { value: 20 },
       uEdge: { value: 11 },
       uHeight: { value: 1 },
+      uOutline: { value: 0 },
+      uColorTime: { value: 0 },
       uColors: swatches(),
       uColorCount: { value: 1 }
     };
@@ -789,6 +874,7 @@ const Hyperspeed = ({
       );
       effectMaterials.push(layerMaterial);
       const mesh = new THREE.Mesh(poleGeometry, layerMaterial);
+      poleMeshes.push(mesh);
       mesh.frustumCulled = false;
       mesh.renderOrder = order;
       if (!mirror) mesh.layers.enable(1);
@@ -995,9 +1081,15 @@ const Hyperspeed = ({
         group.reflection.uniforms.uIntensity.value = s.reflections * (s.light ? 0.22 : 0.42) * surface;
       });
 
-      poleGeometry.instanceCount = s.poles * 2;
+      const poleGeometryForShape = poleGeometries[s.poleShape] ?? poleGeometry;
+      poleGeometryForShape.instanceCount = s.poles * 2;
+      const isOutline = poleGeometryForShape !== poleGeometry;
+      poleMeshes.forEach(mesh => { mesh.geometry = poleGeometryForShape; });
+      poleUniforms.uOutline.value = isOutline ? 1 : 0;
+      if (!reduce) poleUniforms.uColorTime.value += dt * s.poleColorSpeed;
       poleUniforms.uCount.value = Math.max(1, s.poles);
-      poleUniforms.uEdge.value = s.roadWidth + s.medianWidth / 2 + 0.8;
+      const outlineMargin = s.poleShape === 'mushroom' ? 3.5 : 3;
+      poleUniforms.uEdge.value = s.roadWidth + s.medianWidth / 2 + (isOutline ? outlineMargin * s.poleHeight + 0.8 : 0.8);
       poleUniforms.uHeight.value = s.poleHeight;
       polesLayers.core.uniforms.uIntensity.value = s.light ? 0.9 : 1;
       polesLayers.core.uniforms.uCore.value = s.light ? 0 : 0.6;
