@@ -16,6 +16,7 @@ export type RegisterInput = {
   password: string;
 };
 export type AuthUser = SessionUser & { username: string; email: string };
+export type CurrentSessionUser = SessionUser & { sessionExpiresAt: string };
 export type AuthSession = {
   accessToken: string;
   refreshToken: string;
@@ -61,6 +62,13 @@ function parseExpiry(value: unknown, now: number): string | undefined {
     (_, fraction: string | undefined) => `.${(fraction ?? "").padEnd(3, "0")}Z`,
   );
   return date.toISOString() === canonical ? canonical : undefined;
+}
+
+function parseCurrentSessionUser(value: unknown): CurrentSessionUser | undefined {
+  const user = parseSessionUser(value);
+  if (!user || !isRecord(value)) return undefined;
+  const sessionExpiresAt = parseExpiry(value.sessionExpiresAt, Date.now());
+  return sessionExpiresAt ? { ...user, sessionExpiresAt } : undefined;
 }
 
 export function parseAuthSession(
@@ -188,7 +196,7 @@ export function logoutAll(
 export function getSessionUser(
   accessToken: string | undefined,
   options?: ApiOptions,
-): Promise<ApiResult<SessionUser>> {
+): Promise<ApiResult<CurrentSessionUser>> {
   if (!accessToken)
     return Promise.resolve({
       ok: false,
@@ -201,7 +209,7 @@ export function getSessionUser(
       method: "GET",
       expectedStatus: 200,
       accessToken,
-      parse: parseSessionUser,
+      parse: parseCurrentSessionUser,
     },
     options,
   );
@@ -211,7 +219,7 @@ export async function fetchSessionUser(
   accessToken: string | undefined,
   apiUrl: string,
   request: typeof fetch = fetch,
-): Promise<SessionUser | null> {
+): Promise<CurrentSessionUser | null> {
   if (!accessToken) return null;
 
   const result = await getSessionUser(accessToken, { apiUrl, request });

@@ -16,7 +16,7 @@ const api = createServer(async (req, res) => {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (req.url === "/auth/me") {
     const session = sessions.find((session) => session.accessToken === token && session.active);
-    return session ? res.end(JSON.stringify(session.user))
+    return session ? res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt }))
       : res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
   }
   if (req.url === "/auth/refresh") { calls.refresh++; return res.writeHead(401).end(); }

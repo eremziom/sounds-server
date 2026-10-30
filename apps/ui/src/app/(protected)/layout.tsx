@@ -22,6 +22,7 @@ async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
     <ApplicationRuntime
       key={user.id}
       accessTokenExpiresAt={readAccessTokenExpiry(accessToken)}
+      sessionExpiresAt={Date.parse(user.sessionExpiresAt)}
       footerLabels={{ expiresIn: t("expiresIn"), refreshing: t("resuming"), ended: t("expired"), unavailable: t("unavailable"), retry: actions("retry"), rateLimited: errors("rateLimited") }}
       adminLabel={navigation("admin")}
     >

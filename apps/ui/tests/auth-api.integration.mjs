@@ -85,6 +85,7 @@ async function main() {
     const me = await auth.getSessionUser(registered.data.accessToken, options);
     assert.ok(me.ok, "Real API session profile must validate");
     assert.equal(me.data.id, registered.data.user.id);
+    assert.equal(me.data.sessionExpiresAt, registered.data.refreshTokenExpiresAt);
     const duplicate = await auth.register(input, options);
     assert.equal(duplicate.status, 409);
     assert.equal(duplicate.error.body.code, "EMAIL_ALREADY_IN_USE");

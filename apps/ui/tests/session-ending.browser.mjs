@@ -49,7 +49,7 @@ const api = createServer(async (req, res) => {
     return res.writeHead(204).end();
   }
   if (req.url === "/auth/me" && active) {
-    return res.end(JSON.stringify({ ...session.user, roles: [{ key: "USER" }, { key: "ADMIN" }] }));
+    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: "USER" }, { key: "ADMIN" }] }));
   }
   res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
 });

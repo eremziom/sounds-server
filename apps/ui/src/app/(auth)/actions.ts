@@ -40,7 +40,12 @@ export async function refreshAction(): Promise<RefreshResult> {
   }
 
   await setAuthCookies(result.data);
-  return { ok: true, accessTokenExpiresAt: Date.parse(result.data.accessTokenExpiresAt) };
+  return {
+    ok: true,
+    accessTokenExpiresAt: Date.parse(result.data.accessTokenExpiresAt),
+    // Refresh tokens inherit the fixed AuthSession.expiresAt in the API.
+    sessionExpiresAt: Date.parse(result.data.refreshTokenExpiresAt),
+  };
 }
 
 export async function expireSessionAction(): Promise<never> {

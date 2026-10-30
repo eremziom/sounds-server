@@ -92,10 +92,25 @@ expiry; there is no hardcoded token lifetime. For renewed tokens lasting one
 minute or less, renewal is scheduled halfway through the remaining lifetime to
 avoid an immediate rotation loop.
 
-The protected layout includes a small session footer showing the access token's
-remaining lifetime, updated every second. It resets to the new expiry after a
-successful refresh and displays renewal/session-end status in en/pl/es. This is
-the access token countdown; the refresh session's absolute lifetime is separate.
+The protected layout includes a small session footer showing remaining access
+token lifetime followed by `/` and remaining absolute session lifetime, under
+one shared label. Both countdowns update every second; durations over an hour
+include total hours. The access countdown resets after successful refresh while
+the session deadline stays fixed. Renewal/session-end status uses en/pl/es.
+
+The API's `/auth/me` additionally returns `sessionExpiresAt` from the validated
+database session. The layout passes only this timestamp to the runtime; refresh
+actions use the fixed `refreshTokenExpiresAt` as the same absolute deadline.
+A separate timer ends the local session at that deadline even if the access JWT
+is still valid, renewal is in flight, or recovery is `unavailable`. Resume events
+and protected requests also check the deadline because background timers may be
+delayed. Ending stops media, hides protected content, broadcasts to peer tabs,
+and queues cookie cleanup/login after any in-flight action. Renewals and server
+re-renders cannot extend the runtime's known deadline. Backend validation remains
+independent of the browser clock. Build/deploy the updated API before the UI:
+missing/malformed session deadlines fail closed. No database migration is needed.
+Run `pnpm --filter ui test:session-deadline` after building for en/pl/es browser
+checks of idle expiry, expiry after renewal, outage/resume and late refresh.
 
 `useApplicationSession().ensureFresh()` checks the same deadline before a
 protected client request and resolves after cookie rotation. It shares in-flight

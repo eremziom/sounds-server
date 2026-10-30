@@ -15,6 +15,7 @@ const userWithRoles = (...keys) => ({
   id: 1,
   isActive: true,
   roles: keys.map((key) => ({ key })),
+  sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(),
 });
 
 test("app accepts USER and ARTIST; admin requires ADMIN", () => {

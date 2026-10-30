@@ -17,10 +17,19 @@ preserve the instances. Animation engines using requestAnimationFrame/WebGL must
 register their stop callback through useMediaRuntime and unregister on teardown.
 The runtime calls POST Server Action `refreshAction()` one minute before the
 actual access expiry and rechecks on visibility/focus/pageshow. It keeps renewing
-while idle. The server supplies only the JWT expiry timestamp after API session
-verification; renewal returns the next expiry from the API. Token lifetime is
+while idle. The server supplies JWT expiry and the API-validated absolute
+`sessionExpiresAt` timestamps; renewal returns the next access expiry and the
+fixed session deadline (`refreshTokenExpiresAt` in the API). Token lifetime is
 not hardcoded. Renewed tokens valid for at most a minute are scheduled halfway
 through their remaining lifetime to avoid a rotation loop.
+An independent deadline timer calls `session.end()` at the end of the session,
+including during renewal or API recovery. Focus/visibility/pageshow and protected
+requests check that deadline as well. Successful renewal cannot extend it, and
+a late response cannot reactivate an ended runtime. Existing media cleanup,
+cross-tab notification and queued cookie cleanup/login handle this termination.
+The API remains the authority for every protected request, regardless of client
+clock changes. `/auth/me` without a valid future deadline fails response parsing;
+deploy the API contract update before the corresponding UI.
 `useApplicationSession().ensureFresh()` exposes the deadline check for protected
 client requests and shares pending renewal. `runProtected(operation)` waits for
 that check before executing an operation once; failure/session end prevents

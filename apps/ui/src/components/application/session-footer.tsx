@@ -22,8 +22,9 @@ function formatRemainingTime(expiry: number | null, now: number | null) {
   return parts.join(":");
 }
 
-export function SessionFooter({ accessTokenExpiresAt, status, labels }: {
+export function SessionFooter({ accessTokenExpiresAt, sessionExpiresAt, status, labels }: {
   accessTokenExpiresAt: number | null;
+  sessionExpiresAt: number;
   status: ApplicationSessionStatus;
   labels: SessionFooterLabels;
 }) {
@@ -46,8 +47,14 @@ export function SessionFooter({ accessTokenExpiresAt, status, labels }: {
       {status === "ended" ? labels.ended : (
         <>
           <span>{labels.expiresIn}</span>
-          <span className="font-mono tabular-nums" role="timer" aria-live="off" data-session-countdown>
-            {formatRemainingTime(accessTokenExpiresAt, now)}
+          <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono tabular-nums">
+            <span role="timer" aria-live="off" data-session-countdown>
+              {formatRemainingTime(accessTokenExpiresAt, now)}
+            </span>
+            <span aria-hidden="true">/</span>
+            <span role="timer" aria-live="off" data-session-deadline-countdown>
+              {formatRemainingTime(sessionExpiresAt, now)}
+            </span>
           </span>
           {status === "refreshing" && <span role="status">{labels.refreshing}</span>}
         </>

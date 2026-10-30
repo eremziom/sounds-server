@@ -40,6 +40,7 @@ test("refresh action uses only the server cookie and replaces both HttpOnly cook
       untrusted.set("refreshToken", "attacker-supplied");
       assert.deepEqual(await refreshAction(untrusted), {
         ok: true, accessTokenExpiresAt: Date.parse(session.accessTokenExpiresAt),
+        sessionExpiresAt: Date.parse(session.refreshTokenExpiresAt),
       });
       assert.equal(calls, 1);
       assert.deepEqual(state.writes.map(({ name }) => name), ["accessToken", "refreshToken"]);

@@ -17,6 +17,7 @@ export interface JwtPayload {
 
 export interface AuthenticatedUser {
   sessionId: string;
+  sessionExpiresAt: Date;
   userId: number;
   username: string;
   roles: string[];

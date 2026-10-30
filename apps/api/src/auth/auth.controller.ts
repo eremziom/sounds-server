@@ -81,7 +81,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('users:read-own')
   @Get('me')
-  me(@Req() request: AuthenticatedRequest): Promise<UserResponse> {
-    return this.authService.findOne(request.user.userId);
+  async me(
+    @Req() request: AuthenticatedRequest,
+  ): Promise<UserResponse & { sessionExpiresAt: Date }> {
+    const user = await this.authService.findOne(request.user.userId);
+    return { ...user, sessionExpiresAt: request.user.sessionExpiresAt };
   }
 }

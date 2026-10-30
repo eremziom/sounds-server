@@ -26,7 +26,7 @@ const api = createServer(async (req, res) => {
     if (sessionMode === "403") return res.writeHead(403).end(JSON.stringify({ code: "ACCESS_DENIED" }));
     if (sessionMode === "failure") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR", message: "private backend details" }));
     if (sessionMode === "malformed") return res.end("private non-JSON session");
-    return res.end(JSON.stringify({ ...authSession().user, roles }));
+    return res.end(JSON.stringify({ ...authSession().user, sessionExpiresAt: authSession().refreshTokenExpiresAt, roles }));
   }
   if (req.url === "/auth/refresh") {
     calls.refresh++;
@@ -198,7 +198,7 @@ try {
         await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(nextMessages.app.home.title)}`);
         assert.equal(await evaluate("window.stage5Document"), true, "Protected Link navigation must preserve the document");
 
-        // Guards keep their documented 401/403 -> login policy; API outages
+        // With refresh cookies, rejected guards first attempt entry recovery; API outages
         // must fail closed and must not leak either protected page content.
         for (const mode of ["401", "403", "failure", "malformed"]) {
           sessionMode = mode;
@@ -206,7 +206,7 @@ try {
           assert.ok(!response.body.includes(nextMessages.admin.home.placeholder));
           assert.ok(!response.body.includes("private backend details"));
           assert.ok(!response.body.includes("private non-JSON session"));
-          if (mode === "401" || mode === "403") assert.ok(response.body.includes("NEXT_REDIRECT;replace;/login;"));
+          if (mode === "401" || mode === "403") assert.ok(response.body.includes("NEXT_REDIRECT;replace;/resume?returnTo="));
           else assert.ok(response.body.includes('"digest"'), "API failures must produce a rendering error, never grant access");
         }
         sessionMode = "normal";

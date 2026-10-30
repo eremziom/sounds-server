@@ -38,7 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         expiresAt: { gt: new Date() },
         user: { isActive: true },
       },
-      select: { id: true },
+      select: { id: true, expiresAt: true },
     });
     if (!session)
       throw new UnauthorizedException(
@@ -49,6 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
     return {
       sessionId: payload.sid,
+      sessionExpiresAt: session.expiresAt,
       userId: payload.sub,
       username: payload.username,
       roles: payload.roles,

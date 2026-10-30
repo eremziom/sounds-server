@@ -41,7 +41,7 @@ const api = createServer(async (req, res) => {
     return res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
   }
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ id: userId, isActive: true, roles: [{ key: "USER" }, { key: "ADMIN" }] }));
+  res.end(JSON.stringify({ id: userId, isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: "USER" }, { key: "ADMIN" }] }));
 });
 api.listen(0, "127.0.0.1");
 await once(api, "listening");

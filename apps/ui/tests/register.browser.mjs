@@ -14,7 +14,7 @@ const api = createServer(async (req, res) => {
   if (req.url === "/auth/me") {
     if (req.headers.authorization !== "Bearer header.payload.signature")
       return res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
-    return res.end(JSON.stringify(authSession().user));
+    return res.end(JSON.stringify({ ...authSession().user, sessionExpiresAt: authSession().refreshTokenExpiresAt }));
   }
   if (req.url !== "/auth/register") return res.writeHead(404).end();
   calls++;

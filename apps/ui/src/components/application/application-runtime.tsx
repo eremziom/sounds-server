@@ -40,9 +40,10 @@ function renewSession(): Promise<RefreshResult> {
 
 // Mounted once per authenticated account, outside page loading/error boundaries.
 // No token, pathname or locale is part of this component's identity.
-export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabels, adminLabel }: {
+export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpiresAt, footerLabels, adminLabel }: {
   children: ReactNode;
   accessTokenExpiresAt: number | null;
+  sessionExpiresAt: number;
   footerLabels: SessionFooterLabels;
   adminLabel: string;
 }) {
@@ -59,7 +60,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
     const result = await renewSession();
     setRateLimited(!result.ok && result.rateLimited === true);
     return result;
-  }));
+  }, sessionExpiresAt));
   const [context] = useState(() => ({
     session,
     ensureFresh: renewal.ensureFresh,
@@ -96,10 +97,11 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
   }, [session]);
 
   useEffect(() => { renewal.updateExpiry(accessTokenExpiresAt); }, [renewal, accessTokenExpiresAt]);
+  useEffect(() => { renewal.updateSessionExpiry(sessionExpiresAt); }, [renewal, sessionExpiresAt]);
   useEffect(() => {
     const stop = renewal.start();
     const check = () => {
-      if (document.visibilityState === "visible" && session.getSnapshot() !== "unavailable") void renewal.ensureFresh();
+      if (document.visibilityState === "visible" && renewal.checkDeadline() && session.getSnapshot() !== "unavailable") void renewal.ensureFresh();
     };
     document.addEventListener("visibilitychange", check);
     window.addEventListener("focus", check);
@@ -122,7 +124,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
             {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
           </MediaRuntime>
         )}
-        <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} status={status} labels={footerLabels} />
+        <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} sessionExpiresAt={sessionExpiresAt} status={status} labels={footerLabels} />
       </div>
     </SessionContext.Provider>
   );

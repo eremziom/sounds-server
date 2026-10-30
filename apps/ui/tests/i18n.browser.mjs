@@ -23,7 +23,7 @@ const api = createServer(async (req, res) => {
   const role = req.headers.authorization?.replace('Bearer ', '');
   if (!['USER', 'ADMIN', 'ARTIST'].includes(role)) return res.writeHead(401).end();
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ id: 1, isActive: true, roles: [{ key: role }] }));
+  res.end(JSON.stringify({ id: 1, isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
 });
 const apiPort = await listen(api);
 const reservation = createServer();

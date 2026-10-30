@@ -15,8 +15,8 @@ test("concurrent requests wait for one renewal and dispatch only after replaceme
     await gate;
     accessCookie = "rotated";
     events.push("cookies-written");
-    return { ok: true, accessTokenExpiresAt: Date.now() + 900_000 };
-  });
+    return { ok: true, accessTokenExpiresAt: Date.now() + 900_000, sessionExpiresAt: Date.now() + 86_400_000 };
+  }, Date.now() + 86_400_000);
   const run = createProtectedRequest(session, renewal.ensureFresh);
   const read = run(() => { events.push(`read:${accessCookie}`); return "data"; });
   const write = run(() => { events.push(`write:${accessCookie}`); return "saved"; });
@@ -37,8 +37,8 @@ test("requests also wait for renewal already started by the background timer", a
   let calls = 0;
   const renewal = createSessionRefresh(session, Date.now(), async () => {
     await gate;
-    return { ok: true, accessTokenExpiresAt: Date.now() + 900_000 };
-  });
+    return { ok: true, accessTokenExpiresAt: Date.now() + 900_000, sessionExpiresAt: Date.now() + 86_400_000 };
+  }, Date.now() + 86_400_000);
   const background = renewal.ensureFresh();
   const run = createProtectedRequest(session, renewal.ensureFresh);
   const request = run(() => ++calls);
@@ -64,7 +64,7 @@ test("403 and 401 responses are returned once without triggering refresh or retr
   for (const status of [401, 403]) {
     const session = createApplicationSession();
     const renewal = createSessionRefresh(session, Date.now() + 900_000,
-      () => assert.fail("HTTP errors must not trigger token refresh"));
+      () => assert.fail("HTTP errors must not trigger token refresh"), Date.now() + 86_400_000);
     const run = createProtectedRequest(session, renewal.ensureFresh);
     let writes = 0;
     const result = await run(() => { writes++; return new Response(null, { status }); });

@@ -282,7 +282,10 @@ async function main() {
       rotated.refreshTokenExpiresAt,
       registered.refreshTokenExpiresAt,
     );
-    await me(rotated.accessToken);
+    const currentSession = await me(rotated.accessToken);
+    assert.equal(currentSession.sessionExpiresAt, registered.refreshTokenExpiresAt);
+    assert.equal('accessToken' in currentSession, false);
+    assert.equal('refreshToken' in currentSession, false);
     assert.deepEqual(await refresh(registered.refreshToken), rotated, 'A duplicate within grace returns the original pair');
     assert.deepEqual(await refresh(rotated.refreshToken), rotated, 'The replacement cannot rotate again during grace');
     await expireRotation(initialPayload.sid);

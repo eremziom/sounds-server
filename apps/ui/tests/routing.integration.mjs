@@ -17,7 +17,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
       return;
     }
     response.setHeader("Content-Type", "application/json");
-    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, roles: [{ key: role }] }));
+    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
   });
   api.listen(0, "127.0.0.1");
   await once(api, "listening");

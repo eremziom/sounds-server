@@ -201,6 +201,7 @@ describe('AuthController', () => {
     const request: AuthenticatedRequest = {
       user: {
         sessionId: 'test-session',
+        sessionExpiresAt: new Date(Date.now() + 60_000),
         userId: 2,
         username: 'admin',
         roles: ['ADMIN'],
@@ -211,6 +212,7 @@ describe('AuthController', () => {
 
     expect(response.id).toBe(2);
     expect(response.username).toBe('admin');
+    expect(response.sessionExpiresAt).toBe(request.user.sessionExpiresAt);
     expect('password' in response).toBe(false);
   });
 

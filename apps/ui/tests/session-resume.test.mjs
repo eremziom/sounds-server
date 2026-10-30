@@ -40,7 +40,7 @@ test("recovery rotates cookies, checks current roles and distinguishes rejection
         assert.equal(init.headers.Authorization, `Bearer ${session.accessToken}`);
         if (mode === "me-outage") return new Response("", { status: 503 });
         if (mode === "me-invalid") return new Response("", { status: 401 });
-        return Response.json({ ...session.user, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
+        return Response.json({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
       };
       if (["outage", "limited", "me-outage"].includes(mode)) {
         const result = await resumeSessionAction("/admin?view=users");
