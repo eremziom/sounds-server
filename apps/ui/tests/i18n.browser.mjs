@@ -90,7 +90,7 @@ try {
     { name: 'accessToken', value: 'USER', url: origin, path: '/', httpOnly: true },
     { name: 'refreshToken', value: 'keep-session', url: origin, path: '/', httpOnly: true },
   ] });
-  const url = `${origin}/login?returnTo=%2Fadmin&test=1#language-section`;
+  const url = `${origin}/register?returnTo=%2Fadmin&test=1#language-section`;
   await send('Page.navigate', { url });
   await waitFor('document.querySelector("select") && document.documentElement.lang==="en"');
   await delay(300);
@@ -102,21 +102,21 @@ try {
   await key('ArrowDown', 'ArrowDown', 40);
   await waitFor('document.documentElement.lang==="pl" && !document.querySelector("select").disabled');
   assert.equal(await evaluate('location.href'), url);
-  assert.equal(await evaluate('document.querySelector("h1").textContent'), 'Logowanie');
+  assert.equal(await evaluate('document.querySelector("h1").textContent'), 'Rejestracja');
   console.log('Keyboard selection, focus outline, Polish content and full URL: OK');
   assert.equal(await evaluate('document.activeElement.tagName'), 'SELECT', 'Saving keeps keyboard focus');
   await choose('es');
   assert.equal(await evaluate('history.length'), historyLength, 'Language changes must not add history entries');
   assert.equal(await evaluate('document.querySelector("label").textContent'), 'Idioma');
-  assert.equal(await evaluate('document.querySelector("h1").textContent'), 'Iniciar sesión');
+  assert.equal(await evaluate('document.querySelector("h1").textContent'), 'Crear una cuenta');
   assert.equal(await evaluate('location.href'), url);
-  await evaluate(`document.querySelector('a[href="/register"]').click()`);
-  await waitFor('location.pathname==="/register" && document.querySelector("h1")?.textContent==="Crear una cuenta"');
+  await evaluate(`document.querySelector('a[href="/login"]').click()`);
+  await waitFor('location.pathname==="/" && document.querySelector("h1")?.textContent.includes("Sounds")');
   await choose('pl');
   await evaluate('history.back()');
-  await waitFor(`location.href===${JSON.stringify(url)} && document.documentElement.lang==="pl" && document.querySelector('h1')?.textContent==="Logowanie"`);
+  await waitFor(`location.href===${JSON.stringify(url)} && document.documentElement.lang==="pl" && document.querySelector('h1')?.textContent==="Rejestracja"`);
   await evaluate('history.forward()');
-  await waitFor('location.pathname==="/register" && document.documentElement.lang==="pl" && document.querySelector("h1")?.textContent==="Rejestracja"');
+  await waitFor('location.pathname==="/" && document.documentElement.lang==="pl" && document.querySelector("h1")?.textContent.includes("Sounds")');
   await choose('es');
   console.log('Client navigation, back/forward and unchanged history length: OK');
   const cookies = (await send('Network.getCookies', { urls: [origin] })).cookies;
@@ -129,9 +129,9 @@ try {
   assert.equal(cookies.find(c => c.name === 'accessToken').value, 'USER');
   assert.equal(cookies.find(c => c.name === 'refreshToken').value, 'keep-session');
   await send('Page.navigate', { url });
-  await waitFor('document.querySelector("h1")?.textContent==="Iniciar sesión" && document.querySelector("select")?.value==="es"');
+  await waitFor('document.querySelector("h1")?.textContent==="Crear una cuenta" && document.querySelector("select")?.value==="es"');
   await send('Page.reload');
-  await waitFor('document.querySelector("h1")?.textContent==="Iniciar sesión" && document.querySelector("select")?.value==="es"');
+  await waitFor('document.querySelector("h1")?.textContent==="Crear una cuenta" && document.querySelector("select")?.value==="es"');
   assert.equal(await evaluate('location.href'), url);
   console.log('Cookie settings, session preservation, reload, translated label: OK');
   await send('Emulation.setDeviceMetricsOverride', { width: 320, height: 640, deviceScaleFactor: 1, mobile: false });
@@ -176,7 +176,7 @@ try {
     const m = catalogs[locale];
     await send('Network.setCookie', { name: 'locale', value: locale, url: origin, path: '/' });
     for (const [pathname, role, heading, metadata] of [
-      ['/login', 'USER', m.auth.login.title, m.metadata.login],
+      ['/login', 'invalid', m.auth.login.title, m.metadata.login],
       ['/register', 'USER', m.auth.register.title, m.metadata.register],
       ['/', 'USER', m.app.home.title, m.metadata.default],
       ['/admin', 'ADMIN', m.admin.home.title, m.metadata.admin],
@@ -188,8 +188,11 @@ try {
       await waitFor(`document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
       await waitFor(`document.title===${JSON.stringify(metadata.title)} && document.querySelector('meta[name=description]')?.content===${JSON.stringify(metadata.description)}`);
       assert.equal(await evaluate('document.documentElement.scrollWidth <= innerWidth'), true, `${locale} ${pathname} at 320px`);
-      assert.equal(await evaluate('document.querySelector("label").textContent'), m.common.language.label);
-      assert.equal(await evaluate('document.querySelector("select").value'), locale);
+      if (pathname === '/access-denied') assert.equal(await evaluate('document.querySelectorAll("a, button, select, header").length'), 0);
+      else {
+        assert.equal(await evaluate('document.querySelector("label").textContent'), m.common.language.label);
+        assert.equal(await evaluate('document.querySelector("select").value'), locale);
+      }
       assert.ok(!(await evaluate('document.body.innerText')).match(/\b(?:auth|common|errors|metadata)\.[a-z]+\./), 'No raw message keys');
       await screenshot(`${locale}-${pathname.replaceAll('/', '') || 'home'}`);
     }
@@ -215,14 +218,14 @@ try {
   for (const name of ['accessToken', 'refreshToken', 'locale']) await send('Network.deleteCookies', { name, url: origin });
   await send('Network.setExtraHTTPHeaders', { headers: { 'Accept-Language': 'pl-PL,en;q=0.8' } });
   await send('Page.navigate', { url });
-  await waitFor('document.documentElement.lang==="pl" && document.querySelector("h1")?.textContent==="Logowanie"');
+  await waitFor('document.documentElement.lang==="pl" && document.querySelector("h1")?.textContent==="Rejestracja"');
   await delay(200);
   await choose('en');
   const anonymousCookies = (await send('Network.getCookies', { urls: [origin] })).cookies;
   assert.equal(anonymousCookies.find(c => c.name === 'locale').value, 'en');
   assert.ok(!anonymousCookies.some(c => ['accessToken','refreshToken'].includes(c.name)));
   await send('Page.reload');
-  await waitFor('document.documentElement.lang==="en" && document.querySelector("h1")?.textContent==="Sign in"');
+  await waitFor('document.documentElement.lang==="en" && document.querySelector("h1")?.textContent==="Create an account"');
   assert.equal(await evaluate('location.href'), url);
   assert.ok(!allErrors.some(error => /hydration|hydrated|#418|#423|#425/i.test(error)), 'No hydration errors for anonymous visitors');
   console.log('Anonymous choice, shared URL recipient language and cookie precedence after reload: OK');

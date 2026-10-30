@@ -90,16 +90,25 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
 
         for (const path of ["/login", "/register", "/access-denied"]) {
           const response = await fetchRoute(path, headers);
+          if (path === "/login" && ["USER", "ARTIST", "ADMIN"].includes(role)) {
+            const body = await response.text();
+            const target = role === "ADMIN" ? "/admin" : "/";
+            assert.ok(response.headers.get("location") === target || body.includes(`NEXT_REDIRECT;replace;${target};`));
+            assert.ok(!body.includes('name="login"'));
+            assertPrivate(response);
+            continue;
+          }
           assert.equal(response.status, 200, `${path}: ${role}, RSC=${rsc}`);
           assertPrivate(response);
           const body = await response.text();
           assertLocale(body, locale, rsc);
-          if (!rsc) {
+          if (!rsc && path !== "/access-denied") {
             assert.ok(body.includes(catalogs[locale].common.language.label));
             assert.match(body, /<select[^>]*name="locale"/);
             for (const name of ["English", "Polski", "Español"]) assert.ok(body.includes(name));
             assert.match(body, new RegExp(`<option(?=[^>]*value="${locale}")(?=[^>]*selected="")[^>]*>`));
           }
+          if (!rsc && path === "/access-denied") assert.doesNotMatch(body, /<(?:a|button|select|header)\b/);
           const messages = catalogs[locale];
           const heading = path === "/access-denied" ? messages.errors.accessDenied.title
             : path === "/register" ? messages.auth.register.title : messages.auth.login.title;
@@ -190,7 +199,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
       { value, authenticated: false }, { value, authenticated: true },
     ]);
     for (const { value, authenticated } of actionCases) {
-      const response = await fetch(`${origin}/login?returnTo=%2Fadmin`, {
+      const response = await fetch(`${origin}/register?returnTo=%2Fadmin`, {
         method: "POST",
         headers: {
           "Next-Action": actionId,

@@ -32,7 +32,7 @@
   "app": { "home": { "title": "Sounds home" } },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
   "errors": {
-    "accessDenied": { "title": "Access denied", "description": "Your account does not have the required role to open this page." },
+    "accessDenied": { "title": "Access denied", "description": "You do not have the required permissions" },
     "page": { "title": "Something went wrong", "description": "Could not load this page. Try again." },
     "notFound": { "title": "Page not found", "description": "The page you are looking for does not exist." },
     "sessionVerificationFailed": "Could not verify your session. Try again.",

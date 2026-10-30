@@ -5,8 +5,9 @@ import { unstable_rethrow } from "next/navigation";
 import { resumeSessionAction } from "../../app/(auth)/resume/actions";
 import { Button } from "../ui/button";
 
-export function SessionResume({ target, labels }: {
+export function SessionResume({ target, labels, chooseHome = false }: {
   target: string;
+  chooseHome?: boolean;
   labels: { resuming: string; unavailable: string; rateLimited: string; retry: string };
 }) {
   const started = useRef(false);
@@ -16,7 +17,7 @@ export function SessionResume({ target, labels }: {
   function resume() {
     startTransition(async () => {
       try {
-        const result = await resumeSessionAction(target);
+        const result = await resumeSessionAction(target, chooseHome);
         setMessage(result.rateLimited ? labels.rateLimited : labels.unavailable);
       } catch (error) {
         unstable_rethrow(error);

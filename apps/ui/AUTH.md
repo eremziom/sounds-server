@@ -195,7 +195,19 @@ Domyślna ochrona Origin/Host dla Server Actions pozostaje włączona.
   Kontroler klienta nie autoryzuje danych. Scheduler wywołuje POST Server Action
   zapisującą cookies bez wymiany instancji runtime. Synchronizacja kart pozostaje
   do wdrożenia.
-- Login/register pozostają publiczne również dla zalogowanych użytkowników.
+- `/register` pozostaje publiczne również dla zalogowanych użytkowników.
+  `/login` sprawdza sesję przez API i wybiera cel według aktualnych ról, tak jak
+  po logowaniu. Brak/odrzucenie access z refresh cookie uruchamia POST wznowienia
+  w trybie `mode=login`; cel jest wybierany po potwierdzeniu ról z `/auth/me`.
+  Odrzucony refresh usuwa cookies auth i pokazuje formularz bez pętli. Awaria,
+  nieprawidłowa odpowiedź lub limit API zachowują cookies i udostępniają ręczne
+  ponowienie zamiast formularza. GET nie zapisuje cookies.
+- `/access-denied` zawiera wyłącznie informację o odmowie dostępu, bez nagłówka,
+  linków, przycisków nawigacji, przekierowania ani wylogowania. Powrót Wstecz
+  podlega zwykłej kontroli dostępu. Ukrycie nagłówka reaguje na nawigację klienta.
+- `/auth/me` wymaga ważnej sesji i aktywnego konta przez JwtAuthGuard, bez
+  `users:read-own`. Zwraca wyłącznie własny profil i aktualne role, także dla
+  konta bez ról aplikacyjnych. Pozostałe endpointy zachowują kontrolę uprawnień.
 - `(app)` ma RouteGuard(APP_ROLES), a każda chroniona strona dodatkowo wywołuje
   requireRoles(APP_ROLES). `(admin)/admin` analogicznie używa ADMIN_ROLES.
 - Role są addytywne: USER/ARTIST otwierają aplikację, ADMIN panel. Konto z trzema

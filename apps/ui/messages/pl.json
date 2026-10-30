@@ -32,7 +32,7 @@
   "app": { "home": { "title": "Strona główna aplikacji Sounds" } },
   "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
   "errors": {
-    "accessDenied": { "title": "Brak dostępu", "description": "Twoje konto nie ma wymaganej roli, aby otworzyć tę stronę." },
+    "accessDenied": { "title": "Brak dostępu", "description": "Nie masz wymaganych uprawnień" },
     "page": { "title": "Wystąpił błąd", "description": "Nie udało się załadować strony. Spróbuj ponownie." },
     "notFound": { "title": "Nie znaleziono strony", "description": "Strona, której szukasz, nie istnieje." },
     "sessionVerificationFailed": "Nie udało się zweryfikować sesji. Spróbuj ponownie.",

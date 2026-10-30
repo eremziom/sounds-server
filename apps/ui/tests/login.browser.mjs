@@ -137,7 +137,10 @@ try {
         await send("Page.reload");
         await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
         await send("Page.navigate", { url: `${origin}/login` });
-        await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
+        await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)}`);
+        assert.equal(await evaluate("!!document.querySelector('input[name=login]')"), false);
+        if (target === "/access-denied") assert.equal(await evaluate("document.querySelectorAll('a, button, select, header').length"), 0);
+        await open(locale, "/login");
         await evaluate("document.querySelector('a[href=\"/register\"]').click()");
         await waitFor("location.pathname==='/register' && document.querySelector('input[name=username]')");
         await evaluate("document.querySelector('a[href=\"/login\"]').click()");

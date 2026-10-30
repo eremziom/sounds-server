@@ -35,5 +35,5 @@ export async function redirectToSessionResume(): Promise<never> {
   if (!alreadyResumed && (await cookies()).get(REFRESH_TOKEN_COOKIE)?.value) {
     redirect(`/resume?returnTo=${encodeURIComponent(resumeTarget(target))}`);
   }
-  redirect("/login");
+  redirect(alreadyResumed ? `/login?${RESUMED_PARAM}=1` : "/login");
 }

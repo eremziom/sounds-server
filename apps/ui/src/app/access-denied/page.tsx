@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { CircleMinus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -9,14 +9,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AccessDeniedPage() {
   const t = await getTranslations("errors.accessDenied");
-  const navigation = await getTranslations("common.navigation");
   return (
-    <main className="space-y-4 p-6">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      <p>{t("description")}</p>
-      <Link href="/login" className="underline underline-offset-4">
-        {navigation("goToLogin")}
-      </Link>
+    <main className="fixed inset-0 flex items-center justify-center overflow-y-auto bg-background p-6">
+      <section className="flex w-full max-w-md flex-col items-center gap-4 text-center">
+        <CircleMinus aria-hidden="true" className="size-16 shrink-0 text-destructive" />
+        <div className="space-y-2 break-words">
+          <h1 className="text-base font-medium">{t("title")}</h1>
+          <p className="text-sm leading-relaxed text-muted-foreground">{t("description")}</p>
+        </div>
+      </section>
     </main>
   );
 }

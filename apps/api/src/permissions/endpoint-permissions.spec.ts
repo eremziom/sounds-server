@@ -60,7 +60,6 @@ const endpoints: Endpoint[] = [
   ['patch', '/tracks/1', 'tracks:update-any', 'tracks', 'update'],
   ['delete', '/tracks/1', 'tracks:delete-any', 'tracks', 'remove'],
   ['get', '/auth/user/1', 'users:read', 'auth', 'findOne'],
-  ['get', '/auth/me', 'users:read-own', 'auth', 'findOne'],
 ];
 
 describe('Endpoint permissions (HTTP)', () => {
@@ -229,17 +228,29 @@ describe('Endpoint permissions (HTTP)', () => {
     expect(services.users.findAll).toHaveBeenCalledTimes(1);
   });
 
-  it('uses the authenticated user ID for the current profile', async () => {
-    grant(['users:read-own']);
+  it('exposes only the authenticated profile without requiring role permissions', async () => {
+    await request(app.getHttpServer()).get('/auth/me').expect(401);
+    expect(services.auth.findOne).not.toHaveBeenCalled();
+    grant([]);
     await request(app.getHttpServer())
       .get('/auth/me')
       .auth(token, { type: 'bearer' })
       .expect(200);
     expect(services.auth.findOne).toHaveBeenCalledWith(42);
+    expect(prisma.user.findUnique).not.toHaveBeenCalled();
     await request(app.getHttpServer())
       .get('/auth/user/1')
       .auth(token, { type: 'bearer' })
       .expect(403);
+  });
+
+  it('rejects inactive or revoked sessions when checking the current profile', async () => {
+    prisma.authSession.findFirst.mockResolvedValue(null);
+    await request(app.getHttpServer())
+      .get('/auth/me')
+      .auth(token, { type: 'bearer' })
+      .expect(401);
+    expect(services.auth.findOne).not.toHaveBeenCalled();
   });
 
   it('combines permissions from multiple database roles', async () => {

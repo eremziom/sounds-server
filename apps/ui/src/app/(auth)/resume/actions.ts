@@ -3,11 +3,11 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "../../../api/auth.ts";
 import { clearAuthCookies, getAuthCookies } from "../../../lib/auth-cookies.ts";
-import { ADMIN_ROLES, APP_ROLES, hasRequiredRole } from "../../../lib/route-access.ts";
+import { ADMIN_ROLES, APP_ROLES, hasRequiredRole, sessionHome } from "../../../lib/route-access.ts";
 import { resumeTarget, resumedTarget } from "../../../lib/session-resume.ts";
 import { refreshAction } from "../actions.ts";
 
-export async function resumeSessionAction(target: string) {
+export async function resumeSessionAction(target: string, chooseHome = false) {
   // All arguments are untrusted, even though the page also sanitizes the URL.
   const destination = resumeTarget(target);
 
@@ -22,10 +22,18 @@ export async function resumeSessionAction(target: string) {
   const current = await getSessionUser(accessToken);
   if (!current.ok) {
     if (current.status !== 401 && current.status !== 403) {
-      return { ok: false as const, reason: "unavailable" as const };
+      return { ok: false as const, reason: "unavailable" as const, rateLimited: current.status === 429 };
     }
     await clearAuthCookies();
     redirect("/login");
+  }
+  if (!current.data.isActive) {
+    await clearAuthCookies();
+    redirect("/login");
+  }
+  if (chooseHome === true) {
+    const home = sessionHome(current.data);
+    redirect(home === "/access-denied" ? home : resumedTarget(home));
   }
   const roles = new URL(destination, "https://local.invalid").pathname === "/admin" ? ADMIN_ROLES : APP_ROLES;
   if (!hasRequiredRole(current.data, roles)) redirect("/access-denied");

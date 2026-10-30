@@ -368,8 +368,7 @@ async function main() {
           const access = cookies.find((cookie) => cookie.name === "accessToken");
           assert.ok(access.httpOnly && access.secure && access.sameSite === "Lax");
           const current = await auth.getSessionUser(access.value, options);
-          if (target === "/access-denied") assert.equal(current.status, 403);
-          else assert.ok(current.ok);
+          assert.ok(current.ok, "Session discovery also supports accounts without application roles");
           assert.ok(!(await evaluate("document.documentElement.outerHTML")).includes(access.value));
           const rsc = await evaluate(`fetch(${JSON.stringify(`${target}?stage5=real-api`)}, {headers:{RSC:'1'},cache:'no-store'}).then(async response => ({
             status:response.status, type:response.headers.get('content-type'), cache:response.headers.get('cache-control'), body:await response.text()
@@ -382,16 +381,29 @@ async function main() {
           assert.ok(!rsc.body.includes(access.value));
           await send("Page.reload");
           await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)} && document.documentElement.lang===${JSON.stringify(locale)}`);
+          await send("Page.navigate", { url: `${origin}/login` });
+          await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)}`);
+          assert.equal(await evaluate("!!document.querySelector('input[name=login]')"), false);
+          await send("Network.deleteCookies", { name: "accessToken", url: origin });
+          await send("Page.navigate", { url: `${origin}/login` });
+          await waitFor(`location.pathname===${JSON.stringify(target)} && document.querySelector('h1')?.textContent===${JSON.stringify(heading)}`);
+          const renewedCookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
           const secondary = await auth.login({ login: account.username, password: account.password }, options);
           assert.ok(secondary.ok);
+          // Access-denied is informational; account actions remain on registration.
+          if (target === "/access-denied") {
+            assert.equal(await evaluate("document.querySelectorAll('a, button, select, header').length"), 0);
+            await send("Page.navigate", { url: `${origin}/register` });
+            await waitFor("document.querySelector('form[data-auth-logout]')");
+          }
           const scope = account.username === "login-artist" ? "current" : "all";
           await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').click()`);
           await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]') && !document.querySelector('form[data-auth-logout]')");
           const afterLogout = (await send("Network.getCookies", { urls: [origin] })).cookies;
           assert.ok(!afterLogout.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
           assert.equal(afterLogout.find((cookie) => cookie.name === "locale").value, locale);
-          assert.equal((await auth.getSessionUser(access.value, options)).status, 401);
-          assert.equal((await auth.refresh(cookies.find((cookie) => cookie.name === "refreshToken").value, options)).status, 401);
+          assert.equal((await auth.getSessionUser(renewedCookies.find((cookie) => cookie.name === "accessToken").value, options)).status, 401);
+          assert.equal((await auth.refresh(renewedCookies.find((cookie) => cookie.name === "refreshToken").value, options)).status, 401);
           const otherSession = await auth.getSessionUser(secondary.data.accessToken, options);
           if (scope === "all") {
             assert.equal(otherSession.status, 401);

@@ -17,3 +17,9 @@ export function hasRequiredRole(user: SessionUser, allowedRoles: readonly Role[]
     user.roles.some((role) => allowedRoles.some((key) => key === role.key))
   );
 }
+
+export function sessionHome(user: SessionUser): "/" | "/admin" | "/access-denied" {
+  if (hasRequiredRole(user, APP_ROLES)) return "/";
+  if (hasRequiredRole(user, ADMIN_ROLES)) return "/admin";
+  return "/access-denied";
+}
