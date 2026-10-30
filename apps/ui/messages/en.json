@@ -9,6 +9,8 @@
     "login": {
       "title": "Sign in",
       "noAccount": "Don't have an account?",
+      "forgotPassword": "Forgot your password?",
+      "remindPassword": "Reset password",
       "action": "Sign in",
       "pending": "Signing in…",
       "lastAttempt": "One sign-in attempt remains. Another failed attempt will block sign-in for 15 minutes."

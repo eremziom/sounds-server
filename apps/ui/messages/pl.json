@@ -9,6 +9,8 @@
     "login": {
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",
+      "forgotPassword": "Zapomniałeś hasła ?",
+      "remindPassword": "Przypomnij",
       "action": "Zaloguj się",
       "pending": "Logowanie…",
       "lastAttempt": "Pozostała ostatnia próba logowania. Kolejna nieudana próba zablokuje logowanie na 15 minut."

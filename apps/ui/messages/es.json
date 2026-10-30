@@ -9,6 +9,8 @@
     "login": {
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "remindPassword": "Recuperar",
       "action": "Iniciar sesión",
       "pending": "Iniciando sesión…",
       "lastAttempt": "Queda un intento de inicio de sesión. Otro intento fallido bloqueará el inicio de sesión durante 15 minutos."

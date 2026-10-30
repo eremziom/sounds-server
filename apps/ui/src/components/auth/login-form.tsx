@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useId, useRef, useState, type SubmitEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { loginAction } from "../../app/(auth)/actions";
-import { Button } from "../ui/button";
+import { AuthSubmitButton } from "./auth-submit-button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { initialAuthState, type AuthActionState } from "./form-state";
@@ -87,33 +87,31 @@ export function LoginForm() {
   return (
     <>
       <form ref={formRef} action={formAction} onSubmit={handleSubmit} aria-label={t("login.title")}
-        noValidate aria-busy={pending} className="space-y-5">
-        {message && (
-          <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
-            className="break-words text-sm text-destructive outline-offset-4">
-            {message}
-          </p>
-        )}
-        {state.lastLoginAttempt && state.values?.login === values.login && (
-          <p role="alert" aria-atomic="true" className="text-sm text-amber-500" data-login-warning>
-            {t("login.lastAttempt")}
-          </p>
-        )}
+        noValidate aria-busy={pending} className="space-y-2">
+        <div className="min-h-4 space-y-1">
+          {message && (
+            <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
+              className="break-words text-xs leading-4 text-destructive outline-offset-4">
+              {message}
+            </p>
+          )}
+          {state.lastLoginAttempt && state.values?.login === values.login && (
+            <p role="alert" aria-atomic="true" className="break-words text-xs leading-4 text-amber-500" data-login-warning>
+              {t("login.lastAttempt")}
+            </p>
+          )}
+        </div>
         {loginFields.map((field) => {
           const passwordField = field === "password";
           const inputId = `${id}-${field}`;
           const errorId = `${inputId}-error`;
-          const hintId = `${id}-password-hint`;
           const messages = fieldErrors[field];
-          const describedBy = [
-            passwordField ? hintId : undefined,
-            messages?.length ? errorId : undefined,
-          ].filter(Boolean).join(" ") || undefined;
           return (
             <div key={field} className="space-y-2">
               <Label id={`${inputId}-label`} htmlFor={inputId}>{t(`fields.${field}`)}</Label>
               <div className="relative">
                 <Input
+                  variant="auth"
                   id={inputId}
                   name={field}
                   type={passwordField && !visible ? "password" : "text"}
@@ -125,7 +123,7 @@ export function LoginForm() {
                   value={values[field]}
                   onChange={(event) => changeField(field, event.target.value)}
                   aria-invalid={Boolean(messages?.length)}
-                  aria-describedby={describedBy}
+                  aria-describedby={messages?.length ? errorId : undefined}
                   className={passwordField ? "h-11 pr-12" : "h-11"}
                 />
                 {passwordField && (
@@ -133,7 +131,7 @@ export function LoginForm() {
                     aria-label={t(visible ? "password.hide" : "password.show")}
                     aria-describedby={`${inputId}-label`}
                     aria-controls={inputId} aria-pressed={visible}
-                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg focus-visible:outline-2 focus-visible:outline-ring">
+                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-fuchsia-50 focus-visible:outline-2 focus-visible:outline-fuchsia-400">
                     <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
                       <circle cx="12" cy="12" r="3" />
@@ -143,19 +141,24 @@ export function LoginForm() {
                 )}
               </div>
               {passwordField && (
-                <p id={hintId} className="text-sm text-muted-foreground">{t("password.requirements")}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("login.forgotPassword")}{" "}
+                  <a role="link" aria-disabled="true" className="cursor-pointer text-foreground underline underline-offset-4">
+                    {t("login.remindPassword")}
+                  </a>
+                </p>
               )}
-              {messages?.length ? (
-                <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
-                  {messages.map((text) => <li key={text}>{text}</li>)}
-                </ul>
-              ) : null}
+              <div className="min-h-4">
+                {messages?.length ? (
+                  <ul id={errorId} className="break-words text-xs leading-4 text-destructive">
+                    {messages.map((text) => <li key={text}>{text}</li>)}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           );
         })}
-        <Button type="submit" disabled={pending} className="h-auto min-h-11 w-full whitespace-normal px-4 py-2">
-          {t(pending ? "login.pending" : "login.action")}
-        </Button>
+        <AuthSubmitButton label={t(pending ? "login.pending" : "login.action")} pending={pending} />
       </form>
       <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {pending ? t("login.pending") : ""}

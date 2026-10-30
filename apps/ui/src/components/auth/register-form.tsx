@@ -4,7 +4,7 @@ import { useActionState, useEffect, useId, useRef, useState } from "react";
 import type { SubmitEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { registerAction } from "../../app/(auth)/actions";
-import { Button } from "../ui/button";
+import { AuthSubmitButton } from "./auth-submit-button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { initialAuthState, type AuthActionState } from "./form-state";
@@ -93,15 +93,17 @@ export function RegisterForm() {
         action={formAction}
         noValidate
         aria-busy={pending}
-        className="space-y-5"
+        className="space-y-2"
         onSubmit={handleSubmit}
       >
-        {message && (
-          <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
-            className="break-words text-sm text-destructive outline-offset-4">
-            {message}
-          </p>
-        )}
+        <div className="min-h-4">
+          {message && (
+            <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
+              className="break-words text-xs leading-4 text-destructive outline-offset-4">
+              {message}
+            </p>
+          )}
+        </div>
         {registerFields.map((field) => {
           const passwordField = field === "password" || field === "confirmPassword";
           const inputId = `${id}-${field}`;
@@ -117,6 +119,7 @@ export function RegisterForm() {
               <Label id={`${inputId}-label`} htmlFor={inputId}>{t(`fields.${field}`)}</Label>
               <div className="relative">
                 <Input
+                  variant="auth"
                   id={inputId}
                   name={field}
                   type={passwordField ? (visible[field] ? "text" : "password")
@@ -139,7 +142,7 @@ export function RegisterForm() {
                     aria-describedby={`${inputId}-label`}
                     aria-controls={inputId}
                     aria-pressed={visible[field]}
-                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg focus-visible:outline-2 focus-visible:outline-ring"
+                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-lg text-fuchsia-50 focus-visible:outline-2 focus-visible:outline-fuchsia-400"
                     onClick={() => setVisible((current) => ({ ...current, [field]: !current[field] }))}
                   >
                     <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -153,17 +156,17 @@ export function RegisterForm() {
               {field === "password" && (
                 <p id={hintId} className="text-sm text-muted-foreground">{t("password.requirements")}</p>
               )}
-              {messages?.length ? (
-                <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
-                  {messages.map((text) => <li key={text}>{text}</li>)}
-                </ul>
-              ) : null}
+              <div className="min-h-4">
+                {messages?.length ? (
+                  <ul id={errorId} className="break-words text-xs leading-4 text-destructive">
+                    {messages.map((text) => <li key={text}>{text}</li>)}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           );
         })}
-        <Button type="submit" disabled={pending} className="h-auto min-h-11 w-full whitespace-normal px-4 py-2">
-          {t(pending ? "register.pending" : "register.action")}
-        </Button>
+        <AuthSubmitButton label={t(pending ? "register.pending" : "register.action")} pending={pending} />
       </form>
       <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {pending ? t("register.pending") : ""}

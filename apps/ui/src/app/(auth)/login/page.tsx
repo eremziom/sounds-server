@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { checkLoginSession } from "@/lib/login-session";
 import { RESUMED_PARAM } from "@/lib/session-resume";
 import { SessionCheckRetry } from "@/components/auth/session-check-retry";
+import { AuthBackground } from "@/components/auth/auth-background";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("metadata.login");
@@ -24,22 +25,21 @@ export default async function LoginPage({ searchParams }: {
       retry={t("common.actions.retry")} />;
   }
   const t = await getTranslations("auth");
-  const navigation = await getTranslations("common.navigation");
   return (
-    <section className="space-y-4">
-      <h1 className="text-3xl font-semibold">{t("login.title")}</h1>
-      <ClientMessages namespaces={["auth", "validation", "errors"]}>
-        <LoginForm />
-      </ClientMessages>
-      <p>
-        {t("login.noAccount")}{" "}
-        <Link href="/register" className="underline underline-offset-4">
-          {t("register.action")}
-        </Link>
-      </p>
-      <Link href="/" className="inline-block underline underline-offset-4">
-        {navigation("backHome")}
-      </Link>
-    </section>
+    <>
+      <AuthBackground />
+      <section className="relative z-10 space-y-4">
+        <h1 className="text-3xl font-semibold">{t("login.title")}</h1>
+        <ClientMessages namespaces={["auth", "validation", "errors"]}>
+          <LoginForm />
+        </ClientMessages>
+        <p>
+          {t("login.noAccount")}{" "}
+          <Link href="/register" className="underline underline-offset-4">
+            {t("register.action")}
+          </Link>
+        </p>
+      </section>
+    </>
   );
 }
