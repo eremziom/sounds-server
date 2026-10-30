@@ -93,10 +93,17 @@ minute or less, renewal is scheduled halfway through the remaining lifetime to
 avoid an immediate rotation loop.
 
 The protected layout includes a small session footer showing remaining access
-token lifetime followed by `/` and remaining absolute session lifetime, under
-one shared label. Both countdowns update every second; durations over an hour
-include total hours. The access countdown resets after successful refresh while
-the session deadline stays fixed. Renewal/session-end status uses en/pl/es.
+token lifetime beside the existing label. On the same line, absolute session lifetime
+uses one localized unit: whole days when at least a day remains (e.g. `30 dni`),
+whole hours below a day (`23h`), or whole minutes below an hour (`59min`). Seconds
+are omitted. The underlying clock keeps updating. The access countdown resets after
+successful refresh while the session deadline stays fixed. Renewal/session-end
+status uses en/pl/es.
+The display clock schedules the next second boundary of either deadline rather
+than restarting an interval on session status changes. New deadlines and their
+clock reading update together. Focus/pageshow/visibility resume resynchronizes
+against real time after browser suspension. After building, `test:countdown`
+checks both displays across an actual token renewal.
 
 The API's `/auth/me` additionally returns `sessionExpiresAt` from the validated
 database session. The layout passes only this timestamp to the runtime; refresh
