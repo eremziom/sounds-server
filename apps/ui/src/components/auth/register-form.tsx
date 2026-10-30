@@ -93,15 +93,17 @@ export function RegisterForm() {
         action={formAction}
         noValidate
         aria-busy={pending}
-        className="space-y-5"
+        className="space-y-2"
         onSubmit={handleSubmit}
       >
-        {message && (
-          <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
-            className="break-words text-sm text-destructive outline-offset-4">
-            {message}
-          </p>
-        )}
+        <div className="min-h-4">
+          {message && (
+            <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
+              className="break-words text-xs leading-4 text-destructive outline-offset-4">
+              {message}
+            </p>
+          )}
+        </div>
         {registerFields.map((field) => {
           const passwordField = field === "password" || field === "confirmPassword";
           const inputId = `${id}-${field}`;
@@ -154,11 +156,13 @@ export function RegisterForm() {
               {field === "password" && (
                 <p id={hintId} className="text-sm text-muted-foreground">{t("password.requirements")}</p>
               )}
-              {messages?.length ? (
-                <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
-                  {messages.map((text) => <li key={text}>{text}</li>)}
-                </ul>
-              ) : null}
+              <div className="min-h-4">
+                {messages?.length ? (
+                  <ul id={errorId} className="break-words text-xs leading-4 text-destructive">
+                    {messages.map((text) => <li key={text}>{text}</li>)}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           );
         })}

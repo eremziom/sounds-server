@@ -87,18 +87,20 @@ export function LoginForm() {
   return (
     <>
       <form ref={formRef} action={formAction} onSubmit={handleSubmit} aria-label={t("login.title")}
-        noValidate aria-busy={pending} className="space-y-5">
-        {message && (
-          <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
-            className="break-words text-sm text-destructive outline-offset-4">
-            {message}
-          </p>
-        )}
-        {state.lastLoginAttempt && state.values?.login === values.login && (
-          <p role="alert" aria-atomic="true" className="text-sm text-amber-500" data-login-warning>
-            {t("login.lastAttempt")}
-          </p>
-        )}
+        noValidate aria-busy={pending} className="space-y-2">
+        <div className="min-h-4 space-y-1">
+          {message && (
+            <p ref={summaryRef} role="alert" aria-atomic="true" tabIndex={-1}
+              className="break-words text-xs leading-4 text-destructive outline-offset-4">
+              {message}
+            </p>
+          )}
+          {state.lastLoginAttempt && state.values?.login === values.login && (
+            <p role="alert" aria-atomic="true" className="break-words text-xs leading-4 text-amber-500" data-login-warning>
+              {t("login.lastAttempt")}
+            </p>
+          )}
+        </div>
         {loginFields.map((field) => {
           const passwordField = field === "password";
           const inputId = `${id}-${field}`;
@@ -146,11 +148,13 @@ export function LoginForm() {
                   </a>
                 </p>
               )}
-              {messages?.length ? (
-                <ul id={errorId} className="space-y-1 break-words text-sm text-destructive">
-                  {messages.map((text) => <li key={text}>{text}</li>)}
-                </ul>
-              ) : null}
+              <div className="min-h-4">
+                {messages?.length ? (
+                  <ul id={errorId} className="break-words text-xs leading-4 text-destructive">
+                    {messages.map((text) => <li key={text}>{text}</li>)}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           );
         })}
