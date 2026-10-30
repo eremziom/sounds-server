@@ -68,6 +68,18 @@ It composes MediaRuntime, which owns the persistent audio element, animation hos
 useMediaRuntime and media cleanup outside the sections' loading boundaries.
 Navigation and cookie changes preserve the instances;
 switching accounts or leaving the protected area stops and releases them.
+Cold loads/reloads with a missing or rejected access token and a refresh cookie
+go through `/resume?returnTo=...`. A POST action renews cookies, verifies the API
+user and destination roles, then returns to `/` or `/admin` with the original
+query and locale. Invalid refresh clears auth cookies and opens login; API
+outages/rate limits preserve cookies and offer manual retry in en/pl/es. Protected
+content and media remain unmounted while recovering. GET/render never writes
+token cookies. A one-use URL marker prevents recovery redirect loops and is
+removed once the authenticated runtime mounts. See [ROUTING.md](ROUTING.md) for
+the target allowlist and custom server header contract.
+After building, run `pnpm --filter ui test:session-resume` for browser coverage
+of this flow in en/pl/es.
+
 The client session controller supports active/refreshing/unavailable/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
 both rotated cookies and returns only success and the new access expiry timestamp

@@ -203,6 +203,7 @@ try {
       assert.equal(await evaluate("runtimeAnimation.playState"), "idle");
       assert.equal(await evaluate("!!window.runtimeDocument"), true);
 
+      assert.equal(refreshCalls, callsBefore + 3, "Timer, resume and protected navigation each renew once");
       mode = "ended";
       await evaluate("window.next.router.refresh()");
       await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
@@ -210,7 +211,7 @@ try {
       assert.equal(await evaluate("!!document.querySelector('header a[href=\"/admin\"]')"), false);
       assert.equal(await evaluate("!!window.runtimeDocument"), true);
       await evaluate("URL.revokeObjectURL(runtimeAudioUrl)");
-      assert.equal(refreshCalls, callsBefore + 3, "Timer, resume and protected navigation each renew once");
+      assert.equal(refreshCalls, callsBefore + 4, "Rejected route check attempts entry recovery once; rejected /auth/me ends it without a loop");
       console.log(`Application runtime ${locale}: timer/resume rotate cookies without resetting audio/animation; navigation, account reset and session end OK`);
     }
   });

@@ -1,6 +1,5 @@
 import { Suspense, type ReactNode } from "react";
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, redirectToSessionResume } from "@/lib/auth";
 import { ApplicationRuntime } from "@/components/application/application-runtime";
 import Loading from "@/app/loading";
 import { getAuthCookies } from "@/lib/auth-cookies";
@@ -9,7 +8,7 @@ import { getTranslations } from "next-intl/server";
 
 async function AuthenticatedRuntime({ children }: { children: ReactNode }) {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) return redirectToSessionResume();
 
   // Changing accounts intentionally resets media. Navigation, locale changes and
   // replacement of token cookies for the same account must preserve the runtime.

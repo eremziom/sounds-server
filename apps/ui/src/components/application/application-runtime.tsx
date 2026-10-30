@@ -13,6 +13,7 @@ import { createProtectedRequest } from "../../lib/protected-request";
 import { ApplicationNavigation } from "./application-navigation";
 import { LOGOUT_EVENT, broadcastLogout, subscribeToLogout } from "../../lib/logout-event";
 import { SessionRecovery } from "./session-recovery";
+import { RESUMED_PARAM } from "../../lib/session-resume";
 
 const SessionContext = createContext<{
   session: ApplicationSession;
@@ -45,6 +46,13 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, footerLabel
   footerLabels: SessionFooterLabels;
   adminLabel: string;
 }) {
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has(RESUMED_PARAM)) {
+      url.searchParams.delete(RESUMED_PARAM);
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, []);
   const [session] = useState(createApplicationSession);
   const [rateLimited, setRateLimited] = useState(false);
   const [renewal] = useState(() => createSessionRefresh(session, accessTokenExpiresAt, async () => {

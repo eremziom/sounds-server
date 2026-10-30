@@ -12,6 +12,9 @@ let handle;
 let secret;
 let trustedProxies;
 const server = createServer((request, response) => {
+  // Replace caller-supplied values. Server guards need the original destination,
+  // including its query, which layouts do not receive as props.
+  request.headers["x-sounds-request-target"] = request.url;
   delete request.headers["x-sounds-client-source"];
   const address = clientAddress(request, trustedProxies);
   if (address) request.headers["x-sounds-client-source"] = signSource(address, secret);

@@ -3,7 +3,7 @@
 `(auth)` routes (`/login`, `/register`) are public, including for signed-in users.
 `(app)` requires a `USER` or `ARTIST` role; `(admin)/admin` requires `ADMIN`.
 Roles are additive: `ADMIN` alone does not grant access to `(app)`.
-Missing/invalid sessions redirect to `/login`; insufficient roles redirect to
+Missing/invalid sessions without a refresh cookie redirect to `/login`; insufficient roles redirect to
 the public `/access-denied` page.
 
 Both protected sections now live under `src/app/(protected)/`, with unchanged
@@ -50,7 +50,18 @@ in a receiver finishes before its final cookie cleanup. Automatic session loss
 also notifies peers; an unavailable API does not. Old result-page visits do not
 broadcast without a local logout intent. Communication is limited to the same
 origin/browser profile and adds no persistent session store. A cold load
-or unguarded navigation with an expired access cookie still redirects to login.
+or navigation without a valid access cookie first attempts recovery if a refresh
+cookie exists, through the public `/resume?returnTo=...` page. It mounts no
+protected content/media and makes one POST `resumeSessionAction` call using
+`refreshAction`, then verifies `/auth/me` and the destination's current roles.
+Invalid refresh clears auth cookies and redirects to login; outages/rate limits
+preserve cookies and offer a translated manual retry. No automatic retry runs.
+The return target permits only `/` and `/admin` with user query parameters;
+new protected routes must extend `session-resume.ts` and the action's role policy.
+`server.mjs` replaces `x-sounds-request-target` with the actual incoming URL.
+A reserved `__session_resumed` query marker prevents another recovery if the
+destination guard rejects the renewed session; the authenticated runtime removes
+it from browser history after mounting. `_rsc` is omitted from the return target.
 The UI controller never authorizes API operations.
 
 All languages use these same URLs and redirects. Request language is selected
@@ -109,7 +120,7 @@ and other roles to `/access-denied`. App roles take priority for combined roles.
 These decisions use the API response, not decoded JWT claims or submitted roles.
 No returnTo destination is used. Both forms stay public for signed-in users.
 Background renewal runs in the mounted protected runtime; without a valid access
-cookie on initial page load, protected pages still redirect to login.
+cookie on initial page load, protected pages use the recovery flow above.
 
 Layouts guard the section UI. Each protected page must also call
 `requireRoles(APP_ROLES)` or `requireRoles(ADMIN_ROLES)` before fetching protected
@@ -159,7 +170,8 @@ Back navigation and subsequent protected RSC requests are checked after logout.
 Stage 5 additionally checks protected RSC with freshly issued cookies, private
 no-store responses and Link navigation after sign-in. Both public auth forms
 remain available with a session. The getSessionUser result retains 401/403;
-the fetchSessionUser adapter continues to redirect guards to login for either.
+the fetchSessionUser adapter returns null to guards for either, allowing recovery
+when a refresh cookie exists.
 503 and malformed session responses produce rendering errors without protected
 content, raw backend text or an automatic refresh attempt.
 
