@@ -125,7 +125,7 @@ try {
         await open(locale, `/${flow}`);
         await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: false });
         const before = { ...calls };
-        await evaluate("window.stage5Form=document.querySelector('form'); document.querySelector('select[name=locale]').focus()");
+        await evaluate("window.stage5Form=document.querySelector('form'); document.querySelector('[data-language-trigger]').focus()");
         await key("Tab", "Tab", 9);
         await assertFocus(`input[name=${fields[0]}]`);
         await key("Enter", "Enter", 13);
@@ -169,7 +169,7 @@ try {
         // Locale actions are queued behind the auth action. Request the change
         // while auth is still held, then release success and wait for both.
         const preferenceChange = choose(nextLocale);
-        await waitFor("document.querySelector('select[name=locale]').getAttribute('aria-disabled')==='true'");
+        await waitFor("document.querySelector('[data-language-switcher]').getAttribute('aria-busy')==='true'");
         releaseOperation();
         await preferenceChange;
         await waitFor(`location.pathname==='/' && document.querySelector('h1')?.textContent===${JSON.stringify(nextMessages.app.home.title)}`);

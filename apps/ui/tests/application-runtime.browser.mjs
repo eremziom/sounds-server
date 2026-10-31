@@ -185,7 +185,7 @@ try {
       gate = new Promise((resolve) => { release = resolve; });
       const nextLocale = { en: "pl", pl: "es", es: "en" }[locale];
       const change = choose(nextLocale);
-      await waitFor("document.querySelector('select[name=locale]').getAttribute('aria-disabled')==='true'");
+      await waitFor("document.querySelector('[data-language-switcher]').getAttribute('aria-busy')==='true'");
       await delay(300);
       await assertContinuous(beforeNavigation);
       mode = "active";

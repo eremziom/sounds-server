@@ -167,7 +167,7 @@ try {
           assert.equal(await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').textContent.trim()`), m.auth.logout.pending);
           assert.ok((await evaluate("document.querySelector('form[data-auth-logout]').textContent")).includes(m.auth.logout.pending));
           const change = choose(nextLocale);
-          await waitFor("document.querySelector('select[name=locale]').getAttribute('aria-disabled')==='true'");
+          await waitFor("document.querySelector('[data-language-switcher]').getAttribute('aria-busy')==='true'");
           releaseOperation();
           await change;
           const notice = outcome === "failure" ? scope === "current" ? "local" : "all-unconfirmed" : undefined;

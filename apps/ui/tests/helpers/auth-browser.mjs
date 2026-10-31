@@ -63,8 +63,8 @@ export async function withAuthBrowser(apiUrl, run) {
     };
     const submit = () => evaluate("document.querySelector('form:not([data-auth-logout]) button[type=submit]').click()");
     const choose = async (locale) => {
-      await evaluate(`(() => {const select=document.querySelector('select[name=locale]');select.value=${JSON.stringify(locale)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-      await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('select').getAttribute('aria-disabled')!=='true'`);
+      await evaluate(`(() => {if(document.querySelector('[data-language-trigger]').getAttribute('aria-expanded')!=='true') document.querySelector('[data-language-trigger]').click();document.querySelector('[data-locale=\"'+${JSON.stringify(locale)}+'\"]').click();})()`);
+      await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('[data-language-switcher]').getAttribute('aria-busy')!=='true'`);
     };
     const open = async (locale, pathname = "/register") => {
       await send("Network.deleteCookies", { name: "accessToken", url: origin });
