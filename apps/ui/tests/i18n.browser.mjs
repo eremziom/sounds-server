@@ -79,6 +79,8 @@ try {
     assert.equal(await evaluate('document.querySelector(".language-dock").hasAttribute("data-hidden")'), true, 'Selecting a language closes the dock');
     assert.equal(await evaluate('document.querySelectorAll(".language-dock .dock-dot").length'), 1);
     assert.equal(await evaluate('document.querySelector(".dock-dot").closest("[data-locale]").dataset.locale'), locale, 'Indicator follows the saved language');
+    assert.equal(await evaluate('document.querySelector("[data-language-trigger]").dataset.currentLanguage'), locale, 'Trigger follows the saved language');
+    assert.equal(await evaluate('getComputedStyle(document.querySelector(".language-current-flag")).backgroundImage.includes("/flags/'+({en:'gb',pl:'pl',es:'es'}[locale])+'.svg")'), true, 'Trigger displays the selected flag');
   }
   async function screenshot(name) {
     const shot = await send('Page.captureScreenshot', { format: 'png' });
@@ -163,7 +165,7 @@ try {
   await writeFile(new URL('dock-preview.png', screenshotDirectory), Buffer.from(preview.data, 'base64'));
   await choose('es');
   assert.equal(await evaluate('history.length'), historyLength, 'Language changes must not add history entries');
-  assert.equal(await evaluate('document.querySelector("[data-language-trigger]").textContent'), 'Idioma');
+  assert.equal(await evaluate('document.querySelector("[data-language-trigger]").getAttribute("aria-label")'), 'Idioma: Español');
   assert.equal(await evaluate('document.querySelector("h1").textContent'), 'Crear una cuenta');
   assert.equal(await evaluate('location.href'), url);
   await evaluate(`document.querySelector('a[href="/login"]').click()`);
@@ -222,7 +224,7 @@ try {
   errors.length = 0;
   await choose('es');
   await waitFor('!document.querySelector("[role=alert]")');
-  assert.equal(await evaluate('document.querySelector("[data-language-trigger]").textContent'), 'Idioma');
+  assert.equal(await evaluate('document.querySelector("[data-language-trigger]").getAttribute("aria-label")'), 'Idioma: Español');
   console.log('Save failure, accessible translated error and retry: OK');
   assert.deepEqual(errors, [], 'No hydration errors or client exceptions');
   const catalogs = Object.fromEntries(await Promise.all(['en','pl','es'].map(async locale => [
@@ -246,7 +248,8 @@ try {
       await waitFor('document.documentElement.scrollWidth <= innerWidth');
       if (pathname === '/access-denied') assert.equal(await evaluate('document.querySelectorAll("a, button, select, header").length'), 0);
       else {
-        assert.equal(await evaluate('document.querySelector("[data-language-trigger]").textContent'), m.common.language.label);
+        assert.equal(await evaluate('document.querySelector("[data-language-trigger]").getAttribute("aria-label").startsWith('+JSON.stringify(m.common.language.label+': ')+')'), true);
+        assert.equal(await evaluate('document.querySelector("[data-language-trigger]").dataset.currentLanguage'), locale);
         assert.equal(await evaluate('document.querySelector("[data-locale][aria-pressed=true]").dataset.locale'), locale);
       }
       assert.ok(!(await evaluate('document.body.innerText')).match(/\b(?:auth|common|errors|metadata)\.[a-z]+\./), 'No raw message keys');

@@ -22,7 +22,7 @@ export function LanguageSwitcher({
   label: string;
   changeFailed: string;
 }) {
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
   const id = useId();
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -104,7 +104,9 @@ export function LanguageSwitcher({
         ref={trigger}
         type="button"
         data-language-trigger
+        data-current-language={locale}
         className="language-trigger"
+        aria-label={`${label}: ${languageNames[locale]}`}
         aria-expanded={open}
         aria-controls={id}
         aria-describedby={failed ? `${id}-error` : undefined}
@@ -117,7 +119,11 @@ export function LanguageSwitcher({
           }
         }}
       >
-        {label}
+        <span
+          aria-hidden="true"
+          className="language-current-flag"
+          style={{ backgroundImage: `url(/flags/${flags[locale]}.svg)` }}
+        />
       </button>
       <div id={id} className="language-dock-host" inert={!open}>
         <Dock

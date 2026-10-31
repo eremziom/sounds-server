@@ -6,18 +6,19 @@
 }
 
 .language-trigger {
-  min-height: 40px;
-  padding: 0 8px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  border-radius: 50%;
   cursor: pointer;
 }
 
 .language-trigger:focus-visible {
   outline: 2px solid #e879f9;
   outline-offset: 3px;
-  border-radius: 6px;
 }
 
 .language-dock-host {
@@ -58,7 +59,8 @@
   box-shadow: 0 0 6px rgb(232 121 249 / 45%);
 }
 
-.language-flag {
+.language-flag,
+.language-current-flag {
   display: block;
   width: 100%;
   height: 100%;
