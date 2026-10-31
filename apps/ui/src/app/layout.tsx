@@ -48,8 +48,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         }}>
           <SiteHeader>
             <div id="application-navigation" className="mr-auto" />
-            <LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />
             <AuthControls />
+            <LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />
           </SiteHeader>
           {children}
         </NextIntlClientProvider>
