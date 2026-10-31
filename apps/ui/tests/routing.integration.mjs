@@ -104,9 +104,9 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
           assertLocale(body, locale, rsc);
           if (!rsc && path !== "/access-denied") {
             assert.ok(body.includes(catalogs[locale].common.language.label));
-            assert.match(body, /<select[^>]*name="locale"/);
+            assert.match(body, /<button[^>]*data-language-trigger/);
             for (const name of ["English", "Polski", "Español"]) assert.ok(body.includes(name));
-            assert.match(body, new RegExp(`<option(?=[^>]*value="${locale}")(?=[^>]*selected="")[^>]*>`));
+            assert.match(body, new RegExp(`<button(?=[^>]*data-locale="${locale}")(?=[^>]*aria-pressed="true")[^>]*>`));
           }
           if (!rsc && path === "/access-denied") assert.doesNotMatch(body, /<(?:a|button|select|header)\b/);
           const messages = catalogs[locale];

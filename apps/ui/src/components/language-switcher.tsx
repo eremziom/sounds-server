@@ -1,9 +1,13 @@
 "use client";
 
-import { useId, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/i18n/actions";
-import { locales, type Locale } from "@/i18n/config";
+import { type Locale } from "@/i18n/config";
+import Dock from "@/components/react-bits/Dock";
+
+const languages: Locale[] = ["pl", "en", "es"];
+const flags: Record<Locale, string> = { pl: "pl", en: "gb", es: "es" };
 
 const languageNames: Record<Locale, string> = {
   en: "English",
@@ -22,9 +26,41 @@ export function LanguageSwitcher({
   const id = useId();
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const region = useRef<HTMLDivElement>(null);
+  const keyboardNavigation = useRef(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  useEffect(() => {
+    if (!open) return;
+    function dismiss(event: PointerEvent) {
+      if (!region.current?.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, [open]);
+
+  function reveal() {
+    clearTimeout(closeTimer.current);
+    setOpen(true);
+  }
+
+  function scheduleClose() {
+    clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => {
+      if (!keyboardNavigation.current || !region.current?.contains(document.activeElement)) setOpen(false);
+    }, 240);
+  }
 
   function changeLanguage(value: string) {
-    if (pending || value === locale) return;
+    if (pending) return;
+    clearTimeout(closeTimer.current);
+    trigger.current?.focus({ preventScroll: true });
+    setOpen(false);
+    if (value === locale) return;
     setFailed(false);
     startTransition(async () => {
       try {
@@ -37,22 +73,82 @@ export function LanguageSwitcher({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2" aria-busy={pending}>
-      <label htmlFor={id} className="text-sm font-medium">{label}</label>
-      <select
-        id={id}
-        name="locale"
-        value={locale}
-        aria-disabled={pending}
-        onChange={(event) => changeLanguage(event.target.value)}
+    <div
+      ref={region}
+      className="language-switcher"
+      data-language-switcher
+      aria-busy={pending}
+      onPointerEnter={(event) => {
+        keyboardNavigation.current = false;
+        if (event.pointerType !== "touch") reveal();
+      }}
+      onPointerMove={() => { keyboardNavigation.current = false; }}
+      onPointerLeave={scheduleClose}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          clearTimeout(closeTimer.current);
+          setOpen(false);
+        }
+      }}
+      onKeyDown={(event) => {
+        keyboardNavigation.current = true;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          clearTimeout(closeTimer.current);
+          trigger.current?.focus();
+          setOpen(false);
+        }
+      }}
+    >
+      <button
+        ref={trigger}
+        type="button"
+        data-language-trigger
+        className="language-trigger"
+        aria-expanded={open}
+        aria-controls={id}
         aria-describedby={failed ? `${id}-error` : undefined}
-        className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-disabled:cursor-wait aria-disabled:opacity-60"
+        onClick={() => { clearTimeout(closeTimer.current); setOpen(!open); }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            reveal();
+            requestAnimationFrame(() => region.current?.querySelector<HTMLButtonElement>(`[data-locale="${locale}"]`)?.focus());
+          }
+        }}
       >
-        {locales.map((value) => (
-          <option key={value} value={value} lang={value}>{languageNames[value]}</option>
-        ))}
-      </select>
-      {failed && <p id={`${id}-error`} role="alert" className="w-full text-right text-sm text-destructive">{changeFailed}</p>}
+        {label}
+      </button>
+      <div id={id} className="language-dock-host" inert={!open}>
+        <Dock
+          items={languages.map((value) => ({
+            // Local SVG flags render consistently, including on Windows.
+            icon: <span aria-hidden="true" className="language-flag" style={{ backgroundImage: `url(/flags/${flags[value]}.svg)` }} />,
+            label: languageNames[value],
+            value,
+            active: locale === value,
+            disabled: pending,
+            onClick: () => changeLanguage(value),
+          }))}
+          baseItemSize={30}
+          magnification={45}
+          panelHeight={30}
+          position="top"
+          distance={60}
+          gap={10}
+          roundness={1}
+          bounce={false}
+          autoHide
+          revealed={open}
+          ariaLabel={label}
+          showLabels={false}
+          showIndicators
+          showBadges={false}
+          className="language-dock"
+          accentColor="#e879f9"
+        />
+      </div>
+      {failed && <p id={`${id}-error`} role="alert" className="language-error text-sm text-destructive">{changeFailed}</p>}
     </div>
   );
 }
