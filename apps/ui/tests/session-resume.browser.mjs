@@ -43,7 +43,7 @@ api.listen(0, "127.0.0.1");
 await once(api, "listening");
 
 try {
-  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, origin }) => {
+  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, choose, origin }) => {
     for (const locale of ["en", "pl", "es"]) {
       const messages = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
       async function enter(nextMode, target = "/admin?view=users", expired = false, nextRoles = ["ADMIN"]) {
@@ -85,12 +85,43 @@ try {
         assert.equal(await evaluate("!!document.querySelector('[data-application-runtime], [data-persistent-media]')"), false);
         const message = failure === "limited" ? messages.errors.rateLimited : messages.auth.session.unavailable;
         assert.equal(await evaluate("document.querySelector('[data-session-resume] [role=alert]').textContent"), message);
+        // Updating translations must preserve the failure without another refresh.
+        for (const nextLocale of ["en", "pl", "es"]) {
+          const translated = JSON.parse(await readFile(new URL(`../messages/${nextLocale}.json`, import.meta.url), "utf8"));
+          await choose(nextLocale);
+          const expected = failure === "limited" ? translated.errors.rateLimited : translated.auth.session.unavailable;
+          await waitFor(`document.documentElement.lang === ${JSON.stringify(nextLocale)} && document.querySelector('[data-session-resume] [role=alert]')?.textContent === ${JSON.stringify(expected)}`);
+          assert.equal(await evaluate("document.querySelector('[data-session-resume] button .sr-only').textContent"), translated.common.actions.retry);
+          assert.equal(refreshCalls, 1, "Language changes must not repeat session renewal");
+        }
         const cookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
         assert.equal(cookies.find((c) => c.name === "refreshToken").value, session.refreshToken);
+        // Hold a failed retry in flight and ensure the message and layout stay put.
+        const snapshot = `(() => {
+          const section = document.querySelector('[data-session-resume]');
+          return {
+            message: section.querySelector('[role=alert]').textContent,
+            bounds: [...section.children].map(node => {
+              const { x, y, width, height } = node.getBoundingClientRect();
+              return { x, y, width, height };
+            })
+          };
+        })()`;
+        const beforeRetry = await evaluate(snapshot);
+        gate = new Promise(resolve => { release = resolve; });
+        await evaluate("window.retryButton = document.querySelector('[data-session-resume] button'); window.retryButton.click()");
+        await waitFor("document.querySelector('[data-session-resume][aria-busy=true] button:disabled')");
+        assert.deepEqual(await evaluate(snapshot), beforeRetry, "Retry preserves message and element positions");
+        release();
+        await waitFor("document.querySelector('[data-session-resume][aria-busy=false] button:not(:disabled)')");
+        gate = undefined;
+        assert.deepEqual(await evaluate(snapshot), beforeRetry, "Failed retry preserves layout");
+        assert.equal(await evaluate("window.retryButton === document.querySelector('[data-session-resume] button')"), true, "Retry keeps the existing button mounted");
+        assert.equal(refreshCalls, 2);
         mode = "success";
         await evaluate("document.querySelector('[data-session-resume] button').click()");
         await waitFor("document.querySelector('[data-application-runtime]') && location.search==='?view=users'");
-        assert.equal(refreshCalls, 2);
+        assert.equal(refreshCalls, 3);
       }
 
       await enter("invalid");
