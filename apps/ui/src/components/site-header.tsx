@@ -38,7 +38,7 @@ export function SiteHeader({ navigation, userMenu, languageSwitcher }: {
       <span className="justify-self-start font-semibold">LOGO</span>
       <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="min-w-0">{navigation}</div>
-        <div className="ml-auto flex shrink-0 items-center gap-3">{userMenu}</div>
+        <div className="ml-auto flex shrink-0 items-center gap-3" data-header-user-menu>{userMenu}</div>
       </div>
       <div className="justify-self-end">{languageSwitcher}</div>
     </div>

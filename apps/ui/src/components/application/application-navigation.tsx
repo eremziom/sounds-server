@@ -27,7 +27,7 @@ const subscribe = () => () => {};
 const getHeaderSlot = () => document.getElementById("application-navigation");
 const getServerSlot = () => null;
 const navigationLinkStyle = navigationMenuTriggerStyle({
-  className: "hover:bg-transparent data-active:hover:bg-transparent",
+  className: "application-navigation-link bg-transparent hover:bg-transparent focus:bg-transparent data-active:bg-transparent data-active:hover:bg-transparent data-active:focus:bg-transparent",
 });
 
 export function ApplicationNavigation({ labels }: { labels: ApplicationNavigationLabels }) {

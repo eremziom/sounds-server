@@ -1,0 +1,99 @@
+.application-navigation-link,
+.header-menu-trigger {
+  --navigation-accent: #d8b4fe;
+  --navigation-line: #c084fc;
+  position: relative;
+  transition: color 180ms ease, transform 150ms ease;
+}
+
+.header-menu-trigger:not(:disabled) {
+  cursor: pointer;
+}
+
+.application-navigation-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.625rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--navigation-line);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 200ms ease, opacity 180ms ease;
+}
+
+.application-navigation-link > svg,
+.header-menu-trigger > svg {
+  transition: transform 180ms ease;
+}
+
+.application-navigation-link[aria-current="page"],
+.application-navigation-link:not([aria-disabled="true"]):focus-visible,
+.header-menu-trigger:not(:disabled):focus-visible {
+  color: var(--navigation-accent);
+}
+
+.application-navigation-link[aria-current="page"]::after,
+.application-navigation-link:not([aria-disabled="true"]):focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .application-navigation-link:not([aria-disabled="true"]):hover,
+  .header-menu-trigger:not(:disabled):hover {
+    color: var(--navigation-accent);
+  }
+
+  .application-navigation-link:not([aria-disabled="true"]):hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .application-navigation-link:not([aria-disabled="true"]):hover > svg,
+  .header-menu-trigger:not(:disabled):hover > svg {
+    transform: translateY(-2px);
+    animation: navigation-icon-spin 300ms ease-out;
+  }
+}
+
+@keyframes navigation-icon-spin {
+  from {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  to {
+    transform: translateY(-2px) rotate(360deg);
+  }
+}
+
+.application-navigation-link:not([aria-disabled="true"]):active,
+.header-menu-trigger:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.application-navigation-link:not([aria-disabled="true"]):focus-visible,
+.header-menu-trigger:not(:disabled):focus-visible {
+  outline: 2px solid var(--navigation-line);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .application-navigation-link,
+  .application-navigation-link::after,
+  .application-navigation-link > svg,
+  .header-menu-trigger,
+  .header-menu-trigger > svg {
+    transition: none;
+  }
+
+  .application-navigation-link:not([aria-disabled="true"]):active,
+  .application-navigation-link:not([aria-disabled="true"]):hover > svg,
+  .header-menu-trigger:not(:disabled):active,
+  .header-menu-trigger:not(:disabled):hover > svg {
+    transform: none;
+    animation: none;
+  }
+}
