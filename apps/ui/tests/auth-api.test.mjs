@@ -11,12 +11,12 @@ const { ApiRequestError } = await import("../src/api/client.ts");
 
 test("current session exposes the username and validated absolute deadline alongside user roles", async () => {
   const session = authSession();
-  const user = { ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt };
+  const user = { ...session.user, permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt };
   const result = await api.getSessionUser("token", {
     request: async () => Response.json({ ...user, accessToken: "private", refreshToken: "private", password: "private" }),
   });
   assert.deepEqual(result, { ok: true, data: {
-    id: user.id, isActive: user.isActive, roles: user.roles, sessionExpiresAt: user.sessionExpiresAt, username: user.username,
+    id: user.id, isActive: user.isActive, roles: user.roles, permissions: [], sessionExpiresAt: user.sessionExpiresAt, username: user.username,
   } });
   for (const invalid of [undefined, "invalid", "2026-02-30T12:00:00Z", new Date(Date.now() - 1).toISOString()]) {
     const failure = await api.getSessionUser("token", { request: async () => Response.json({ ...user, sessionExpiresAt: invalid }) });

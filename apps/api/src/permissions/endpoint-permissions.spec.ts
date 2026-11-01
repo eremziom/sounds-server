@@ -126,6 +126,7 @@ describe('Endpoint permissions (HTTP)', () => {
         [
           'findAll',
           'findOne',
+          'findSessionUser',
           'create',
           'update',
           'remove',
@@ -236,13 +237,13 @@ describe('Endpoint permissions (HTTP)', () => {
 
   it('exposes only the authenticated profile without requiring role permissions', async () => {
     await request(app.getHttpServer()).get('/auth/me').expect(401);
-    expect(services.auth.findOne).not.toHaveBeenCalled();
+    expect(services.auth.findSessionUser).not.toHaveBeenCalled();
     grant([]);
     await request(app.getHttpServer())
       .get('/auth/me')
       .auth(token, { type: 'bearer' })
       .expect(200);
-    expect(services.auth.findOne).toHaveBeenCalledWith(42);
+    expect(services.auth.findSessionUser).toHaveBeenCalledWith(42);
     expect(prisma.user.findUnique).not.toHaveBeenCalled();
     await request(app.getHttpServer())
       .get('/auth/user/1')
@@ -256,7 +257,7 @@ describe('Endpoint permissions (HTTP)', () => {
       .get('/auth/me')
       .auth(token, { type: 'bearer' })
       .expect(401);
-    expect(services.auth.findOne).not.toHaveBeenCalled();
+    expect(services.auth.findSessionUser).not.toHaveBeenCalled();
   });
 
   it('combines permissions from multiple database roles', async () => {

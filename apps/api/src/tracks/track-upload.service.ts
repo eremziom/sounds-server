@@ -8,6 +8,7 @@ import { createApiValidationPipe } from '../common/api-validation.pipe';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { CreateTrackDto } from './create-track.dto';
 import { TracksService } from './tracks.service';
+import { AUDIO_FORMATS } from '../audio/audio-formats';
 
 @Injectable()
 export class TrackUploadService {
@@ -15,6 +16,10 @@ export class TrackUploadService {
     private readonly storage: LocalAudioStorageService,
     private readonly tracks: TracksService,
   ) {}
+
+  getConfig() {
+    return { maxFileBytes: this.storage.maxFileBytes, formats: AUDIO_FORMATS };
+  }
 
   async upload(request: Request & AuthenticatedRequest, response: Response) {
     if (!request.is('multipart/form-data')) {

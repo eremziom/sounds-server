@@ -133,6 +133,27 @@ describe('Track upload HTTP and filesystem', () => {
       .set('Authorization', 'test-session')
       .field('metadata', JSON.stringify(data));
 
+  it('exposes only supported formats and the actual storage limit without caching', async () => {
+    const response = await request(server)
+      .get('/tracks/upload-config')
+      .set('Authorization', 'session')
+      .expect(200);
+    expect(response.headers['cache-control']).toBe('private, no-store');
+    expect(response.body).toEqual({
+      maxFileBytes: 16384,
+      formats: [
+        { extension: '.mp3', mimeType: 'audio/mpeg' },
+        { extension: '.wav', mimeType: 'audio/wav' },
+      ],
+    });
+    await request(server).get('/tracks/upload-config').expect(401);
+    user.mockResolvedValue({ isActive: true, roles: [] });
+    await request(server)
+      .get('/tracks/upload-config')
+      .set('Authorization', 'session')
+      .expect(403);
+  });
+
   it.each(['wav', 'mp3'])(
     'stores valid %s by content and returns private-safe track metadata',
     async (format) => {

@@ -8,6 +8,7 @@ import {
 } from './audio-validator.service';
 import { audioError } from './audio-errors';
 import { readAudioConfig } from './audio-config';
+import { audioMimeType } from './audio-formats';
 
 @Injectable()
 export class BuiltinAudioValidatorService
@@ -78,8 +79,7 @@ export class BuiltinAudioValidatorService
           ) {
             return finish(undefined, {
               extension: message.extension,
-              mimeType:
-                message.extension === 'mp3' ? 'audio/mpeg' : 'audio/wav',
+              mimeType: audioMimeType(message.extension),
             });
           }
           const kind = 'error' in message ? message.error : undefined;

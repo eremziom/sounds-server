@@ -11,6 +11,7 @@ import {
   Req,
   Res,
   Headers,
+  Header,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { TrackUploadService } from './track-upload.service';
@@ -35,6 +36,13 @@ export class TracksController {
     private readonly trackUploadService: TrackUploadService,
     private readonly trackAudioService: TrackAudioService,
   ) {}
+
+  @Get('upload-config')
+  @RequirePermissions('tracks:create')
+  @Header('Cache-Control', 'private, no-store')
+  uploadConfig() {
+    return this.trackUploadService.getConfig();
+  }
 
   @Post('upload')
   @RequirePermissions('tracks:create')

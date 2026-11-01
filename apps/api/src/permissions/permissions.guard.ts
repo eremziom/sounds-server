@@ -9,19 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 import { PERMISSIONS_KEY } from './permissions.decorator';
-
-interface UserPermissionRecord {
-  isActive: boolean;
-  roles: {
-    role: {
-      permissions: {
-        permission: {
-          key: string;
-        };
-      }[];
-    };
-  }[];
-}
+import { getGrantedPermissions } from './granted-permissions';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -83,7 +71,7 @@ export class PermissionsGuard implements CanActivate {
       );
     }
 
-    const grantedPermissions = this.getGrantedPermissions(user);
+    const grantedPermissions = getGrantedPermissions(user);
     const hasPermission = (permission: string) =>
       grantedPermissions.has(permission);
     const hasRequiredPermissions = Array.isArray(requirement)
@@ -96,15 +84,5 @@ export class PermissionsGuard implements CanActivate {
 
     request.permissions = [...grantedPermissions];
     return true;
-  }
-
-  private getGrantedPermissions(user: UserPermissionRecord): Set<string> {
-    return new Set(
-      user.roles.flatMap((userRole) =>
-        userRole.role.permissions.map(
-          (rolePermission) => rolePermission.permission.key,
-        ),
-      ),
-    );
   }
 }

@@ -1,5 +1,6 @@
 import {
   Controller,
+  Header,
   Get,
   Param,
   ParseIntPipe,
@@ -82,10 +83,11 @@ export class AuthController {
   // JwtAuthGuard verifies the live session and active account in the database.
   @UseGuards(JwtAuthGuard)
   @Get('me')
+  @Header('Cache-Control', 'private, no-store')
   async me(
     @Req() request: AuthenticatedRequest,
-  ): Promise<UserResponse & { sessionExpiresAt: Date }> {
-    const user = await this.authService.findOne(request.user.userId);
+  ): Promise<UserResponse & { permissions: string[]; sessionExpiresAt: Date }> {
+    const user = await this.authService.findSessionUser(request.user.userId);
     return { ...user, sessionExpiresAt: request.user.sessionExpiresAt };
   }
 }

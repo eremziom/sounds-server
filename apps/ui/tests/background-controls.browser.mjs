@@ -7,7 +7,7 @@ const api = createServer((request, response) => {
   if (request.url !== "/auth/me" || !request.headers.authorization) return response.writeHead(401).end();
   response.setHeader("Content-Type", "application/json");
   response.end(JSON.stringify({
-    id: 1, isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+    id: 1, isActive: true, permissions: [], sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(),
     roles: [{ key: "USER" }],
   }));
 });

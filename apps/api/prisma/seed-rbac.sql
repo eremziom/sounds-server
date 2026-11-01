@@ -67,7 +67,6 @@ role_permissions_to_seed(role_key, permission_key) AS (
     ('ADMIN', 'users:set-role'),
     ('ADMIN', 'users:set-active'),
     ('ADMIN', 'tracks:read'),
-    ('ADMIN', 'tracks:create'),
     ('ADMIN', 'tracks:update-own'),
     ('ADMIN', 'tracks:update-any'),
     ('ADMIN', 'tracks:delete-own'),
@@ -93,5 +92,13 @@ WHERE rp."roleId" = r."id"
   AND rp."permissionId" = p."id"
   AND r."key" IN ('USER', 'ARTIST')
   AND p."key" IN ('users:read', 'users:update');
+
+-- Creating tracks belongs to ARTIST, including on accounts also holding ADMIN.
+DELETE FROM "RolePermission" AS rp
+USING "Role" AS r, "Permission" AS p
+WHERE rp."roleId" = r."id"
+  AND rp."permissionId" = p."id"
+  AND r."key" = 'ADMIN'
+  AND p."key" = 'tracks:create';
 
 COMMIT;

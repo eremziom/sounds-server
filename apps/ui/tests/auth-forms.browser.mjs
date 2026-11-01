@@ -26,7 +26,7 @@ const api = createServer(async (req, res) => {
     if (sessionMode === "403") return res.writeHead(403).end(JSON.stringify({ code: "ACCESS_DENIED" }));
     if (sessionMode === "failure") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR", message: "private backend details" }));
     if (sessionMode === "malformed") return res.end("private non-JSON session");
-    return res.end(JSON.stringify({ ...authSession().user, sessionExpiresAt: authSession().refreshTokenExpiresAt, roles }));
+    return res.end(JSON.stringify({ ...authSession().user, permissions: [], sessionExpiresAt: authSession().refreshTokenExpiresAt, roles }));
   }
   if (req.url === "/auth/refresh") {
     calls.refresh++;

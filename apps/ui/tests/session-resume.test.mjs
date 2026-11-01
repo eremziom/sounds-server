@@ -41,7 +41,7 @@ test("recovery rotates cookies, checks current roles and distinguishes rejection
         if (mode === "me-outage") return new Response("", { status: 503 });
         if (mode === "me-limited") return new Response("", { status: 429 });
         if (mode === "me-invalid") return new Response("", { status: 401 });
-        return Response.json({ ...session.user, isActive: mode !== "inactive", sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
+        return Response.json({ ...session.user, isActive: mode !== "inactive", permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
       };
       if (["outage", "limited", "me-outage", "me-limited"].includes(mode)) {
         const result = await resumeSessionAction("/admin?view=users");

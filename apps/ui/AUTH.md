@@ -206,8 +206,14 @@ Domyślna ochrona Origin/Host dla Server Actions pozostaje włączona.
   linków, przycisków nawigacji, przekierowania ani wylogowania. Powrót Wstecz
   podlega zwykłej kontroli dostępu. Ukrycie nagłówka reaguje na nawigację klienta.
 - `/auth/me` wymaga ważnej sesji i aktywnego konta przez JwtAuthGuard, bez
-  `users:read-own`. Zwraca wyłącznie własny profil i aktualne role, także dla
-  konta bez ról aplikacyjnych. Pozostałe endpointy zachowują kontrolę uprawnień.
+  `users:read-own`. Zwraca własny profil, aktualne role i unikalne `permissions`
+  z bazy, także dla konta bez ról aplikacyjnych; odpowiedź ma private, no-store.
+  Serwerowy klient wymaga poprawnej tablicy kluczy permissions, bez wnioskowania
+  uprawnień z JWT lub nazw ról. Pozostałe endpointy zachowują kontrolę uprawnień.
+- `canCreateTrack` sprawdza aktywność konta i `tracks:create` z profilu; standardowo
+  uprawnienie ma ARTIST, a sam ADMIN go nie posiada. `getUploadConfig` pobiera
+  chronione `/tracks/upload-config`, waliduje limit/formats po stronie serwera
+  i odrzuca nieprawidłowe odpowiedzi bez ujawniania szczegółów magazynu.
 - `(app)` ma RouteGuard(APP_ROLES), a każda chroniona strona dodatkowo wywołuje
   requireRoles(APP_ROLES). `(admin)/admin` analogicznie używa ADMIN_ROLES.
 - Role są addytywne: USER/ARTIST otwierają aplikację, ADMIN panel. Konto z trzema

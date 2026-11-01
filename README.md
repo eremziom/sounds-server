@@ -73,6 +73,21 @@ pnpm seed:rbac
 The RBAC seed is idempotent. Prisma commands are executed inside `apps/api`.
 For other Prisma operations, use `pnpm --filter api exec prisma <command>`.
 
+`tracks:create` belongs to ARTIST. ADMIN alone cannot create tracks; an account
+holding both roles can create through ARTIST. The upload-access migration revokes
+only the legacy ADMIN grant, and re-seeding also removes it from existing data.
+`GET /auth/me` returns deduplicated `permissions` read from current database roles,
+independently of JWT role claims, with `Cache-Control: private, no-store`.
+
+`GET /tracks/upload-config` requires an active session and `tracks:create`.
+It returns `maxFileBytes` from the active audio storage limit and a `formats` array
+of `{ extension, mimeType }` pairs for MP3/WAV, without storage paths or keys.
+Responses use `private, no-store`. The UI validates the profile/configuration
+on the server; creation visibility uses `tracks:create`, while every API request
+still authorizes against current database permissions. Run
+`pnpm --filter api test:upload-access` to check the migration, seed and live
+permissions using a temporary PostgreSQL database and temporary audio storage.
+
 ## Development
 
 ```bash

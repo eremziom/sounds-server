@@ -28,7 +28,7 @@ test("login validates API sessions, chooses current roles and preserves cookies 
         }
         assert.equal(init.cache, "no-store");
         return status === 200
-          ? Response.json({ ...session.user, roles: roles.map(key => ({ key })), sessionExpiresAt: session.refreshTokenExpiresAt })
+          ? Response.json({ ...session.user, roles: roles.map(key => ({ key })), permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt })
           : new Response("private backend details", { status });
       };
       assert.deepEqual(await checkLoginSession(), { destination });

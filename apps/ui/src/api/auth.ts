@@ -16,7 +16,11 @@ export type RegisterInput = {
   password: string;
 };
 export type AuthUser = SessionUser & { username: string; email: string };
-export type CurrentSessionUser = SessionUser & { sessionExpiresAt: string; username?: string };
+export type CurrentSessionUser = SessionUser & {
+  permissions: string[];
+  sessionExpiresAt: string;
+  username?: string;
+};
 export type AuthSession = {
   accessToken: string;
   refreshToken: string;
@@ -67,11 +71,23 @@ function parseExpiry(value: unknown, now: number): string | undefined {
 function parseCurrentSessionUser(value: unknown): CurrentSessionUser | undefined {
   const user = parseSessionUser(value);
   if (!user || !isRecord(value)) return undefined;
+  if (
+    !Array.isArray(value.permissions) ||
+    !value.permissions.every(
+      (permission) => typeof permission === "string" &&
+        /^[a-z][a-z0-9-]{0,63}:[a-z][a-z0-9-]{0,63}$/.test(permission),
+    )
+  ) return undefined;
   const sessionExpiresAt = parseExpiry(value.sessionExpiresAt, Date.now());
   if (!sessionExpiresAt) return undefined;
   const username = typeof value.username === "string" && value.username.trim()
     ? value.username : undefined;
-  return { ...user, sessionExpiresAt, ...(username ? { username } : {}) };
+  return {
+    ...user,
+    permissions: [...new Set(value.permissions)],
+    sessionExpiresAt,
+    ...(username ? { username } : {}),
+  };
 }
 
 export function parseAuthSession(
