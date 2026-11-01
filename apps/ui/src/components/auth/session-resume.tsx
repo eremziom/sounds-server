@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { unstable_rethrow } from "next/navigation";
 import { resumeSessionAction } from "../../app/(auth)/resume/actions";
-import { Button } from "../ui/button";
+import { AuthSubmitButton } from "./auth-submit-button";
 
 export function SessionResume({ target, labels, chooseHome = false }: {
   target: string;
@@ -37,7 +37,7 @@ export function SessionResume({ target, labels, chooseHome = false }: {
   return (
     <section className="space-y-4 text-center" data-session-resume>
       <p role={message ? "alert" : "status"}>{pending || !message ? labels.resuming : message}</p>
-      {message && <Button disabled={pending} onClick={resume}>{labels.retry}</Button>}
+      {message && <AuthSubmitButton type="button" label={labels.retry} pending={pending} onClick={resume} />}
     </section>
   );
 }
