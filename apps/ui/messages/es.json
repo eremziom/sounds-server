@@ -33,7 +33,23 @@
     "logout": { "success": "Sesión cerrada correctamente", "ok": "OK", "action": "Cerrar sesión", "pending": "Cerrando sesión…", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar que la sesión haya finalizado en el servidor." },
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
-  "app": { "home": { "title": "Página de inicio de Sounds" } },
+  "app": {
+    "home": { "title": "Página de inicio de Sounds" },
+    "animations": {
+      "configuration": "Configuración de Animación",
+      "description": "Ajusta los parámetros para ver los cambios de la animación de fondo en directo. Los ajustes se mantienen hasta recargar la página o cerrar sesión.",
+      "colors": "Colores", "color": "Color del hilo", "coreColor": "Color del núcleo",
+      "addColor": "Añadir color", "removeColor": "Eliminar color del hilo", "reset": "Restaurar valores iniciales",
+      "parameters": {
+        "threadCount": "Número de hilos", "spread": "Separación", "speed": "Velocidad",
+        "frequency": "Frecuencia", "taper": "Estrechamiento", "position": "Posición",
+        "pinch": "Punto de convergencia", "nodes": "Número de nodos", "angle": "Ángulo (°)",
+        "glow": "Resplandor", "falloff": "Atenuación del resplandor", "brightness": "Brillo",
+        "depth": "Profundidad", "pulses": "Pulsaciones", "fade": "Desvanecimiento de bordes",
+        "grain": "Grano", "mouseStrength": "Intensidad de interacción con el cursor"
+      }
+    }
+  },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
   "errors": {
     "accessDenied": { "title": "Acceso denegado", "description": "No tienes los permisos necesarios" },

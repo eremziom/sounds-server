@@ -33,7 +33,23 @@
     "logout": { "success": "Successfully signed out", "ok": "OK", "action": "Sign out", "pending": "Signing out…", "localOnly": "You have been signed out on this browser. We could not confirm that the session was ended on the server." },
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
-  "app": { "home": { "title": "Sounds home" } },
+  "app": {
+    "home": { "title": "Sounds home" },
+    "animations": {
+      "configuration": "Animation Settings",
+      "description": "Adjust the settings to see the background animation change live. Settings last until you reload the page or sign out.",
+      "colors": "Colors", "color": "Thread color", "coreColor": "Core color",
+      "addColor": "Add color", "removeColor": "Remove thread color", "reset": "Restore defaults",
+      "parameters": {
+        "threadCount": "Thread count", "spread": "Spread", "speed": "Speed",
+        "frequency": "Frequency", "taper": "Taper", "position": "Position",
+        "pinch": "Convergence point", "nodes": "Node count", "angle": "Angle (°)",
+        "glow": "Glow", "falloff": "Glow falloff", "brightness": "Brightness",
+        "depth": "Depth", "pulses": "Pulses", "fade": "Edge fade",
+        "grain": "Grain", "mouseStrength": "Mouse interaction strength"
+      }
+    }
+  },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
   "errors": {
     "accessDenied": { "title": "Access denied", "description": "You do not have the required permissions" },
