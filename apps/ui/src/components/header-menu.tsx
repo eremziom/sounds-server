@@ -33,7 +33,7 @@ export function HeaderMenu({ username, menuLabels, logoutLabel, logoutPendingLab
     <>
       <form ref={formRef} action={action} onSubmitCapture={notifyLogout} hidden data-user-menu-logout />
       <DropdownMenu>
-        <DropdownMenuTrigger ref={triggerRef} disabled={pending} render={<Button variant="ghost" className="min-h-10 px-3 py-2" style={{ backgroundColor: "transparent" }} />}>
+        <DropdownMenuTrigger ref={triggerRef} disabled={pending} render={<Button variant="ghost" className="header-menu-trigger min-h-10 px-3 py-2" style={{ backgroundColor: "transparent" }} />}>
           {username}
           <ChevronDownIcon aria-hidden="true" />
         </DropdownMenuTrigger>

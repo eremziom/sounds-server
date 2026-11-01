@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 @import "../components/react-bits/Dock.css";
 @import "../components/language-switcher.css";
+@import "../components/application/application-navigation.css";
+@import "../components/site-header.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,6 +12,10 @@
   /* Follow the rendered recovery view, including errors at the same URL.
      The root header persists when the user navigates or retries a request. */
   .header-recovery-logout {
+    display: none;
+  }
+
+  body:has([data-page-not-found]) [data-header-user-menu] {
     display: none;
   }
 

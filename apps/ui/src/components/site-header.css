@@ -1,0 +1,21 @@
+.site-header {
+  --header-controls-overlay-opacity: 0.55;
+}
+
+.site-header-controls {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Dim the aurora behind controls without affecting text or hover effects. */
+.site-header-controls:has(nav, button)::before {
+  content: "";
+  position: absolute;
+  inset: -4px -8px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 12px;
+  background-color: var(--background);
+  opacity: var(--header-controls-overlay-opacity);
+  filter: blur(8px);
+}

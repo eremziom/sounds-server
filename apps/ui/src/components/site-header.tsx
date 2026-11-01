@@ -11,7 +11,7 @@ export function SiteHeader({ navigation, userMenu, languageSwitcher }: {
 }) {
   // Root layouts persist across client navigation, so follow the live pathname.
   if (usePathname() === "/access-denied") return null;
-  return <header className="relative isolate z-10 border-b">
+  return <header className="site-header relative isolate z-10 border-b">
     <div aria-hidden="true" className="site-header-aurora" style={{
       position: "absolute", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none",
       background: "radial-gradient(ellipse at center, rgb(225 0 255 / 8%), transparent 75%)",
@@ -37,8 +37,8 @@ export function SiteHeader({ navigation, userMenu, languageSwitcher }: {
     <div className="grid w-full grid-cols-[minmax(max-content,1fr)_minmax(0,1200px)_minmax(max-content,1fr)] items-center gap-3 px-4 py-3 sm:px-6">
       <span className="justify-self-start font-semibold">LOGO</span>
       <div className="flex min-w-0 items-center justify-between gap-3">
-        <div className="min-w-0">{navigation}</div>
-        <div className="ml-auto flex shrink-0 items-center gap-3">{userMenu}</div>
+        <div className="site-header-controls min-w-0">{navigation}</div>
+        <div className="site-header-controls ml-auto flex shrink-0 items-center gap-3" data-header-user-menu>{userMenu}</div>
       </div>
       <div className="justify-self-end">{languageSwitcher}</div>
     </div>

@@ -1,6 +1,6 @@
 {
   "common": {
-    "navigation": { "backHome": "Wróć na stronę główną", "goToLogin": "Przejdź do logowania", "admin": "Admin" },
+    "navigation": { "backHome": "Wróć na stronę główną", "goToLogin": "Przejdź do logowania", "admin": "Admin", "label": "Nawigacja główna", "home": "Home", "library": "Biblioteka", "animations": "Animacje" },
     "status": { "checkingAccess": "Sprawdzanie dostępu…", "loading": "Ładowanie…" },
     "actions": { "retry": "Spróbuj ponownie", "close": "Zamknij" },
     "language": { "label": "Język", "changeFailed": "Nie udało się zapisać wyboru języka. Spróbuj ponownie." }

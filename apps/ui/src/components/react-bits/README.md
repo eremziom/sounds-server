@@ -9,6 +9,12 @@ Tailwind Turbopack loader processes both through a single global CSS entry point
 See LICENSE.md for the upstream license. Flags in public/flags come from
 https://github.com/lipis/flag-icons (MIT; license included alongside the flags).
 
+FuzzyText.tsx is installed from the React Bits FuzzyText-TS-TW registry:
+https://reactbits.dev/text-animations/fuzzy-text
+It displays the responsive animated 404 on the centered not-found screen.
+The upstream component includes reduced-motion support and animation cleanup.
+See LICENSE.md for the upstream license.
+
 SoftAurora.tsx is vendored from React Bits:
 https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Backgrounds/SoftAurora
 Local adaptations: settings refs update in an effect for React compatibility,

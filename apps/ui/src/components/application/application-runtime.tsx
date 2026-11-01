@@ -10,7 +10,7 @@ import { refreshAction, expireSessionAction } from "../../app/(auth)/actions";
 import { createSessionRefresh, type RefreshResult } from "../../lib/session-refresh";
 import { SessionFooter, type SessionFooterLabels } from "./session-footer";
 import { createProtectedRequest } from "../../lib/protected-request";
-import { ApplicationNavigation } from "./application-navigation";
+import { ApplicationNavigation, type ApplicationNavigationLabels } from "./application-navigation";
 import { ApplicationBackground } from "./application-background";
 import { LOGOUT_EVENT, broadcastLogout, subscribeToLogout } from "../../lib/logout-event";
 import { SessionRecovery } from "./session-recovery";
@@ -41,12 +41,12 @@ function renewSession(): Promise<RefreshResult> {
 
 // Mounted once per authenticated account, outside page loading/error boundaries.
 // No token, pathname or locale is part of this component's identity.
-export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpiresAt, footerLabels, adminLabel }: {
+export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpiresAt, footerLabels, navigationLabels }: {
   children: ReactNode;
   accessTokenExpiresAt: number | null;
   sessionExpiresAt: number;
   footerLabels: SessionFooterLabels;
-  adminLabel: string;
+  navigationLabels: ApplicationNavigationLabels;
 }) {
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -122,7 +122,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpi
           {status !== "ended" && (
             <MediaRuntime session={session} blocked={status === "unavailable"}>
               {status !== "unavailable" && <ApplicationBackground />}
-              <ApplicationNavigation adminLabel={adminLabel} />
+              <ApplicationNavigation labels={navigationLabels} />
               <div className={status === "unavailable" ? "hidden" : "relative z-10 flex flex-1 flex-col"} data-application-page>{children}</div>
               {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
             </MediaRuntime>
