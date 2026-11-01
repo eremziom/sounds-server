@@ -6,6 +6,7 @@
     "language": { "label": "Language", "changeFailed": "Could not save your language preference. Try again." }
   },
   "auth": {
+    "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop" },
     "login": {
       "title": "Sign in",
       "noAccount": "Don't have an account?",

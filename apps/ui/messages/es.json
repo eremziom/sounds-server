@@ -6,6 +6,7 @@
     "language": { "label": "Idioma", "changeFailed": "No se pudo guardar tu preferencia de idioma. Inténtalo de nuevo." }
   },
   "auth": {
+    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller" },
     "login": {
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",

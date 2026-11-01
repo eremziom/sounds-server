@@ -262,13 +262,13 @@ try {
     await waitFor(`document.querySelector('h1')?.textContent===${JSON.stringify(m.app.home.title)}`);
     apiMode = 'failure';
     await send('Page.navigate', { url: `${origin}/` });
-    await waitFor(`document.querySelector('[role=alert] h1')?.textContent===${JSON.stringify(m.errors.page.title)}`);
-    assert.equal(await evaluate('document.querySelector("[role=alert] button").textContent'), m.common.actions.retry);
+    await waitFor(`document.querySelector('[data-page-error] [role=alert]')?.textContent===${JSON.stringify(m.errors.page.description)}`);
+    assert.equal(await evaluate('document.querySelector("[data-page-error] button .sr-only").textContent'), m.common.actions.retry);
     assert.ok(!(await evaluate('document.body.innerText')).includes('private-server-details'));
     await waitFor(`document.title===${JSON.stringify(m.errors.page.title)}`);
     await screenshot(`${locale}-error`);
     apiMode = 'normal';
-    await evaluate('document.querySelector("[role=alert] button").click()');
+    await evaluate('document.querySelector("[data-page-error] button").click()');
     await waitFor(`document.querySelector('h1')?.textContent===${JSON.stringify(m.app.home.title)}`);
     console.log(`${locale}: all pages, metadata, 404, localized loading/error, retry and 320px layout: OK`);
   }

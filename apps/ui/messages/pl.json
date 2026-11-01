@@ -6,6 +6,7 @@
     "language": { "label": "Język", "changeFailed": "Nie udało się zapisać wyboru języka. Spróbuj ponownie." }
   },
   "auth": {
+    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat" },
     "login": {
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",

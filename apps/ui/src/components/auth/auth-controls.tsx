@@ -16,7 +16,9 @@ export async function AuthControls() {
   const user = await getCurrentUser().catch(() => null);
   // All-device sign-out is temporarily hidden in the UI.
   return <>
-    {user?.username && <HeaderMenu username={user.username} />}
+    {user?.username && <HeaderMenu username={user.username}
+      menuLabels={{ profile: t("menu.profile"), settings: t("menu.settings"), workshop: t("menu.workshop") }}
+      logoutLabel={t("logout.action")} logoutPendingLabel={t("logout.pending")} />}
     <LogoutControls action={t("logout.action")} pending={t("logout.pending")}
       all={t("logoutAll.action")} canLogoutAll={false} />
   </>;
