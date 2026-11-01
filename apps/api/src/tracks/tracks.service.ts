@@ -73,6 +73,32 @@ export class TracksService {
     return this.mapToTrackResponse(newTrack);
   }
 
+  async createWithAudio(
+    dto: CreateTrackDto,
+    ownerId: number,
+    audio: {
+      storageKey: string;
+      originalName: string;
+      mimeType: string;
+      sizeBytes: number;
+    },
+  ): Promise<Track> {
+    // Prisma nested writes atomically create both records in one transaction.
+    const track = await this.prisma.track.create({
+      include: trackInclude,
+      data: {
+        ownerId,
+        title: dto.title,
+        description: dto.description,
+        releaseDate: new Date(dto.releaseDate),
+        bpmFrom: dto.bpm.bpmFrom,
+        bpmTo: dto.bpm.bpmTo,
+        audioFile: { create: audio },
+      },
+    });
+    return this.mapToTrackResponse(track);
+  }
+
   async update(
     id: number,
     data: Partial<UpdatableTrackFields>,

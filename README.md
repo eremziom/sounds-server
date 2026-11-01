@@ -162,8 +162,8 @@ these responses.
 
 The database now supports one `AudioFile` per track and unique storage keys.
 Deleting a user preserves their tracks with `ownerId: null`; deleting a track
-cascades to its audio metadata. Upload, streaming and disk cleanup are subsequent
-implementation stages. Apply the migration with `pnpm prisma:migrate` before
+cascades to its audio metadata. Streaming, track deletion with disk cleanup and
+the orphan cleanup script are subsequent implementation stages. Apply the migration with `pnpm prisma:migrate` before
 running the updated API.
 
 `pnpm --filter api test:audio-model` verifies the migration against historical
@@ -201,3 +201,24 @@ budget per file. Busy/unavailable validation returns `AUDIO_VALIDATION_UNAVAILAB
 copies `src/audio/worker/*.cjs` to `dist/src/audio/worker`; deploy these assets
 alongside the compiled API and production dependencies. File buffers stay bounded
 during receipt and validation; decoded recordings are not retained in memory.
+
+`POST /tracks/upload` accepts `multipart/form-data` with exactly one `file` and
+one `metadata` field (JSON matching `CreateTrackDto`: `title`, `description`,
+`releaseDate`, `bpm: { bpmFrom, bpmTo }`). Either part order is accepted. Metadata
+is limited to 8 KiB; unknown fields, extra files and missing/invalid data are
+rejected. JWT authentication and `tracks:create` are checked before file receipt.
+The owner always comes from the authenticated session; client `ownerId` is rejected.
+
+The API streams bytes to private temporary storage, validates content, commits
+the file, then atomically creates `Track` and `AudioFile` using a Prisma nested
+write. A successful response is HTTP 201 with the regular track response and
+`hasAudio: true`; no storage details are returned. Request/validation failures
+and disconnected transfers clean temporary files. Database failures remove the
+committed file. A disconnect after a successful database commit preserves the
+saved track and audio; clients must not automatically retry a mutation whose
+response was lost. Cleanup failures are logged and return `AUDIO_STORAGE_FAILED`.
+Process crashes can leave orphan files until the later cleanup-script stage.
+
+Upload HTTP/filesystem tests run with `pnpm --filter api exec jest --runInBand
+tracks/track-upload.service.spec.ts` using a temporary directory and mocked DB.
+`test:audio-model` additionally checks atomic creation and rollback in PostgreSQL.

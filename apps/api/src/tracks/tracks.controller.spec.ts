@@ -10,6 +10,7 @@ import { TracksController } from './tracks.controller';
 import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
+import { TrackUploadService } from './track-upload.service';
 import { Track } from './tracks.interfaces';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 
@@ -88,6 +89,7 @@ describe('TracksController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TracksController],
       providers: [
+        { provide: TrackUploadService, useValue: {} },
         {
           provide: TracksService,
           useValue: tracksService,

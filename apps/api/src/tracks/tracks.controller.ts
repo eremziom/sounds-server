@@ -9,7 +9,10 @@ import {
   Delete,
   UseGuards,
   Req,
+  Res,
 } from '@nestjs/common';
+import type { Request, Response } from 'express';
+import { TrackUploadService } from './track-upload.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { PermissionsGuard } from '../permissions/permissions.guard';
@@ -22,7 +25,19 @@ import { UpdateTrackDto } from './update-track.dto';
 @Controller('tracks')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TracksController {
-  constructor(private readonly tracksService: TracksService) {}
+  constructor(
+    private readonly tracksService: TracksService,
+    private readonly trackUploadService: TrackUploadService,
+  ) {}
+
+  @Post('upload')
+  @RequirePermissions('tracks:create')
+  upload(
+    @Req() request: Request & AuthenticatedRequest,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Track> {
+    return this.trackUploadService.upload(request, response);
+  }
 
   @Get()
   @RequirePermissions('tracks:read')

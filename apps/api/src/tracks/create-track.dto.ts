@@ -3,6 +3,7 @@ import {
   Length,
   IsDateString,
   ValidateNested,
+  IsDefined,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BpmRangeDto } from './bpm-range.dto';
@@ -20,6 +21,7 @@ export class CreateTrackDto {
   @Length(3, 300, { message: 'Genre must be between 3 and 300 characters' })
   description!: string;
 
+  @IsDefined()
   @ValidateNested()
   @Type(() => BpmRangeDto)
   @IsBpmRangeValid({ message: 'bpmFrom must be <= bpmTo' })

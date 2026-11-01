@@ -115,6 +115,31 @@ async function main() {
       }),
       (error) => error.code === 'P2003',
     );
+    // The upload service uses this nested write: both records commit or neither does.
+    const uploadAudio = {
+      storageKey: `${randomUUID()}.wav`,
+      originalName: 'upload.wav',
+      mimeType: 'audio/wav',
+      sizeBytes: 48,
+    };
+    const uploaded = await tracks.createWithAudio(dto, owner.id, uploadAudio);
+    assert.equal(uploaded.ownerId, owner.id);
+    assert.equal(uploaded.hasAudio, true);
+    const beforeFailure = await prisma.track.count();
+    await assert.rejects(
+      tracks.createWithAudio(dto, owner.id, uploadAudio),
+      uniqueViolation,
+    );
+    assert.equal(await prisma.track.count(), beforeFailure);
+    await assert.rejects(
+      tracks.createWithAudio(dto, 2147483647, {
+        ...uploadAudio, storageKey: `${randomUUID()}.wav`,
+      }),
+      (error) => error.code === 'P2003',
+    );
+    assert.equal(await prisma.track.count(), beforeFailure);
+    await tracks.remove(uploaded.id);
+
     // Deleting an account must preserve its tracks and associated audio.
     await prisma.user.delete({ where: { id: owner.id } });
     assert.equal((await tracks.findOne(track.id)).ownerId, null);
@@ -126,7 +151,7 @@ async function main() {
       migrated.rows,
     );
     console.log(
-      'Audio model: migration preserves historical data; ownership, responses, uniqueness, foreign keys and cascading metadata deletion passed.',
+      'Audio model: historical data, ownership, responses, atomic track/audio creation and rollback, uniqueness, foreign keys and cascading metadata deletion passed.',
     );
   } finally {
     if (prisma) await prisma.$disconnect();

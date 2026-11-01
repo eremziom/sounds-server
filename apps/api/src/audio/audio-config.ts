@@ -30,7 +30,7 @@ export function assertPrivateDirectory(directory: string) {
 }
 
 export function readAudioConfig(
-  config: Pick<ConfigService, 'get'>,
+  config: Pick<ConfigService<Record<string, unknown>>, 'get'>,
 ): AudioConfig {
   const directory = config.get<string>('AUDIO_STORAGE_DIR');
   if (!directory || !isAbsolute(directory)) {
