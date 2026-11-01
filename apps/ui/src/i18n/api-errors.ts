@@ -1,4 +1,4 @@
-export type ApiOperation = "login" | "register" | "refresh" | "session" | "logout" | "other";
+export type ApiOperation = "login" | "register" | "refresh" | "session" | "logout" | "track" | "other";
 export type ApiFailure =
   | { kind: "http"; status: number; body: unknown }
   | { kind: "timeout" | "network" | "invalid-response" };
@@ -8,6 +8,7 @@ type MessageKey =
   | "errors.accessDenied.description" | "errors.invalidInput"
   | "errors.serviceUnavailable" | "errors.timeout" | "errors.unexpected"
   | "errors.loginLocked" | "errors.rateLimited"
+  | "errors.audioUploadNotFound" | "errors.audioUploadConsumed" | "errors.audioUploadExpired"
   | "auth.session.expired" | "validation.required" | "validation.email"
   | "validation.length" | "validation.usernameNoAt" | "validation.passwordComplexity" | "validation.invalid";
 
@@ -29,6 +30,15 @@ function generalMessage(failure: ApiFailure, operation: ApiOperation): MessageKe
   const session = ["session", "refresh", "logout"].includes(operation);
   if (isRecord(body) && Object.hasOwn(body, "code")) {
     switch (body.code) {
+      case "AUDIO_UPLOAD_NOT_FOUND":
+        if (status === 404 && operation === "track") return "errors.audioUploadNotFound";
+        break;
+      case "AUDIO_UPLOAD_CONSUMED":
+        if (status === 409 && operation === "track") return "errors.audioUploadConsumed";
+        break;
+      case "AUDIO_UPLOAD_EXPIRED":
+        if (status === 410 && operation === "track") return "errors.audioUploadExpired";
+        break;
       case "AUTH_INVALID_CREDENTIALS":
       case "AUTH_LAST_LOGIN_ATTEMPT":
         if (status === 401 && operation === "login") return "errors.invalidCredentials";

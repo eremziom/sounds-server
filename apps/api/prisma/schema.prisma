@@ -45,6 +45,29 @@ model AudioFile {
   track        Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
 }
 
+enum AudioUploadStatus {
+  PENDING
+  CONSUMED
+  CANCELLED
+  EXPIRED
+}
+
+model AudioUpload {
+  id           String            @id @default(uuid())
+  ownerId      Int
+  owner        User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  storageKey   String            @unique
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  createdAt    DateTime          @default(now())
+  expiresAt    DateTime
+  status       AudioUploadStatus @default(PENDING)
+
+  @@index([status, expiresAt])
+  @@index([ownerId])
+}
+
 model User {
   id              Int           @id @default(autoincrement())
   /// Must not contain @; enforced by the User_username_no_at SQL CHECK constraint.
@@ -61,6 +84,7 @@ model User {
   roles           UserRole[]
   sessions        AuthSession[]
   tracks          Track[]
+  audioUploads    AudioUpload[]
 }
 
 model AuthSession {

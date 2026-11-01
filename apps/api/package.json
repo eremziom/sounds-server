@@ -26,6 +26,7 @@
     "test:auth-sessions": "pnpm run build && node scripts/test-auth-sessions.cjs",
     "test:audio-model": "pnpm run build && node scripts/test-audio-model.cjs",
     "test:upload-access": "pnpm run build && node scripts/test-upload-access.cjs",
+    "test:temporary-uploads": "pnpm run build && node scripts/test-temporary-uploads.cjs",
     "test:audio-storage": "pnpm run build && node scripts/test-audio-storage.cjs"
   },
   "dependencies": {

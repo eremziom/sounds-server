@@ -52,6 +52,9 @@
   },
   "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
   "errors": {
+    "audioUploadNotFound": "Ten plik tymczasowy jest już niedostępny. Wybierz plik ponownie.",
+    "audioUploadConsumed": "Ten plik został już zapisany jako utwór. Sprawdź Bibliotekę.",
+    "audioUploadExpired": "Czas ważności pliku tymczasowego minął. Wybierz plik ponownie.",
     "accessDenied": { "title": "Brak dostępu", "description": "Nie masz wymaganych uprawnień" },
     "page": { "title": "Wystąpił błąd", "description": "Nie udało się załadować strony. Spróbuj ponownie." },
     "notFound": { "title": "Nie znaleziono strony", "description": "Strona, której szukasz, nie istnieje." },

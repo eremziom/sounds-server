@@ -34,6 +34,47 @@ policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
 from `src/app/(auth)/actions.ts`. `src/api/` is
 application code, distinct from Next.js HTTP routes under `src/app/api/`.
 
+The server-only `src/api/tracks.ts` exposes `getUploadConfig` and `getTracks`.
+List parsing validates every track and returns only the public fields, including
+`ownerId` and `hasAudio`; historical tracks may have no owner or audio. Calls use
+the HttpOnly access cookie supplied by server code, `no-store`, and typed failures.
+
+Track Route Handlers expose `POST /api/tracks/uploads`,
+`POST /api/tracks/uploads/[uploadId]/complete`,
+`DELETE /api/tracks/uploads/[uploadId]`, and GET/HEAD `/api/tracks/[id]/audio`.
+Only `getAuthCookies()` supplies API credentials; caller Authorization, Cookie and
+forwarded headers are never relayed. Mutations require an exact matching Origin
+and reject cross-site Fetch Metadata. Behind a reverse proxy, set `UI_ORIGIN` to
+the public origin without a trailing slash; forwarded host/protocol are not trusted.
+Routes return JSON 401/403, never login redirects, and do not refresh or retry a
+mutation. Future UI callers must use `runProtected` before starting an operation.
+
+The proxy streams request bodies and audio with backpressure and disconnect
+propagation. It preserves the multipart boundary and Range, 200/206/416 and audio
+headers; it strips upstream cookies and all other non-allowlisted headers. Every
+response has `private, no-store`. File-byte validation remains in NestJS; the proxy
+also bounds multipart bytes to the current API file limit plus 16 KiB, complete
+JSON to 8 KiB and API JSON responses to 64 KiB. Transfer timeout is 15 minutes,
+including audio-body reads, separate from the 5-second config/list request timeout.
+Configure the reverse proxy/platform body limit to allow the configured file size
+plus 16 KiB and timeouts to permit this transfer budget. Disable proxy buffering
+for these routes. The transfer timer in `track-proxy.ts` enforces the timeout;
+Route Handlers use the default Node.js runtime.
+
+API error statuses/codes remain distinguishable from proxy failures:
+`UPSTREAM_UNAVAILABLE` (502), `UPSTREAM_INVALID_RESPONSE` (502),
+`UPSTREAM_TIMEOUT` (504) and `TRANSFER_ABORTED` (499). Transport failures during
+mutations mean an unknown result; do not claim a definite failure or retry
+automatically. `AUDIO_FILE_TOO_LARGE` (413) also covers the proxy byte limit.
+Only code and allowlisted validation fields/bounds survive API JSON errors.
+New upload 404/409/410 messages are available in en/pl/es via operation `track`.
+The Library, upload form and playback controls remain subsequent plan stages.
+
+Run `pnpm --filter ui test` for domain/proxy unit tests. After a UI build,
+`pnpm --filter ui test:tracks-proxy` exercises the actual Next.js HTTP routes with
+an isolated mock upstream: cookies, CSRF, multipart streaming, mutations, errors,
+Range/HEAD and interrupted upload/audio. It does not access the application DB.
+
 The auth API module supports login, register, refresh, logout, logout-all and
 session verification. `src/api/client.ts` returns typed success/failure results,
 preserves HTTP status and strips raw backend error text/input values. It disables

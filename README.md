@@ -257,6 +257,50 @@ file in place. If disk cleanup fails after commit, deletion still returns 200;
 an error log records the track ID and storage key for later orphan cleanup.
 The orphan cleanup script remains planned; no automatic sweep runs yet.
 
+The two-stage upload contract is also available. `POST /tracks/uploads` receives
+one multipart `file` and no metadata, validates it and returns HTTP 201 with
+`{ uploadId, expiresAt }`. The private `AudioUpload` record survives restarts;
+its 24-hour TTL starts after receipt/validation. No Track is visible at this point.
+`POST /tracks/uploads/:uploadId/complete` takes `CreateTrackDto` JSON and returns
+HTTP 201 with the track. Both endpoints require an active session and current
+`tracks:create`. `DELETE /tracks/uploads/:uploadId` cancels an owned upload with
+HTTP 204 even after create permission is revoked; it still requires an active
+session. Missing/foreign/cancelled uploads return 404, consumed uploads 409 and
+expired uploads cannot be completed (410). Cancellation is idempotent for a known
+cancelled upload and never removes a completed track.
+
+Validated pending files already live under private `files/`; only a completed
+Track exposes an audio read route. Completion performs no filesystem move. A
+conditional row update consumes the upload in the same transaction as the nested
+Track/AudioFile insert; DB failure leaves the upload and file available for retry.
+Concurrent complete/cancel/expiry operations serialize on that row. Cancellation
+and expiry retire the record before unlinking, so a competing complete cannot
+adopt a file being deleted. Failed unlink leaves the retired record/storage key
+for retry. Upload registration failure removes its private file. Lost responses
+may leave a pending upload for TTL cleanup or an already-created track; clients
+must check the Library rather than automatically repeat a mutation.
+
+The future cleanup script must call `TemporaryUploadsService.expire` (or use the
+same conditional transaction) for expired pending records. It must protect all
+PENDING storage keys from orphan deletion and never unlink a CONSUMED key through
+the temporary-upload cleanup path. Consumed records retain the 409 tombstone;
+AudioFile owns their file lifecycle. There is no scheduled TTL sweep yet (plan
+stage 6); complete already enforces expiry. Process-crash orphans still need the
+stage-6 grace period and file/database comparison.
+
+`pnpm --filter api test:temporary-uploads` builds the API and verifies the new
+contract over real HTTP, PostgreSQL and temporary storage, including restart,
+owner checks, registration/transaction rollback, permission revocation, TTL,
+complete/complete and complete/cancel races, and cleanup while completion holds
+its row lock across expiry. It requires CREATE DATABASE permission and removes
+only its isolated database and temporary directory.
+
+Next.js proxies these operations under `/api/tracks/uploads` and GET/HEAD audio
+under `/api/tracks/:id/audio`. See [UI README](apps/ui/README.md) for CSRF origin,
+streaming limits, transport errors and `test:tracks-proxy`. The server-only
+`getTracks` module validates uncached list responses; Library/form/player UI is
+implemented in the subsequent audio-upload plan stages.
+
 Read/deletion HTTP tests use real JWT guards and temporary disk storage with a
 mocked database: `pnpm --filter api exec jest --runInBand track-audio`.
 `test:audio-model` also verifies deletion permissions, cascading metadata deletion

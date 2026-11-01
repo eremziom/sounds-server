@@ -9,12 +9,15 @@ import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { CreateTrackDto } from './create-track.dto';
 import { TracksService } from './tracks.service';
 import { AUDIO_FORMATS } from '../audio/audio-formats';
+import { TemporaryUploadsService } from './temporary-uploads.service';
+import type { Track } from './tracks.interfaces';
 
 @Injectable()
 export class TrackUploadService {
   constructor(
     private readonly storage: LocalAudioStorageService,
     private readonly tracks: TracksService,
+    private readonly temporaryUploads: TemporaryUploadsService,
   ) {}
 
   getConfig() {
@@ -22,6 +25,32 @@ export class TrackUploadService {
   }
 
   async upload(request: Request & AuthenticatedRequest, response: Response) {
+    return this.receive(request, response, false) as Promise<Track>;
+  }
+
+  async uploadTemporary(
+    request: Request & AuthenticatedRequest,
+    response: Response,
+  ) {
+    return this.receive(request, response, true) as Promise<{
+      uploadId: string;
+      expiresAt: string;
+    }>;
+  }
+
+  complete(id: string, ownerId: number, dto: CreateTrackDto) {
+    return this.temporaryUploads.complete(id, ownerId, dto);
+  }
+
+  cancel(id: string, ownerId: number) {
+    return this.temporaryUploads.cancel(id, ownerId);
+  }
+
+  private async receive(
+    request: Request & AuthenticatedRequest,
+    response: Response,
+    temporaryOnly: boolean,
+  ) {
     if (!request.is('multipart/form-data')) {
       throw new BadRequestException('Expected multipart/form-data');
     }
@@ -32,7 +61,7 @@ export class TrackUploadService {
         defParamCharset: 'utf8',
         limits: {
           files: 1,
-          fields: 1,
+          fields: temporaryOnly ? 0 : 1,
           parts: 3,
           fieldSize: 8192,
           fieldNameSize: 100,
@@ -128,28 +157,43 @@ export class TrackUploadService {
       await parsed;
       await fileWrite;
       if (failure) throw failure;
-      if (!temporary || !originalName || metadata === undefined) {
+      if (
+        !temporary ||
+        !originalName ||
+        (!temporaryOnly && metadata === undefined)
+      ) {
         throw new BadRequestException('Both file and metadata are required');
       }
-      let data: unknown;
-      try {
-        data = JSON.parse(metadata);
-      } catch {
-        throw new BadRequestException('Metadata must be valid JSON');
+      let dto: CreateTrackDto | undefined;
+      if (!temporaryOnly) {
+        let data: unknown;
+        try {
+          data = JSON.parse(metadata!);
+        } catch {
+          throw new BadRequestException('Metadata must be valid JSON');
+        }
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          throw new BadRequestException('Metadata must be an object');
+        }
+        dto = (await createApiValidationPipe().transform(data, {
+          type: 'body',
+          metatype: CreateTrackDto,
+        })) as CreateTrackDto;
       }
-      if (!data || typeof data !== 'object' || Array.isArray(data)) {
-        throw new BadRequestException('Metadata must be an object');
-      }
-      const dto = (await createApiValidationPipe().transform(data, {
-        type: 'body',
-        metatype: CreateTrackDto,
-      })) as CreateTrackDto;
       abort.signal.throwIfAborted();
       stored = await this.storage.commit(temporary.temporaryKey, abort.signal);
       temporary = undefined;
       abort.signal.throwIfAborted();
+      if (temporaryOnly) {
+        const receipt = await this.temporaryUploads.register(
+          request.user.userId,
+          { ...stored, originalName },
+        );
+        saved = true;
+        return receipt;
+      }
       const track = await this.tracks.createWithAudio(
-        dto,
+        dto!,
         request.user.userId,
         {
           ...stored,

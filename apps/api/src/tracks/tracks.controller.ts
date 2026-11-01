@@ -12,6 +12,8 @@ import {
   Res,
   Headers,
   Header,
+  HttpCode,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { TrackUploadService } from './track-upload.service';
@@ -42,6 +44,37 @@ export class TracksController {
   @Header('Cache-Control', 'private, no-store')
   uploadConfig() {
     return this.trackUploadService.getConfig();
+  }
+
+  @Post('uploads')
+  @RequirePermissions('tracks:create')
+  @Header('Cache-Control', 'private, no-store')
+  uploadTemporary(
+    @Req() request: Request & AuthenticatedRequest,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.trackUploadService.uploadTemporary(request, response);
+  }
+
+  @Post('uploads/:uploadId/complete')
+  @RequirePermissions('tracks:create')
+  @Header('Cache-Control', 'private, no-store')
+  completeUpload(
+    @Param('uploadId', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Req() request: AuthenticatedRequest,
+    @Body() dto: CreateTrackDto,
+  ) {
+    return this.trackUploadService.complete(id, request.user.userId, dto);
+  }
+
+  @Delete('uploads/:uploadId')
+  @HttpCode(204)
+  @Header('Cache-Control', 'private, no-store')
+  cancelUpload(
+    @Param('uploadId', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.trackUploadService.cancel(id, request.user.userId);
   }
 
   @Post('upload')

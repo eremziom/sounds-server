@@ -52,6 +52,9 @@
   },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
   "errors": {
+    "audioUploadNotFound": "This upload is no longer available. Select the file again.",
+    "audioUploadConsumed": "This upload has already been saved. Check the Library.",
+    "audioUploadExpired": "This upload has expired. Select the file again.",
     "accessDenied": { "title": "Access denied", "description": "You do not have the required permissions" },
     "page": { "title": "Something went wrong", "description": "Could not load this page. Try again." },
     "notFound": { "title": "Page not found", "description": "The page you are looking for does not exist." },

@@ -52,6 +52,9 @@
   },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
   "errors": {
+    "audioUploadNotFound": "Esta carga ya no está disponible. Selecciona el archivo de nuevo.",
+    "audioUploadConsumed": "Esta carga ya se ha guardado. Consulta la Biblioteca.",
+    "audioUploadExpired": "Esta carga ha caducado. Selecciona el archivo de nuevo.",
     "accessDenied": { "title": "Acceso denegado", "description": "No tienes los permisos necesarios" },
     "page": { "title": "Se ha producido un error", "description": "No se pudo cargar esta página. Inténtalo de nuevo." },
     "notFound": { "title": "Página no encontrada", "description": "La página que buscas no existe." },

@@ -36,6 +36,9 @@ For example, a duplicate email still returns HTTP 409:
 | `AUDIO_STORAGE_FAILED` | 503 | Temporary or final audio storage operation failed |
 | `AUDIO_VALIDATION_UNAVAILABLE` | 503 | Audio validator cannot run or has exhausted its processing budget |
 | `AUDIO_RANGE_INVALID` | 416 | Invalid, multiple or unsatisfiable byte range; `Content-Range: bytes */<size>` reports the recording size |
+| `AUDIO_UPLOAD_NOT_FOUND` | 404 | Missing, cancelled or another user's temporary upload |
+| `AUDIO_UPLOAD_CONSUMED` | 409 | Upload already committed to a track; cancel cannot delete it |
+| `AUDIO_UPLOAD_EXPIRED` | 410 | Temporary upload passed its 24-hour TTL; select the file again |
 | `INTERNAL_ERROR` | 5xx | Explicit HTTP exceptions not covered above |
 | `HTTP_ERROR` | Other statuses | Other explicit HTTP exceptions |
 

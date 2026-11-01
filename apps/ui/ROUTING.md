@@ -208,3 +208,11 @@ The preparation-stage decisions for these forms (server/client boundary,
 Server Actions, safe action results and translations) are recorded in
 [AUTH.md](AUTH.md). Existing layout/page guards remain the access boundary;
 future protected actions must also perform their own checks.
+
+Audio-upload stage 5.3 adds HTTP endpoints under `/api/tracks`: POST `uploads`,
+POST `uploads/[uploadId]/complete`, DELETE `uploads/[uploadId]`, GET/HEAD
+`[id]/audio`. These Route Handlers sit outside page layouts; they read only the
+HttpOnly access cookie and rely on the API's active-session/permission/ownership
+checks. They return JSON status codes instead of redirecting to recovery/login.
+Mutations additionally verify Origin. No `/library` or `/upload` page, menu entry,
+page-role rule or recovery destination is introduced in this stage.
