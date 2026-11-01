@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { unstable_rethrow } from "next/navigation";
 import { resumeSessionAction } from "../../app/(auth)/resume/actions";
-import { Button } from "../ui/button";
+import { AuthSubmitButton } from "./auth-submit-button";
 
 export function SessionResume({ target, labels, chooseHome = false }: {
   target: string;
@@ -11,17 +11,18 @@ export function SessionResume({ target, labels, chooseHome = false }: {
   labels: { resuming: string; unavailable: string; rateLimited: string; retry: string };
 }) {
   const started = useRef(false);
-  const [message, setMessage] = useState<string>();
+  const [failure, setFailure] = useState<"rateLimited" | "unavailable">();
+  const message = failure ? labels[failure] : undefined;
   const [pending, startTransition] = useTransition();
 
   function resume() {
     startTransition(async () => {
       try {
         const result = await resumeSessionAction(target, chooseHome);
-        setMessage(result.rateLimited ? labels.rateLimited : labels.unavailable);
+        setFailure(result.rateLimited ? "rateLimited" : "unavailable");
       } catch (error) {
         unstable_rethrow(error);
-        setMessage(labels.unavailable);
+        setFailure("unavailable");
       }
     });
   }
@@ -35,9 +36,9 @@ export function SessionResume({ target, labels, chooseHome = false }: {
   }, []);
 
   return (
-    <section className="space-y-4 text-center" data-session-resume>
-      <p role={message ? "alert" : "status"}>{pending || !message ? labels.resuming : message}</p>
-      {message && <Button disabled={pending} onClick={resume}>{labels.retry}</Button>}
+    <section className="space-y-4 text-center" data-session-resume aria-busy={pending}>
+      <p role={message ? "alert" : "status"}>{message ?? labels.resuming}</p>
+      {message && <AuthSubmitButton type="button" label={labels.retry} pending={pending} onClick={resume} />}
     </section>
   );
 }

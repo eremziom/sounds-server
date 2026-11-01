@@ -2,10 +2,12 @@
   "common": {
     "navigation": { "backHome": "Wróć na stronę główną", "goToLogin": "Przejdź do logowania", "admin": "Admin" },
     "status": { "checkingAccess": "Sprawdzanie dostępu…", "loading": "Ładowanie…" },
-    "actions": { "retry": "Spróbuj ponownie" },
+    "actions": { "retry": "Spróbuj ponownie", "close": "Zamknij" },
     "language": { "label": "Język", "changeFailed": "Nie udało się zapisać wyboru języka. Spróbuj ponownie." }
   },
   "auth": {
+    "logoutConfirm": { "title": "Wyloguj", "description": "Czy na pewno chcesz się wylogować? To spowoduje zakończenie obecnej podróży muzycznej", "cancel": "Anuluj" },
+    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat" },
     "login": {
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",

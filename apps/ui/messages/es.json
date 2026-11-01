@@ -2,10 +2,12 @@
   "common": {
     "navigation": { "backHome": "Volver al inicio", "goToLogin": "Ir al inicio de sesión", "admin": "Admin" },
     "status": { "checkingAccess": "Comprobando el acceso…", "loading": "Cargando…" },
-    "actions": { "retry": "Intentar de nuevo" },
+    "actions": { "retry": "Intentar de nuevo", "close": "Cerrar" },
     "language": { "label": "Idioma", "changeFailed": "No se pudo guardar tu preferencia de idioma. Inténtalo de nuevo." }
   },
   "auth": {
+    "logoutConfirm": { "title": "Cerrar sesión", "description": "¿Seguro que quieres cerrar sesión? Esto pondrá fin a tu viaje musical actual", "cancel": "Cancelar" },
+    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller" },
     "login": {
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
