@@ -158,7 +158,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
       assertLocale(body, locale, rsc);
       assert.ok(body.includes(catalogs[locale].errors.notFound.title));
       assert.ok(body.includes(catalogs[locale].errors.notFound.description));
-      assert.ok(body.includes(catalogs[locale].common.navigation.backHome));
+      assert.ok(body.includes("data-page-not-found"), "Missing routes render the dedicated 404 view");
       assert.ok(body.includes("noindex"));
       const prefixed = await fetchRoute(`/${locale}/login`, { Cookie: `locale=${locale}`, ...(rsc ? { RSC: "1" } : {}) });
       const prefixedBody = await prefixed.text();

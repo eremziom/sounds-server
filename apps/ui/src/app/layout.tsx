@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Michroma, Smooch_Sans, Geist_Mono } from "next/font/google";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
@@ -48,7 +49,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         }}>
           <SiteHeader
             navigation={<div id="application-navigation" />}
-            userMenu={<AuthControls />}
+            userMenu={<Suspense fallback={null}><AuthControls /></Suspense>}
             languageSwitcher={<LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />}
           />
           {children}

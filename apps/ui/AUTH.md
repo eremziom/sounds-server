@@ -210,6 +210,9 @@ Domyślna ochrona Origin/Host dla Server Actions pozostaje włączona.
   z bazy, także dla konta bez ról aplikacyjnych; odpowiedź ma private, no-store.
   Serwerowy klient wymaga poprawnej tablicy kluczy permissions, bez wnioskowania
   uprawnień z JWT lub nazw ról. Pozostałe endpointy zachowują kontrolę uprawnień.
+- Odczyt profilu w menu nagłówka ma własną granicę Suspense, aby nie blokował
+  renderowania wskaźnika ładowania chronionej strony. Test i18n zatrzymuje
+  odpowiedź API do czasu pokazania przetłumaczonego wskaźnika.
 - `canCreateTrack` sprawdza aktywność konta i `tracks:create` z profilu; standardowo
   uprawnienie ma ARTIST, a sam ADMIN go nie posiada. `getUploadConfig` pobiera
   chronione `/tracks/upload-config`, waliduje limit/formats po stronie serwera

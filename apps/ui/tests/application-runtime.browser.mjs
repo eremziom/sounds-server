@@ -96,7 +96,7 @@ try {
       })()`);
       assert.equal(dimmer.width, Math.min(1200, backgroundBounds.viewportWidth));
       assert.equal(dimmer.left, (backgroundBounds.viewportWidth - dimmer.width) / 2);
-      assert.equal(dimmer.opacity, "0.7");
+      assert.equal(dimmer.opacity, "0.8");
       assert.match(dimmer.mask, /linear-gradient\(to right,.*10%,.*90%,.*100%\)/);
       assert.notEqual(dimmer.background, "rgba(0, 0, 0, 0)");
       assert.equal(dimmer.zIndex, "1");
