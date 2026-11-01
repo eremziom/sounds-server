@@ -88,6 +88,18 @@ try {
       assert.equal(backgroundBounds.right, backgroundBounds.viewportWidth);
       assert.equal(backgroundBounds.top, backgroundBounds.headerBottom);
       assert.equal(backgroundBounds.bottom, backgroundBounds.footerTop);
+      const dimmer = await evaluate(`(() => {
+        const element = document.querySelector('[data-application-background-dimmer]');
+        const bounds = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return { width: bounds.width, left: bounds.left, opacity: style.opacity, background: style.backgroundColor, zIndex: style.zIndex, mask: style.maskImage };
+      })()`);
+      assert.equal(dimmer.width, Math.min(1200, backgroundBounds.viewportWidth));
+      assert.equal(dimmer.left, (backgroundBounds.viewportWidth - dimmer.width) / 2);
+      assert.equal(dimmer.opacity, "0.7");
+      assert.match(dimmer.mask, /linear-gradient\(to right,.*10%,.*90%,.*100%\)/);
+      assert.notEqual(dimmer.background, "rgba(0, 0, 0, 0)");
+      assert.equal(dimmer.zIndex, "1");
       // A real, silent WAV and Web Animation stand in for the future player and
       // engine. The test exercises the actual persistent audio/animation hosts.
       const started = await send("Runtime.evaluate", { userGesture: true, awaitPromise: true, returnByValue: true, expression: `
