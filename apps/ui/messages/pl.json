@@ -33,7 +33,23 @@
     "logout": { "success": "Udane wylogowanie", "ok": "OK", "action": "Wyloguj", "pending": "Wylogowywanie…", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić zakończenia sesji na serwerze." },
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
-  "app": { "home": { "title": "Strona główna aplikacji Sounds" } },
+  "app": {
+    "home": { "title": "Strona główna aplikacji Sounds" },
+    "animations": {
+      "configuration": "Konfiguracja Animacji",
+      "description": "Zmieniaj parametry i obserwuj animację w tle na żywo. Ustawienia obowiązują do odświeżenia strony lub wylogowania.",
+      "colors": "Kolory", "color": "Kolor nici", "coreColor": "Kolor rdzenia",
+      "addColor": "Dodaj kolor", "removeColor": "Usuń kolor nici", "reset": "Przywróć domyślne",
+      "parameters": {
+        "threadCount": "Liczba nici", "spread": "Rozstaw", "speed": "Prędkość",
+        "frequency": "Częstotliwość", "taper": "Zwężenie", "position": "Pozycja",
+        "pinch": "Punkt zbiegu", "nodes": "Liczba węzłów", "angle": "Kąt (°)",
+        "glow": "Poświata", "falloff": "Zanik poświaty", "brightness": "Jasność",
+        "depth": "Głębia", "pulses": "Pulsowanie", "fade": "Wygaszanie krawędzi",
+        "grain": "Ziarno", "mouseStrength": "Siła reakcji na kursor"
+      }
+    }
+  },
   "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
   "errors": {
     "accessDenied": { "title": "Brak dostępu", "description": "Nie masz wymaganych uprawnień" },

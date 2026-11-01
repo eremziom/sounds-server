@@ -51,7 +51,7 @@ export function ApplicationNavigation({ labels }: { labels: ApplicationNavigatio
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink aria-disabled="true" tabIndex={-1} className={`${navigationLinkStyle} pointer-events-none opacity-50`}>
+          <NavigationMenuLink render={<ProtectedLink href="/animations" />} active={pathname === "/animations" || pathname.startsWith("/animations/")} className={navigationLinkStyle}>
             <Eye aria-hidden="true" className="size-4 shrink-0" />
             {labels.animations}
           </NavigationMenuLink>

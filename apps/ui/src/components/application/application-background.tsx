@@ -2,32 +2,16 @@
 
 import WebThreads from "../react-bits/WebThreads";
 import { useMediaRuntime } from "./media-runtime";
+import { useBackgroundSettings } from "./background-settings";
 
 export function ApplicationBackground() {
   const { registerStop } = useMediaRuntime();
+  const { settings } = useBackgroundSettings();
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" data-application-background>
       <WebThreads
-        colors={["#a855f7", "#00008c"]}
-        coreColor="#a12e2e"
-        threadCount={4}
-        spread={0.01}
-        speed={0.5}
-        frequency={5.8}
-        taper={0.3}
-        position={0.5}
-        pinch={0.5}
-        nodes={1}
-        angle={-10}
-        glow={0.008}
-        falloff={0.63}
-        brightness={0.35}
-        depth={0.9}
-        pulses={0.75}
-        fade={0.02}
-        grain={0.02}
-        mouseStrength={0.57}
+        {...settings}
         registerStop={registerStop}
       />
       <div
