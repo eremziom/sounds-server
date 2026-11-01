@@ -5,7 +5,7 @@ export default async function NotFound() {
   const t = await getTranslations("errors.notFound");
   const navigation = await getTranslations("common.navigation");
   return (
-    <main className="space-y-4 p-6">
+    <main className="mx-auto w-full max-w-7xl space-y-4 px-4 py-6 sm:px-6">
       <h1 className="text-3xl font-semibold">{t("title")}</h1>
       <p>{t("description")}</p>
       <Link href="/" className="inline-block underline underline-offset-4">

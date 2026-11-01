@@ -73,6 +73,33 @@ try {
       ] });
       await send("Page.navigate", { url: `${origin}/admin` });
       await waitFor("document.querySelector('[data-application-runtime]') && window.next?.router");
+      await waitFor("document.querySelector('[data-application-background] canvas')?.width > 1");
+      const backgroundBounds = await evaluate(`(() => {
+        window.runtimeBackgroundCanvas = document.querySelector('[data-application-background] canvas');
+        const bounds = runtimeBackgroundCanvas.getBoundingClientRect();
+        return {
+          left: bounds.left, right: bounds.right, top: bounds.top, bottom: bounds.bottom,
+          viewportWidth: document.documentElement.clientWidth,
+          headerBottom: document.querySelector('header').getBoundingClientRect().bottom,
+          footerTop: document.querySelector('[data-session-footer]').getBoundingClientRect().top,
+        };
+      })()`);
+      assert.equal(backgroundBounds.left, 0);
+      assert.equal(backgroundBounds.right, backgroundBounds.viewportWidth);
+      assert.equal(backgroundBounds.top, backgroundBounds.headerBottom);
+      assert.equal(backgroundBounds.bottom, backgroundBounds.footerTop);
+      const dimmer = await evaluate(`(() => {
+        const element = document.querySelector('[data-application-background-dimmer]');
+        const bounds = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return { width: bounds.width, left: bounds.left, opacity: style.opacity, background: style.backgroundColor, zIndex: style.zIndex, mask: style.maskImage };
+      })()`);
+      assert.equal(dimmer.width, Math.min(1200, backgroundBounds.viewportWidth));
+      assert.equal(dimmer.left, (backgroundBounds.viewportWidth - dimmer.width) / 2);
+      assert.equal(dimmer.opacity, "0.7");
+      assert.match(dimmer.mask, /linear-gradient\(to right,.*10%,.*90%,.*100%\)/);
+      assert.notEqual(dimmer.background, "rgba(0, 0, 0, 0)");
+      assert.equal(dimmer.zIndex, "1");
       // A real, silent WAV and Web Animation stand in for the future player and
       // engine. The test exercises the actual persistent audio/animation hosts.
       const started = await send("Runtime.evaluate", { userGesture: true, awaitPromise: true, returnByValue: true, expression: `
@@ -104,6 +131,7 @@ try {
       assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-session-footer]')).fontSize"), "12px");
 
       async function assertContinuous(before, status = "active") {
+        assert.equal(await evaluate("runtimeBackgroundCanvas===document.querySelector('[data-application-background] canvas')"), true);
         assert.equal(await evaluate("runtimeRoot===document.querySelector('[data-application-runtime]')"), true);
         assert.equal(await evaluate("runtimeAudio===document.querySelector('[data-persistent-media] audio')"), true);
         assert.equal(await evaluate("runtimeStage===document.querySelector('[data-animation-host]')"), true);
@@ -200,6 +228,7 @@ try {
       await choose(locale);
       await waitFor("runtimeAudio!==document.querySelector('[data-persistent-media] audio')");
       assert.equal(await evaluate("runtimeAudio.paused && !runtimeAudio.hasAttribute('src')"), true);
+      assert.equal(await evaluate("runtimeBackgroundCanvas.isConnected"), false);
       assert.equal(await evaluate("runtimeAnimation.playState"), "idle");
       assert.equal(await evaluate("!!window.runtimeDocument"), true);
 

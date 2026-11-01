@@ -67,22 +67,24 @@ export function SessionFooter({ accessTokenExpiresAt, sessionExpiresAt, status, 
     : t("remainingMinutes", { value: minutes });
 
   return (
-    <footer className="mt-auto flex items-center justify-end gap-x-2 whitespace-nowrap border-t px-4 py-2 text-xs text-muted-foreground sm:px-6" data-session-footer>
-      {status === "ended" ? labels.ended : (
-        <>
-          <div className="flex items-center justify-end gap-x-2">
-            <span>{labels.expiresIn}</span>
-            <span className="font-mono tabular-nums" role="timer" aria-live="off" data-session-countdown>
-              {formatRemainingTime(snapshot?.accessTokenExpiresAt ?? null, snapshot?.now ?? null)}
+    <footer className="mt-auto border-t text-xs text-muted-foreground" data-session-footer>
+      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-end gap-x-2 whitespace-nowrap px-4 py-2 sm:px-6">
+        {status === "ended" ? labels.ended : (
+          <>
+            <div className="flex items-center justify-end gap-x-2">
+              <span>{labels.expiresIn}</span>
+              <span className="font-mono tabular-nums" role="timer" aria-live="off" data-session-countdown>
+                {formatRemainingTime(snapshot?.accessTokenExpiresAt ?? null, snapshot?.now ?? null)}
+              </span>
+              {status === "refreshing" && <span role="status">{labels.refreshing}</span>}
+            </div>
+            <span aria-hidden="true">|</span>
+            <span className="tabular-nums" role="timer" aria-live="off" data-session-deadline-countdown>
+              {sessionRemaining}
             </span>
-            {status === "refreshing" && <span role="status">{labels.refreshing}</span>}
-          </div>
-          <span aria-hidden="true">|</span>
-          <span className="tabular-nums" role="timer" aria-live="off" data-session-deadline-countdown>
-            {sessionRemaining}
-          </span>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </footer>
   );
 }
