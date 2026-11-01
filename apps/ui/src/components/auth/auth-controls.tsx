@@ -18,8 +18,11 @@ export async function AuthControls() {
   return <>
     {user?.username && <HeaderMenu username={user.username}
       menuLabels={{ profile: t("menu.profile"), settings: t("menu.settings"), workshop: t("menu.workshop") }}
+      logoutConfirmation={{ title: t("logoutConfirm.title"), description: t("logoutConfirm.description"), cancel: t("logoutConfirm.cancel") }}
       logoutLabel={t("logout.action")} logoutPendingLabel={t("logout.pending")} />}
-    <LogoutControls action={t("logout.action")} pending={t("logout.pending")}
-      all={t("logoutAll.action")} canLogoutAll={false} />
+    <div className="header-recovery-logout">
+      <LogoutControls action={t("logout.action")} pending={t("logout.pending")}
+        all={t("logoutAll.action")} canLogoutAll={false} />
+    </div>
   </>;
 }

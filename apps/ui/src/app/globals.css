@@ -7,6 +7,16 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer utilities {
+  /* Follow the rendered recovery view, including errors at the same URL.
+     The root header persists when the user navigates or retries a request. */
+  .header-recovery-logout {
+    display: none;
+  }
+
+  body:has([data-session-resume], [data-page-error], [data-session-check], [data-session-recovery]) .header-recovery-logout {
+    display: contents;
+  }
+
   input[data-variant="auth"]:autofill {
     background-clip: text;
     box-shadow:

@@ -2,10 +2,11 @@
   "common": {
     "navigation": { "backHome": "Back to home", "goToLogin": "Go to sign in", "admin": "Admin" },
     "status": { "checkingAccess": "Checking access…", "loading": "Loading…" },
-    "actions": { "retry": "Try again" },
+    "actions": { "retry": "Try again", "close": "Close" },
     "language": { "label": "Language", "changeFailed": "Could not save your language preference. Try again." }
   },
   "auth": {
+    "logoutConfirm": { "title": "Sign out", "description": "Are you sure you want to sign out? This will end your current musical journey", "cancel": "Cancel" },
     "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop" },
     "login": {
       "title": "Sign in",
