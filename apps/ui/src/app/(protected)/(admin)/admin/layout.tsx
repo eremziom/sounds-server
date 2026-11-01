@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       fallback={<LoadingIndicator label={t("checkingAccess")} />}
     >
       <RouteGuard roles={ADMIN_ROLES}>
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col border-x px-4 sm:px-6">{children}</div>
       </RouteGuard>
     </Suspense>
   );

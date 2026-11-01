@@ -14,7 +14,7 @@ export default async function AdminPage() {
   const t = await getTranslations("admin.home");
   const navigation = await getTranslations("common.navigation");
   return (
-    <main className="space-y-4 p-6">
+    <main className="space-y-4 py-6">
       <h1 className="text-2xl font-semibold sm:text-3xl">{t("title")}</h1>
       <p className="text-muted-foreground">
         {t("placeholder")}

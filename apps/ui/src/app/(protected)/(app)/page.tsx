@@ -6,7 +6,7 @@ export default async function Home() {
   await requireRoles(APP_ROLES);
   const t = await getTranslations("app.home");
   return (
-    <main className="p-6">
+    <main className="py-6">
       <h1>{t("title")}</h1>
     </main>
   );

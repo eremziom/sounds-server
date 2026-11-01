@@ -46,11 +46,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           common: { actions: messages.common.actions },
           auth: { session: messages.auth.session },
         }}>
-          <SiteHeader>
-            <div id="application-navigation" className="mr-auto" />
-            <AuthControls />
-            <LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />
-          </SiteHeader>
+          <SiteHeader
+            navigation={<div id="application-navigation" />}
+            userMenu={<AuthControls />}
+            languageSwitcher={<LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />}
+          />
           {children}
         </NextIntlClientProvider>
       </body>
