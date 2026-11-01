@@ -11,6 +11,7 @@ import { createSessionRefresh, type RefreshResult } from "../../lib/session-refr
 import { SessionFooter, type SessionFooterLabels } from "./session-footer";
 import { createProtectedRequest } from "../../lib/protected-request";
 import { ApplicationNavigation } from "./application-navigation";
+import { ApplicationBackground } from "./application-background";
 import { LOGOUT_EVENT, broadcastLogout, subscribeToLogout } from "../../lib/logout-event";
 import { SessionRecovery } from "./session-recovery";
 import { RESUMED_PARAM } from "../../lib/session-resume";
@@ -117,13 +118,16 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpi
   return (
     <SessionContext.Provider value={context}>
       <div className="flex flex-1 flex-col" data-application-runtime data-session-status={status}>
-        {status !== "ended" && (
-          <MediaRuntime session={session} blocked={status === "unavailable"}>
-            <ApplicationNavigation adminLabel={adminLabel} />
-            <div className={status === "unavailable" ? "hidden" : "flex flex-1 flex-col"} data-application-page>{children}</div>
-            {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
-          </MediaRuntime>
-        )}
+        <div className="relative isolate flex flex-1 flex-col">
+          {status !== "ended" && (
+            <MediaRuntime session={session} blocked={status === "unavailable"}>
+              {status !== "unavailable" && <ApplicationBackground />}
+              <ApplicationNavigation adminLabel={adminLabel} />
+              <div className={status === "unavailable" ? "hidden" : "relative z-10 flex flex-1 flex-col"} data-application-page>{children}</div>
+              {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
+            </MediaRuntime>
+          )}
+        </div>
         <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} sessionExpiresAt={sessionExpiresAt} status={status} labels={footerLabels} />
       </div>
     </SessionContext.Provider>
