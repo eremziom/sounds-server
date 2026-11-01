@@ -2,6 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { CreateTrackDto } from './create-track.dto';
 import { Track } from './tracks.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
+import type { Prisma } from '../generated/prisma/client.cjs';
+
+// Only load the relation identifier; storage details stay private to the API.
+const trackInclude = { audioFile: { select: { id: true } } } as const;
+type TrackWithAudio = Prisma.TrackGetPayload<{ include: typeof trackInclude }>;
 
 type UpdatableTrackFields = Pick<
   Track,
@@ -12,16 +17,11 @@ type UpdatableTrackFields = Pick<
 export class TracksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private mapToTrackResponse(track: {
-    id: number;
-    title: string;
-    description: string | null;
-    releaseDate: Date;
-    bpmFrom: number;
-    bpmTo: number;
-  }): Track {
+  private mapToTrackResponse(track: TrackWithAudio): Track {
     return {
       id: track.id,
+      ownerId: track.ownerId,
+      hasAudio: track.audioFile !== null,
       title: track.title,
       description: track.description ?? null,
       releaseDate: track.releaseDate.toISOString().split('T')[0],
@@ -33,6 +33,7 @@ export class TracksService {
   }
   async findAll(): Promise<Track[]> {
     const tracks = await this.prisma.track.findMany({
+      include: trackInclude,
       orderBy: {
         id: 'asc',
       },
@@ -43,6 +44,7 @@ export class TracksService {
   async findOne(id: number): Promise<Track> {
     const track = await this.prisma.track.findUnique({
       where: { id },
+      include: trackInclude,
     });
 
     if (!track) {
@@ -52,9 +54,14 @@ export class TracksService {
     return this.mapToTrackResponse(track);
   }
 
-  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+  async create(
+    createTrackDto: CreateTrackDto,
+    ownerId: number,
+  ): Promise<Track> {
     const newTrack = await this.prisma.track.create({
+      include: trackInclude,
       data: {
+        ownerId,
         title: createTrackDto.title,
         description: createTrackDto.description,
         releaseDate: new Date(createTrackDto.releaseDate),
@@ -80,6 +87,7 @@ export class TracksService {
 
     const updatedTrack = await this.prisma.track.update({
       where: { id },
+      include: trackInclude,
       data: {
         ...(data.title !== undefined && { title: data.title }),
         ...(data.description !== undefined && {

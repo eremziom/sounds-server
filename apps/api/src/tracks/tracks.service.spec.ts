@@ -13,7 +13,7 @@ import { PrismaService } from '../prisma/prisma.service';
 type DbTrack = (typeof initialTracks)[number];
 type TrackWhereUnique = { where: { id: number } };
 type TrackCreateArgs = {
-  data: Omit<DbTrack, 'id'>;
+  data: Omit<DbTrack, 'id' | 'audioFile'>;
 };
 type TrackUpdateArgs = TrackWhereUnique & {
   data: Partial<DbTrack>;
@@ -22,6 +22,8 @@ type TrackUpdateArgs = TrackWhereUnique & {
 const initialTracks = [
   {
     id: 1,
+    ownerId: null as number | null,
+    audioFile: null as { id: number } | null,
     title: 'Solar Drift',
     releaseDate: new Date('2024-01-01'),
     description: 'Driving psy with warm bass',
@@ -30,6 +32,8 @@ const initialTracks = [
   },
   {
     id: 2,
+    ownerId: 42,
+    audioFile: { id: 10 },
     title: 'Night Pulse',
     releaseDate: new Date('2024-02-01'),
     description: 'Dark rolling groove',
@@ -65,6 +69,7 @@ describe('TracksService', () => {
         create: jest.fn(({ data }: TrackCreateArgs) => {
           const newTrack = {
             id: Math.max(...tracks.map((track) => track.id)) + 1,
+            audioFile: null,
             ...data,
           };
 
@@ -108,6 +113,25 @@ describe('TracksService', () => {
     await expect(service.findAll()).resolves.toHaveLength(2);
   });
 
+  it('returns historical tracks without an owner or audio', async () => {
+    await expect(service.findOne(1)).resolves.toMatchObject({
+      id: 1,
+      ownerId: null,
+      hasAudio: false,
+      title: 'Solar Drift',
+      releaseDate: '2024-01-01',
+    });
+  });
+
+  it('reports audio availability without exposing the storage relation', async () => {
+    const track = await service.findOne(2);
+    expect(track).toMatchObject({ ownerId: 42, hasAudio: true });
+    expect(track).not.toHaveProperty('audioFile');
+    expect(await service.findAll()).toContainEqual(track);
+    const updated = await service.update(2, { title: 'Renamed' });
+    expect(updated).toMatchObject({ ownerId: 42, hasAudio: true });
+  });
+
   it('create adds a track with incremented id', async () => {
     const dto: CreateTrackDto = {
       title: 'New Dawn',
@@ -116,9 +140,10 @@ describe('TracksService', () => {
       bpm: { bpmFrom: 132, bpmTo: 136 },
     };
 
-    const created = await service.create(dto);
+    const created = await service.create(dto, 42);
     expect(created.id).toEqual(3);
     expect(created).toMatchObject(dto);
+    expect(created).toMatchObject({ ownerId: 42, hasAudio: false });
     await expect(service.findAll()).resolves.toContainEqual(created);
   });
 

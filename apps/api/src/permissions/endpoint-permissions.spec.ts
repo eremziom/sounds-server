@@ -10,6 +10,8 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { AppModule } from '../app.module';
+import { LocalAudioStorageService } from '../audio/local-audio-storage.service';
+import { AudioValidatorService } from '../audio/audio-validator.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthLimitsService } from '../auth/auth-limits.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -98,6 +100,10 @@ describe('Endpoint permissions (HTTP)', () => {
 
   beforeAll(async () => {
     const builder = Test.createTestingModule({ imports: [AppModule] })
+      .overrideProvider(LocalAudioStorageService)
+      .useValue({})
+      .overrideProvider(AudioValidatorService)
+      .useValue({})
       .overrideProvider(ConfigService)
       .useValue({
         getOrThrow: () => secret,

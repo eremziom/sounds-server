@@ -30,6 +30,11 @@ For example, a duplicate email still returns HTTP 409:
 | `INVALID_REQUEST` | 400 | Other bad-request exceptions, including route parameter parsing |
 | `NOT_FOUND` | 404 | Resource/route not found |
 | `CONFLICT` | 409 | Other conflict exceptions |
+| `AUDIO_FILE_TOO_LARGE` | 413 | Audio exceeds the configured byte limit |
+| `AUDIO_FORMAT_UNSUPPORTED` | 415 | Unsupported audio container or encoding |
+| `AUDIO_FILE_INVALID` | 400 | Empty, malformed or undecodable audio |
+| `AUDIO_STORAGE_FAILED` | 503 | Temporary or final audio storage operation failed |
+| `AUDIO_VALIDATION_UNAVAILABLE` | 503 | Audio validator cannot run or has exhausted its processing budget |
 | `INTERNAL_ERROR` | 5xx | Explicit HTTP exceptions not covered above |
 | `HTTP_ERROR` | Other statuses | Other explicit HTTP exceptions |
 

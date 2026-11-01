@@ -48,6 +48,7 @@ coverage/
 .tmp
 
 # Runtime data
+/storage/
 pids
 *.pid
 *.seed

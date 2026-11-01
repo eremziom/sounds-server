@@ -11,10 +11,13 @@ import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
 import { Track } from './tracks.interfaces';
+import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 
 const initialTracks: Track[] = [
   {
     id: 1,
+    ownerId: null,
+    hasAudio: false,
     title: 'Solar Drift',
     releaseDate: '2024-01-01',
     description: 'Driving psy with warm bass',
@@ -22,6 +25,8 @@ const initialTracks: Track[] = [
   },
   {
     id: 2,
+    ownerId: null,
+    hasAudio: false,
     title: 'Night Pulse',
     releaseDate: '2024-02-01',
     description: 'Dark rolling groove',
@@ -47,10 +52,12 @@ describe('TracksController', () => {
 
     tracksService = {
       findAll: jest.fn(() => Promise.resolve(tracks)),
-      create: jest.fn((dto: CreateTrackDto) => {
+      create: jest.fn((dto: CreateTrackDto, ownerId: number) => {
         const created: Track = {
           id: Math.max(...tracks.map((track) => track.id)) + 1,
           ...dto,
+          ownerId,
+          hasAudio: false,
         };
 
         tracks.push(created);
@@ -110,7 +117,24 @@ describe('TracksController', () => {
       bpm: { bpmFrom: 130, bpmTo: 135 },
     };
 
-    const created = await controller.create(dto);
+    const request: AuthenticatedRequest = {
+      user: {
+        userId: 42,
+        sessionId: 'session',
+        sessionExpiresAt: new Date('2030-01-01'),
+        username: 'artist',
+        roles: ['ARTIST'],
+      },
+    };
+    const created = await controller.create(
+      { ...dto, ownerId: 999 } as CreateTrackDto,
+      request,
+    );
+    expect(tracksService.create).toHaveBeenCalledWith(
+      expect.objectContaining(dto),
+      42,
+    );
+    expect(created.ownerId).toBe(42);
     expect(created).toMatchObject(dto);
     expect(created.id).toBeGreaterThan(2);
   });

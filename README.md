@@ -126,6 +126,8 @@ pnpm test                # Unit tests
 pnpm test:cov            # Unit tests with coverage
 pnpm test:e2e            # End-to-end tests (requires database configuration)
 pnpm test:auth-sessions  # Auth integration checks (creates a temporary database)
+pnpm --filter api test:audio-model # Audio model migration/integration checks (temporary database)
+pnpm --filter api test:audio-storage # Compiled audio module/worker checks (temporary storage, no database)
 pnpm test:auth-api       # Auth client + browser registration/login/logout against NestJS in a temporary database (build UI first)
 pnpm format              # Format backend source and tests
 ```
@@ -148,3 +150,54 @@ empty values, invalid ICU or changed interpolation arguments block tests and
 builds. The emergency English catalog must also match its source messages.
 See [UI documentation](apps/ui/README.md), [route access](apps/ui/ROUTING.md) and
 the [API error contract](apps/api/ERRORS.md) for maintenance instructions.
+
+## Track ownership and audio metadata
+
+Track responses from list, detail, create and update include `ownerId` (nullable)
+and `hasAudio` (boolean). Existing tracks keep their data, have no owner and report
+`hasAudio: false` until audio metadata is attached. New tracks created through
+`POST /tracks` get their owner from the authenticated session; `ownerId` is not an
+accepted request field. Audio storage keys and file metadata are not exposed in
+these responses.
+
+The database now supports one `AudioFile` per track and unique storage keys.
+Deleting a user preserves their tracks with `ownerId: null`; deleting a track
+cascades to its audio metadata. Upload, streaming and disk cleanup are subsequent
+implementation stages. Apply the migration with `pnpm prisma:migrate` before
+running the updated API.
+
+`pnpm --filter api test:audio-model` verifies the migration against historical
+records and exercises the model using a temporary database. It requires
+`DATABASE_URL` and permission to create/drop test databases; application records
+are not modified.
+
+Audio storage uses `AUDIO_STORAGE_DIR`, an absolute path to a private directory
+outside `public`, source and build directories. Local development uses
+`D:/Sandbox/sounds-server/storage/audio` (ignored by Git). The API creates `tmp`
+and `files` subdirectories and checks that they are writable at startup.
+`AUDIO_MAX_FILE_BYTES` defaults to `52428800` (50 MiB) and limits bytes while
+receiving the stream. On deployment, use a persistent disk/volume and back up
+audio files together with the database. This version assumes one API instance.
+
+Validation uses the bundled `mpg123-decoder` WebAssembly library and a WAV
+structure/sample parser; no FFmpeg/ffprobe installation is required. MP3 frames
+are checked for continuity, truncation and invalid Layer III side information,
+then decoded incrementally. MPEG-1/2/2.5 Layer III with standard bitrates (including
+VBR), leading ID3v2.2/2.3/2.4 and trailing ID3v1 tags are supported. Free-format
+MP3, other MPEG layers and unrecognized trailing data/tags are outside this version.
+Decoding does not prove bit-for-bit integrity of recordings without checksums;
+some modified MP3 payloads remain decodable or can be concealed by the decoder.
+
+Supported WAV: little-endian RIFF/WAVE with PCM 8/16/24/32-bit or IEEE float
+32/64-bit samples, including `WAVE_FORMAT_EXTENSIBLE` with those subformats.
+Compressed WAV, RF64 and big-endian RIFX are not supported. Invalid chunk sizes,
+inconsistent sample layout, partial/empty sample data and non-finite float
+samples are rejected. Original filenames and declared MIME types do not determine
+the accepted format or the stored extension.
+
+Validation runs in at most two worker threads per API instance with a 120-second
+budget per file. Busy/unavailable validation returns `AUDIO_VALIDATION_UNAVAILABLE`
+(503). Worker assets and the embedded decoder are checked at startup. The build
+copies `src/audio/worker/*.cjs` to `dist/src/audio/worker`; deploy these assets
+alongside the compiled API and production dependencies. File buffers stay bounded
+during receipt and validation; decoded recordings are not retained in memory.

@@ -8,8 +8,10 @@ import {
   ParseIntPipe,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { PermissionsGuard } from '../permissions/permissions.guard';
 import { RequirePermissions } from '../permissions/permissions.decorator';
 import type { Track } from './tracks.interfaces';
@@ -52,8 +54,11 @@ export class TracksController {
    * @param {CreateTrackDto} createTrackDto The track data to be created.
    * @returns {Track} The newly created track.
    */
-  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
-    return this.tracksService.create(createTrackDto);
+  async create(
+    @Body() createTrackDto: CreateTrackDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<Track> {
+    return this.tracksService.create(createTrackDto, request.user.userId);
   }
 
   @Patch(':id')
