@@ -162,9 +162,8 @@ these responses.
 
 The database now supports one `AudioFile` per track and unique storage keys.
 Deleting a user preserves their tracks with `ownerId: null`; deleting a track
-cascades to its audio metadata. Streaming, track deletion with disk cleanup and
-the orphan cleanup script are subsequent implementation stages. Apply the migration with `pnpm prisma:migrate` before
-running the updated API.
+cascades to its audio metadata. Apply the migration with `pnpm prisma:migrate`
+before running the updated API. The orphan cleanup script is a later stage.
 
 `pnpm --filter api test:audio-model` verifies the migration against historical
 records and exercises the model using a temporary database. It requires
@@ -222,3 +221,28 @@ Process crashes can leave orphan files until the later cleanup-script stage.
 Upload HTTP/filesystem tests run with `pnpm --filter api exec jest --runInBand
 tracks/track-upload.service.spec.ts` using a temporary directory and mocked DB.
 `test:audio-model` additionally checks atomic creation and rollback in PostgreSQL.
+
+`GET /tracks/:id/audio` requires an active JWT session and `tracks:read` for every
+request. Without `Range`, it streams the full recording with HTTP 200. One byte
+range (`bytes=start-end`, `bytes=start-` or `bytes=-suffix`) returns HTTP 206 with
+`Content-Range`, `Content-Length` and `Accept-Ranges: bytes`. End positions and
+suffixes beyond the file are clamped; malformed, multiple or unsatisfiable ranges
+return HTTP 416, `AUDIO_RANGE_INVALID` and `Content-Range: bytes */<size>`.
+Audio responses use `Cache-Control: private, no-store` and the detected MIME type.
+The API closes disk streams on completion, read errors and client disconnects.
+Tracks without audio return 404; missing or inconsistent stored files return 503
+with `AUDIO_STORAGE_FAILED`. Errors after streaming starts terminate the connection.
+
+`DELETE /tracks/:id` accepts `tracks:delete-any` or `tracks:delete-own` plus ownership
+of that track. Historical tracks with no owner require `tracks:delete-any`.
+Permissions are loaded from the database, independently of token role names.
+The API checks ownership and deletes the track (with cascading audio metadata)
+in a database transaction, then removes its stored file. DB failure leaves the
+file in place. If disk cleanup fails after commit, deletion still returns 200;
+an error log records the track ID and storage key for later orphan cleanup.
+The orphan cleanup script remains planned; no automatic sweep runs yet.
+
+Read/deletion HTTP tests use real JWT guards and temporary disk storage with a
+mocked database: `pnpm --filter api exec jest --runInBand track-audio`.
+`test:audio-model` also verifies deletion permissions, cascading metadata deletion
+and rollback without invoking disk cleanup against temporary PostgreSQL.

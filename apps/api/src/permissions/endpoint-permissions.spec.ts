@@ -274,10 +274,7 @@ describe('Endpoint permissions (HTTP)', () => {
     }
   });
 
-  it.each([
-    ['patch', 'tracks:update-own', 'update'],
-    ['delete', 'tracks:delete-own', 'remove'],
-  ] as const)(
+  it.each([['patch', 'tracks:update-own', 'update']] as const)(
     'does not allow %s with only %s',
     async (method, permission, operation) => {
       grant([permission]);
@@ -289,6 +286,18 @@ describe('Endpoint permissions (HTTP)', () => {
       expect(services.tracks[operation]).not.toHaveBeenCalled();
     },
   );
+
+  it('passes delete-own and the authenticated owner to the track ownership check', async () => {
+    grant(['tracks:delete-own']);
+    await request(app.getHttpServer())
+      .delete('/tracks/1')
+      .auth(token, { type: 'bearer' })
+      .expect(200);
+    expect(services.tracks.remove).toHaveBeenCalledWith(1, {
+      userId: 42,
+      permissions: ['tracks:delete-own'],
+    });
+  });
 
   it('keeps login, registration and the root endpoint public', async () => {
     await request(app.getHttpServer())

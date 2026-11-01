@@ -31,11 +31,13 @@ export class PermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
-      PERMISSIONS_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requirement = this.reflector.getAllAndOverride<
+      string[] | { anyOf: string[] }
+    >(PERMISSIONS_KEY, [context.getHandler(), context.getClass()]);
 
+    const requiredPermissions = Array.isArray(requirement)
+      ? requirement
+      : requirement?.anyOf;
     if (!requiredPermissions?.length) {
       return true;
     }
@@ -82,14 +84,17 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const grantedPermissions = this.getGrantedPermissions(user);
-    const hasRequiredPermissions = requiredPermissions.every((permission) =>
-      grantedPermissions.has(permission),
-    );
+    const hasPermission = (permission: string) =>
+      grantedPermissions.has(permission);
+    const hasRequiredPermissions = Array.isArray(requirement)
+      ? requiredPermissions.every(hasPermission)
+      : requiredPermissions.some(hasPermission);
 
     if (!hasRequiredPermissions) {
       throw new ForbiddenException('Missing required permission');
     }
 
+    request.permissions = [...grantedPermissions];
     return true;
   }
 

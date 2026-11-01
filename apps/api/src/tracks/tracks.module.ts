@@ -4,10 +4,11 @@ import { TracksService } from './tracks.service';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AudioModule } from '../audio/audio.module';
 import { TrackUploadService } from './track-upload.service';
+import { TrackAudioService } from './track-audio.service';
 
 @Module({
   imports: [PermissionsModule, AudioModule],
   controllers: [TracksController],
-  providers: [TracksService, TrackUploadService],
+  providers: [TracksService, TrackUploadService, TrackAudioService],
 })
 export class TracksModule {}

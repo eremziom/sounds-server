@@ -188,4 +188,45 @@ describe('PermissionsGuard', () => {
       ),
     ).rejects.toThrow(ForbiddenException);
   });
+
+  it('keeps RequirePermissions as an all-permissions check', async () => {
+    reflector.getAllAndOverride.mockReturnValue([
+      'tracks:create',
+      'tracks:delete-any',
+    ]);
+    await expect(
+      guard.canActivate(
+        createExecutionContext({
+          user: { userId: 1, username: 'artist', roles: ['ARTIST'] },
+        }),
+      ),
+    ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('accepts one RequireAnyPermission and forwards current DB permissions', async () => {
+    reflector.getAllAndOverride.mockReturnValue({
+      anyOf: ['tracks:delete-any', 'tracks:create'],
+    });
+    const request = {
+      user: { userId: 1, username: 'artist', roles: ['ARTIST'] },
+      permissions: ['untrusted:permission'],
+    };
+    await expect(
+      guard.canActivate(createExecutionContext(request)),
+    ).resolves.toBe(true);
+    expect(request.permissions).toEqual(['tracks:create']);
+  });
+
+  it('rejects RequireAnyPermission when none are granted', async () => {
+    reflector.getAllAndOverride.mockReturnValue({
+      anyOf: ['tracks:delete-any', 'tracks:delete-own'],
+    });
+    await expect(
+      guard.canActivate(
+        createExecutionContext({
+          user: { userId: 1, username: 'artist', roles: ['ADMIN'] },
+        }),
+      ),
+    ).rejects.toThrow(ForbiddenException);
+  });
 });

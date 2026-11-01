@@ -35,6 +35,7 @@ For example, a duplicate email still returns HTTP 409:
 | `AUDIO_FILE_INVALID` | 400 | Empty, malformed or undecodable audio |
 | `AUDIO_STORAGE_FAILED` | 503 | Temporary or final audio storage operation failed |
 | `AUDIO_VALIDATION_UNAVAILABLE` | 503 | Audio validator cannot run or has exhausted its processing budget |
+| `AUDIO_RANGE_INVALID` | 416 | Invalid, multiple or unsatisfiable byte range; `Content-Range: bytes */<size>` reports the recording size |
 | `INTERNAL_ERROR` | 5xx | Explicit HTTP exceptions not covered above |
 | `HTTP_ERROR` | Other statuses | Other explicit HTTP exceptions |
 

@@ -53,7 +53,10 @@ async function main() {
     const { TracksService } = require('../dist/src/tracks/tracks.service.js');
     prisma = new PrismaService();
     await prisma.$connect();
-    const tracks = new TracksService(prisma);
+    // Model-only fixture: storage keys here are synthetic, never actual app files.
+    const removedKeys = [];
+    const tracks = new TracksService(prisma, { remove: async (key) => { removedKeys.push(key); } });
+    const adminActor = { userId: 1, permissions: ['tracks:delete-any'] };
     assert.equal((await tracks.findOne(historical.rows[0].id)).hasAudio, false);
     const owner = await prisma.user.create({
       data: {
@@ -138,20 +141,36 @@ async function main() {
       (error) => error.code === 'P2003',
     );
     assert.equal(await prisma.track.count(), beforeFailure);
-    await tracks.remove(uploaded.id);
+    await db.query(`
+      CREATE FUNCTION reject_test_track_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN RAISE EXCEPTION 'simulated delete failure'; END $$;
+      CREATE TRIGGER reject_test_track_delete BEFORE DELETE ON "Track"
+      FOR EACH ROW EXECUTE FUNCTION reject_test_track_delete();
+    `);
+    await assert.rejects(tracks.remove(uploaded.id, adminActor));
+    assert.equal((await tracks.findOne(uploaded.id)).hasAudio, true);
+    assert.equal(removedKeys.includes(uploadAudio.storageKey), false);
+    await db.query('DROP TRIGGER reject_test_track_delete ON "Track"; DROP FUNCTION reject_test_track_delete();');
+    await tracks.remove(uploaded.id, { userId: owner.id, permissions: ['tracks:delete-own'] });
+    assert.ok(removedKeys.includes(uploadAudio.storageKey));
 
     // Deleting an account must preserve its tracks and associated audio.
     await prisma.user.delete({ where: { id: owner.id } });
     assert.equal((await tracks.findOne(track.id)).ownerId, null);
     assert.equal((await tracks.findOne(track.id)).hasAudio, true);
-    await tracks.remove(track.id);
+    await assert.rejects(
+      tracks.remove(track.id, { userId: owner.id, permissions: ['tracks:delete-own'] }),
+      (error) => error.getStatus() === 403,
+    );
+    await tracks.remove(track.id, adminActor);
+    assert.ok(removedKeys.includes(audioData.storageKey));
     assert.equal(await prisma.audioFile.count(), 0);
     assert.deepEqual(
       await db.query('SELECT * FROM "Track"').then((result) => result.rows),
       migrated.rows,
     );
     console.log(
-      'Audio model: historical data, ownership, responses, atomic track/audio creation and rollback, uniqueness, foreign keys and cascading metadata deletion passed.',
+      'Audio model: historical data, ownership, responses, atomic creation, deletion rollback/permissions/cleanup ordering, uniqueness, foreign keys and cascading metadata deletion passed.',
     );
   } finally {
     if (prisma) await prisma.$disconnect();

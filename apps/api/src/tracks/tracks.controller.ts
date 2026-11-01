@@ -10,13 +10,18 @@ import {
   UseGuards,
   Req,
   Res,
+  Headers,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { TrackUploadService } from './track-upload.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { PermissionsGuard } from '../permissions/permissions.guard';
-import { RequirePermissions } from '../permissions/permissions.decorator';
+import {
+  RequirePermissions,
+  RequireAnyPermission,
+} from '../permissions/permissions.decorator';
+import { TrackAudioService } from './track-audio.service';
 import type { Track } from './tracks.interfaces';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './create-track.dto';
@@ -28,6 +33,7 @@ export class TracksController {
   constructor(
     private readonly tracksService: TracksService,
     private readonly trackUploadService: TrackUploadService,
+    private readonly trackAudioService: TrackAudioService,
   ) {}
 
   @Post('upload')
@@ -59,6 +65,16 @@ export class TracksController {
    */
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Track> {
     return this.tracksService.findOne(id);
+  }
+
+  @Get(':id/audio')
+  @RequirePermissions('tracks:read')
+  audio(
+    @Param('id', ParseIntPipe) id: number,
+    @Headers('range') range: string | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.trackAudioService.read(id, range, response);
   }
 
   @Post()
@@ -93,13 +109,19 @@ export class TracksController {
   }
 
   @Delete(':id')
-  @RequirePermissions('tracks:delete-any')
+  @RequireAnyPermission('tracks:delete-any', 'tracks:delete-own')
   /**
    * Removes a track by its id.
    * @param {number} id The id of the track to be removed.
    * @throws {NotFoundException} If the track with the given id is not found.
    */
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.tracksService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<void> {
+    return this.tracksService.remove(id, {
+      userId: request.user.userId,
+      permissions: request.permissions ?? [],
+    });
   }
 }

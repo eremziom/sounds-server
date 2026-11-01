@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { LocalAudioStorageService } from '../audio/local-audio-storage.service';
 import type { CreateTrackDto } from './create-track.dto';
 import { Track } from './tracks.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,7 +21,11 @@ type UpdatableTrackFields = Pick<
 
 @Injectable()
 export class TracksService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(TracksService.name);
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storage: LocalAudioStorageService,
+  ) {}
 
   private mapToTrackResponse(track: TrackWithAudio): Track {
     return {
@@ -130,17 +140,53 @@ export class TracksService {
     return this.mapToTrackResponse(updatedTrack);
   }
 
-  async remove(id: number): Promise<void> {
-    const existingTrack = await this.prisma.track.findUnique({
-      where: { id },
-    });
-
-    if (!existingTrack) {
-      throw new NotFoundException('Track not found');
+  async remove(
+    id: number,
+    actor: { userId: number; permissions: readonly string[] },
+  ): Promise<void> {
+    const canDeleteAny = actor.permissions.includes('tracks:delete-any');
+    if (!canDeleteAny && !actor.permissions.includes('tracks:delete-own')) {
+      throw new ForbiddenException('Missing required permission');
     }
-
-    await this.prisma.track.delete({
-      where: { id },
-    });
+    const audio = await this.prisma
+      .$transaction(async (tx) => {
+        const track = await tx.track.findUnique({
+          where: { id },
+          select: {
+            ownerId: true,
+            audioFile: { select: { storageKey: true } },
+          },
+        });
+        if (!track) throw new NotFoundException('Track not found');
+        if (!canDeleteAny && track.ownerId !== actor.userId) {
+          throw new ForbiddenException('Track belongs to another user');
+        }
+        // Keep the owner predicate on the mutation as well. The FK cascade removes AudioFile.
+        await tx.track.delete({
+          where: { id, ...(!canDeleteAny ? { ownerId: actor.userId } : {}) },
+        });
+        return track.audioFile;
+      })
+      .catch((error: unknown) => {
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          error.code === 'P2025'
+        ) {
+          throw new NotFoundException('Track not found');
+        }
+        throw error;
+      });
+    if (audio) {
+      try {
+        await this.storage.remove(audio.storageKey);
+      } catch {
+        // DB deletion succeeded; retrying DELETE cannot restore it. The orphan sweep will retry disk cleanup.
+        this.logger.error(
+          `Audio cleanup required after deleting track ${id}: storageKey=${audio.storageKey}`,
+        );
+      }
+    }
   }
 }

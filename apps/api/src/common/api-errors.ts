@@ -20,6 +20,7 @@ export const API_ERROR_CODES = {
   audioInvalid: 'AUDIO_FILE_INVALID',
   audioStorageFailed: 'AUDIO_STORAGE_FAILED',
   audioValidationUnavailable: 'AUDIO_VALIDATION_UNAVAILABLE',
+  audioRangeInvalid: 'AUDIO_RANGE_INVALID',
 } as const;
 
 export type ApiErrorCode =

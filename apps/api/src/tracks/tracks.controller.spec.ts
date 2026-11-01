@@ -11,6 +11,7 @@ import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
 import { TrackUploadService } from './track-upload.service';
+import { TrackAudioService } from './track-audio.service';
 import { Track } from './tracks.interfaces';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 
@@ -90,6 +91,7 @@ describe('TracksController', () => {
       controllers: [TracksController],
       providers: [
         { provide: TrackUploadService, useValue: {} },
+        { provide: TrackAudioService, useValue: {} },
         {
           provide: TracksService,
           useValue: tracksService,
@@ -153,13 +155,17 @@ describe('TracksController', () => {
   });
 
   it('removes a track by id', async () => {
-    await controller.remove(1);
+    await controller.remove(1, {
+      user: { userId: 42 },
+    } as AuthenticatedRequest);
     const allTracks = await controller.findAll();
 
     expect(allTracks.some((track) => track.id === 1)).toBe(false);
   });
 
   it('throws NotFoundException when deleting absent id', async () => {
-    await expect(controller.remove(99)).rejects.toThrow(NotFoundException);
+    await expect(
+      controller.remove(99, { user: { userId: 42 } } as AuthenticatedRequest),
+    ).rejects.toThrow(NotFoundException);
   });
 });

@@ -9,6 +9,7 @@ import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { LocalAudioStorageService } from '../audio/local-audio-storage.service';
 
 type DbTrack = (typeof initialTracks)[number];
 type TrackWhereUnique = { where: { id: number } };
@@ -45,6 +46,7 @@ const initialTracks = [
 describe('TracksService', () => {
   let service: TracksService;
   let prisma: {
+    $transaction: jest.Mock;
     track: {
       findMany: jest.Mock;
       findUnique: jest.Mock;
@@ -59,6 +61,10 @@ describe('TracksService', () => {
     tracks = initialTracks.map((track) => ({ ...track }));
 
     prisma = {
+      $transaction: jest.fn(
+        (callback: (tx: { track: typeof prisma.track }) => unknown) =>
+          callback(prisma),
+      ),
       track: {
         findMany: jest.fn(() =>
           Promise.resolve([...tracks].sort((a, b) => a.id - b.id)),
@@ -95,6 +101,7 @@ describe('TracksService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TracksService,
+        { provide: LocalAudioStorageService, useValue: { remove: jest.fn() } },
         {
           provide: PrismaService,
           useValue: prisma,
@@ -167,14 +174,19 @@ describe('TracksService', () => {
 
   describe('remove', () => {
     it('removes the track from list', async () => {
-      await service.remove(2);
+      await service.remove(2, {
+        userId: 42,
+        permissions: ['tracks:delete-any'],
+      });
       const allTracks = await service.findAll();
 
       expect(allTracks.some((track) => track.id === 2)).toBe(false);
     });
 
     it('throws NotFoundException for absent id', async () => {
-      await expect(service.remove(99)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.remove(99, { userId: 42, permissions: ['tracks:delete-any'] }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
