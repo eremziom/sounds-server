@@ -4,6 +4,7 @@
 @import "../components/react-bits/Dock.css";
 @import "../components/language-switcher.css";
 @import "../components/application/application-navigation.css";
+@import "../components/site-header.css";
 
 @custom-variant dark (&:is(.dark *));
 
