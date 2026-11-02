@@ -18,6 +18,7 @@ import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 const initialTracks: Track[] = [
   {
     id: 1,
+    author: null,
     ownerId: null,
     hasAudio: false,
     genre: null,
@@ -29,6 +30,7 @@ const initialTracks: Track[] = [
   },
   {
     id: 2,
+    author: null,
     ownerId: null,
     hasAudio: false,
     genre: null,
@@ -68,9 +70,8 @@ describe('TracksController', () => {
           bpm: dto.bpm ?? null,
           publicationDate: dto.publicationDate,
           ownerId,
+          author: null,
           hasAudio: false,
-          genre: null,
-          subgenre: null,
         };
 
         tracks.push(created);

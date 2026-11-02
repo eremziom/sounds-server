@@ -52,10 +52,13 @@
       "leaveTitle": "¿Salir sin guardar?", "leaveDescription": "Salir cancela la carga y descarta los datos de la pista sin guardar.", "stay": "Quedarse", "leave": "Salir"
     },
     "library": {
+      "author": "Autor",
+      "playColumn": "Reproducción", "trackTitle": "Título", "genre": "Género", "subgenre": "Subgénero",
+      "playTrack": "Reproducir: {title}", "pauseTrack": "Pausar: {title}", "playFailed": "No se pudo reproducir la pista.",
       "title": "Biblioteca", "tracks": "Pistas", "loading": "Cargando pistas…",
       "empty": "Todavía no hay pistas en la Biblioteca.",
       "loadFailed": "No se pudieron cargar las pistas. Inténtalo de nuevo.", "retry": "Reintentar",
-      "publicationDate": "Fecha de publicación", "bpm": "Rango de BPM", "audio": "Audio",
+      "publicationDate": "Fecha de publicación", "bpm": "BPM", "audio": "Audio",
       "audioAvailable": "Audio disponible", "noAudio": "Sin archivo de audio"
     },
     "home": { "title": "Página de inicio de Sounds" },

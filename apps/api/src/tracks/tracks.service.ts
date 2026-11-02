@@ -10,8 +10,11 @@ import { Track } from './tracks.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Prisma } from '../generated/prisma/client.cjs';
 
-// Only load the relation identifier; storage details stay private to the API.
-const trackInclude = { audioFile: { select: { id: true } } } as const;
+// Select only public author data and the audio identifier, keeping storage details private.
+const trackInclude = {
+  audioFile: { select: { id: true } },
+  owner: { select: { username: true } },
+} as const;
 type TrackWithAudio = Prisma.TrackGetPayload<{ include: typeof trackInclude }>;
 
 type UpdatableTrackFields = Pick<
@@ -31,6 +34,7 @@ export class TracksService {
     return {
       id: track.id,
       ownerId: track.ownerId,
+      author: track.owner?.username ?? null,
       hasAudio: track.audioFile !== null,
       title: track.title,
       description: track.description ?? null,

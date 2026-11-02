@@ -8,6 +8,7 @@ export type UploadConfig = {
 
 export type Track = {
   id: number; ownerId: number | null; hasAudio: boolean;
+  author: string | null;
   title: string; description: string | null; publicationDate: string;
   genre: string | null; subgenre: string | null;
   bpm: { bpmFrom: number; bpmTo: number } | null;
@@ -17,6 +18,7 @@ export function parseTrack(value: unknown): Track | undefined {
   const positiveInt = (n: unknown): n is number => typeof n === "number" && Number.isSafeInteger(n) && n > 0;
   if (!isRecord(value) || !positiveInt(value.id) ||
       !(value.ownerId === null || positiveInt(value.ownerId)) || typeof value.hasAudio !== "boolean" ||
+      !(value.author == null || typeof value.author === "string") ||
       typeof value.title !== "string" || !(value.description === null || typeof value.description === "string") ||
       !(value.genre === null || typeof value.genre === "string") || !(value.subgenre === null || typeof value.subgenre === "string") ||
       typeof value.publicationDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value.publicationDate) ||
@@ -27,7 +29,7 @@ export function parseTrack(value: unknown): Track | undefined {
         value.bpm.bpmFrom > value.bpm.bpmTo) return undefined;
     bpm = { bpmFrom: value.bpm.bpmFrom, bpmTo: value.bpm.bpmTo };
   }
-  return { id: value.id, ownerId: value.ownerId, hasAudio: value.hasAudio,
+  return { id: value.id, ownerId: value.ownerId, author: value.author ?? null, hasAudio: value.hasAudio,
     title: value.title, description: value.description, publicationDate: value.publicationDate,
     genre: value.genre, subgenre: value.subgenre, bpm };
 }

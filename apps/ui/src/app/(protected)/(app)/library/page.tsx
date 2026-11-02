@@ -7,6 +7,8 @@ import { ACCESS_TOKEN_COOKIE, APP_ROLES } from "@/lib/route-access";
 import { formatCalendarDate, formatNumber } from "@/i18n/format";
 import { formats } from "@/i18n/formats";
 import { LibraryRetry } from "@/components/application/library-retry";
+import { TrackPlayButton } from "@/components/application/track-play-button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default async function LibraryPage() {
   // Layout guards run independently: authorize here before requesting the list.
@@ -23,21 +25,46 @@ export default async function LibraryPage() {
       <p role="alert">{t("loadFailed")}</p>
       <LibraryRetry label={t("retry")} />
     </section> : result.data.length === 0 ? <p role="status" data-library-empty>{t("empty")}</p> :
-      <ul aria-label={t("tracks")} className="space-y-4">
-        {result.data.map((track) => <li key={track.id} className="min-w-0 rounded-lg border bg-card/80 p-4 sm:p-6" data-track-id={track.id}>
-          <article className="space-y-3" aria-labelledby={`track-${track.id}`}>
-            <h2 id={`track-${track.id}`} className="break-words text-xl font-semibold">{track.title}</h2>
-            {track.description && <p className="whitespace-pre-wrap break-words text-muted-foreground">{track.description}</p>}
-            <dl className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <div><dt className="text-muted-foreground">{t("publicationDate")}</dt>
-                <dd><time dateTime={track.publicationDate}>{formatCalendarDate(track.publicationDate, locale)}</time></dd></div>
-              {track.bpm && <div><dt className="text-muted-foreground">{t("bpm")}</dt>
-                <dd>{formatNumber(track.bpm.bpmFrom, locale, formats.number.bpm)}–{formatNumber(track.bpm.bpmTo, locale, formats.number.bpm)}</dd></div>}
-              <div><dt className="text-muted-foreground">{t("audio")}</dt>
-                <dd>{track.hasAudio ? t("audioAvailable") : t("noAudio")}</dd></div>
-            </dl>
-          </article>
-        </li>)}
-      </ul>}
+      <div className="overflow-hidden rounded-lg border bg-card/80">
+        <Table aria-label={t("tracks")} className="table-fixed text-xs [&_td]:overflow-hidden [&_td]:px-3 [&_td]:py-1 [&_td]:text-ellipsis [&_td:first-child]:px-0 [&_th]:h-8 [&_th]:overflow-hidden [&_th]:px-3 [&_th]:text-xs [&_th]:text-ellipsis [&_th:first-child]:px-0">
+          <colgroup>
+            <col style={{ width: "1.5rem" }} />
+            <col style={{ width: "35%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "15%" }} />
+          </colgroup>
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col"><span className="sr-only">{t("playColumn")}</span></TableHead>
+              <TableHead scope="col">{t("trackTitle")}</TableHead>
+              <TableHead scope="col">{t("author")}</TableHead>
+              <TableHead scope="col">{t("genre")}</TableHead>
+              <TableHead scope="col">{t("subgenre")}</TableHead>
+              <TableHead scope="col">{t("bpm")}</TableHead>
+              <TableHead scope="col">{t("publicationDate")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {result.data.map((track) => <TableRow key={track.id} data-track-id={track.id}>
+              <TableCell>{track.hasAudio && <TrackPlayButton trackId={track.id} labels={{
+                play: t("playTrack", { title: track.title }), pause: t("pauseTrack", { title: track.title }), failed: t("playFailed"),
+              }} />}</TableCell>
+              <TableCell className="!whitespace-normal">
+                <a className="break-words font-medium no-underline">{track.title}</a>
+              </TableCell>
+              <TableCell>{track.author ?? "—"}</TableCell>
+              <TableCell>{track.genre ?? "—"}</TableCell>
+              <TableCell>{track.subgenre ?? "—"}</TableCell>
+              <TableCell className="tabular-nums">{track.bpm
+                ? `${formatNumber(track.bpm.bpmFrom, locale, formats.number.bpm)}–${formatNumber(track.bpm.bpmTo, locale, formats.number.bpm)}`
+                : "—"}</TableCell>
+              <TableCell className="tabular-nums"><time dateTime={track.publicationDate}>{formatCalendarDate(track.publicationDate, locale, formats.dateTime.publicationDateNumeric)}</time></TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
+      </div>}
   </main>;
 }

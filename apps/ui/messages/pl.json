@@ -52,10 +52,13 @@
       "leaveTitle": "Opuścić bez zapisywania?", "leaveDescription": "Opuszczenie strony anuluje upload i odrzuci niezapisane dane utworu.", "stay": "Zostań", "leave": "Opuść"
     },
     "library": {
+      "author": "Autor",
+      "playColumn": "Odtwarzanie", "trackTitle": "Tytuł", "genre": "Gatunek", "subgenre": "Subgatunek",
+      "playTrack": "Odtwórz: {title}", "pauseTrack": "Wstrzymaj: {title}", "playFailed": "Nie udało się odtworzyć utworu.",
       "title": "Biblioteka", "tracks": "Utwory", "loading": "Ładowanie utworów…",
       "empty": "W Bibliotece nie ma jeszcze utworów.",
       "loadFailed": "Nie udało się wczytać utworów. Spróbuj ponownie.", "retry": "Spróbuj ponownie",
-      "publicationDate": "Data publikacji", "bpm": "Zakres BPM", "audio": "Audio",
+      "publicationDate": "Data publikacji", "bpm": "BPM", "audio": "Audio",
       "audioAvailable": "Audio dostępne", "noAudio": "Brak pliku audio"
     },
     "home": { "title": "Strona główna aplikacji Sounds" },

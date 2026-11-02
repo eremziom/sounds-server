@@ -3,6 +3,7 @@ import type { Track } from '../tracks/tracks.interfaces';
 export const tracks: Track[] = [
   {
     id: 1,
+    author: null,
     ownerId: null,
     hasAudio: false,
     genre: null,
@@ -17,6 +18,7 @@ export const tracks: Track[] = [
   },
   {
     id: 2,
+    author: null,
     ownerId: null,
     hasAudio: false,
     genre: null,

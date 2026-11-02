@@ -14,7 +14,7 @@ import { LocalAudioStorageService } from '../audio/local-audio-storage.service';
 type DbTrack = (typeof initialTracks)[number];
 type TrackWhereUnique = { where: { id: number } };
 type TrackCreateArgs = {
-  data: Omit<DbTrack, 'id' | 'audioFile'>;
+  data: Omit<DbTrack, 'id' | 'audioFile' | 'owner'>;
 };
 type TrackUpdateArgs = TrackWhereUnique & {
   data: Partial<DbTrack>;
@@ -24,6 +24,7 @@ const initialTracks = [
   {
     id: 1,
     ownerId: null as number | null,
+    owner: null as { username: string } | null,
     audioFile: null as { id: number } | null,
     title: 'Solar Drift',
     publicationDate: new Date('2024-01-01'),
@@ -34,6 +35,7 @@ const initialTracks = [
   {
     id: 2,
     ownerId: 42,
+    owner: { username: 'night-artist' },
     audioFile: { id: 10 },
     title: 'Night Pulse',
     publicationDate: new Date('2024-02-01'),
@@ -76,6 +78,7 @@ describe('TracksService', () => {
           const newTrack = {
             id: Math.max(...tracks.map((track) => track.id)) + 1,
             audioFile: null,
+            owner: data.ownerId === 42 ? { username: 'night-artist' } : null,
             ...data,
           };
 
@@ -124,6 +127,7 @@ describe('TracksService', () => {
     await expect(service.findOne(1)).resolves.toMatchObject({
       id: 1,
       ownerId: null,
+      author: null,
       hasAudio: false,
       title: 'Solar Drift',
       publicationDate: '2024-01-01',
@@ -132,7 +136,19 @@ describe('TracksService', () => {
 
   it('reports audio availability without exposing the storage relation', async () => {
     const track = await service.findOne(2);
-    expect(track).toMatchObject({ ownerId: 42, hasAudio: true });
+    expect(track).toMatchObject({
+      ownerId: 42,
+      author: 'night-artist',
+      hasAudio: true,
+    });
+    expect(prisma.track.findUnique).toHaveBeenCalledWith({
+      where: { id: 2 },
+      include: {
+        audioFile: { select: { id: true } },
+        owner: { select: { username: true } },
+      },
+    });
+    expect(track).not.toHaveProperty('owner');
     expect(track).not.toHaveProperty('audioFile');
     expect(await service.findAll()).toContainEqual(track);
     const updated = await service.update(2, { title: 'Renamed' });

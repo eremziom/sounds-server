@@ -52,10 +52,13 @@
       "leaveTitle": "Leave without saving?", "leaveDescription": "Leaving cancels the upload and discards the unsaved track details.", "stay": "Stay", "leave": "Leave"
     },
     "library": {
+      "author": "Author",
+      "playColumn": "Playback", "trackTitle": "Title", "genre": "Genre", "subgenre": "Subgenre",
+      "playTrack": "Play: {title}", "pauseTrack": "Pause: {title}", "playFailed": "Could not play the track.",
       "title": "Library", "tracks": "Tracks", "loading": "Loading tracks…",
       "empty": "There are no tracks in the Library yet.",
       "loadFailed": "Could not load the tracks. Try again.", "retry": "Try again",
-      "publicationDate": "Publication date", "bpm": "BPM range", "audio": "Audio",
+      "publicationDate": "Publication date", "bpm": "BPM", "audio": "Audio",
       "audioAvailable": "Audio available", "noAudio": "No audio file"
     },
     "home": { "title": "Sounds home" },
