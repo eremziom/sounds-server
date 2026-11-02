@@ -28,7 +28,7 @@ export function useApplicationSession() {
   if (!context) throw new Error("Application session requires the protected application layout");
   const { session, ensureFresh, runProtected } = context;
   const status = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot);
-  return { status, renew: session.renew, end: session.end, ensureFresh, runProtected };
+  return { status, renew: session.renew, end: session.end, subscribe: session.subscribe, getStatus: session.getSnapshot, ensureFresh, runProtected };
 }
 
 function renewSession(): Promise<RefreshResult> {

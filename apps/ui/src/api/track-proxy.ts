@@ -19,6 +19,20 @@ const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{1
 const failure = (status: number, code: string) =>
   Response.json({ statusCode: status, code }, { status, headers: privateHeaders });
 
+function directRequestOrigin(request: Request): string | undefined {
+  const url = new URL(request.url);
+  const host = request.headers.get("host");
+  if (host === null) return url.origin;
+  // Next may build request.url from its bind address (e.g. 0.0.0.0), while
+  // Host identifies the address the browser actually requested. Forwarded
+  // headers remain untrusted; TLS-terminating proxies must set UI_ORIGIN.
+  if (!host || /[\\/?#@\s,]/.test(host)) return undefined;
+  try {
+    const origin = new URL(`${url.protocol}//${host}`);
+    return ["http:", "https:"].includes(origin.protocol) ? origin.origin : undefined;
+  } catch { return undefined; }
+}
+
 async function boundedJson(body: ReadableStream<Uint8Array> | null) {
   if (!body) throw new SyntaxError("Missing JSON");
   const reader = body.getReader();
@@ -46,7 +60,7 @@ export async function proxyTrack(
 ) {
   const mutation = operation !== "audio";
   if (mutation) {
-    const origin = options.origin ?? process.env.UI_ORIGIN ?? new URL(request.url).origin;
+    const origin = options.origin ?? process.env.UI_ORIGIN ?? directRequestOrigin(request);
     if (
       request.headers.get("origin") !== origin ||
       request.headers.get("sec-fetch-site") === "cross-site"

@@ -9,11 +9,13 @@ type MessageKey =
   | "errors.serviceUnavailable" | "errors.timeout" | "errors.unexpected"
   | "errors.loginLocked" | "errors.rateLimited"
   | "errors.audioUploadNotFound" | "errors.audioUploadConsumed" | "errors.audioUploadExpired"
+  | "errors.audioFileInvalid" | "errors.audioFileTooLarge" | "errors.audioFormatUnsupported"
+  | "errors.audioStorageFailed" | "errors.audioValidationUnavailable"
   | "auth.session.expired" | "validation.required" | "validation.email"
   | "validation.length" | "validation.usernameNoAt" | "validation.passwordComplexity" | "validation.invalid";
 
 type Message = { key: MessageKey; values?: { min: number; max: number } };
-const formFields = ["username", "email", "password", "confirmPassword", "login"] as const;
+const formFields = ["username", "email", "password", "confirmPassword", "login", "title", "description", "releaseDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo"] as const;
 type FormField = (typeof formFields)[number];
 export type ApiErrorMessages = { message: string; fieldErrors: Partial<Record<FormField, string[]>> };
 type Translate = (key: MessageKey, values?: { min: number; max: number }) => string;
@@ -30,6 +32,21 @@ function generalMessage(failure: ApiFailure, operation: ApiOperation): MessageKe
   const session = ["session", "refresh", "logout"].includes(operation);
   if (isRecord(body) && Object.hasOwn(body, "code")) {
     switch (body.code) {
+      case "AUDIO_FILE_INVALID":
+        if (status === 400 && operation === "track") return "errors.audioFileInvalid";
+        break;
+      case "AUDIO_FILE_TOO_LARGE":
+        if (status === 413 && operation === "track") return "errors.audioFileTooLarge";
+        break;
+      case "AUDIO_FORMAT_UNSUPPORTED":
+        if (status === 415 && operation === "track") return "errors.audioFormatUnsupported";
+        break;
+      case "AUDIO_STORAGE_FAILED":
+        if (status === 503 && operation === "track") return "errors.audioStorageFailed";
+        break;
+      case "AUDIO_VALIDATION_UNAVAILABLE":
+        if (status === 503 && operation === "track") return "errors.audioValidationUnavailable";
+        break;
       case "AUDIO_UPLOAD_NOT_FOUND":
         if (status === 404 && operation === "track") return "errors.audioUploadNotFound";
         break;

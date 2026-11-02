@@ -46,6 +46,8 @@ Only `getAuthCookies()` supplies API credentials; caller Authorization, Cookie a
 forwarded headers are never relayed. Mutations require an exact matching Origin
 and reject cross-site Fetch Metadata. Behind a reverse proxy, set `UI_ORIGIN` to
 the public origin without a trailing slash; forwarded host/protocol are not trusted.
+For direct requests without `UI_ORIGIN`, the expected origin uses the request's
+Host and protocol, rather than Next's internal bind address (`0.0.0.0`).
 Routes return JSON 401/403, never login redirects, and do not refresh or retry a
 mutation. Future UI callers must use `runProtected` before starting an operation.
 
@@ -68,7 +70,7 @@ mutations mean an unknown result; do not claim a definite failure or retry
 automatically. `AUDIO_FILE_TOO_LARGE` (413) also covers the proxy byte limit.
 Only code and allowlisted validation fields/bounds survive API JSON errors.
 New upload 404/409/410 messages are available in en/pl/es via operation `track`.
-The Library, upload form and playback controls remain subsequent plan stages.
+The Library and upload form are available; playback controls remain in stage 5.6.
 
 Run `pnpm --filter ui test` for domain/proxy unit tests. After a UI build,
 `pnpm --filter ui test:tracks-proxy` exercises the actual Next.js HTTP routes with
@@ -117,7 +119,7 @@ Navigation and cookie changes preserve the instances;
 switching accounts or leaving the protected area stops and releases them.
 Cold loads/reloads with a missing or rejected access token and a refresh cookie
 go through `/resume?returnTo=...`. A POST action renews cookies, verifies the API
-user and destination roles, then returns to `/` or `/admin` with the original
+user and destination roles/permissions, then returns to `/`, `/library`, `/upload` or `/admin` with the original
 query and locale. Invalid refresh clears auth cookies and opens login; API
 outages/rate limits preserve cookies and offer manual retry in en/pl/es. Protected
 content and media remain unmounted while recovering. GET/render never writes
@@ -126,6 +128,37 @@ removed once the authenticated runtime mounts. See [ROUTING.md](ROUTING.md) for
 the target allowlist and custom server header contract.
 After building, run `pnpm --filter ui test:session-resume` for browser coverage
 of this flow in en/pl/es.
+
+`/library` is available to USER/ARTIST, including combined ADMIN roles. Its page
+checks roles before fetching the uncached, server-validated track list. It shows
+title, optional description, localized release date, BPM range and audio availability
+in API order, including historical tracks without audio. Playback is planned in
+audio-upload stage 5.6. Loading, empty and failure states have en/pl/es messages;
+manual retry checks the session through `runProtected` before refreshing.
+API 401 enters session recovery; 403 opens access-denied. After building, run
+`pnpm --filter ui test:library` for browser checks of roles, direct/navigation entry,
+recovery, list states and retry. This suite also runs in `test:browser`.
+
+`/upload` requires an application role and live `tracks:create` permission before
+loading upload configuration. The fourth HeaderMenu item uses the same policy;
+ADMIN alone cannot enter. Recovery preserves `/upload` and rechecks both rules.
+The form starts a file-only temporary upload after `runProtected`, then shows the
+metadata fields while the transfer is running. Save validates the DTO and checks
+the session again before calling complete. Confirmed success clears the editor
+and refreshes the Router Cache so the next Library visit sees the saved track,
+while the shared MediaRuntime stays mounted. HTTP/API errors preserve metadata;
+uncertain network/proxy results require checking the Library, with no automatic retry.
+
+`UnsavedNavigation` tracks browser history entries from the root, preserving Next's
+state, and intercepts same-tab links and Back/Forward while an editor is dirty.
+LanguageSwitcher checks the same blocker before starting its Server Action.
+The existing AlertDialog offers Stay/Leave; Leave aborts transfer/completion and
+attempts bounded cancellation of a known upload. A confirmed language change also
+clears the discarded editor. Reload/close uses native beforeunload. Logout and
+session termination bypass the editor guard and abort requests immediately;
+uncertain session failures also stop requests. Unknown upload IDs and failed
+cleanup remain subject to the API's TTL policy; unload does not rely on DELETE.
+Run `pnpm --filter ui test:upload` after building for the en/pl/es browser suite.
 
 The client session controller supports active/refreshing/unavailable/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes

@@ -15,7 +15,7 @@ export async function withAuthBrowser(apiUrl, run) {
   const origin = `http://127.0.0.1:${port}`;
   const next = spawn(process.execPath, ["server.mjs", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: new URL("../..", import.meta.url), windowsHide: true,
-    env: { ...process.env, API_URL: apiUrl }, stdio: ["ignore", "pipe", "pipe"],
+    env: { ...process.env, API_URL: apiUrl, UI_ORIGIN: undefined }, stdio: ["ignore", "pipe", "pipe"],
   });
   let output = "";
   next.stdout.on("data", (chunk) => output += chunk);

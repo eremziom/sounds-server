@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Wyloguj", "description": "Czy na pewno chcesz się wylogować? To spowoduje zakończenie obecnej podróży muzycznej", "cancel": "Anuluj" },
-    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat" },
+    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat", "upload": "Dodaj utwór" },
     "login": {
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",
@@ -34,6 +34,28 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
+    "upload": {
+      "title": "Dodaj utwór", "configFailed": "Nie udało się wczytać ustawień uploadu. Spróbuj ponownie.", "retry": "Spróbuj ponownie",
+      "file": "Plik audio", "fileHelp": "Formaty: {formats}. Maksymalny rozmiar: {limit, number} bajtów.",
+      "fileEmpty": "Wybierz niepusty plik audio.", "fileTooLarge": "Plik przekracza maksymalny rozmiar.", "fileUnsupported": "Wybierz plik MP3 lub WAV.",
+      "metadata": "Dane utworu", "fieldTitle": "Tytuł", "description": "Opis", "releaseDate": "Data wydania", "bpmFrom": "BPM od", "bpmTo": "BPM do",
+      "lengthTitle": "Tytuł musi mieć od 3 do 50 znaków.", "lengthDescription": "Opis musi mieć od 3 do 300 znaków.", "dateInvalid": "Podaj prawidłową datę wydania.",
+      "bpmInvalid": "Podaj BPM w zakresie 60–200.", "bpmOrder": "Górna granica BPM musi być co najmniej równa dolnej.",
+      "requirements": "Wszystkie pola są wymagane. Tytuł: 3–50 znaków, opis: 3–300, BPM: 60–200.",
+      "uploading": "Wysyłanie audio… Możesz już uzupełnić dane utworu.", "uploaded": "Audio wysłane. Uzupełnij dane i zapisz utwór.", "saving": "Zapisywanie utworu…", "cancelling": "Anulowanie uploadu…",
+      "save": "Zapisz utwór", "success": "Utwór zapisany. Jest już dostępny w Bibliotece.", "chooseAnother": "Anuluj upload i wybierz inny plik", "library": "Otwórz Bibliotekę",
+      "expired": "Upload wygasł. Wybierz plik ponownie. Dane utworu zostały zachowane.",
+      "unknownResult": "Nie udało się potwierdzić wyniku. Sprawdź Bibliotekę przed ponowieniem. Dane utworu zostały zachowane.",
+      "sessionUnavailable": "Nie udało się potwierdzić sesji. Spróbuj ponownie po przywróceniu połączenia.",
+      "leaveTitle": "Opuścić bez zapisywania?", "leaveDescription": "Opuszczenie strony anuluje upload i odrzuci niezapisane dane utworu.", "stay": "Zostań", "leave": "Opuść"
+    },
+    "library": {
+      "title": "Biblioteka", "tracks": "Utwory", "loading": "Ładowanie utworów…",
+      "empty": "W Bibliotece nie ma jeszcze utworów.",
+      "loadFailed": "Nie udało się wczytać utworów. Spróbuj ponownie.", "retry": "Spróbuj ponownie",
+      "releaseDate": "Data wydania", "bpm": "Zakres BPM", "audio": "Audio",
+      "audioAvailable": "Audio dostępne", "noAudio": "Brak pliku audio"
+    },
     "home": { "title": "Strona główna aplikacji Sounds" },
     "animations": {
       "configuration": "Konfiguracja Animacji",
@@ -52,6 +74,11 @@
   },
   "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
   "errors": {
+    "audioFileInvalid": "Plik nie zawiera poprawnego audio w obsługiwanym formacie.",
+    "audioFileTooLarge": "Plik audio przekracza maksymalny rozmiar.",
+    "audioFormatUnsupported": "Ten format audio nie jest obsługiwany. Wybierz MP3 lub WAV.",
+    "audioStorageFailed": "Nie udało się zapisać audio. Spróbuj ponownie później.",
+    "audioValidationUnavailable": "Walidacja audio jest chwilowo niedostępna. Spróbuj ponownie później.",
     "audioUploadNotFound": "Ten plik tymczasowy jest już niedostępny. Wybierz plik ponownie.",
     "audioUploadConsumed": "Ten plik został już zapisany jako utwór. Sprawdź Bibliotekę.",
     "audioUploadExpired": "Czas ważności pliku tymczasowego minął. Wybierz plik ponownie.",

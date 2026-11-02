@@ -6,7 +6,7 @@ export function resumeTarget(value: unknown): string {
   if (typeof value !== "string" || !value.startsWith("/") ||
       value.startsWith("//") || /[\\\x00-\x20\x7f]/.test(value)) return "/";
   const url = new URL(value, "https://local.invalid");
-  if (url.origin !== "https://local.invalid" || !["/", "/admin"].includes(url.pathname)) return "/";
+  if (url.origin !== "https://local.invalid" || !["/", "/admin", "/library", "/upload"].includes(url.pathname)) return "/";
   url.searchParams.delete(RESUMED_PARAM);
   url.searchParams.delete("_rsc");
   return `${url.pathname}${url.search}${url.hash}`;

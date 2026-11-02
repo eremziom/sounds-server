@@ -8,6 +8,7 @@ import { formats } from "@/i18n/formats";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AuthControls } from "@/components/auth/auth-controls";
 import { SiteHeader } from "@/components/site-header";
+import { UnsavedNavigation } from "@/components/unsaved-navigation";
 import "./globals.css";
 
 const michroma = Michroma({
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             userMenu={<Suspense fallback={null}><AuthControls /></Suspense>}
             languageSwitcher={<LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />}
           />
+          <UnsavedNavigation />
           {children}
         </NextIntlClientProvider>
       </body>

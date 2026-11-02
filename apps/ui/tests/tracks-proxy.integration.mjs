@@ -54,9 +54,9 @@ try {
   const reservation = createServer(); reservation.listen(0, "127.0.0.1"); await once(reservation, "listening");
   const port = reservation.address().port; await new Promise(resolve => reservation.close(resolve));
   const origin = `http://127.0.0.1:${port}`;
-  next = spawn(process.execPath, ["server.mjs", "--hostname", "127.0.0.1", "--port", String(port)], {
+  next = spawn(process.execPath, ["server.mjs", "--hostname", "0.0.0.0", "--port", String(port)], {
     cwd: new URL("..", import.meta.url), windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, API_URL: `http://127.0.0.1:${api.address().port}`, UI_ORIGIN: origin },
+    env: { ...process.env, API_URL: `http://127.0.0.1:${api.address().port}`, UI_ORIGIN: undefined },
   });
   next.stdout.on("data", chunk => output += chunk); next.stderr.on("data", chunk => output += chunk);
   for (let i = 0; i < 100; i++) {

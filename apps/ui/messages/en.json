@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Sign out", "description": "Are you sure you want to sign out? This will end your current musical journey", "cancel": "Cancel" },
-    "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop" },
+    "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop", "upload": "Add track" },
     "login": {
       "title": "Sign in",
       "noAccount": "Don't have an account?",
@@ -34,6 +34,28 @@
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": {
+    "upload": {
+      "title": "Add track", "configFailed": "Could not load upload settings. Try again.", "retry": "Try again",
+      "file": "Audio file", "fileHelp": "Formats: {formats}. Maximum size: {limit, number} bytes.",
+      "fileEmpty": "Select a non-empty audio file.", "fileTooLarge": "The file exceeds the maximum size.", "fileUnsupported": "Select an MP3 or WAV file.",
+      "metadata": "Track details", "fieldTitle": "Title", "description": "Description", "releaseDate": "Release date", "bpmFrom": "BPM from", "bpmTo": "BPM to",
+      "lengthTitle": "Use 3–50 characters for the title.", "lengthDescription": "Use 3–300 characters for the description.", "dateInvalid": "Enter a valid release date.",
+      "bpmInvalid": "Enter a BPM between 60 and 200.", "bpmOrder": "The upper BPM must be at least the lower BPM.",
+      "requirements": "All fields are required. Title: 3–50 characters, description: 3–300, BPM: 60–200.",
+      "uploading": "Uploading audio… You can fill in the track details now.", "uploaded": "Audio uploaded. Complete the details and save the track.", "saving": "Saving track…", "cancelling": "Cancelling upload…",
+      "save": "Save track", "success": "Track saved. It is now available in the Library.", "chooseAnother": "Cancel upload and select another file", "library": "Open Library",
+      "expired": "The upload has expired. Select the file again. Your track details have been preserved.",
+      "unknownResult": "We could not confirm the result. Check the Library before trying again. Your track details have been preserved.",
+      "sessionUnavailable": "Could not confirm your session. Try again after restoring the connection.",
+      "leaveTitle": "Leave without saving?", "leaveDescription": "Leaving cancels the upload and discards the unsaved track details.", "stay": "Stay", "leave": "Leave"
+    },
+    "library": {
+      "title": "Library", "tracks": "Tracks", "loading": "Loading tracks…",
+      "empty": "There are no tracks in the Library yet.",
+      "loadFailed": "Could not load the tracks. Try again.", "retry": "Try again",
+      "releaseDate": "Release date", "bpm": "BPM range", "audio": "Audio",
+      "audioAvailable": "Audio available", "noAudio": "No audio file"
+    },
     "home": { "title": "Sounds home" },
     "animations": {
       "configuration": "Animation Settings",
@@ -52,6 +74,11 @@
   },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
   "errors": {
+    "audioFileInvalid": "The file does not contain valid supported audio.",
+    "audioFileTooLarge": "The audio file exceeds the maximum size.",
+    "audioFormatUnsupported": "This audio format is not supported. Select MP3 or WAV.",
+    "audioStorageFailed": "Could not store the audio. Try again later.",
+    "audioValidationUnavailable": "Audio validation is temporarily unavailable. Try again later.",
     "audioUploadNotFound": "This upload is no longer available. Select the file again.",
     "audioUploadConsumed": "This upload has already been saved. Check the Library.",
     "audioUploadExpired": "This upload has expired. Select the file again.",

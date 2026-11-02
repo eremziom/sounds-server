@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Cerrar sesión", "description": "¿Seguro que quieres cerrar sesión? Esto pondrá fin a tu viaje musical actual", "cancel": "Cancelar" },
-    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller" },
+    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller", "upload": "Añadir pista" },
     "login": {
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
@@ -34,6 +34,28 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "upload": {
+      "title": "Añadir pista", "configFailed": "No se pudo cargar la configuración de carga. Inténtalo de nuevo.", "retry": "Reintentar",
+      "file": "Archivo de audio", "fileHelp": "Formatos: {formats}. Tamaño máximo: {limit, number} bytes.",
+      "fileEmpty": "Selecciona un archivo de audio que no esté vacío.", "fileTooLarge": "El archivo supera el tamaño máximo.", "fileUnsupported": "Selecciona un archivo MP3 o WAV.",
+      "metadata": "Datos de la pista", "fieldTitle": "Título", "description": "Descripción", "releaseDate": "Fecha de lanzamiento", "bpmFrom": "BPM desde", "bpmTo": "BPM hasta",
+      "lengthTitle": "El título debe tener entre 3 y 50 caracteres.", "lengthDescription": "La descripción debe tener entre 3 y 300 caracteres.", "dateInvalid": "Introduce una fecha de lanzamiento válida.",
+      "bpmInvalid": "Introduce un BPM entre 60 y 200.", "bpmOrder": "El BPM superior debe ser igual o mayor que el inferior.",
+      "requirements": "Todos los campos son obligatorios. Título: 3–50 caracteres, descripción: 3–300, BPM: 60–200.",
+      "uploading": "Cargando audio… Ya puedes completar los datos de la pista.", "uploaded": "Audio cargado. Completa los datos y guarda la pista.", "saving": "Guardando pista…", "cancelling": "Cancelando carga…",
+      "save": "Guardar pista", "success": "Pista guardada. Ya está disponible en la Biblioteca.", "chooseAnother": "Cancelar la carga y seleccionar otro archivo", "library": "Abrir Biblioteca",
+      "expired": "La carga ha caducado. Selecciona el archivo de nuevo. Se han conservado los datos de la pista.",
+      "unknownResult": "No se pudo confirmar el resultado. Revisa la Biblioteca antes de reintentar. Se han conservado los datos de la pista.",
+      "sessionUnavailable": "No se pudo confirmar tu sesión. Inténtalo de nuevo cuando se restablezca la conexión.",
+      "leaveTitle": "¿Salir sin guardar?", "leaveDescription": "Salir cancela la carga y descarta los datos de la pista sin guardar.", "stay": "Quedarse", "leave": "Salir"
+    },
+    "library": {
+      "title": "Biblioteca", "tracks": "Pistas", "loading": "Cargando pistas…",
+      "empty": "Todavía no hay pistas en la Biblioteca.",
+      "loadFailed": "No se pudieron cargar las pistas. Inténtalo de nuevo.", "retry": "Reintentar",
+      "releaseDate": "Fecha de lanzamiento", "bpm": "Rango de BPM", "audio": "Audio",
+      "audioAvailable": "Audio disponible", "noAudio": "Sin archivo de audio"
+    },
     "home": { "title": "Página de inicio de Sounds" },
     "animations": {
       "configuration": "Configuración de Animación",
@@ -52,6 +74,11 @@
   },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
   "errors": {
+    "audioFileInvalid": "El archivo no contiene audio válido en un formato compatible.",
+    "audioFileTooLarge": "El archivo de audio supera el tamaño máximo.",
+    "audioFormatUnsupported": "Este formato de audio no es compatible. Selecciona MP3 o WAV.",
+    "audioStorageFailed": "No se pudo almacenar el audio. Inténtalo más tarde.",
+    "audioValidationUnavailable": "La validación de audio no está disponible temporalmente. Inténtalo más tarde.",
     "audioUploadNotFound": "Esta carga ya no está disponible. Selecciona el archivo de nuevo.",
     "audioUploadConsumed": "Esta carga ya se ha guardado. Consulta la Biblioteca.",
     "audioUploadExpired": "Esta carga ha caducado. Selecciona el archivo de nuevo.",

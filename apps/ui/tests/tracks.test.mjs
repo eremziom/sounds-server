@@ -59,6 +59,25 @@ test("proxy forwards only cookie authorization, preserves JSON validation fields
   assert.equal(calls, 1);
 });
 
+test("direct proxy origin follows Host rather than Next's internal bind address and ignores forwarded headers", async () => {
+  const input = headers => new Request("http://0.0.0.0:3001/api/tracks/uploads", {
+    method: "POST", body: "{}", headers: { host: "localhost:3001", origin: "http://localhost:3001", "content-type": "application/json", ...headers },
+  });
+  let calls = 0;
+  const options = { accessToken: "token", request: async () => { calls++; return Response.json(track, { status: 201 }); } };
+  assert.equal((await proxyTrack(input({}), "complete", id, options)).status, 201);
+  assert.equal(calls, 1);
+  for (const headers of [
+    { origin: "http://evil.test", "x-forwarded-host": "evil.test", "x-forwarded-proto": "http" },
+    { origin: "null" }, { origin: "" }, { "sec-fetch-site": "cross-site" },
+    { host: "localhost:3001@evil.test" }, { host: "localhost:3001/path" },
+    { host: "localhost:3001,evil.test" },
+  ]) assert.equal((await proxyTrack(input(headers), "complete", id, options)).status, 403);
+  assert.equal(calls, 1);
+  assert.equal((await proxyTrack(input({ origin: "https://public.test" }), "complete", id, { ...options, origin: "https://public.test" })).status, 201);
+  assert.equal((await proxyTrack(input({}), "complete", id, { ...options, origin: "https://public.test" })).status, 403);
+});
+
 test("upload streams before source completion, preserves boundary and enforces actual config limit", async () => {
   let controller;
   const source = new ReadableStream({ start(c) { controller = c; c.enqueue(new TextEncoder().encode("first")); } });
