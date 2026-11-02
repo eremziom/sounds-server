@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  Length,
-  ValidateNested,
-  IsDateString,
-} from 'class-validator';
+import { IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BpmRangeDto } from './bpm-range.dto';
 import { IsBpmRangeValid } from './validators/is-bpm-range-valid';
@@ -16,15 +10,21 @@ export class UpdateTrackDto {
   title?: string;
 
   @IsOptional()
-  @IsDateString({}, { message: 'Release date must be a valid date string' })
-  releaseDate?: string;
-
-  @IsOptional()
   @IsString({ message: 'Description must be a string' })
   @Length(3, 300, {
     message: 'Description must be between 3 and 300 characters',
   })
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(3, 30)
+  genre?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(3, 30)
+  subgenre?: string;
 
   @IsOptional()
   @ValidateNested()

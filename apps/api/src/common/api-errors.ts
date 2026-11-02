@@ -15,6 +15,15 @@ export const API_ERROR_CODES = {
   conflict: 'CONFLICT',
   internalError: 'INTERNAL_ERROR',
   httpError: 'HTTP_ERROR',
+  audioTooLarge: 'AUDIO_FILE_TOO_LARGE',
+  audioUnsupported: 'AUDIO_FORMAT_UNSUPPORTED',
+  audioInvalid: 'AUDIO_FILE_INVALID',
+  audioStorageFailed: 'AUDIO_STORAGE_FAILED',
+  audioValidationUnavailable: 'AUDIO_VALIDATION_UNAVAILABLE',
+  audioRangeInvalid: 'AUDIO_RANGE_INVALID',
+  audioUploadNotFound: 'AUDIO_UPLOAD_NOT_FOUND',
+  audioUploadConsumed: 'AUDIO_UPLOAD_CONSUMED',
+  audioUploadExpired: 'AUDIO_UPLOAD_EXPIRED',
 } as const;
 
 export type ApiErrorCode =

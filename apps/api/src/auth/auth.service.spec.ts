@@ -77,6 +77,31 @@ const seedUsers = [
 
 describe('AuthService', () => {
   let service: AuthService;
+
+  it('returns live deduplicated permissions without password or nested grants', async () => {
+    const profile = {
+      ...seedUsers[0],
+      roles: ['USER', 'ARTIST'].map((key) => ({
+        role: {
+          ...seedUsers[0].roles[0].role,
+          key,
+          permissions: [
+            'tracks:read',
+            ...(key === 'ARTIST' ? ['tracks:create'] : []),
+          ].map((permission) => ({ permission: { key: permission } })),
+        },
+      })),
+    };
+    prisma.user.findUnique.mockResolvedValue(profile);
+    const response = await service.findSessionUser(1);
+    expect(response.permissions).toEqual(['tracks:create', 'tracks:read']);
+    expect(response).not.toHaveProperty('password');
+    expect(response.roles[0]).not.toHaveProperty('permissions');
+    profile.roles = [];
+    expect((await service.findSessionUser(1)).permissions).toEqual([]);
+    prisma.user.findUnique.mockResolvedValue(null);
+    await expect(service.findSessionUser(1)).rejects.toThrow(NotFoundException);
+  });
   let users: (Omit<(typeof seedUsers)[number], 'bio' | 'avatar'> & {
     bio: string | null;
     avatar: string | null;

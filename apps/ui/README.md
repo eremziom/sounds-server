@@ -34,6 +34,49 @@ policy and cookie helpers belong in `src/lib/`; Server Actions orchestrate them
 from `src/app/(auth)/actions.ts`. `src/api/` is
 application code, distinct from Next.js HTTP routes under `src/app/api/`.
 
+The server-only `src/api/tracks.ts` exposes `getUploadConfig` and `getTracks`.
+List parsing validates every track and returns only the public fields, including
+`ownerId` and `hasAudio`; historical tracks may have no owner or audio. Calls use
+the HttpOnly access cookie supplied by server code, `no-store`, and typed failures.
+
+Track Route Handlers expose `POST /api/tracks/uploads`,
+`POST /api/tracks/uploads/[uploadId]/complete`,
+`DELETE /api/tracks/uploads/[uploadId]`, and GET/HEAD `/api/tracks/[id]/audio`.
+Only `getAuthCookies()` supplies API credentials; caller Authorization, Cookie and
+forwarded headers are never relayed. Mutations require an exact matching Origin
+and reject cross-site Fetch Metadata. Behind a reverse proxy, set `UI_ORIGIN` to
+the public origin without a trailing slash; forwarded host/protocol are not trusted.
+For direct requests without `UI_ORIGIN`, the expected origin uses the request's
+Host and protocol, rather than Next's internal bind address (`0.0.0.0`).
+Routes return JSON 401/403, never login redirects, and do not refresh or retry a
+mutation. Future UI callers must use `runProtected` before starting an operation.
+
+The proxy streams request bodies and audio with backpressure and disconnect
+propagation. It preserves the multipart boundary and Range, 200/206/416 and audio
+headers; it strips upstream cookies and all other non-allowlisted headers. Every
+response has `private, no-store`. File-byte validation remains in NestJS; the proxy
+also bounds multipart bytes to the current API file limit plus 16 KiB, complete
+JSON to 8 KiB and API JSON responses to 64 KiB. Transfer timeout is 15 minutes,
+including audio-body reads, separate from the 5-second config/list request timeout.
+Configure the reverse proxy/platform body limit to allow the configured file size
+plus 16 KiB and timeouts to permit this transfer budget. Disable proxy buffering
+for these routes. The transfer timer in `track-proxy.ts` enforces the timeout;
+Route Handlers use the default Node.js runtime.
+
+API error statuses/codes remain distinguishable from proxy failures:
+`UPSTREAM_UNAVAILABLE` (502), `UPSTREAM_INVALID_RESPONSE` (502),
+`UPSTREAM_TIMEOUT` (504) and `TRANSFER_ABORTED` (499). Transport failures during
+mutations mean an unknown result; do not claim a definite failure or retry
+automatically. `AUDIO_FILE_TOO_LARGE` (413) also covers the proxy byte limit.
+Only code and allowlisted validation fields/bounds survive API JSON errors.
+New upload 404/409/410 messages are available in en/pl/es via operation `track`.
+The Library and upload form are available; shared playback controls are implemented.
+
+Run `pnpm --filter ui test` for domain/proxy unit tests. After a UI build,
+`pnpm --filter ui test:tracks-proxy` exercises the actual Next.js HTTP routes with
+an isolated mock upstream: cookies, CSRF, multipart streaming, mutations, errors,
+Range/HEAD and interrupted upload/audio. It does not access the application DB.
+
 The auth API module supports login, register, refresh, logout, logout-all and
 session verification. `src/api/client.ts` returns typed success/failure results,
 preserves HTTP status and strips raw backend error text/input values. It disables
@@ -76,7 +119,7 @@ Navigation and cookie changes preserve the instances;
 switching accounts or leaving the protected area stops and releases them.
 Cold loads/reloads with a missing or rejected access token and a refresh cookie
 go through `/resume?returnTo=...`. A POST action renews cookies, verifies the API
-user and destination roles, then returns to `/` or `/admin` with the original
+user and destination roles/permissions, then returns to `/`, `/library`, `/upload` or `/admin` with the original
 query and locale. Invalid refresh clears auth cookies and opens login; API
 outages/rate limits preserve cookies and offer manual retry in en/pl/es. Protected
 content and media remain unmounted while recovering. GET/render never writes
@@ -85,6 +128,61 @@ removed once the authenticated runtime mounts. See [ROUTING.md](ROUTING.md) for
 the target allowlist and custom server header contract.
 After building, run `pnpm --filter ui test:session-resume` for browser coverage
 of this flow in en/pl/es.
+
+`/library` is available to USER/ARTIST, including combined ADMIN roles. Its page
+checks roles before fetching the uncached, server-validated track list. It shows
+title, author, genre/subgenre, localized publication date and optional BPM range
+in API order, including historical tracks without audio. Row play/pause controls
+share playback state with the persistent footer player. Loading, empty and failure states have en/pl/es messages;
+manual retry checks the session through `runProtected` before refreshing.
+API 401 enters session recovery; 403 opens access-denied. After building, run
+`pnpm --filter ui test:library` for browser checks of roles, direct/navigation entry,
+recovery, list states and retry. This suite also runs in `test:browser`.
+
+`MediaRuntime` owns one audio element and `useAudioPlayback` manages the selected
+track, playback commands and media event state. `usePlayback` connects Library
+buttons and `AudioPlayer`: play/pause, title/author, time, duration, seeking,
+buffering, ended and explicit error retry. The sticky footer includes SessionFooter
+and occupies normal document space, with wrapped controls on narrow screens.
+The seek slider supports arrows (5 seconds), Home and End. Navigation and locale
+changes preserve audio; unavailable/ended sessions stop and clear the source.
+Playback checks the session through `runProtected`. A media error triggers a
+protected HEAD to classify access/missing-recording errors; 401 ends the session,
+403/404 and transport/decoding failures remain recoverable through explicit retry.
+Browser playback policy rejection has a separate message. No automatic replay.
+After building, `pnpm --filter ui test:playback` checks these behaviors in Chromium
+with an isolated API and WAV stream, including real Range seeking, en/pl/es,
+locale/page continuity, keyboard controls, mobile footer and logout.
+
+`/upload` requires an application role and live `tracks:create` permission before
+loading upload configuration. The fourth HeaderMenu item uses the same policy;
+ADMIN alone cannot enter. Recovery preserves `/upload` and rechecks both rules.
+The form starts a file-only temporary upload after `runProtected`, then shows the
+metadata fields while the transfer is running. Save validates the DTO and checks
+the session again before calling complete. Confirmed success clears the editor
+and refreshes the Router Cache so the next Library visit sees the saved track,
+while the shared MediaRuntime stays mounted. HTTP/API errors preserve metadata;
+uncertain network/proxy results require checking the Library, with no automatic retry.
+
+`UnsavedNavigation` tracks browser history entries from the root, preserving Next's
+state, and intercepts same-tab links and Back/Forward while an editor is dirty.
+LanguageSwitcher checks the same blocker before starting its Server Action.
+The existing AlertDialog offers Stay/Leave; Leave aborts transfer/completion and
+attempts bounded cancellation of a known upload. A confirmed language change also
+clears the discarded editor. Reload/close uses native beforeunload. Logout and
+session termination bypass the editor guard and abort requests immediately;
+uncertain session failures also stop requests. Unknown upload IDs and failed
+cleanup remain subject to the API's TTL policy; unload does not rely on DELETE.
+Run `pnpm --filter ui test:upload` after building for the en/pl/es browser suite.
+
+`pnpm --filter ui test:audio-upload` verifies the integrated upload → previously
+visited Library → playback → Range flow through production Next.js in Chromium.
+It sends actual WAV bytes to an isolated in-memory API, checks keyboard submission
+and seeking at 320px in en/pl/es, and preserves the same audio element across
+navigation and language changes. Subsequent Range 403/401, logout, the absolute
+session timer and refresh 503/recovery exercise media cleanup and explicit retry.
+It is included in `test:browser`; build UI first. This verifies UI/proxy integration,
+not real audio validation or persistence: the API suites cover those separately.
 
 The client session controller supports active/refreshing/unavailable/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
@@ -278,7 +376,7 @@ fails. Since request context/providers may be unavailable, it uses English,
 `lang="en"`, and only the three strings in `messages/emergency.en.json`.
 A test checks that this minimal emergency catalog matches the English source.
 
-`src/i18n/formats.ts` defines shared named Intl formats: `releaseDate`, `decimal`
+`src/i18n/formats.ts` defines shared named Intl formats: `publicationDate`, `decimal`
 and `bpm`. They are configured for both server `getFormatter()` and client
 `useFormatter()`. Plain code may call `formatDate`, `formatNumber` or
 `formatCalendarDate` from `src/i18n/format.ts`, always passing the resolved locale.

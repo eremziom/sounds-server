@@ -41,7 +41,7 @@ const api = createServer(async (req, res) => {
     return res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
   }
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ id: userId, isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: "USER" }, { key: "ADMIN" }] }));
+  res.end(JSON.stringify({ id: userId, isActive: true, permissions: [], sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: "USER" }, { key: "ADMIN" }] }));
 });
 api.listen(0, "127.0.0.1");
 await once(api, "listening");
@@ -96,7 +96,7 @@ try {
       })()`);
       assert.equal(dimmer.width, Math.min(1200, backgroundBounds.viewportWidth));
       assert.equal(dimmer.left, (backgroundBounds.viewportWidth - dimmer.width) / 2);
-      assert.equal(dimmer.opacity, "0.7");
+      assert.equal(dimmer.opacity, "0.8");
       assert.match(dimmer.mask, /linear-gradient\(to right,.*10%,.*90%,.*100%\)/);
       assert.notEqual(dimmer.background, "rgba(0, 0, 0, 0)");
       assert.equal(dimmer.zIndex, "1");

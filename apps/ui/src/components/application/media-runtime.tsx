@@ -3,6 +3,7 @@ import {
   type ReactNode, type RefObject,
 } from "react";
 import type { ApplicationSession } from "../../lib/application-session";
+import { useAudioPlayback } from "./use-audio-playback";
 
 type MediaRuntimeContext = {
   audio: RefObject<HTMLAudioElement | null>;
@@ -11,6 +12,12 @@ type MediaRuntimeContext = {
 };
 
 const MediaContext = createContext<MediaRuntimeContext | null>(null);
+const PlaybackContext = createContext<ReturnType<typeof useAudioPlayback> | null>(null);
+export function usePlayback() {
+  const playback = useContext(PlaybackContext);
+  if (!playback) throw new Error("Playback requires MediaRuntime");
+  return playback;
+}
 
 export function useMediaRuntime() {
   const media = useContext(MediaContext);
@@ -24,7 +31,8 @@ export function MediaRuntime({ children, session, blocked = false }: {
   session: ApplicationSession;
   blocked?: boolean;
 }) {
-  const audio = useRef<HTMLAudioElement>(null);
+  const playback = useAudioPlayback();
+  const { audio } = playback;
   const animationHost = useRef<HTMLDivElement>(null);
   const [stops] = useState(() => new Set<() => void>());
   const [media] = useState<MediaRuntimeContext>(() => ({
@@ -58,15 +66,17 @@ export function MediaRuntime({ children, session, blocked = false }: {
       unsubscribe();
       stop();
     };
-  }, [session, stops]);
+  }, [audio, session, stops]);
 
   return (
     <MediaContext.Provider value={media}>
-      <div data-persistent-media hidden={blocked}>
-        <audio ref={audio} preload="none" />
-        <div ref={animationHost} data-animation-host />
-      </div>
-      {children}
+      <PlaybackContext.Provider value={playback}>
+        <div data-persistent-media hidden={blocked}>
+          <audio ref={audio} preload="none" />
+          <div ref={animationHost} data-animation-host />
+        </div>
+        {children}
+      </PlaybackContext.Provider>
     </MediaContext.Provider>
   );
 }

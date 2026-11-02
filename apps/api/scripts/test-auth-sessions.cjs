@@ -3,6 +3,8 @@ const assert = require('node:assert/strict');
 const { randomUUID, createHash, createHmac } = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { readFileSync } = require('node:fs');
+const { mkdtemp, rm } = require('node:fs/promises');
+const { tmpdir } = require('node:os');
 const path = require('node:path');
 const { Pool } = require('pg');
 require('dotenv').config({ quiet: true });
@@ -21,10 +23,13 @@ async function main() {
   let prisma;
   let db;
   let checks = 0;
+  let audioDirectory;
   try {
     await admin.query(`CREATE DATABASE "${databaseName}"`);
     created = true;
     process.env.DATABASE_URL = testUrl.toString();
+    audioDirectory = await mkdtemp(path.join(tmpdir(), 'sounds-auth-audio-'));
+    process.env.AUDIO_STORAGE_DIR = audioDirectory;
     process.env.JWT_SECRET = randomUUID();
     process.env.AUTH_PROXY_SECRET = randomUUID();
     process.env.JWT_EXPIRES_IN = '15m';
@@ -446,9 +451,8 @@ async function main() {
       'POST',
       '/tracks',
       {
-        title: 'Session test',
+        title: 'Session test', publicationDate: '2026-11-01',
         description: 'Test track',
-        releaseDate: '2026-10-17',
         bpm: { bpmFrom: 100, bpmTo: 120 },
       },
       afterRoles.accessToken,
@@ -529,6 +533,7 @@ async function main() {
     if (app) await app.close();
     if (prisma) await prisma.$disconnect();
     if (db) await db.end();
+    if (audioDirectory) await rm(audioDirectory, { recursive: true, force: true });
     if (created) {
       if (!/^sounds_auth_test_[a-f0-9]{32}$/.test(databaseName))
         throw new Error('Unexpected test database name');

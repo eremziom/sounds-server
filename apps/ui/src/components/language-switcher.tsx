@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { setLocale } from "@/i18n/actions";
 import { type Locale } from "@/i18n/config";
 import Dock from "@/components/react-bits/Dock";
+import { confirmNavigation } from "@/lib/unsaved-navigation";
 
 const languages: Locale[] = ["pl", "en", "es"];
 const flags: Record<Locale, string> = { pl: "pl", en: "gb", es: "es" };
@@ -55,12 +56,15 @@ export function LanguageSwitcher({
     }, 240);
   }
 
-  function changeLanguage(value: string) {
+  async function changeLanguage(value: string) {
     if (pending) return;
     clearTimeout(closeTimer.current);
     trigger.current?.focus({ preventScroll: true });
     setOpen(false);
     if (value === locale) return;
+    // Open the leave dialog outside a transition: waiting for its decision
+    // inside the transition would also defer rendering the dialog itself.
+    if (!await confirmNavigation()) return;
     setFailed(false);
     startTransition(async () => {
       try {

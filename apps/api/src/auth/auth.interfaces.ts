@@ -25,4 +25,6 @@ export interface AuthenticatedUser {
 
 export interface AuthenticatedRequest {
   user: AuthenticatedUser;
+  /** Current database permissions populated only by PermissionsGuard. */
+  permissions?: string[];
 }

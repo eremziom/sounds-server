@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Wyloguj", "description": "Czy na pewno chcesz się wylogować? To spowoduje zakończenie obecnej podróży muzycznej", "cancel": "Anuluj" },
-    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat" },
+    "menu": { "profile": "Profil", "settings": "Ustawienia", "workshop": "Warsztat", "upload": "Dodaj utwór" },
     "login": {
       "title": "Logowanie",
       "noAccount": "Nie masz konta?",
@@ -34,6 +34,34 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
+    "player": {"volume":"Głośność","mute":"Wycisz","unmute":"Włącz dźwięk","label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
+    "upload": {
+      "addAnother": "Dodaj kolejny utwór",
+      "genre": "Gatunek (opcjonalnie)", "subgenre": "Subgatunek (opcjonalnie)", "lengthGenre": "Podaj od 3 do 30 znaków.", "publicationDateAutomatic": "Ustawiana automatycznie na bieżącą datę przy publikacji utworu.",
+      "title": "Dodaj utwór", "configFailed": "Nie udało się wczytać ustawień uploadu. Spróbuj ponownie.", "retry": "Spróbuj ponownie",
+      "file": "Plik audio", "progress": "Postęp wysyłania audio", "processing": "Plik przesłany. Trwa przetwarzanie audio…", "cancelTitle": "Anulować upload?", "cancelDescription": "Plik i wszystkie dane utworu zostaną usunięte z formularza. Aby zacząć ponownie, wybierz nowy plik.", "keepUpload": "Zachowaj upload", "confirmCancel": "Anuluj upload", "fileHelp": "Formaty: {formats}. Maksymalny rozmiar: {limit, number} MB.",
+      "fileEmpty": "Wybierz niepusty plik audio.", "fileTooLarge": "Plik przekracza maksymalny rozmiar.", "fileUnsupported": "Wybierz plik MP3 lub WAV.",
+      "metadata": "Dane utworu", "fieldTitle": "Tytuł", "description": "Opis (opcjonalnie)", "publicationDate": "Data publikacji", "bpmFrom": "BPM od (opcjonalnie)", "bpmTo": "BPM do (opcjonalnie)",
+      "lengthTitle": "Tytuł musi mieć od 3 do 50 znaków.", "lengthDescription": "Opis musi mieć od 3 do 300 znaków.", "dateInvalid": "Podaj prawidłową datę wydania.",
+      "bpmInvalid": "Podaj BPM w zakresie 60–200.", "bpmOrder": "Górna granica BPM musi być co najmniej równa dolnej.",
+      "requirements": "Tytuł jest wymagany (3–50 znaków). Opcjonalnie: opis (3–300 znaków), gatunek i subgatunek (3–30 znaków). BPM: obie granice 60–200 lub obie puste.",
+      "uploading": "Wysyłanie audio… Możesz już uzupełnić dane utworu.", "uploaded": "Audio wysłane. Uzupełnij dane i zapisz utwór.", "saving": "Zapisywanie utworu…", "cancelling": "Anulowanie uploadu…",
+      "save": "Zapisz utwór", "success": "Utwór zapisany. Jest już dostępny w Bibliotece.", "chooseAnother": "Anuluj upload", "library": "Otwórz Bibliotekę",
+      "expired": "Upload wygasł. Wybierz plik ponownie. Dane utworu zostały zachowane.",
+      "unknownResult": "Nie udało się potwierdzić wyniku. Sprawdź Bibliotekę przed ponowieniem. Dane utworu zostały zachowane.",
+      "sessionUnavailable": "Nie udało się potwierdzić sesji. Spróbuj ponownie po przywróceniu połączenia.",
+      "leaveTitle": "Opuścić bez zapisywania?", "leaveDescription": "Opuszczenie strony anuluje upload i odrzuci niezapisane dane utworu.", "stay": "Zostań", "leave": "Opuść"
+    },
+    "library": {
+      "author": "Autor",
+      "playColumn": "Odtwarzanie", "trackTitle": "Tytuł", "genre": "Gatunek", "subgenre": "Subgatunek",
+      "playTrack": "Odtwórz: {title}", "pauseTrack": "Wstrzymaj: {title}", "playFailed": "Nie udało się odtworzyć utworu.",
+      "title": "Biblioteka", "tracks": "Utwory", "loading": "Ładowanie utworów…",
+      "empty": "W Bibliotece nie ma jeszcze utworów.",
+      "loadFailed": "Nie udało się wczytać utworów. Spróbuj ponownie.", "retry": "Spróbuj ponownie",
+      "publicationDate": "Data publikacji", "bpm": "BPM", "audio": "Audio",
+      "audioAvailable": "Audio dostępne", "noAudio": "Brak pliku audio"
+    },
     "home": { "title": "Strona główna aplikacji Sounds" },
     "animations": {
       "configuration": "Konfiguracja Animacji",
@@ -52,6 +80,14 @@
   },
   "admin": { "home": { "title": "Panel administracyjny", "placeholder": "Tutaj pojawią się narzędzia do zarządzania aplikacją." } },
   "errors": {
+    "audioFileInvalid": "Plik nie zawiera poprawnego audio w obsługiwanym formacie.",
+    "audioFileTooLarge": "Plik audio przekracza maksymalny rozmiar.",
+    "audioFormatUnsupported": "Ten format audio nie jest obsługiwany. Wybierz MP3 lub WAV.",
+    "audioStorageFailed": "Nie udało się zapisać audio. Spróbuj ponownie później.",
+    "audioValidationUnavailable": "Walidacja audio jest chwilowo niedostępna. Spróbuj ponownie później.",
+    "audioUploadNotFound": "Ten plik tymczasowy jest już niedostępny. Wybierz plik ponownie.",
+    "audioUploadConsumed": "Ten plik został już zapisany jako utwór. Sprawdź Bibliotekę.",
+    "audioUploadExpired": "Czas ważności pliku tymczasowego minął. Wybierz plik ponownie.",
     "accessDenied": { "title": "Brak dostępu", "description": "Nie masz wymaganych uprawnień" },
     "page": { "title": "Wystąpił błąd", "description": "Nie udało się załadować strony. Spróbuj ponownie." },
     "notFound": { "title": "Nie znaleziono strony", "description": "Strona, której szukasz, nie istnieje." },

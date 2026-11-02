@@ -24,7 +24,7 @@ const api = createServer(async (req, res) => {
     session = pair(900_000);
     return res.end(JSON.stringify(session));
   }
-  if (req.url === "/auth/me") return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: deadline }));
+  if (req.url === "/auth/me") return res.end(JSON.stringify({ ...session.user, permissions: [], sessionExpiresAt: deadline }));
   res.writeHead(404).end();
 });
 api.listen(0, "127.0.0.1");

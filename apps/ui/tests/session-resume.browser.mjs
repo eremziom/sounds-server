@@ -35,7 +35,7 @@ const api = createServer(async (req, res) => {
     return res.end(JSON.stringify(session));
   }
   if (req.url === "/auth/me" && req.headers.authorization === `Bearer ${session.accessToken}` && mode !== "me-invalid") {
-    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: (mode === "denied" ? ["USER"] : roles).map(key => ({ key })) }));
+    return res.end(JSON.stringify({ ...session.user, permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt, roles: (mode === "denied" ? ["USER"] : roles).map(key => ({ key })) }));
   }
   res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
 });

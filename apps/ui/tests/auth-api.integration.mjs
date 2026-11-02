@@ -183,7 +183,7 @@ async function main() {
     assert.equal(renamedLogin.data.user.id, loggedIn.data.user.id);
     assert.equal((await auth.login({ login: input.username, password: input.password }, options)).status, 401);
     assert.ok((await auth.login({ login: input.email, password: input.password }, options)).ok);
-    await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, waitFor, evaluate, choose, origin }) => {
+    await withAuthBrowser(options.apiUrl, async ({ send, open, fill, submit, signOut, logoutByPost, waitFor, evaluate, choose, origin }) => {
       // Two real tabs share cookies, but have separate schedulers/pending work.
       const combined = loginAccounts.find((account) => account.username === "login-combined");
       const tabLogin = await auth.login({ login: combined.username, password: combined.password }, options);
@@ -255,7 +255,7 @@ async function main() {
         const next = await auth.refresh(refresh.value, options);
         assert.ok(next.ok, "The cookie left by two tabs must remain usable");
         assert.equal(next.data.refreshToken, refresh.value);
-        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await signOut();
         for (let attempt = 0; ; attempt++) {
           if (await evaluateSecond("location.pathname==='/login' && !!document.querySelector('input[name=login]')")) break;
           assert.ok(attempt < 100, "The other tab must receive logout and leave the protected runtime");
@@ -304,7 +304,7 @@ async function main() {
         await submit();
         await waitFor("location.pathname==='/' && document.querySelector('[data-application-runtime]')");
         assert.equal((await prisma.authRateLimit.findUniqueOrThrow({ where: { key: limitKey } })).count, 0, "A correct fifth attempt resets the counter");
-        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await signOut();
         await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
         for (let attempt = 1; attempt <= 5; attempt++) await failedAttempt(attempt);
         await waitFor(`document.querySelector('[role=alert]')?.textContent===${JSON.stringify(messages.errors.loginLocked)}`);
@@ -325,7 +325,7 @@ async function main() {
         await send("Page.reload");
         await waitFor(`location.pathname==='/' && document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('h1')?.textContent.includes('Sounds')`);
         const registrationRefresh = cookies.find((cookie) => cookie.name === "refreshToken").value;
-        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await signOut();
         await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]') && !document.querySelector('form[data-auth-logout]')");
         assert.equal((await auth.getSessionUser(access.value, options)).status, 401);
         assert.equal((await auth.refresh(registrationRefresh, options)).status, 401);
@@ -397,7 +397,12 @@ async function main() {
             await waitFor("document.querySelector('form[data-auth-logout]')");
           }
           const scope = account.username === "login-artist" ? "current" : "all";
-          await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').click()`);
+          // All-device logout is currently available through the API, not the UI.
+          assert.equal(await evaluate("!!document.querySelector('[data-logout-scope=all]')"), false);
+          if (scope === "all") {
+            assert.ok((await auth.logoutAll(renewedCookies.find(cookie => cookie.name === "accessToken").value, options)).ok);
+          }
+          await signOut();
           await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]') && !document.querySelector('form[data-auth-logout]')");
           const afterLogout = (await send("Network.getCookies", { urls: [origin] })).cookies;
           assert.ok(!afterLogout.some((cookie) => ["accessToken", "refreshToken"].includes(cookie.name)));
@@ -419,9 +424,9 @@ async function main() {
         await waitFor("location.pathname==='/' && document.querySelector('form[data-auth-logout]')");
         const expiredCookies = (await send("Network.getCookies", { urls: [origin] })).cookies;
         await send("Network.deleteCookies", { name: "accessToken", url: origin });
-        await send("Page.navigate", { url: `${origin}/login` });
+        await send("Page.navigate", { url: `${origin}/register` });
         await waitFor("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]')");
-        await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').click()");
+        await logoutByPost();
         await waitFor("location.pathname==='/login' && !document.querySelector('form[data-auth-logout]')");
         assert.equal((await auth.refresh(expiredCookies.find((cookie) => cookie.name === "refreshToken").value, options)).status, 401);
         const afterExpired = (await send("Network.getCookies", { urls: [origin] })).cookies;
@@ -453,5 +458,10 @@ main().catch((error) => {
       ? error.message
       : `Auth API integration failed (${error.code ?? error.name}); connection details omitted.`,
   );
+  // Print only test source locations, never raw error details that may contain
+  // credentials/connection strings. This makes generic failures actionable.
+  for (const frame of (error.stack ?? "").split("\n").slice(1)) {
+    if (/\bat .*tests[\\/].*\.mjs:\d+:\d+/.test(frame)) console.error(frame.trim());
+  }
   process.exitCode = 1;
 });

@@ -16,7 +16,7 @@ const api = createServer(async (req, res) => {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (req.url === "/auth/me") {
     const session = sessions.find((session) => session.accessToken === token && session.active);
-    return session ? res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt }))
+    return session ? res.end(JSON.stringify({ ...session.user, permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt }))
       : res.writeHead(401).end(JSON.stringify({ code: "AUTH_REQUIRED" }));
   }
   if (req.url === "/auth/refresh") { calls.refresh++; return res.writeHead(401).end(); }
@@ -51,7 +51,7 @@ api.listen(0, "127.0.0.1");
 await once(api, "listening");
 
 try {
-  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, listeners, evaluate, waitFor, fill, submit, choose, open, origin }) => {
+  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, listeners, evaluate, waitFor, fill, submit, signOut, logoutByPost, choose, open, origin }) => {
     const actionRequests = [];
     listeners.set("Network.requestWillBeSent", ({ request }) => {
       const actionId = Object.entries(request.headers).find(([key]) => key.toLowerCase() === "next-action")?.[1];
@@ -67,9 +67,7 @@ try {
       const cookies = await readCookies();
       return sessions.find((session) => session.accessToken === cookies.find((cookie) => cookie.name === "accessToken").value);
     }
-    async function clickLogout(scope) {
-      await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').click()`);
-    }
+
     async function assertSignedOut(locale, notice) {
       const m = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
       await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && (document.querySelector('[data-logout-result]') || document.querySelector('input[name=login]')) && !document.querySelector('form[data-auth-logout]')`);
@@ -115,12 +113,12 @@ try {
       await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: false });
       const session = await signIn(locale);
       assert.equal(await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]').textContent.trim()"), m.auth.logout.action);
-      assert.equal(await evaluate("document.querySelector('form[data-auth-logout] button[data-logout-scope=all]').textContent.trim()"), m.auth.logoutAll.action);
+      assert.equal(await evaluate("!!document.querySelector('[data-logout-scope=all]')"), false, "All-device logout is hidden");
       const beforeGet = calls.current;
       await evaluate("fetch('/login?logout=local').then(response=>response.text())");
       assert.equal(calls.current, beforeGet, "GET must not mutate the session");
       assert.ok(session.active);
-      await clickLogout("current");
+      await signOut();
       await assertSignedOut(locale);
       assert.equal(session.active, false);
       logoutActionId ??= actionRequests.at(-1)?.id;
@@ -143,14 +141,17 @@ try {
 
       const expiredAccess = await signIn(locale);
       await send("Network.deleteCookies", { name: "accessToken", url: origin });
-      await send("Page.navigate", { url: `${origin}/login` });
+      // Login automatically attempts recovery. Test the action's refresh-cookie
+      // contract over HTTP on registration, without clicking its hidden fallback.
+      await send("Page.navigate", { url: `${origin}/register` });
       await waitFor("document.querySelector('form[data-auth-logout] button[data-logout-scope=current]')");
       assert.equal(await evaluate("!!document.querySelector('form[data-auth-logout] button[data-logout-scope=all]')"), false);
-      await clickLogout("current");
+      await logoutByPost();
       await assertSignedOut(locale);
       assert.equal(expiredAccess.active, false, "Refresh token alone must revoke the session");
 
-      for (const scope of ["current", "all"]) {
+      // Confirmed menu logout shares pending state with locale changes.
+      {
         const nextLocale = { en: "pl", pl: "es", es: "en" }[locale];
         for (const outcome of ["success", "failure"]) {
           const active = await signIn(locale);
@@ -160,29 +161,46 @@ try {
           const second = sessions.find((session) => session.accessToken === secondData.accessToken);
           mode = `held-${outcome}`;
           gate = new Promise((resolve) => { releaseOperation = resolve; });
-          const previousCalls = calls[scope];
-          await clickLogout(scope);
-          await waitFor("document.querySelector('form[data-auth-logout] [aria-busy=true]')");
-          assert.equal(await evaluate("[...document.querySelectorAll('form[data-auth-logout] button')].every(button=>button.disabled)"), true);
-          assert.equal(await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').textContent.trim()`), m.auth.logout.pending);
-          assert.ok((await evaluate("document.querySelector('form[data-auth-logout]').textContent")).includes(m.auth.logout.pending));
+          const previousCalls = calls.current;
+          await signOut();
+          await waitFor("document.querySelector('[role=alertdialog][aria-busy=true]')");
+          assert.equal(await evaluate("[...document.querySelectorAll('[role=alertdialog] button')].every(button=>button.disabled)"), true);
+          assert.equal(await evaluate("document.querySelector('[data-slot=alert-dialog-action]').textContent.trim()"), m.auth.logout.pending);
+          assert.ok((await evaluate("document.querySelector('[role=alertdialog]').textContent")).includes(m.auth.logout.pending));
           const change = choose(nextLocale);
           await waitFor("document.querySelector('[data-language-switcher]').getAttribute('aria-busy')==='true'");
           releaseOperation();
           await change;
-          const notice = outcome === "failure" ? scope === "current" ? "local" : "all-unconfirmed" : undefined;
+          const notice = outcome === "failure" ? "local" : undefined;
           await assertSignedOut(nextLocale, notice);
-          assert.equal(calls[scope], previousCalls + 1, "Language change must not replay logout");
+          assert.equal(calls.current, previousCalls + 1, "Language change must not replay logout");
           assert.equal(active.active, outcome === "failure");
-          assert.equal(second.active, outcome === "failure" || scope === "current");
+          assert.equal(second.active, true, "Current logout preserves the independent session");
           assert.ok(!(await evaluate("document.body.innerText")).includes("private backend failure"));
           if (outcome === "failure") {
             const shots = new URL("../.tmp/logout/", import.meta.url);
             await mkdir(shots, { recursive: true });
             const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
-            await writeFile(new URL(`${scope}-${nextLocale}.png`, shots), Buffer.from(shot.data, "base64"));
+            await writeFile(new URL(`current-${nextLocale}.png`, shots), Buffer.from(shot.data, "base64"));
           }
         }
+      }
+
+      // Keep HTTP coverage of the all-device action even though its UI is hidden.
+      // Browser fetch applies the real HttpOnly Set-Cookie deletions from Next.
+      for (const outcome of ["success", "failure"]) {
+        const active = await signIn(locale);
+        const secondData = await (await fetch(`http://127.0.0.1:${api.address().port}/auth/login`, { method: "POST", body: "{}" })).json();
+        const second = sessions.find(session => session.accessToken === secondData.accessToken);
+        mode = outcome === "failure" ? "failure" : "normal";
+        const beforeAll = calls.all;
+        const target = `/logout?status=${outcome === "failure" ? "all-unconfirmed" : "success"}`;
+        assert.equal(await logoutByPost("all"), target);
+        assert.equal(calls.all, beforeAll + 1);
+        assert.equal(active.active, outcome === "failure");
+        assert.equal(second.active, outcome === "failure");
+        assert.ok(!(await readCookies()).some(cookie => ["accessToken", "refreshToken"].includes(cookie.name)));
+        await assertSignedOut(locale, outcome === "failure" ? "all-unconfirmed" : undefined);
       }
 
       // Use a captured public action ID with an unrelated Origin. Next's own
@@ -210,7 +228,7 @@ try {
       assert.ok([200, 303].includes(trusted.status), "The same action and payload must work with a trusted Origin");
       assert.equal(calls.current, beforeCsrf + 1);
       assert.equal(protectedSession.active, false);
-      console.log(`Logout ${locale}: POST, expired access, local/all revocation, outage notice, pending locale changes, back/RSC and Origin protection OK`);
+      console.log(`Logout ${locale}: menu confirmation, expired access, current/all revocation, outage notice, pending locale changes, back/RSC and Origin protection OK`);
     }
   });
 } finally {

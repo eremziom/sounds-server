@@ -3,7 +3,8 @@ import { timeZone } from "./config.ts";
 // Use the same named Intl options in server and client formatters.
 export const formats = {
   dateTime: {
-    releaseDate: { year: "numeric", month: "long", day: "numeric", timeZone },
+    publicationDate: { year: "numeric", month: "long", day: "numeric", timeZone },
+    publicationDateNumeric: { year: "numeric", month: "2-digit", day: "2-digit", timeZone },
   },
   number: {
     decimal: { maximumFractionDigits: 2 },

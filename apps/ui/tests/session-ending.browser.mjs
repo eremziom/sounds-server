@@ -49,7 +49,7 @@ const api = createServer(async (req, res) => {
     return res.writeHead(204).end();
   }
   if (req.url === "/auth/me" && active) {
-    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: "USER" }, { key: "ADMIN" }] }));
+    return res.end(JSON.stringify({ ...session.user, permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: "USER" }, { key: "ADMIN" }] }));
   }
   res.writeHead(401).end(JSON.stringify({ code: "AUTH_SESSION_INVALID" }));
 });
@@ -64,7 +64,7 @@ wav.writeUInt32LE(8000, 24); wav.writeUInt32LE(16000, 28);
 wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34); wav.write("data", 36); wav.writeUInt32LE(1600, 40);
 
 try {
-  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, origin }) => {
+  await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, signOut, origin }) => {
     async function enter(locale) {
       mode = "active";
       allowPreviousLogout = false;
@@ -145,14 +145,15 @@ try {
       assert.equal(await evaluate("document.querySelector('[data-session-recovery] [role=alert]').textContent"), messages.errors.rateLimited);
       assert.equal((await send("Network.getCookies", { urls: [origin] })).cookies.find((cookie) => cookie.name === "refreshToken")?.value, rateLimitedRefresh);
 
-      for (const scope of ["current", "all"]) {
+      // All-device logout is hidden; exercise the supported menu action here.
+      {
         await enter(locale);
         refreshGate = new Promise((resolve) => { releaseRefresh = resolve; });
         logoutGate = new Promise((resolve) => { releaseLogout = resolve; });
         const beforeLogout = logoutCalls;
         await triggerRefresh();
         await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='refreshing'");
-        await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope}]').click()`);
+        await signOut();
         await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='ended'");
         await assertStopped();
         assert.equal(logoutCalls, beforeLogout, "Logout waits behind the in-flight refresh action");
@@ -169,7 +170,7 @@ try {
         await waitFor("location.pathname==='/login' && document.querySelector('input[name=login]')");
         await assertCookiesCleared(locale);
       }
-      for (const scope of locale === "en" ? ["current", "all", "local", "race"] : ["current", "all", "local"]) {
+      for (const scope of locale === "en" ? ["current", "local", "race"] : ["current", "local"]) {
         await enter(locale);
         const { targetId } = await send("Target.createTarget", { url: `${origin}/admin` });
         const { sessionId: peer } = await send("Target.attachToTarget", { targetId, flatten: true });
@@ -199,7 +200,7 @@ try {
           }
           logoutGate = new Promise((resolve) => { releaseLogout = resolve; });
           const beforeLogout = logoutCalls;
-          await evaluate(`document.querySelector('form[data-auth-logout] button[data-logout-scope=${scope === "all" ? "all" : "current"}]').click()`);
+          await signOut();
           for (let attempt = 0; logoutCalls === beforeLogout; attempt++) {
             assert.ok(attempt < 100);
             await delay(100);
@@ -243,8 +244,8 @@ try {
           await send("Target.closeTarget", { targetId });
         }
       }
-      console.log(`Session end ${locale}: rejected refresh cleans cookies; outage blocks/retries without sign-out; current/all logout wins over late refresh OK`);
-      console.log(`Cross-tab logout ${locale}: current/all/local sign-out stops peer media, clears cookies and redirects without tokens or echoes OK`);
+      console.log(`Session end ${locale}: rejected refresh cleans cookies; outage blocks/retries without sign-out; menu logout wins over late refresh OK`);
+      console.log(`Cross-tab logout ${locale}: current/local sign-out stops peer media, clears cookies and redirects without tokens or echoes OK`);
     }
   });
 } finally {

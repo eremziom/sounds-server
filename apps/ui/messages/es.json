@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Cerrar sesión", "description": "¿Seguro que quieres cerrar sesión? Esto pondrá fin a tu viaje musical actual", "cancel": "Cancelar" },
-    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller" },
+    "menu": { "profile": "Perfil", "settings": "Configuración", "workshop": "Taller", "upload": "Añadir pista" },
     "login": {
       "title": "Iniciar sesión",
       "noAccount": "¿No tienes una cuenta?",
@@ -34,6 +34,34 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "player": {"volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
+    "upload": {
+      "addAnother": "Añadir otra pista",
+      "genre": "Género (opcional)", "subgenre": "Subgénero (opcional)", "lengthGenre": "Usa entre 3 y 30 caracteres.", "publicationDateAutomatic": "Se establece automáticamente en la fecha actual al publicar la pista.",
+      "title": "Añadir pista", "configFailed": "No se pudo cargar la configuración de carga. Inténtalo de nuevo.", "retry": "Reintentar",
+      "file": "Archivo de audio", "progress": "Progreso de carga de audio", "processing": "Archivo transferido. Procesando audio…", "cancelTitle": "¿Cancelar la carga?", "cancelDescription": "Se eliminarán el archivo y todos los datos de la pista del formulario. Selecciona un archivo nuevo para empezar de nuevo.", "keepUpload": "Conservar carga", "confirmCancel": "Cancelar carga", "fileHelp": "Formatos: {formats}. Tamaño máximo: {limit, number} MB.",
+      "fileEmpty": "Selecciona un archivo de audio que no esté vacío.", "fileTooLarge": "El archivo supera el tamaño máximo.", "fileUnsupported": "Selecciona un archivo MP3 o WAV.",
+      "metadata": "Datos de la pista", "fieldTitle": "Título", "description": "Descripción (opcional)", "publicationDate": "Fecha de publicación", "bpmFrom": "BPM desde (opcional)", "bpmTo": "BPM hasta (opcional)",
+      "lengthTitle": "El título debe tener entre 3 y 50 caracteres.", "lengthDescription": "La descripción debe tener entre 3 y 300 caracteres.", "dateInvalid": "Introduce una fecha de lanzamiento válida.",
+      "bpmInvalid": "Introduce un BPM entre 60 y 200.", "bpmOrder": "El BPM superior debe ser igual o mayor que el inferior.",
+      "requirements": "El título es obligatorio (3–50 caracteres). Opcionales: descripción (3–300 caracteres), género y subgénero (3–30 caracteres). BPM: ambos límites entre 60 y 200 o ambos vacíos.",
+      "uploading": "Cargando audio… Ya puedes completar los datos de la pista.", "uploaded": "Audio cargado. Completa los datos y guarda la pista.", "saving": "Guardando pista…", "cancelling": "Cancelando carga…",
+      "save": "Guardar pista", "success": "Pista guardada. Ya está disponible en la Biblioteca.", "chooseAnother": "Cancelar carga", "library": "Abrir Biblioteca",
+      "expired": "La carga ha caducado. Selecciona el archivo de nuevo. Se han conservado los datos de la pista.",
+      "unknownResult": "No se pudo confirmar el resultado. Revisa la Biblioteca antes de reintentar. Se han conservado los datos de la pista.",
+      "sessionUnavailable": "No se pudo confirmar tu sesión. Inténtalo de nuevo cuando se restablezca la conexión.",
+      "leaveTitle": "¿Salir sin guardar?", "leaveDescription": "Salir cancela la carga y descarta los datos de la pista sin guardar.", "stay": "Quedarse", "leave": "Salir"
+    },
+    "library": {
+      "author": "Autor",
+      "playColumn": "Reproducción", "trackTitle": "Título", "genre": "Género", "subgenre": "Subgénero",
+      "playTrack": "Reproducir: {title}", "pauseTrack": "Pausar: {title}", "playFailed": "No se pudo reproducir la pista.",
+      "title": "Biblioteca", "tracks": "Pistas", "loading": "Cargando pistas…",
+      "empty": "Todavía no hay pistas en la Biblioteca.",
+      "loadFailed": "No se pudieron cargar las pistas. Inténtalo de nuevo.", "retry": "Reintentar",
+      "publicationDate": "Fecha de publicación", "bpm": "BPM", "audio": "Audio",
+      "audioAvailable": "Audio disponible", "noAudio": "Sin archivo de audio"
+    },
     "home": { "title": "Página de inicio de Sounds" },
     "animations": {
       "configuration": "Configuración de Animación",
@@ -52,6 +80,14 @@
   },
   "admin": { "home": { "title": "Panel de administración", "placeholder": "Aquí aparecerán las herramientas para gestionar la aplicación." } },
   "errors": {
+    "audioFileInvalid": "El archivo no contiene audio válido en un formato compatible.",
+    "audioFileTooLarge": "El archivo de audio supera el tamaño máximo.",
+    "audioFormatUnsupported": "Este formato de audio no es compatible. Selecciona MP3 o WAV.",
+    "audioStorageFailed": "No se pudo almacenar el audio. Inténtalo más tarde.",
+    "audioValidationUnavailable": "La validación de audio no está disponible temporalmente. Inténtalo más tarde.",
+    "audioUploadNotFound": "Esta carga ya no está disponible. Selecciona el archivo de nuevo.",
+    "audioUploadConsumed": "Esta carga ya se ha guardado. Consulta la Biblioteca.",
+    "audioUploadExpired": "Esta carga ha caducado. Selecciona el archivo de nuevo.",
     "accessDenied": { "title": "Acceso denegado", "description": "No tienes los permisos necesarios" },
     "page": { "title": "Se ha producido un error", "description": "No se pudo cargar esta página. Inténtalo de nuevo." },
     "notFound": { "title": "Página no encontrada", "description": "La página que buscas no existe." },

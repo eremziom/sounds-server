@@ -13,6 +13,34 @@ test("recovery accepts only local protected destinations and preserves their que
   }
   assert.equal(resumeTarget("/admin?view=users&__session_resumed=1&_rsc=private"), "/admin?view=users");
   assert.equal(resumedTarget("/admin?view=users"), "/admin?view=users&__session_resumed=1");
+  assert.equal(resumeTarget("/library?view=all&__session_resumed=1&_rsc=private"), "/library?view=all");
+  assert.equal(resumedTarget("/library"), "/library?__session_resumed=1");
+  assert.equal(resumedTarget("/upload"), "/upload?__session_resumed=1");
+  assert.equal(resumeTarget("/library/unknown"), "/");
+});
+
+test("upload recovery checks both current application roles and live creation permission", async () => {
+  const originalFetch = globalThis.fetch;
+  const session = authSession();
+  try {
+    for (const [roles, permission, expected] of [
+      [["ARTIST"], true, "/upload?view=draft&__session_resumed=1"],
+      [["ARTIST"], false, "/access-denied"],
+      [["USER"], true, "/upload?view=draft&__session_resumed=1"],
+      [["ADMIN"], true, "/access-denied"],
+      [["ADMIN", "ARTIST"], true, "/upload?view=draft&__session_resumed=1"],
+    ]) {
+      const values = new Map([["refreshToken", session.refreshToken]]);
+      globalThis.__authTestContext = { cookies: () => ({
+        get: key => values.has(key) ? { value: values.get(key) } : undefined,
+        set: (key, value) => values.set(key, value),
+      }) };
+      globalThis.fetch = async url => url.endsWith("/auth/refresh") ? Response.json(session) : Response.json({
+        ...session.user, roles: roles.map(key => ({ key })), permissions: permission ? ["tracks:create"] : [], sessionExpiresAt: session.refreshTokenExpiresAt,
+      });
+      await assert.rejects(resumeSessionAction("/upload?view=draft"), error => error.path === expected);
+    }
+  } finally { globalThis.fetch = originalFetch; delete globalThis.__authTestContext; }
 });
 
 test("recovery rotates cookies, checks current roles and distinguishes rejection from outage", async () => {
@@ -41,7 +69,7 @@ test("recovery rotates cookies, checks current roles and distinguishes rejection
         if (mode === "me-outage") return new Response("", { status: 503 });
         if (mode === "me-limited") return new Response("", { status: 429 });
         if (mode === "me-invalid") return new Response("", { status: 401 });
-        return Response.json({ ...session.user, isActive: mode !== "inactive", sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
+        return Response.json({ ...session.user, isActive: mode !== "inactive", permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt, roles: [{ key: mode === "denied" ? "USER" : "ADMIN" }] });
       };
       if (["outage", "limited", "me-outage", "me-limited"].includes(mode)) {
         const result = await resumeSessionAction("/admin?view=users");

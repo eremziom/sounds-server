@@ -19,6 +19,7 @@ import { CreateUserDto } from '../auth/create-user.dto';
 import { LoginUserDto } from '../auth/login-user.dto';
 import { API_ERROR_CODES, codedError } from './api-errors';
 import { ApiExceptionFilter } from './api-exception.filter';
+import { audioError } from '../audio/audio-errors';
 import {
   createApiValidationPipe,
   normalizeValidationErrors,
@@ -26,6 +27,31 @@ import {
 
 @Controller('contract')
 class ContractController {
+  @Get('audio-limit')
+  audioLimit() {
+    throw audioError('tooLarge');
+  }
+
+  @Get('audio-format')
+  audioFormat() {
+    throw audioError('unsupported');
+  }
+
+  @Get('audio-invalid')
+  audioInvalid() {
+    throw audioError('invalid');
+  }
+
+  @Get('audio-storage')
+  audioStorage() {
+    throw audioError('storage');
+  }
+
+  @Get('audio-validator')
+  audioValidator() {
+    throw audioError('validationUnavailable');
+  }
+
   @Post('register')
   register(@Body() body: CreateUserDto) {
     return { username: body.username };
@@ -79,6 +105,25 @@ describe('API error HTTP contract', () => {
   afterAll(async () => {
     await app.close();
   });
+
+  it.each([
+    ['audio-limit', 413, 'AUDIO_FILE_TOO_LARGE'],
+    ['audio-format', 415, 'AUDIO_FORMAT_UNSUPPORTED'],
+    ['audio-invalid', 400, 'AUDIO_FILE_INVALID'],
+    ['audio-storage', 503, 'AUDIO_STORAGE_FAILED'],
+    ['audio-validator', 503, 'AUDIO_VALIDATION_UNAVAILABLE'],
+  ])(
+    'preserves the stable audio error code for %s',
+    async (route, status, code) => {
+      const response = await request(server)
+        .get(`/contract/${route}`)
+        .expect(status);
+      expect(response.body).toMatchObject({ statusCode: status, code });
+      expect(JSON.stringify(response.body)).not.toMatch(
+        /storageKey|stderr|stack/,
+      );
+    },
+  );
 
   it('adds codes without changing status, message or error and ignores language headers', async () => {
     for (const language of ['en', 'pl', 'es']) {

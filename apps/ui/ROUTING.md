@@ -83,7 +83,7 @@ protected content/media and makes one POST `resumeSessionAction` call using
 `refreshAction`, then verifies `/auth/me` and the destination's current roles.
 Invalid refresh clears auth cookies and redirects to login; outages/rate limits
 preserve cookies and offer a translated manual retry. No automatic retry runs.
-The return target permits only `/` and `/admin` with user query parameters;
+The return target permits only `/`, `/library`, `/upload` and `/admin` with user query parameters;
 new protected routes must extend `session-resume.ts` and the action's role policy.
 `server.mjs` replaces `x-sounds-request-target` with the actual incoming URL.
 A reserved `__session_resumed` query marker prevents another recovery if the
@@ -208,3 +208,45 @@ The preparation-stage decisions for these forms (server/client boundary,
 Server Actions, safe action results and translations) are recorded in
 [AUTH.md](AUTH.md). Existing layout/page guards remain the access boundary;
 future protected actions must also perform their own checks.
+
+Audio-upload stage 5.3 adds HTTP endpoints under `/api/tracks`: POST `uploads`,
+POST `uploads/[uploadId]/complete`, DELETE `uploads/[uploadId]`, GET/HEAD
+`[id]/audio`. These Route Handlers sit outside page layouts; they read only the
+HttpOnly access cookie and rely on the API's active-session/permission/ownership
+checks. They return JSON status codes instead of redirecting to recovery/login.
+Mutations additionally verify Origin. No `/library` or `/upload` page, menu entry,
+page-role rule or recovery destination is introduced in this stage.
+
+Audio-upload stage 5.4 adds `/library` under `(app)` with USER/ARTIST guards in
+both layout and page, before the track request. The navigation uses ProtectedLink.
+Recovery permits `/library` and checks APP_ROLES on return. Initial list data is
+fetched on the server without shared cache; 401 redirects to recovery and 403 to
+access-denied. Other list failures show an explicit retry guarded by runProtected.
+Loading/empty/error states and track metadata are localized in en/pl/es. Audio
+controls share the persistent playback state introduced in stage 5.6.
+
+Audio-upload stage 5.5 adds `/upload` under `(app)`. Its page requires APP_ROLES
+and live `tracks:create` before fetching configuration; the fourth HeaderMenu
+entry follows the same policy. Recovery checks both roles and permission on return
+to `/upload`. File upload and completion use separate HTTP mutations behind
+runProtected, never Server Actions for file data. Completion refreshes the Router
+Cache so Library navigation sees current data without replacing MediaRuntime.
+
+Audio-upload stage 5.6 uses the existing GET/HEAD `/api/tracks/[id]/audio`
+proxy and one audio element in MediaRuntime. Row controls and the sticky player
+footer share state across page/locale transitions. Playback and error HEAD probes
+use runProtected; a probe returning 401 ends the runtime, whereas 403/404 and
+other media errors show an explicit retry. Session unavailability clears audio
+without automatically resuming it after recovery. No new page route is required.
+The root UnsavedNavigation observer preserves framework history fields and blocks
+same-tab links and Back/Forward through the editor's AlertDialog. Language changes
+consult the same blocker before their Server Action. Native beforeunload covers
+reload/close; logout/session termination bypass confirmation and abort requests.
+
+Stage 5.7 verifies these routes together with `test:audio-upload`: populate the
+Library cache, enter Upload through HeaderMenu, save, follow the success link,
+play and seek via actual Range requests. Page and locale navigation preserve the
+audio element. Range 403 keeps the session active and offers explicit retry;
+Range 401 ends the session through the protected HEAD check. Logout and absolute
+expiry remove the source; refresh outages block the page and stop audio until
+recovery, after which playback still requires an explicit user action.

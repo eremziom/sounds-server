@@ -9,19 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthenticatedRequest } from '../auth/auth.interfaces';
 import { PrismaService } from '../prisma/prisma.service';
 import { PERMISSIONS_KEY } from './permissions.decorator';
-
-interface UserPermissionRecord {
-  isActive: boolean;
-  roles: {
-    role: {
-      permissions: {
-        permission: {
-          key: string;
-        };
-      }[];
-    };
-  }[];
-}
+import { getGrantedPermissions } from './granted-permissions';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -31,11 +19,13 @@ export class PermissionsGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
-      PERMISSIONS_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requirement = this.reflector.getAllAndOverride<
+      string[] | { anyOf: string[] }
+    >(PERMISSIONS_KEY, [context.getHandler(), context.getClass()]);
 
+    const requiredPermissions = Array.isArray(requirement)
+      ? requirement
+      : requirement?.anyOf;
     if (!requiredPermissions?.length) {
       return true;
     }
@@ -81,25 +71,18 @@ export class PermissionsGuard implements CanActivate {
       );
     }
 
-    const grantedPermissions = this.getGrantedPermissions(user);
-    const hasRequiredPermissions = requiredPermissions.every((permission) =>
-      grantedPermissions.has(permission),
-    );
+    const grantedPermissions = getGrantedPermissions(user);
+    const hasPermission = (permission: string) =>
+      grantedPermissions.has(permission);
+    const hasRequiredPermissions = Array.isArray(requirement)
+      ? requiredPermissions.every(hasPermission)
+      : requiredPermissions.some(hasPermission);
 
     if (!hasRequiredPermissions) {
       throw new ForbiddenException('Missing required permission');
     }
 
+    request.permissions = [...grantedPermissions];
     return true;
-  }
-
-  private getGrantedPermissions(user: UserPermissionRecord): Set<string> {
-    return new Set(
-      user.roles.flatMap((userRole) =>
-        userRole.role.permissions.map(
-          (rolePermission) => rolePermission.permission.key,
-        ),
-      ),
-    );
   }
 }

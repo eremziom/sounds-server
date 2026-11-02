@@ -14,7 +14,7 @@ const api = createServer(async (req, res) => {
   res.setHeader("Content-Type", "application/json");
   if (req.url === "/auth/me") {
     if (unavailable) return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR" }));
-    return res.end(JSON.stringify({ ...session.user, sessionExpiresAt: session.refreshTokenExpiresAt }));
+    return res.end(JSON.stringify({ ...session.user, permissions: [], sessionExpiresAt: session.refreshTokenExpiresAt }));
   }
   if (req.url === "/auth/refresh") return res.writeHead(503).end(JSON.stringify({ code: "INTERNAL_ERROR" }));
   if (req.url === "/auth/logout") {

@@ -10,20 +10,33 @@ import { TracksController } from './tracks.controller';
 import { CreateTrackDto } from './create-track.dto';
 import { UpdateTrackDto } from './update-track.dto';
 import { TracksService } from './tracks.service';
+import { TrackUploadService } from './track-upload.service';
+import { TrackAudioService } from './track-audio.service';
 import { Track } from './tracks.interfaces';
+import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 
 const initialTracks: Track[] = [
   {
     id: 1,
+    author: null,
+    ownerId: null,
+    hasAudio: false,
+    genre: null,
+    subgenre: null,
     title: 'Solar Drift',
-    releaseDate: '2024-01-01',
+    publicationDate: '2024-01-01',
     description: 'Driving psy with warm bass',
     bpm: { bpmFrom: 128, bpmTo: 132 },
   },
   {
     id: 2,
+    author: null,
+    ownerId: null,
+    hasAudio: false,
+    genre: null,
+    subgenre: null,
     title: 'Night Pulse',
-    releaseDate: '2024-02-01',
+    publicationDate: '2024-02-01',
     description: 'Dark rolling groove',
     bpm: { bpmFrom: 134, bpmTo: 138 },
   },
@@ -42,15 +55,23 @@ describe('TracksController', () => {
   beforeEach(async () => {
     tracks = initialTracks.map((track) => ({
       ...track,
-      bpm: { ...track.bpm },
+      bpm: track.bpm ? { ...track.bpm } : null,
     }));
 
     tracksService = {
       findAll: jest.fn(() => Promise.resolve(tracks)),
-      create: jest.fn((dto: CreateTrackDto) => {
+      create: jest.fn((dto: CreateTrackDto, ownerId: number) => {
         const created: Track = {
           id: Math.max(...tracks.map((track) => track.id)) + 1,
           ...dto,
+          description: dto.description ?? null,
+          genre: dto.genre ?? null,
+          subgenre: dto.subgenre ?? null,
+          bpm: dto.bpm ?? null,
+          publicationDate: dto.publicationDate,
+          ownerId,
+          author: null,
+          hasAudio: false,
         };
 
         tracks.push(created);
@@ -81,6 +102,8 @@ describe('TracksController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TracksController],
       providers: [
+        { provide: TrackUploadService, useValue: {} },
+        { provide: TrackAudioService, useValue: {} },
         {
           provide: TracksService,
           useValue: tracksService,
@@ -105,12 +128,29 @@ describe('TracksController', () => {
   it('creates a track using the dto', async () => {
     const dto = {
       title: 'Synth Bloom',
-      releaseDate: '2026-01-01',
+      publicationDate: '2026-11-01',
       description: 'Modular pads with driving groove',
       bpm: { bpmFrom: 130, bpmTo: 135 },
     };
 
-    const created = await controller.create(dto);
+    const request: AuthenticatedRequest = {
+      user: {
+        userId: 42,
+        sessionId: 'session',
+        sessionExpiresAt: new Date('2030-01-01'),
+        username: 'artist',
+        roles: ['ARTIST'],
+      },
+    };
+    const created = await controller.create(
+      { ...dto, ownerId: 999 } as CreateTrackDto,
+      request,
+    );
+    expect(tracksService.create).toHaveBeenCalledWith(
+      expect.objectContaining(dto),
+      42,
+    );
+    expect(created.ownerId).toBe(42);
     expect(created).toMatchObject(dto);
     expect(created.id).toBeGreaterThan(2);
   });
@@ -127,13 +167,17 @@ describe('TracksController', () => {
   });
 
   it('removes a track by id', async () => {
-    await controller.remove(1);
+    await controller.remove(1, {
+      user: { userId: 42 },
+    } as AuthenticatedRequest);
     const allTracks = await controller.findAll();
 
     expect(allTracks.some((track) => track.id === 1)).toBe(false);
   });
 
   it('throws NotFoundException when deleting absent id', async () => {
-    await expect(controller.remove(99)).rejects.toThrow(NotFoundException);
+    await expect(
+      controller.remove(99, { user: { userId: 42 } } as AuthenticatedRequest),
+    ).rejects.toThrow(NotFoundException);
   });
 });

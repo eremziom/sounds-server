@@ -4,6 +4,8 @@ import { getAuthCookies } from "../../lib/auth-cookies";
 import { LogoutControls } from "./logout-controls";
 import { HeaderMenu } from "../header-menu";
 import { getCurrentUser } from "../../lib/auth";
+import { canCreateTrack } from "../../lib/track-access";
+import { APP_ROLES, hasRequiredRole } from "../../lib/route-access";
 
 export async function AuthControls() {
   const { accessToken, refreshToken } = await getAuthCookies();
@@ -17,7 +19,8 @@ export async function AuthControls() {
   // All-device sign-out is temporarily hidden in the UI.
   return <>
     {user?.username && <HeaderMenu username={user.username}
-      menuLabels={{ profile: t("menu.profile"), settings: t("menu.settings"), workshop: t("menu.workshop") }}
+      canUpload={canCreateTrack(user) && hasRequiredRole(user, APP_ROLES)}
+      menuLabels={{ profile: t("menu.profile"), settings: t("menu.settings"), workshop: t("menu.workshop"), upload: t("menu.upload") }}
       logoutConfirmation={{ title: t("logoutConfirm.title"), description: t("logoutConfirm.description"), cancel: t("logoutConfirm.cancel") }}
       logoutLabel={t("logout.action")} logoutPendingLabel={t("logout.pending")} />}
     <div className="header-recovery-logout">

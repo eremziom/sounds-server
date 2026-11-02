@@ -6,6 +6,7 @@ import {
 } from "react";
 import { createApplicationSession, type ApplicationSession } from "../../lib/application-session";
 import { MediaRuntime } from "./media-runtime";
+import { AudioPlayer } from "./audio-player";
 import { refreshAction, expireSessionAction } from "../../app/(auth)/actions";
 import { createSessionRefresh, type RefreshResult } from "../../lib/session-refresh";
 import { SessionFooter, type SessionFooterLabels } from "./session-footer";
@@ -28,7 +29,7 @@ export function useApplicationSession() {
   if (!context) throw new Error("Application session requires the protected application layout");
   const { session, ensureFresh, runProtected } = context;
   const status = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot);
-  return { status, renew: session.renew, end: session.end, ensureFresh, runProtected };
+  return { status, renew: session.renew, end: session.end, subscribe: session.subscribe, getStatus: session.getSnapshot, ensureFresh, runProtected };
 }
 
 function renewSession(): Promise<RefreshResult> {
@@ -120,17 +121,21 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpi
     <SessionContext.Provider value={context}>
       <BackgroundSettingsProvider>
         <div className="flex flex-1 flex-col" data-application-runtime data-session-status={status}>
-          <div className="relative isolate flex flex-1 flex-col">
-            {status !== "ended" && (
-              <MediaRuntime session={session} blocked={status === "unavailable"}>
+          {status !== "ended" && (
+            <MediaRuntime session={session} blocked={status === "unavailable"}>
+              <div className="relative isolate flex flex-1 flex-col">
                 {status !== "unavailable" && <ApplicationBackground />}
                 <ApplicationNavigation labels={navigationLabels} />
                 <div className={status === "unavailable" ? "hidden" : "relative z-10 flex flex-1 flex-col"} data-application-page>{children}</div>
                 {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
-              </MediaRuntime>
-            )}
-          </div>
-          <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} sessionExpiresAt={sessionExpiresAt} status={status} labels={footerLabels} />
+              </div>
+              <div className="sticky bottom-0 z-20 mt-auto bg-background pb-[env(safe-area-inset-bottom)]" data-application-footer>
+                <AudioPlayer />
+                <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} sessionExpiresAt={sessionExpiresAt} status={status} labels={footerLabels} />
+              </div>
+            </MediaRuntime>
+          )}
+          {status === "ended" && <SessionFooter accessTokenExpiresAt={accessTokenExpiresAt} sessionExpiresAt={sessionExpiresAt} status={status} labels={footerLabels} />}
         </div>
       </BackgroundSettingsProvider>
     </SessionContext.Provider>

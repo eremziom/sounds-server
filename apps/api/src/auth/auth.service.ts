@@ -15,6 +15,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RolesService } from '../roles/roles.service';
 import { API_ERROR_CODES, codedError } from '../common/api-errors';
 import { AuthLimitsService } from './auth-limits.service';
+import { getGrantedPermissions } from '../permissions/granted-permissions';
 
 @Injectable()
 export class AuthService {
@@ -51,6 +52,37 @@ export class AuthService {
     }
 
     return this.toUserResponse(user);
+  }
+
+  async findSessionUser(
+    id: number,
+  ): Promise<UserResponse & { permissions: string[] }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        roles: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  select: { permission: { select: { key: true } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    // Strip nested permission relations; expose only the flattened public keys.
+    const roles = user.roles.map(({ role: { permissions, ...role } }) => {
+      void permissions;
+      return { role };
+    });
+    return {
+      ...this.toUserResponse({ ...user, roles }),
+      permissions: [...getGrantedPermissions(user)].sort(),
+    };
   }
 
   async register(data: CreateUserDto): Promise<AuthResponse> {

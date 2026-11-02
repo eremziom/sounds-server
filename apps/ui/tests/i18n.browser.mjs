@@ -17,13 +17,14 @@ async function listen(server) {
   return server.address().port;
 }
 let apiMode = 'normal';
+let slowGate, releaseSlow;
 const api = createServer(async (req, res) => {
   if (apiMode === 'failure') return res.writeHead(503).end('private-server-details');
-  if (apiMode === 'slow') await delay(900);
+  if (apiMode === 'slow') await slowGate;
   const role = req.headers.authorization?.replace('Bearer ', '');
   if (!['USER', 'ADMIN', 'ARTIST'].includes(role)) return res.writeHead(401).end();
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ id: 1, isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
+  res.end(JSON.stringify({ id: 1, isActive: true, permissions: [], sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
 });
 const apiPort = await listen(api);
 const reservation = createServer();
@@ -256,9 +257,17 @@ try {
       await screenshot(`${locale}-${pathname.replaceAll('/', '') || 'home'}`);
     }
     await send('Network.setCookie', { name: 'accessToken', value: 'USER', url: origin, path: '/', httpOnly: true });
+    // Hold the response until the loading UI is observed, rather than racing a
+    // fixed sleep. The async user menu must not block the document's shell.
+    slowGate = new Promise(resolve => { releaseSlow = resolve; });
     apiMode = 'slow';
-    await send('Page.navigate', { url: `${origin}/` });
-    await waitFor(`Array.from(document.querySelectorAll('[role=status]')).some(el=>el.textContent===${JSON.stringify(m.common.status.checkingAccess)} || el.textContent===${JSON.stringify(m.common.status.loading)})`);
+    try {
+      await send('Page.navigate', { url: `${origin}/?loading-check=${locale}` });
+      await waitFor(`Array.from(document.querySelectorAll('[role=status]')).some(el=>el.textContent===${JSON.stringify(m.common.status.checkingAccess)} || el.textContent===${JSON.stringify(m.common.status.loading)})`);
+    } finally {
+      apiMode = 'normal';
+      releaseSlow();
+    }
     await waitFor(`document.querySelector('h1')?.textContent===${JSON.stringify(m.app.home.title)}`);
     apiMode = 'failure';
     await send('Page.navigate', { url: `${origin}/` });
@@ -290,6 +299,7 @@ try {
   console.log('Anonymous choice, shared URL recipient language and cookie precedence after reload: OK');
   console.log(`Hydration: OK. Screenshots: ${fileURLToPath(screenshotDirectory)}`);
 } finally {
+  releaseSlow?.();
   try { await browser?.close(); }
   finally {
     next.kill();

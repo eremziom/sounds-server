@@ -12,12 +12,20 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
   ])));
   const api = createServer((request, response) => {
     const role = request.headers.authorization?.replace("Bearer ", "");
+    if (request.url === "/tracks/upload-config" && role === "ARTIST") {
+      response.setHeader("Content-Type", "application/json");
+      return response.end(JSON.stringify({ maxFileBytes: 1024, formats: [{ extension: ".wav", mimeType: "audio/wav" }] }));
+    }
+    if (request.url === "/tracks" && ["USER", "ARTIST"].includes(role)) {
+      response.setHeader("Content-Type", "application/json");
+      return response.end("[]");
+    }
     if (request.url !== "/auth/me" || !["USER", "ARTIST", "ADMIN"].includes(role)) {
       response.writeHead(401).end();
       return;
     }
     response.setHeader("Content-Type", "application/json");
-    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
+    response.end(JSON.stringify({ id: { USER: 1, ARTIST: 2, ADMIN: 3 }[role], isActive: true, permissions: role === "ARTIST" ? ["tracks:create"] : [], sessionExpiresAt: new Date(Date.now() + 86_400_000).toISOString(), roles: [{ key: role }] }));
   });
   api.listen(0, "127.0.0.1");
   await once(api, "listening");
@@ -121,6 +129,8 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
 
         for (const [path, allowedRoles, heading] of [
           ["/", ["USER", "ARTIST"], catalogs[locale].app.home.title],
+          ["/library", ["USER", "ARTIST"], catalogs[locale].app.library.title],
+          ["/upload", ["ARTIST"], catalogs[locale].app.upload.title],
           ["/admin", ["ADMIN"], catalogs[locale].admin.home.title],
         ]) {
           const response = await fetchRoute(path, headers);
@@ -131,7 +141,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
             assertPrivate(response);
             assertLocale(body, locale, rsc);
             assert.ok(body.includes(heading), context);
-            const metadata = path === "/" ? catalogs[locale].metadata.default : catalogs[locale].metadata.admin;
+            const metadata = path === "/admin" ? catalogs[locale].metadata.admin : catalogs[locale].metadata.default;
             assert.ok(body.includes(metadata.title), context);
             assert.ok(body.includes(metadata.description), context);
             assert.ok(!body.includes("NEXT_REDIRECT"), context);
@@ -142,7 +152,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
               `Expected redirect to ${target}: ${context}`,
             );
             // Metadata can include the admin title; the guarded page body must not render.
-            assert.ok(!body.includes(path === "/" ? heading : catalogs[locale].admin.home.placeholder), context);
+            assert.ok(!body.includes(path === "/admin" ? catalogs[locale].admin.home.placeholder : path === "/library" ? "data-library-empty" : path === "/upload" ? "data-upload-form" : heading), context);
             const destination = await fetchRoute(target, headers);
             assert.equal(destination.status, 200, context);
             const destinationBody = await destination.text();
@@ -158,7 +168,7 @@ test("request languages preserve route guards, redirects and private HTML/RSC", 
       assertLocale(body, locale, rsc);
       assert.ok(body.includes(catalogs[locale].errors.notFound.title));
       assert.ok(body.includes(catalogs[locale].errors.notFound.description));
-      assert.ok(body.includes(catalogs[locale].common.navigation.backHome));
+      assert.ok(body.includes("data-page-not-found"), "Missing routes render the dedicated 404 view");
       assert.ok(body.includes("noindex"));
       const prefixed = await fetchRoute(`/${locale}/login`, { Cookie: `locale=${locale}`, ...(rsc ? { RSC: "1" } : {}) });
       const prefixedBody = await prefixed.text();

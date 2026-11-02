@@ -77,6 +77,12 @@ describe('AuthController', () => {
   beforeEach(async () => {
     users = seedUsers.map((user) => ({ ...user }));
     const authService = {
+      findSessionUser: jest.fn((id: number) => {
+        const user = users.find((item) => item.id === id);
+        if (!user)
+          return Promise.reject(new NotFoundException('User not found'));
+        return Promise.resolve({ ...user, permissions: ['tracks:read'] });
+      }),
       findOne: jest.fn((id: number) => {
         const user = users.find((item) => item.id === id);
         if (!user) {
@@ -213,6 +219,7 @@ describe('AuthController', () => {
     expect(response.id).toBe(2);
     expect(response.username).toBe('admin');
     expect(response.sessionExpiresAt).toBe(request.user.sessionExpiresAt);
+    expect(response.permissions).toEqual(['tracks:read']);
     expect('password' in response).toBe(false);
   });
 

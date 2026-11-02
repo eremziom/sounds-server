@@ -5,6 +5,7 @@ import { ChevronDownIcon, LogOutIcon } from "lucide-react";
 import { logoutAction } from "../app/(auth)/actions";
 import { notifyLogout } from "../lib/logout-event";
 import { Button } from "./ui/button";
+import Link from "next/link";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
@@ -17,9 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-export function HeaderMenu({ username, menuLabels, logoutLabel, logoutPendingLabel, logoutConfirmation }: {
+export function HeaderMenu({ username, menuLabels, canUpload = false, logoutLabel, logoutPendingLabel, logoutConfirmation }: {
   username: string;
-  menuLabels: { profile: string; settings: string; workshop: string };
+  menuLabels: { profile: string; settings: string; workshop: string; upload?: string };
+  canUpload?: boolean;
   logoutLabel: string;
   logoutPendingLabel: string;
   logoutConfirmation: { title: string; description: string; cancel: string };
@@ -41,6 +43,7 @@ export function HeaderMenu({ username, menuLabels, logoutLabel, logoutPendingLab
           <DropdownMenuItem>{menuLabels.profile}</DropdownMenuItem>
           <DropdownMenuItem>{menuLabels.settings}</DropdownMenuItem>
           <DropdownMenuItem>{menuLabels.workshop}</DropdownMenuItem>
+          {canUpload && <DropdownMenuItem render={<Link href="/upload" prefetch={false} />} data-user-menu-upload>{menuLabels.upload}</DropdownMenuItem>}
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={pending} onClick={() => setConfirmOpen(true)} data-user-menu-logout-item>
             <LogOutIcon aria-hidden="true" />

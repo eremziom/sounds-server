@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Michroma, Smooch_Sans, Geist_Mono } from "next/font/google";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
@@ -7,6 +8,7 @@ import { formats } from "@/i18n/formats";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AuthControls } from "@/components/auth/auth-controls";
 import { SiteHeader } from "@/components/site-header";
+import { UnsavedNavigation } from "@/components/unsaved-navigation";
 import "./globals.css";
 
 const michroma = Michroma({
@@ -45,12 +47,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           errors: { page: messages.errors.page },
           common: { actions: messages.common.actions },
           auth: { session: messages.auth.session },
+          app: { player: messages.app.player },
         }}>
           <SiteHeader
             navigation={<div id="application-navigation" />}
-            userMenu={<AuthControls />}
+            userMenu={<Suspense fallback={null}><AuthControls /></Suspense>}
             languageSwitcher={<LanguageSwitcher label={language("label")} changeFailed={language("changeFailed")} />}
           />
+          <UnsavedNavigation />
           {children}
         </NextIntlClientProvider>
       </body>

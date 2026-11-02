@@ -45,7 +45,7 @@ export function ApplicationNavigation({ labels }: { labels: ApplicationNavigatio
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink aria-disabled="true" tabIndex={-1} className={`${navigationLinkStyle} pointer-events-none opacity-50`}>
+          <NavigationMenuLink render={<ProtectedLink href="/library" />} active={pathname === "/library"} className={navigationLinkStyle}>
             <LibraryBig aria-hidden="true" className="size-4 shrink-0" />
             {labels.library}
           </NavigationMenuLink>

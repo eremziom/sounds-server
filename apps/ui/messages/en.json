@@ -7,7 +7,7 @@
   },
   "auth": {
     "logoutConfirm": { "title": "Sign out", "description": "Are you sure you want to sign out? This will end your current musical journey", "cancel": "Cancel" },
-    "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop" },
+    "menu": { "profile": "Profile", "settings": "Settings", "workshop": "Workshop", "upload": "Add track" },
     "login": {
       "title": "Sign in",
       "noAccount": "Don't have an account?",
@@ -34,6 +34,34 @@
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": {
+    "player": {"volume":"Volume","mute":"Mute","unmute":"Unmute","label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
+    "upload": {
+      "addAnother": "Add another track",
+      "genre": "Genre (optional)", "subgenre": "Subgenre (optional)", "lengthGenre": "Use 3–30 characters.", "publicationDateAutomatic": "Set automatically to the current date when the track is published.",
+      "title": "Add track", "configFailed": "Could not load upload settings. Try again.", "retry": "Try again",
+      "file": "Audio file", "progress": "Audio upload progress", "processing": "File transferred. Processing audio…", "cancelTitle": "Cancel upload?", "cancelDescription": "The file and all track details will be cleared from the form. Select a new file to start again.", "keepUpload": "Keep upload", "confirmCancel": "Cancel upload", "fileHelp": "Formats: {formats}. Maximum size: {limit, number} MB.",
+      "fileEmpty": "Select a non-empty audio file.", "fileTooLarge": "The file exceeds the maximum size.", "fileUnsupported": "Select an MP3 or WAV file.",
+      "metadata": "Track details", "fieldTitle": "Title", "description": "Description (optional)", "publicationDate": "Publication date", "bpmFrom": "BPM from (optional)", "bpmTo": "BPM to (optional)",
+      "lengthTitle": "Use 3–50 characters for the title.", "lengthDescription": "Use 3–300 characters for the description.", "dateInvalid": "Enter a valid release date.",
+      "bpmInvalid": "Enter a BPM between 60 and 200.", "bpmOrder": "The upper BPM must be at least the lower BPM.",
+      "requirements": "Title is required (3–50 characters). Optional: description (3–300 characters), genre and subgenre (3–30 characters). BPM: both bounds between 60 and 200 or both empty.",
+      "uploading": "Uploading audio… You can fill in the track details now.", "uploaded": "Audio uploaded. Complete the details and save the track.", "saving": "Saving track…", "cancelling": "Cancelling upload…",
+      "save": "Save track", "success": "Track saved. It is now available in the Library.", "chooseAnother": "Cancel upload", "library": "Open Library",
+      "expired": "The upload has expired. Select the file again. Your track details have been preserved.",
+      "unknownResult": "We could not confirm the result. Check the Library before trying again. Your track details have been preserved.",
+      "sessionUnavailable": "Could not confirm your session. Try again after restoring the connection.",
+      "leaveTitle": "Leave without saving?", "leaveDescription": "Leaving cancels the upload and discards the unsaved track details.", "stay": "Stay", "leave": "Leave"
+    },
+    "library": {
+      "author": "Author",
+      "playColumn": "Playback", "trackTitle": "Title", "genre": "Genre", "subgenre": "Subgenre",
+      "playTrack": "Play: {title}", "pauseTrack": "Pause: {title}", "playFailed": "Could not play the track.",
+      "title": "Library", "tracks": "Tracks", "loading": "Loading tracks…",
+      "empty": "There are no tracks in the Library yet.",
+      "loadFailed": "Could not load the tracks. Try again.", "retry": "Try again",
+      "publicationDate": "Publication date", "bpm": "BPM", "audio": "Audio",
+      "audioAvailable": "Audio available", "noAudio": "No audio file"
+    },
     "home": { "title": "Sounds home" },
     "animations": {
       "configuration": "Animation Settings",
@@ -52,6 +80,14 @@
   },
   "admin": { "home": { "title": "Admin panel", "placeholder": "Tools for managing the application will appear here." } },
   "errors": {
+    "audioFileInvalid": "The file does not contain valid supported audio.",
+    "audioFileTooLarge": "The audio file exceeds the maximum size.",
+    "audioFormatUnsupported": "This audio format is not supported. Select MP3 or WAV.",
+    "audioStorageFailed": "Could not store the audio. Try again later.",
+    "audioValidationUnavailable": "Audio validation is temporarily unavailable. Try again later.",
+    "audioUploadNotFound": "This upload is no longer available. Select the file again.",
+    "audioUploadConsumed": "This upload has already been saved. Check the Library.",
+    "audioUploadExpired": "This upload has expired. Select the file again.",
     "accessDenied": { "title": "Access denied", "description": "You do not have the required permissions" },
     "page": { "title": "Something went wrong", "description": "Could not load this page. Try again." },
     "notFound": { "title": "Page not found", "description": "The page you are looking for does not exist." },

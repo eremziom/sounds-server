@@ -7,6 +7,22 @@
   isolation: isolate;
 }
 
+/* Animate the controls when they arrive, including streamed/portal content. */
+@media (prefers-reduced-motion: no-preference) {
+  .site-header :is(
+    #application-navigation > [data-slot="navigation-menu"],
+    .header-menu-trigger,
+    .header-recovery-logout > form
+  ) {
+    animation: header-controls-appear 450ms ease-out;
+  }
+}
+
+@keyframes header-controls-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Dim the aurora behind controls without affecting text or hover effects. */
 .site-header-controls:has(nav, button)::before {
   content: "";

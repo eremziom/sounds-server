@@ -19,14 +19,55 @@ model AuthRateLimit {
 }
 
 model Track {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   title       String
   description String?
-  releaseDate DateTime
-  bpmFrom     Int
-  bpmTo       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  publicationDate DateTime @default(now())
+  genre       String?    @db.VarChar(30)
+  subgenre    String?    @db.VarChar(30)
+  bpmFrom     Int?
+  bpmTo       Int?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  ownerId     Int?
+  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  audioFile   AudioFile?
+
+  @@index([ownerId])
+}
+
+model AudioFile {
+  id           Int      @id @default(autoincrement())
+  trackId      Int      @unique
+  storageKey   String   @unique
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  createdAt    DateTime @default(now())
+  track        Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+}
+
+enum AudioUploadStatus {
+  PENDING
+  CONSUMED
+  CANCELLED
+  EXPIRED
+}
+
+model AudioUpload {
+  id           String            @id @default(uuid())
+  ownerId      Int
+  owner        User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  storageKey   String            @unique
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  createdAt    DateTime          @default(now())
+  expiresAt    DateTime
+  status       AudioUploadStatus @default(PENDING)
+
+  @@index([status, expiresAt])
+  @@index([ownerId])
 }
 
 model User {
@@ -44,6 +85,8 @@ model User {
   updatedAt       DateTime      @updatedAt
   roles           UserRole[]
   sessions        AuthSession[]
+  tracks          Track[]
+  audioUploads    AudioUpload[]
 }
 
 model AuthSession {

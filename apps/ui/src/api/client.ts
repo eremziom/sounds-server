@@ -34,13 +34,14 @@ const fields = new Set([
   "login",
   "password",
   "confirmPassword",
+  "title", "description", "genre", "subgenre", "publicationDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo",
 ]);
 const safeCode = (value: unknown) =>
   typeof value === "string" && /^[A-Z][A-Z0-9_]{0,63}$/.test(value);
 
 // Keep only identifiers and numeric validation bounds. Never retain backend text,
 // submitted values, tokens, targets or arbitrary metadata in an action error.
-function safeErrorBody(body: unknown): Record<string, unknown> | undefined {
+export function safeErrorBody(body: unknown): Record<string, unknown> | undefined {
   if (!isRecord(body)) return undefined;
   const result: Record<string, unknown> = {};
   if (Object.hasOwn(body, "code"))

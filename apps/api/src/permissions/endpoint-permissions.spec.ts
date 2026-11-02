@@ -10,6 +10,8 @@ jest.mock('../prisma/prisma.service', () => ({
 }));
 
 import { AppModule } from '../app.module';
+import { LocalAudioStorageService } from '../audio/local-audio-storage.service';
+import { AudioValidatorService } from '../audio/audio-validator.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthLimitsService } from '../auth/auth-limits.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -98,6 +100,10 @@ describe('Endpoint permissions (HTTP)', () => {
 
   beforeAll(async () => {
     const builder = Test.createTestingModule({ imports: [AppModule] })
+      .overrideProvider(LocalAudioStorageService)
+      .useValue({})
+      .overrideProvider(AudioValidatorService)
+      .useValue({})
       .overrideProvider(ConfigService)
       .useValue({
         getOrThrow: () => secret,
@@ -120,6 +126,7 @@ describe('Endpoint permissions (HTTP)', () => {
         [
           'findAll',
           'findOne',
+          'findSessionUser',
           'create',
           'update',
           'remove',
@@ -230,13 +237,13 @@ describe('Endpoint permissions (HTTP)', () => {
 
   it('exposes only the authenticated profile without requiring role permissions', async () => {
     await request(app.getHttpServer()).get('/auth/me').expect(401);
-    expect(services.auth.findOne).not.toHaveBeenCalled();
+    expect(services.auth.findSessionUser).not.toHaveBeenCalled();
     grant([]);
     await request(app.getHttpServer())
       .get('/auth/me')
       .auth(token, { type: 'bearer' })
       .expect(200);
-    expect(services.auth.findOne).toHaveBeenCalledWith(42);
+    expect(services.auth.findSessionUser).toHaveBeenCalledWith(42);
     expect(prisma.user.findUnique).not.toHaveBeenCalled();
     await request(app.getHttpServer())
       .get('/auth/user/1')
@@ -250,7 +257,7 @@ describe('Endpoint permissions (HTTP)', () => {
       .get('/auth/me')
       .auth(token, { type: 'bearer' })
       .expect(401);
-    expect(services.auth.findOne).not.toHaveBeenCalled();
+    expect(services.auth.findSessionUser).not.toHaveBeenCalled();
   });
 
   it('combines permissions from multiple database roles', async () => {
@@ -268,10 +275,7 @@ describe('Endpoint permissions (HTTP)', () => {
     }
   });
 
-  it.each([
-    ['patch', 'tracks:update-own', 'update'],
-    ['delete', 'tracks:delete-own', 'remove'],
-  ] as const)(
+  it.each([['patch', 'tracks:update-own', 'update']] as const)(
     'does not allow %s with only %s',
     async (method, permission, operation) => {
       grant([permission]);
@@ -283,6 +287,18 @@ describe('Endpoint permissions (HTTP)', () => {
       expect(services.tracks[operation]).not.toHaveBeenCalled();
     },
   );
+
+  it('passes delete-own and the authenticated owner to the track ownership check', async () => {
+    grant(['tracks:delete-own']);
+    await request(app.getHttpServer())
+      .delete('/tracks/1')
+      .auth(token, { type: 'bearer' })
+      .expect(200);
+    expect(services.tracks.remove).toHaveBeenCalledWith(1, {
+      userId: 42,
+      permissions: ['tracks:delete-own'],
+    });
+  });
 
   it('keeps login, registration and the root endpoint public', async () => {
     await request(app.getHttpServer())
