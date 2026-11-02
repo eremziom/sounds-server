@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'node:path';
 import { Worker } from 'node:worker_threads';
@@ -15,6 +15,7 @@ export class BuiltinAudioValidatorService
   extends AudioValidatorService
   implements OnModuleInit
 {
+  private readonly logger = new Logger(BuiltinAudioValidatorService.name);
   private active = 0;
   constructor(private readonly config: ConfigService) {
     super();
@@ -64,9 +65,13 @@ export class BuiltinAudioValidatorService
           else resolve(format!);
         };
         signal?.addEventListener('abort', aborted, { once: true });
-        currentWorker.once('error', () =>
-          finish(audioError('validationUnavailable')),
-        );
+        currentWorker.once('error', (error) => {
+          this.logger.error(
+            'Audio validation worker failed',
+            error instanceof Error ? error.stack : String(error),
+          );
+          finish(audioError('validationUnavailable'));
+        });
         currentWorker.once('exit', () =>
           finish(audioError('validationUnavailable')),
         );

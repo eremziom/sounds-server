@@ -39,7 +39,7 @@ export function HeaderMenu({ username, menuLabels, canUpload = false, logoutLabe
           {username}
           <ChevronDownIcon aria-hidden="true" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" sideOffset={8}>
+        <DropdownMenuContent align="end" sideOffset={8} data-header-user-popup>
           <DropdownMenuItem>{menuLabels.profile}</DropdownMenuItem>
           <DropdownMenuItem>{menuLabels.settings}</DropdownMenuItem>
           <DropdownMenuItem>{menuLabels.workshop}</DropdownMenuItem>

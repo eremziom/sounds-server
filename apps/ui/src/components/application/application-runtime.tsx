@@ -125,7 +125,7 @@ export function ApplicationRuntime({ children, accessTokenExpiresAt, sessionExpi
             <MediaRuntime session={session} blocked={status === "unavailable"}>
               <div className="relative isolate flex flex-1 flex-col">
                 {status !== "unavailable" && <ApplicationBackground />}
-                <ApplicationNavigation labels={navigationLabels} />
+                {status !== "unavailable" && <ApplicationNavigation labels={navigationLabels} />}
                 <div className={status === "unavailable" ? "hidden" : "relative z-10 flex flex-1 flex-col"} data-application-page>{children}</div>
                 {status === "unavailable" && <SessionRecovery message={rateLimited ? footerLabels.rateLimited : footerLabels.unavailable} retryLabel={footerLabels.retry} retry={renewal.ensureFresh} />}
               </div>

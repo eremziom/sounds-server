@@ -213,7 +213,9 @@ the accepted format or the stored extension.
 Validation runs in at most two worker threads per API instance with a 120-second
 budget per file. Busy/unavailable validation returns `AUDIO_VALIDATION_UNAVAILABLE`
 (503). Worker assets and the embedded decoder are checked at startup. The build
-copies `src/audio/worker/*.cjs` to `dist/src/audio/worker`; deploy these assets
+emits `src/audio/worker/*.cjs` to `dist/src/audio/worker` through TypeScript,
+before startup in both build and watch mode (without an asynchronous asset-copy
+step); deploy these assets
 alongside the compiled API and production dependencies. File buffers stay bounded
 during receipt and validation; decoded recordings are not retained in memory.
 

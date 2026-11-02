@@ -124,11 +124,13 @@ try {
       assert.equal(await evaluate("endingRoot===document.querySelector('[data-application-runtime]')"), true);
       assert.equal(await evaluate("document.querySelector('[data-session-recovery] [role=alert]').textContent"), messages.auth.session.unavailable);
       assert.equal(await evaluate("getComputedStyle(document.querySelector('[data-application-page]')).display"), "none");
+      assert.equal(await evaluate("document.querySelector('#application-navigation').getClientRects().length"), 0, "Session failure hides navigation");
+      assert.equal(await evaluate("document.querySelector('[data-header-user-menu]').getClientRects().length"), 0, "Session failure hides the user menu and fallback logout");
       await assertStopped();
       const { cookies } = await send("Network.getCookies", { urls: [origin] });
       assert.equal(cookies.find((cookie) => cookie.name === "refreshToken")?.value, originalRefresh);
       const failedCalls = refreshCalls;
-      await evaluate("window.dispatchEvent(new Event('focus')); document.querySelector('header a[href=\"/admin\"]').click()");
+      await evaluate("window.dispatchEvent(new Event('focus'))");
       await delay(150);
       assert.equal(refreshCalls, failedCalls, "Unknown outcome is not retried by focus/navigation");
       mode = "active";
@@ -136,6 +138,8 @@ try {
       await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='active' && !document.querySelector('[data-session-recovery]')");
       assert.equal(await evaluate("endingRoot===document.querySelector('[data-application-runtime]')"), true);
       assert.equal(await evaluate("endingAudio===document.querySelector('[data-persistent-media] audio')"), true);
+      assert.equal(await evaluate("document.querySelector('#application-navigation').getClientRects().length > 0"), true, "Successful retry restores navigation");
+      assert.equal(await evaluate("document.querySelector('[data-header-user-menu] [data-slot=dropdown-menu-trigger]').getClientRects().length > 0"), true, "Successful retry restores the user menu");
 
       await enter(locale);
       mode = "rate-limited";
@@ -143,6 +147,7 @@ try {
       await triggerRefresh();
       await waitFor("document.querySelector('[data-application-runtime]')?.dataset.sessionStatus==='unavailable'");
       assert.equal(await evaluate("document.querySelector('[data-session-recovery] [role=alert]').textContent"), messages.errors.rateLimited);
+      assert.equal(await evaluate("document.querySelector('#application-navigation').getClientRects().length + document.querySelector('[data-header-user-menu]').getClientRects().length"), 0, "Rate limits also hide session controls");
       assert.equal((await send("Network.getCookies", { urls: [origin] })).cookies.find((cookie) => cookie.name === "refreshToken")?.value, rateLimitedRefresh);
 
       // All-device logout is hidden; exercise the supported menu action here.
