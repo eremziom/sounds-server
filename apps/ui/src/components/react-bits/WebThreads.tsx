@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, type CSSProperties } from 'react';
+import type { AnimationParameter } from '../../lib/audio-animation';
 
 export interface WebThreadsProps {
   colors?: string[];
@@ -36,6 +37,7 @@ export interface WebThreadsProps {
   className?: string;
   style?: CSSProperties;
   registerStop?: (stop: () => void) => () => void;
+  modulate?: (dt: number) => Partial<Record<AnimationParameter, number>>;
 }
 
 type RGB = [number, number, number];
@@ -387,7 +389,8 @@ export default function WebThreads({
   dpr = 2,
   className = '',
   style,
-  registerStop
+  registerStop,
+  modulate
 }: WebThreadsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const colorKey = colors.join('|');
@@ -403,6 +406,7 @@ export default function WebThreads({
   const paper = useMemo(() => parseColor(backgroundColor, null), [backgroundColor]);
 
   const settings = {
+    modulate,
     palette: palette.length ? palette : [[1, 1, 1]],
     core,
     paper,
@@ -593,8 +597,7 @@ export default function WebThreads({
       return strongest > 0.002 || state.presence > 0.002 || state.settle > 0.002;
     };
 
-    const render = (reduced: boolean) => {
-      const s = settingsRef.current;
+    const render = (reduced: boolean, s: typeof settings) => {
       const introClock = state.introAt < 0 ? 0 : state.clock - state.introAt;
       const introRunning = s.intro && !reduced && introClock < introLength(s);
       gl.viewport(0, 0, state.width, state.height);
@@ -649,10 +652,16 @@ export default function WebThreads({
         state.last = now;
         return;
       }
-      const s = settingsRef.current;
       const dt = state.last ? Math.min((now - state.last) / 1000, 0.1) : 1 / 60;
       state.last = now;
       const reduced = prefersReduced();
+      const base = settingsRef.current;
+      const patch = base.modulate?.(dt) ?? {};
+      const s = reduced || base.paused ? base : {
+        ...base, ...patch,
+        count: patch.threadCount ?? base.count,
+        angle: patch.angle === undefined ? base.angle : patch.angle * Math.PI / 180,
+      };
       state.clock += dt;
       if (state.introAt < 0) state.introAt = state.clock;
       if (!s.paused && !reduced) state.phase += dt * s.speed;
@@ -670,7 +679,7 @@ export default function WebThreads({
       if (state.quiet > 3) return;
 
       resize();
-      render(reduced);
+      render(reduced, s);
     };
 
     const local = (event: PointerEvent) => {

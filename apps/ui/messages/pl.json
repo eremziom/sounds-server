@@ -37,7 +37,7 @@
     "bassVisual": {
       "title": "Puls basu", "description": "Rozmiar okręgu pokazuje bieżącą energię basu. Rozchodzący się, wygasający błysk oznacza wykryty impuls; silniejsze impulsy dają mocniejszy błysk.",
       "sensitivity": "Czułość: {value, number}×", "interval": "Odstęp między impulsami: {value, number} ms", "decay": "Wygaszanie: {value, number} ms", "reset": "Przywróć ustawienia",
-      "notes": "Wskaźnik działa podczas analizy na żywo i odtwarzania. Wyższa czułość obniża próg wykrywania impulsów basowych także w polach pomiarów. Zmiana czułości lub odstępu zeruje historię detekcji. To impulsy w paśmie 20–250 Hz, a nie potwierdzone rozpoznanie stopy. Przy ograniczeniu ruchu w systemie animowane błyski są wyłączone."
+      "notes": "Wskaźnik działa podczas analizy na żywo i odtwarzania. Wyższa czułość obniża próg wykrywania impulsów basowych także w polach pomiarów. Zmiana czułości lub odstępu zeruje historię detekcji. To impulsy w ustawionym paśmie basu, a nie potwierdzone rozpoznanie stopy. Przy ograniczeniu ruchu w systemie animowane błyski są wyłączone."
     },
     "liveAnalysis": {
       "title": "Analiza na żywo", "description": "Bieżące pomiary odtwarzanego utworu w osobnych polach, odświeżane co około 100 ms. Nie wymagają wcześniejszej analizy całego pliku.",
@@ -85,7 +85,36 @@
       "audioAvailable": "Audio dostępne", "noAudio": "Brak pliku audio"
     },
     "home": { "title": "Strona główna aplikacji Sounds" },
+    "audioBands": {
+      "title": "Detektory częstotliwości", "reset": "Resetuj detektory",
+      "description": "Wybierz zakres częstotliwości dla każdego sygnału. Poziom śledzi jego energię, a atak generuje pojedynczy impuls na początku dźwięku.",
+      "bass": "Bas", "mid": "Średnie tony", "high": "Wysokie tony",
+      "fromHz": "Od (Hz)", "toHz": "Do (Hz)", "sensitivity": "Czułość",
+      "minDbfs": "Minimalny poziom (dBFS)", "minIntervalMs": "Minimalny odstęp uderzeń (ms)",
+      "lastAttack": "Ostatni atak", "level": "Poziom: {band}",
+      "notes": "Zakresy mogą się nakładać. Filtry reagują też na pobliskie częstotliwości i harmoniczne; nie rozpoznają instrumentu ani nuty. Ustawienia obowiązują do odświeżenia strony lub wylogowania."
+    },
     "animations": {
+      "audio": {
+        "title": "Reakcja na audio",
+        "description": "Suwaki poniżej ustalają wartości bazowe. Każde mapowanie dodaje reakcję na audio do wybranego parametru.",
+        "enabled": "Reaguj na audio",
+        "start": "Uruchom reakcję na audio",
+        "selectTrack": "Najpierw wybierz utwór w bibliotece, a następnie wróć tutaj.",
+        "kickNote": "Kick korzysta z ataku ustawionego pasma basu. Wszystkie ataki wykrywają zmianę energii w swoim paśmie, a nie konkretny instrument.",
+        "rowEnabled": "Aktywne",
+        "source": "Sygnał",
+        "target": "Parametr animacji",
+        "bass": "Poziom basu",
+        "kick": "Kick / atak basu",
+        "mid": "Poziom średnich", "midAttack": "Atak średnich", "high": "Poziom wysokich", "highAttack": "Atak wysokich",
+        "amount": "Siła",
+        "remove": "Usuń",
+        "add": "Dodaj mapowanie",
+        "reset": "Resetuj mapowania",
+        "decay": "Wygaszanie uderzenia",
+        "amountHelp": "Siła to procent zakresu parametru dodawany do wartości bazowej. Wartości ujemne ją zmniejszają. Mapowania tego samego parametru sumują się, a wynik mieści się w jego granicach. Pauza i zatrzymanie przywracają wartości bazowe animacji."
+      },
       "configuration": "Konfiguracja Animacji",
       "description": "Zmieniaj parametry i obserwuj animację w tle na żywo. Ustawienia obowiązują do odświeżenia strony lub wylogowania.",
       "colors": "Kolory", "color": "Kolor nici", "coreColor": "Kolor rdzenia",

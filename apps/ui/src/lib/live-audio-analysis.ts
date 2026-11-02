@@ -1,3 +1,4 @@
+import { AUDIO_BANDS, DEFAULT_BAND_OPTIONS, createAttackGate, createBandDetector, sanitizeBandOptions, type AudioBand, type BandOptions, type BandDetections } from "./audio-band-detection.ts";
 import { BANDS, FFT_SIZE, estimateTempo, type AudioAnalysis, type BandKey } from "./audio-analysis.ts";
 
 export type LiveMeasurement = {
@@ -14,8 +15,8 @@ export type BassDetectionOptions = { sensitivity: number; minIntervalMs: number 
 export const DEFAULT_BASS_OPTIONS: BassDetectionOptions = { sensitivity: 1, minIntervalMs: 180 };
 export const TRANSIENT_INTERVAL_MS = 20;
 export const TRANSIENT_WINDOW_SIZE = 1024;
-export type TransientMeasurement = Pick<LiveMeasurement, "start" | "end" | "rmsDbfs" | "amplitude" | "lowAmplitude">;
-export type LiveDetection = Omit<LiveSnapshot, keyof LiveMeasurement>;
+export type TransientMeasurement = Pick<LiveMeasurement, "start" | "end" | "rmsDbfs" | "amplitude" | "lowAmplitude"> & { bandAmplitudes?: Record<AudioBand, number> };
+export type LiveDetection = Omit<LiveSnapshot, keyof LiveMeasurement> & { bandDetections: BandDetections };
 export type BassPulse = { time: number; strength: number };
 const db = (amplitude: number) => Math.max(-120, 20 * Math.log10(Math.max(1e-6, amplitude)));
 
@@ -45,58 +46,27 @@ export function measureLiveAudio(samples: Float32Array[], frequencies: Float32Ar
   };
 }
 
-// An attack locks the gate until the envelope has fallen for at least 40 ms.
-// This groups the attack, body and ringing of one hit into a single event.
-function createAttackGate() {
-  let baseline: number | null = null;
-  let previous = 0, armed = true, peak = 0, releaseLevel = 0, releaseDuration = 0;
-  let lastTime: number | null = null;
-  let history: { time: number; delta: number }[] = [];
-  const median = (values: number[]) => {
-    const sorted = [...values].sort((a, b) => a - b);
-    return sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
-  };
-  return (level: number, time: number, dt: number, sensitivity: number, spacing: number) => {
-    if (baseline === null) { baseline = previous = level; return null; }
-    const delta = Math.max(0, level - previous);
-    history = history.filter(item => time - item.time <= 1);
-    const noise = median(history.map(item => item.delta));
-    const deviation = median(history.map(item => Math.abs(item.delta - noise)));
-    const threshold = Math.max(0.008, noise + 3 * deviation) / sensitivity;
-    const before = baseline;
-    baseline += (1 - Math.exp(-dt / 0.25)) * (level - baseline);
-    previous = level;
-    history.push({ time, delta });
-    if (!armed) {
-      peak = Math.max(peak, level);
-      if (level <= Math.max(releaseLevel, peak * 0.55)) releaseDuration += dt;
-      else releaseDuration = 0;
-      if (releaseDuration >= 0.04) armed = true;
-    }
-    if (!armed || (lastTime !== null && time - lastTime < spacing) || delta <= threshold ||
-        level < before * (1 + 0.35 / sensitivity) + threshold) return null;
-    armed = false; peak = level; releaseLevel = before * 1.2; releaseDuration = 0; lastTime = time;
-    return delta / threshold;
-  };
-}
-
 export function createLiveDetector() {
   let previous: TransientMeasurement | null = null;
-  let bassGate = createAttackGate(), overallGate = createAttackGate();
+  const bandDetectors = { bass: createBandDetector(), mid: createBandDetector(), high: createBandDetector() };
+  let overallGate = createAttackGate();
   let bassTimes: number[] = [];
   let lastBassTime: number | null = null, lastOnsetTime: number | null = null;
   let bassStrength: number | null = null, onsetStrength: number | null = null;
   let silenceStart: number | null = null;
-  const detect = (frame: TransientMeasurement, bassOptions: BassDetectionOptions = DEFAULT_BASS_OPTIONS): LiveDetection => {
+  const detect = (frame: TransientMeasurement, bassOptions: BassDetectionOptions = DEFAULT_BASS_OPTIONS, bandOptions: BandOptions = DEFAULT_BAND_OPTIONS): LiveDetection => {
       // Seeks, stalled polling and source changes must not fabricate transients.
       if (previous && (frame.end <= previous.end || frame.end - previous.end > 0.35)) {
-        previous = null; bassGate = createAttackGate(); overallGate = createAttackGate();
+        previous = null; overallGate = createAttackGate();
         bassTimes = []; lastBassTime = lastOnsetTime = null;
         bassStrength = onsetStrength = null; silenceStart = null;
       }
       const dt = previous ? frame.end - previous.end : TRANSIENT_INTERVAL_MS / 1000;
-      const spacing = Math.max(120, Math.min(600, bassOptions.minIntervalMs)) / 1000;
-      const bassAttack = bassGate(frame.lowAmplitude, frame.end, dt, Math.max(0.5, Math.min(3, bassOptions.sensitivity)), spacing);
+      const bandDetections = Object.fromEntries(AUDIO_BANDS.map(band => [band, bandDetectors[band](
+        band === "bass" ? frame.lowAmplitude : frame.bandAmplitudes?.[band] ?? 0,
+        frame.end, band === "bass" ? { ...bandOptions.bass, ...bassOptions } : bandOptions[band],
+      )])) as BandDetections;
+      const bassAttack = bandDetections.bass.onset ? bandDetections.bass.strength : null;
       const overallAttack = overallGate(frame.amplitude, frame.end, dt, 1, 0.18);
       const bassOnset = bassAttack !== null, onset = overallAttack !== null;
       if (bassOnset) { lastBassTime = frame.end; bassStrength = bassAttack; bassTimes.push(frame.end); }
@@ -105,7 +75,7 @@ export function createLiveDetector() {
       bassTimes = bassTimes.filter(time => frame.end - time <= 15);
       previous = frame;
       return {
-        bassOnset, onset, silence: silenceStart !== null && frame.end - silenceStart >= 0.3,
+        bandDetections, bassOnset, onset, silence: silenceStart !== null && frame.end - silenceStart >= 0.3,
         lastBassTime, lastOnsetTime, bassStrength, onsetStrength, silenceStart,
         tempo: estimateTempo(bassTimes),
       };
@@ -124,10 +94,22 @@ export function createLiveAudioGraph() {
   let context: AudioContext | null = null;
   let source: MediaElementAudioSourceNode | null = null;
   let analysers: AnalyserNode[] = [];
-  let transientAnalysers: AnalyserNode[] = [], bassAnalysers: AnalyserNode[] = [];
+  let transientAnalysers: AnalyserNode[] = [];
+  let bandOptions = DEFAULT_BAND_OPTIONS;
+  type BandTap = { highpass: BiquadFilterNode[]; lowpass: BiquadFilterNode[]; analysers: AnalyserNode[]; samples: Float32Array<ArrayBuffer>[] };
+  const taps: Partial<Record<AudioBand, BandTap>> = {};
   let samples: Float32Array<ArrayBuffer>[] = [], frequencies: Float32Array<ArrayBuffer>[] = [];
-  let transientSamples: Float32Array<ArrayBuffer>[] = [], bassSamples: Float32Array<ArrayBuffer>[] = [];
+  let transientSamples: Float32Array<ArrayBuffer>[] = [];
   return {
+    configureBands(options: BandOptions) {
+      bandOptions = Object.fromEntries(AUDIO_BANDS.map(band => [band, sanitizeBandOptions(options[band])])) as BandOptions;
+      for (const band of AUDIO_BANDS) {
+        const tap = taps[band];
+        if (!tap) continue;
+        tap.highpass.forEach(filter => { filter.frequency.value = bandOptions[band].fromHz; });
+        tap.lowpass.forEach(filter => { filter.frequency.value = bandOptions[band].toHz; });
+      }
+    },
     connect(element: HTMLAudioElement) {
       if (source) return;
       if (typeof AudioContext === "undefined") throw new Error("unsupported");
@@ -147,19 +129,31 @@ export function createLiveAudioGraph() {
       frequencies = analysers.map(node => new Float32Array(node.frequencyBinCount));
       // Independent short time-domain windows avoid smearing attacks across the
       // 93 ms spectrum window used by the slower numeric UI.
-      const highpass = context.createBiquadFilter();
-      highpass.type = "highpass"; highpass.frequency.value = 20; highpass.Q.value = Math.SQRT1_2;
-      const lowpass = context.createBiquadFilter();
-      lowpass.type = "lowpass"; lowpass.frequency.value = 250; lowpass.Q.value = Math.SQRT1_2;
-      const bassSplitter = context.createChannelSplitter(2);
-      stereo.connect(highpass); highpass.connect(lowpass); lowpass.connect(bassSplitter);
       const shortAnalysers = (input: ChannelSplitterNode) => [0, 1].map(channel => {
         const node = context!.createAnalyser(); node.fftSize = TRANSIENT_WINDOW_SIZE; node.smoothingTimeConstant = 0;
         input.connect(node, channel); return node;
       });
-      transientAnalysers = shortAnalysers(splitter); bassAnalysers = shortAnalysers(bassSplitter);
+      transientAnalysers = shortAnalysers(splitter);
+      for (const band of AUDIO_BANDS) {
+        // Fourth-order Butterworth edges reduce leakage when tuning a narrow band.
+        const filters = (type: BiquadFilterType, hz: number) => [0.5411961, 1.306563].map(q => {
+          const filter = context!.createBiquadFilter();
+          filter.type = type; filter.frequency.value = hz;
+          // Web Audio expresses low/high-pass Q in dB, unlike bandpass Q.
+          filter.Q.value = 20 * Math.log10(q);
+          return filter;
+        });
+        const highpass = filters("highpass", bandOptions[band].fromHz);
+        const lowpass = filters("lowpass", bandOptions[band].toHz);
+        const bandSplitter = context.createChannelSplitter(2);
+        let input: AudioNode = stereo;
+        for (const filter of [...highpass, ...lowpass]) { input.connect(filter); input = filter; }
+        input.connect(bandSplitter);
+        const bandAnalysers = shortAnalysers(bandSplitter);
+        taps[band] = { highpass, lowpass, analysers: bandAnalysers,
+          samples: bandAnalysers.map(() => new Float32Array(TRANSIENT_WINDOW_SIZE)) };
+      }
       transientSamples = transientAnalysers.map(() => new Float32Array(TRANSIENT_WINDOW_SIZE));
-      bassSamples = bassAnalysers.map(() => new Float32Array(TRANSIENT_WINDOW_SIZE));
       source = context.createMediaElementSource(element);
       source.connect(context.destination);
       source.connect(stereo);
@@ -181,12 +175,19 @@ export function createLiveAudioGraph() {
         return Math.sqrt(power / nodes.length / TRANSIENT_WINDOW_SIZE);
       };
       const amplitude = rms(transientAnalysers, transientSamples);
+      const bandAmplitudes = Object.fromEntries(AUDIO_BANDS.map(band => {
+        const tap = taps[band]!;
+        return [band, rms(tap.analysers, tap.samples)];
+      })) as Record<AudioBand, number>;
       return { start: Math.max(0, time - TRANSIENT_WINDOW_SIZE / context.sampleRate), end: time,
-        amplitude, lowAmplitude: rms(bassAnalysers, bassSamples), rmsDbfs: db(amplitude) };
+        amplitude, bandAmplitudes, lowAmplitude: bandAmplitudes.bass, rmsDbfs: db(amplitude) };
     },
     close() {
       source?.disconnect();
-      [...analysers, ...transientAnalysers, ...bassAnalysers].forEach(node => node.disconnect());
+      [...analysers, ...transientAnalysers].forEach(node => node.disconnect());
+      for (const tap of Object.values(taps)) {
+        [...tap.highpass, ...tap.lowpass, ...tap.analysers].forEach(node => node.disconnect());
+      }
       if (context && context.state !== "closed") void context.close().catch(() => {});
     },
   };

@@ -37,7 +37,7 @@
     "bassVisual": {
       "title": "Bass pulse", "description": "The circle size shows current bass energy. An expanding, fading glow indicates a detected pulse; stronger pulses produce a stronger glow.",
       "sensitivity": "Sensitivity: {value, number}×", "interval": "Pulse spacing: {value, number} ms", "decay": "Fade: {value, number} ms", "reset": "Reset settings",
-      "notes": "Active during live analysis and playback. Higher sensitivity lowers the bass detection threshold in the measurement fields too. Changing sensitivity or spacing resets detection history. These are pulses at 20–250 Hz, not verified kick drum recognition. Animated glows are disabled when your system requests reduced motion."
+      "notes": "Active during live analysis and playback. Higher sensitivity lowers the bass detection threshold in the measurement fields too. Changing sensitivity or spacing resets detection history. These are pulses in the configured bass range, not verified kick drum recognition. Animated glows are disabled when your system requests reduced motion."
     },
     "liveAnalysis": {
       "title": "Live analysis", "description": "Current measurements of the playing track in separate fields, refreshed approximately every 100 ms. No full-file analysis is required.",
@@ -85,7 +85,36 @@
       "audioAvailable": "Audio available", "noAudio": "No audio file"
     },
     "home": { "title": "Sounds home" },
+    "audioBands": {
+      "title": "Frequency detectors", "reset": "Reset detectors",
+      "description": "Choose a frequency range for each signal. Level follows its energy; attack generates one impulse at the start of a sound.",
+      "bass": "Bass", "mid": "Mid tones", "high": "High tones",
+      "fromHz": "From (Hz)", "toHz": "To (Hz)", "sensitivity": "Sensitivity",
+      "minDbfs": "Minimum level (dBFS)", "minIntervalMs": "Minimum hit spacing (ms)",
+      "lastAttack": "Last attack", "level": "{band} level",
+      "notes": "Ranges may overlap. Filters also pick up nearby frequencies and harmonics; they do not identify an instrument or a note. Settings last until reload or sign-out."
+    },
     "animations": {
+      "audio": {
+        "title": "Audio response",
+        "description": "Sliders below set the base values. Each mapping adds an audio response to the selected parameter.",
+        "enabled": "React to audio",
+        "start": "Start audio response",
+        "selectTrack": "Select a track in the library first, then return here.",
+        "kickNote": "Kick uses the attack of the configured bass range. All attacks detect energy changes in their band, not a specific instrument.",
+        "rowEnabled": "Active",
+        "source": "Signal",
+        "target": "Animation parameter",
+        "bass": "Bass level",
+        "kick": "Kick / bass attack",
+        "mid": "Mid level", "midAttack": "Mid attack", "high": "High level", "highAttack": "High attack",
+        "amount": "Strength",
+        "remove": "Remove",
+        "add": "Add mapping",
+        "reset": "Reset mappings",
+        "decay": "Hit decay",
+        "amountHelp": "Strength is a percentage of the parameter range added to its base value. Negative values reduce it. Mappings to the same parameter add together; the result stays within its limits. Pause and stop return the animation to its base values."
+      },
       "configuration": "Animation Settings",
       "description": "Adjust the settings to see the background animation change live. Settings last until you reload the page or sign out.",
       "colors": "Colors", "color": "Thread color", "coreColor": "Core color",

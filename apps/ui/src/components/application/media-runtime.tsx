@@ -2,6 +2,7 @@ import {
   createContext, useContext, useLayoutEffect, useRef, useState,
   type ReactNode, type RefObject,
 } from "react";
+import { LiveAnalysisProvider } from "./live-analysis-runtime";
 import type { ApplicationSession } from "../../lib/application-session";
 import { useAudioPlayback } from "./use-audio-playback";
 import { createLiveAudioGraph } from "../../lib/live-audio-analysis";
@@ -81,7 +82,7 @@ export function MediaRuntime({ children, session, blocked = false }: {
           <audio ref={audio} preload="none" />
           <div ref={animationHost} data-animation-host />
         </div>
-        {children}
+        <LiveAnalysisProvider>{children}</LiveAnalysisProvider>
       </PlaybackContext.Provider>
     </MediaContext.Provider>
   );

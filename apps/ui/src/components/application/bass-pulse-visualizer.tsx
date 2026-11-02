@@ -66,7 +66,7 @@ export function BassPulseVisualizer({ snapshot, pulse, active, options, onOption
               onChange={event => onOptionsChange({ ...options, sensitivity: Number(event.target.value) })} className="w-full accent-fuchsia-400" />
           </label>
           <label className="flex min-w-0 flex-col gap-2 text-xs">{t("interval", { value: options.minIntervalMs })}
-            <input type="range" min={120} max={600} step={10} value={options.minIntervalMs} data-bass-interval
+            <input type="range" min={40} max={1000} step={10} value={options.minIntervalMs} data-bass-interval
               onChange={event => onOptionsChange({ ...options, minIntervalMs: Number(event.target.value) })} className="w-full accent-fuchsia-400" />
           </label>
           <label className="flex min-w-0 flex-col gap-2 text-xs">{t("decay", { value: decay })}

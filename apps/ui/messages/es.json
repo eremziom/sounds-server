@@ -37,7 +37,7 @@
     "bassVisual": {
       "title": "Pulso de graves", "description": "El tamaño del círculo muestra la energía actual de graves. Un brillo que se expande y desvanece indica un pulso detectado; los pulsos más fuertes producen un brillo mayor.",
       "sensitivity": "Sensibilidad: {value, number}×", "interval": "Separación de pulsos: {value, number} ms", "decay": "Desvanecimiento: {value, number} ms", "reset": "Restablecer ajustes",
-      "notes": "Activo durante el análisis en vivo y la reproducción. Una mayor sensibilidad reduce el umbral de graves también en los campos de medición. Cambiar la sensibilidad o la separación reinicia el historial. Son pulsos entre 20 y 250 Hz, no una identificación confirmada del bombo. Los brillos animados se desactivan si el sistema solicita movimiento reducido."
+      "notes": "Activo durante el análisis en vivo y la reproducción. Una mayor sensibilidad reduce el umbral de graves también en los campos de medición. Cambiar la sensibilidad o la separación reinicia el historial. Son pulsos en el rango de graves configurado, no una identificación confirmada del bombo. Los brillos animados se desactivan si el sistema solicita movimiento reducido."
     },
     "liveAnalysis": {
       "title": "Análisis en vivo", "description": "Mediciones actuales de la pista en reproducción en campos separados, actualizados aproximadamente cada 100 ms. No se necesita analizar el archivo completo.",
@@ -85,7 +85,36 @@
       "audioAvailable": "Audio disponible", "noAudio": "Sin archivo de audio"
     },
     "home": { "title": "Página de inicio de Sounds" },
+    "audioBands": {
+      "title": "Detectores de frecuencia", "reset": "Restablecer detectores",
+      "description": "Elige un rango de frecuencias para cada señal. El nivel sigue su energía; el ataque genera un impulso al inicio del sonido.",
+      "bass": "Graves", "mid": "Tonos medios", "high": "Tonos agudos",
+      "fromHz": "Desde (Hz)", "toHz": "Hasta (Hz)", "sensitivity": "Sensibilidad",
+      "minDbfs": "Nivel mínimo (dBFS)", "minIntervalMs": "Intervalo mínimo de golpes (ms)",
+      "lastAttack": "Último ataque", "level": "Nivel: {band}",
+      "notes": "Los rangos pueden solaparse. Los filtros también detectan frecuencias cercanas y armónicos; no identifican un instrumento ni una nota. Los ajustes duran hasta recargar o cerrar sesión."
+    },
     "animations": {
+      "audio": {
+        "title": "Reacción al audio",
+        "description": "Los controles de abajo establecen los valores base. Cada asignación añade una reacción al audio al parámetro elegido.",
+        "enabled": "Reaccionar al audio",
+        "start": "Iniciar reacción al audio",
+        "selectTrack": "Primero selecciona una pista en la biblioteca y vuelve aquí.",
+        "kickNote": "El bombo usa el ataque del rango de graves configurado. Los ataques detectan cambios de energía en su banda, no un instrumento específico.",
+        "rowEnabled": "Activa",
+        "source": "Señal",
+        "target": "Parámetro de animación",
+        "bass": "Nivel de graves",
+        "kick": "Bombo / ataque de graves",
+        "mid": "Nivel de medios", "midAttack": "Ataque de medios", "high": "Nivel de agudos", "highAttack": "Ataque de agudos",
+        "amount": "Intensidad",
+        "remove": "Eliminar",
+        "add": "Añadir asignación",
+        "reset": "Restablecer asignaciones",
+        "decay": "Duración del golpe",
+        "amountHelp": "La intensidad es un porcentaje del rango del parámetro que se suma al valor base. Los valores negativos lo reducen. Las asignaciones al mismo parámetro se suman y el resultado respeta sus límites. La pausa y la detención restauran los valores base de la animación."
+      },
       "configuration": "Configuración de Animación",
       "description": "Ajusta los parámetros para ver los cambios de la animación de fondo en directo. Los ajustes se mantienen hasta recargar la página o cerrar sesión.",
       "colors": "Colores", "color": "Color del hilo", "coreColor": "Color del núcleo",

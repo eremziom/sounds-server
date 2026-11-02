@@ -46,7 +46,7 @@ try {
     await waitFor("document.querySelector('a[href=\"/animations\"]') && window.backgroundUniforms.uCount");
     await evaluate("window.backgroundCanvas = document.querySelector('[data-application-background] canvas'); document.querySelector('a[href=\"/animations\"]').click()");
     await waitFor("location.pathname === '/animations' && document.querySelector('input[name=speed]')");
-    assert.equal(await evaluate("document.querySelectorAll('input[type=number]').length"), 17);
+    assert.equal(await evaluate("document.querySelectorAll('[data-background-base-controls] input[type=number]').length"), 17);
     assert.equal(await evaluate("document.querySelectorAll('input[type=color]').length"), 3);
 
     await fill({ speed: "1.25", threadCount: "8" });
