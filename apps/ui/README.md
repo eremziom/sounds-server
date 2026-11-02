@@ -1,5 +1,99 @@
 Sounds frontend built with Next.js App Router, React and next-intl.
 
+## Audio analysis
+
+The same track page also has a Live analysis panel. Its explicit start button
+initializes Web Audio from a user gesture and starts/resumes that track in the
+existing player. Read-only fields update approximately every 100 ms from two
+`AnalyserNode`s (4,096 samples, no spectrum smoothing). Measurements use the latest
+roughly 93 ms signal window at 44,100 Hz; these are not lookups into offline data.
+
+Attack detection has a separate 20 ms polling loop. Short 1,024-sample windows
+(about 23 ms at 44,100 Hz) measure both the full signal and a 20 Hz highpass /
+250 Hz lowpass bass tap, per channel. The 4,096-sample spectrum is still read only
+when numeric fields publish, approximately every 100 ms. Bass events go directly
+to the visualizer without waiting for that publication; event flags are latched
+between publications so short events also appear in the fields. These are
+best-effort browser timers, not audio-thread scheduling; busy/hidden tabs can
+still miss reads.
+
+Its bass pulse visualizer scales a circle from absolute 20–250 Hz amplitude
+(−60 to 0 dB mapped to a bounded scale), not relative band percentage. Detected
+bass onsets launch a fading ring whose intensity is capped and depends on onset
+strength. Controls adjust bass sensitivity (0.5–3×), minimum onset spacing
+(120–600 ms), and visual decay (150–600 ms, default 220 ms). Sensitivity divides
+the adaptive bass threshold; spacing also applies to live bass measurement fields.
+Changing either resets the live detector; the offline analysis is unaffected.
+Pause, stop, seek, source changes and session failure cancel the pulse. System
+reduced-motion preference disables ring animations and circle scaling. Settings
+remain local to the mounted panel and can be reset to defaults.
+Band percentages sum linear spectral powers, and RMS/peak use time-domain samples.
+Mono is upmixed for the analysis tap and stereo channels are measured separately
+to avoid phase cancellation. The audible source remains connected directly to the
+destination, with the analysers on a separate tap.
+
+The graph belongs to the persistent media runtime, not the track page. Its single
+`MediaElementAudioSourceNode` is reused across starts, navigation and track changes;
+later playback resumes an existing suspended context. Page cleanup stops polling
+but leaves audio playing. The context is closed only when the media runtime
+unmounts. Session failure stops polling and clears the live fields.
+
+Pause/end freeze the last values; seeking/source changes clear measurements and
+restart detector history after a short settling window. Hidden tabs skip sampling;
+gaps over 350 ms reset history to avoid fabricated onsets. Live onset thresholds
+use the median and median absolute deviation of one second of positive envelope
+differences, an absolute floor and a rise relative to a 250 ms baseline. Once an
+attack is accepted, it cannot retrigger until the envelope falls below the release
+level for at least 40 ms and the configured minimum spacing has elapsed. This
+groups the body and ringing of a hit while allowing later separate attacks.
+The detector still estimates bass transients, not kick drum identity. Timing and
+event detection may differ from the offline overlapping-window algorithm.
+Last-event time/strength fields retain the last detection, while yes/no fields
+describe only the current measurement. A tempo estimate uses at most the last
+15 seconds of bass pulses. No live result is persisted to the database.
+
+`pnpm --filter ui test:live-analysis` tests real stereo audio, changing input values,
+pause/resume, seeking, pulse/silence detection, graph reuse, navigation, switching,
+end and logout in en/pl/es. It runs against an isolated API and synthetic WAV.
+
+Click an audio track's title in the Library to open `/library/:id/analysis`.
+Start analysis explicitly: the browser fetches the authorized recording through
+the existing audio proxy and decodes it using Web Audio `OfflineAudioContext` at
+44,100 Hz, without playback. A module worker computes a numeric timeline and
+events; no audio is sent to an external service. Results live in page memory and
+can be exported as versioned JSON; they are not saved to the database.
+
+The timeline contains 100 ms intervals with RMS/peak in dBFS, the strongest FFT
+frequency and relative energy in 20–60, 60–250, 250–2,000, 2,000–6,000 and
+6,000–20,000 Hz bands. RMS/peak use exactly the interval's samples. Each spectrum
+uses the first 4,096 samples within that interval (Hann window, about 93 ms,
+zero-padding the final short interval). Channels are analyzed separately and
+their powers averaged, so opposite stereo phases do not cancel. The reported
+sample rate is the analysis rate, not original encoding metadata.
+
+Onset detection uses overlapping 4,096-sample windows, a 1,024-sample hop,
+positive energy differences, a one-second adaptive threshold (mean + 1.5 standard
+deviations, floor 0.008) and 180 ms minimum spacing. Timestamps refer to window
+centers, with roughly window-scale timing precision. Bass onsets refer to
+20–250 Hz energy increases, not kick/instrument recognition. Silence is RMS below
+−60 dBFS for at least 300 ms. A tempo estimate requires at least eight bass pulses
+over four seconds and 75% of adjacent intervals within 12% of the median; it may
+be half/double musical tempo. `tempo.regularity` is an interval-consistency score,
+not a calibrated probability. No beat grid, meter or bars are inferred yet.
+
+Limits: 50 MiB encoded input, 10 minutes, mono/stereo and 192 MiB decoded PCM.
+Metadata duration is checked before decoding, and decoded limits are checked
+again afterwards. Browser decoding still requires the complete file in memory;
+multichannel input can allocate memory before its channel count is rejected.
+Processing has a two-minute budget. Cancel/navigation/session failure aborts
+downloads and terminates the worker; native decoding already in progress cannot
+be interrupted, but its result is discarded. Session failure clears results.
+
+`pnpm --filter ui test` covers synthetic tones, pulses, silence, interval bounds,
+stereo phase and invalid PCM. After building UI, run
+`pnpm --filter ui test:analysis` for actual Web Audio/worker/browser checks in
+en/pl/es, including export, language changes, access errors and cancellation.
+
 ## Getting Started
 
 From the repository root, run the development server:

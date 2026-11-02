@@ -23,6 +23,11 @@
     display: contents;
   }
 
+  /* Session failures also affect the persistent header and its portaled menu. */
+  body:has([data-session-resume], [data-session-check], [data-session-recovery], [data-session-status="ended"]) :is(#application-navigation, [data-header-user-menu], [data-header-user-popup]) {
+    display: none;
+  }
+
   input[data-variant="auth"]:autofill {
     background-clip: text;
     box-shadow:

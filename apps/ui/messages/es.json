@@ -34,6 +34,28 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "bassVisual": {
+      "title": "Pulso de graves", "description": "El tamaño del círculo muestra la energía actual de graves. Un brillo que se expande y desvanece indica un pulso detectado; los pulsos más fuertes producen un brillo mayor.",
+      "sensitivity": "Sensibilidad: {value, number}×", "interval": "Separación de pulsos: {value, number} ms", "decay": "Desvanecimiento: {value, number} ms", "reset": "Restablecer ajustes",
+      "notes": "Activo durante el análisis en vivo y la reproducción. Una mayor sensibilidad reduce el umbral de graves también en los campos de medición. Cambiar la sensibilidad o la separación reinicia el historial. Son pulsos en el rango de graves configurado, no una identificación confirmada del bombo. Los brillos animados se desactivan si el sistema solicita movimiento reducido."
+    },
+    "liveAnalysis": {
+      "title": "Análisis en vivo", "description": "Mediciones actuales de la pista en reproducción en campos separados, actualizados aproximadamente cada 100 ms. No se necesita analizar el archivo completo.",
+      "start": "Reproducir y analizar en vivo", "restart": "Reiniciar análisis", "stop": "Detener análisis", "yes": "Sí", "no": "No",
+      "idle": "Análisis desactivado", "running": "Analizando", "paused": "En pausa — valores congelados", "ended": "Pista finalizada — últimos valores", "waiting": "Esperando audio…", "otherTrack": "Se está reproduciendo otra pista", "playbackFailed": "Error de reproducción — revisa el reproductor", "failed": "No se pudo iniciar el análisis en vivo. Comprueba la compatibilidad con Web Audio y reinténtalo.",
+      "windowStart": "Inicio de la ventana de medición", "windowEnd": "Tiempo de pista / fin de ventana", "lastBassTime": "Hora del último pulso grave", "lastBassStrength": "Intensidad del último pulso grave respecto al umbral", "lastOnsetTime": "Hora del último aumento de energía", "lastOnsetStrength": "Intensidad del último aumento de energía respecto al umbral", "silenceStart": "Inicio del silencio actual",
+      "notes": "Los campos se actualizan cada 100 ms aproximadamente, con una ventana de 93 ms. Los ataques se detectan por separado cada 20 ms aproximadamente, con una ventana más corta de 23 ms y graves filtrados. El brillo reacciona de inmediato; la resonancia se agrupa en un evento. Cambiar de posición reinicia el historial. El navegador puede retrasar las lecturas, especialmente en segundo plano. El tempo requiere pulsos regulares; no se infieren compases. Detener el análisis no detiene la reproducción."
+    },
+    "analysis": {
+      "title": "Análisis de audio", "back": "Volver a la Biblioteca", "description": "Analiza la grabación completa sin reproducirla. Los resultados se calculan en el navegador y están disponibles hasta salir de esta página. Pulsa el título de una pista en la Biblioteca para abrir su análisis.",
+      "limits": "Primera versión: MP3/WAV, hasta 50 MiB y 10 minutos, mono o estéreo. Parámetros cada 100 ms; ventana de frecuencias de unos 93 ms. La energía por banda es un porcentaje entre 20 y 20 000 Hz. RMS y Peak miden niveles digitales, no LUFS.",
+      "analyze": "Analizar toda la pista", "cancel": "Cancelar", "export": "Descargar JSON", "processing": "Análisis: {progress}%", "progress": "Progreso del análisis", "retry": "Reintentar",
+      "unsupported": "Este navegador no admite el análisis de audio.", "limit": "El archivo supera los límites: 50 MiB, 10 minutos, mono/estéreo o el presupuesto de memoria.", "failed": "No se pudo analizar el audio. Reinténtalo.", "denied": "No tienes acceso a esta grabación.", "missing": "Esta grabación ya no está disponible.", "noAudio": "Esta pista no tiene archivo de audio.",
+      "duration": "Duración", "sampleRate": "Frecuencia de muestreo del análisis", "channels": "Canales", "tempo": "Tempo estimado de pulsos graves", "unknown": "Sin estimación fiable",
+      "estimates": "Un pulso grave es un aumento de energía entre 20 y 250 Hz, no una identificación de instrumentos. El tempo se basa en la regularidad de los pulsos y puede ser la mitad o el doble del BPM musical. Aún no se infieren beats, métrica ni compases. La intensidad es el aumento respecto al umbral de detección, no la confianza.",
+      "view": "Mostrar", "events": "Eventos", "timeline": "Parámetros cada 100 ms", "time": "Inicio", "end": "Fin", "event": "Evento", "strength": "Intensidad respecto al umbral", "dominant": "Frecuencia más intensa",
+      "bassOnset": "Pulso grave (estimado)", "onset": "Aumento de energía", "silence": "Silencio por debajo de −60 dBFS", "empty": "No se detectaron eventos. Los parámetros están disponibles en la otra vista.", "previous": "Anterior", "next": "Siguiente", "page": "Página {page} de {pages} · {count} entradas"
+    },
     "player": {"volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
     "upload": {
       "addAnother": "Añadir otra pista",
@@ -63,7 +85,36 @@
       "audioAvailable": "Audio disponible", "noAudio": "Sin archivo de audio"
     },
     "home": { "title": "Página de inicio de Sounds" },
+    "audioBands": {
+      "title": "Detectores de frecuencia", "reset": "Restablecer detectores",
+      "description": "Elige un rango de frecuencias para cada señal. El nivel sigue su energía; el ataque genera un impulso al inicio del sonido.",
+      "bass": "Graves", "mid": "Tonos medios", "high": "Tonos agudos",
+      "fromHz": "Desde (Hz)", "toHz": "Hasta (Hz)", "sensitivity": "Sensibilidad",
+      "minDbfs": "Nivel mínimo (dBFS)", "minIntervalMs": "Intervalo mínimo de golpes (ms)",
+      "lastAttack": "Último ataque", "level": "Nivel: {band}",
+      "notes": "Los rangos pueden solaparse. Los filtros también detectan frecuencias cercanas y armónicos; no identifican un instrumento ni una nota. Los ajustes duran hasta recargar o cerrar sesión."
+    },
     "animations": {
+      "audio": {
+        "title": "Reacción al audio",
+        "description": "Los controles de abajo establecen los valores base. Cada asignación añade una reacción al audio al parámetro elegido.",
+        "enabled": "Reaccionar al audio",
+        "start": "Iniciar reacción al audio",
+        "selectTrack": "Primero selecciona una pista en la biblioteca y vuelve aquí.",
+        "kickNote": "El bombo usa el ataque del rango de graves configurado. Los ataques detectan cambios de energía en su banda, no un instrumento específico.",
+        "rowEnabled": "Activa",
+        "source": "Señal",
+        "target": "Parámetro de animación",
+        "bass": "Nivel de graves",
+        "kick": "Bombo / ataque de graves",
+        "mid": "Nivel de medios", "midAttack": "Ataque de medios", "high": "Nivel de agudos", "highAttack": "Ataque de agudos",
+        "amount": "Intensidad",
+        "remove": "Eliminar",
+        "add": "Añadir asignación",
+        "reset": "Restablecer asignaciones",
+        "decay": "Duración del golpe",
+        "amountHelp": "La intensidad es un porcentaje del rango del parámetro que se suma al valor base. Los valores negativos lo reducen. Las asignaciones al mismo parámetro se suman y el resultado respeta sus límites. La pausa y la detención restauran los valores base de la animación."
+      },
       "configuration": "Configuración de Animación",
       "description": "Ajusta los parámetros para ver los cambios de la animación de fondo en directo. Los ajustes se mantienen hasta recargar la página o cerrar sesión.",
       "colors": "Colores", "color": "Color del hilo", "coreColor": "Color del núcleo",

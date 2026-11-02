@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { WebThreadsProps } from "../react-bits/WebThreads";
+import { DEFAULT_AUDIO_MAPPINGS, type AudioMapping } from "@/lib/audio-animation";
 
 export const DEFAULT_BACKGROUND_SETTINGS = {
   colors: ["#a855f7", "#00008c"],
@@ -32,16 +33,26 @@ const BackgroundSettingsContext = createContext<{
   settings: BackgroundSettings;
   updateSettings: (patch: Partial<BackgroundSettings>) => void;
   resetSettings: () => void;
+  audioEnabled: boolean;
+  setAudioEnabled: (enabled: boolean) => void;
+  mappings: AudioMapping[];
+  setMappings: (mappings: AudioMapping[]) => void;
+  decayMs: number;
+  setDecayMs: (value: number) => void;
 } | null>(null);
 
 export function BackgroundSettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState(DEFAULT_BACKGROUND_SETTINGS);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [mappings, setMappings] = useState(DEFAULT_AUDIO_MAPPINGS);
+  const [decayMs, setDecayMs] = useState(220);
 
   return (
     <BackgroundSettingsContext.Provider value={{
       settings,
       updateSettings: (patch) => setSettings((current) => ({ ...current, ...patch })),
       resetSettings: () => setSettings(DEFAULT_BACKGROUND_SETTINGS),
+      audioEnabled, setAudioEnabled, mappings, setMappings, decayMs, setDecayMs,
     }}>
       {children}
     </BackgroundSettingsContext.Provider>

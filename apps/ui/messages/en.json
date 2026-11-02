@@ -34,6 +34,28 @@
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": {
+    "bassVisual": {
+      "title": "Bass pulse", "description": "The circle size shows current bass energy. An expanding, fading glow indicates a detected pulse; stronger pulses produce a stronger glow.",
+      "sensitivity": "Sensitivity: {value, number}×", "interval": "Pulse spacing: {value, number} ms", "decay": "Fade: {value, number} ms", "reset": "Reset settings",
+      "notes": "Active during live analysis and playback. Higher sensitivity lowers the bass detection threshold in the measurement fields too. Changing sensitivity or spacing resets detection history. These are pulses in the configured bass range, not verified kick drum recognition. Animated glows are disabled when your system requests reduced motion."
+    },
+    "liveAnalysis": {
+      "title": "Live analysis", "description": "Current measurements of the playing track in separate fields, refreshed approximately every 100 ms. No full-file analysis is required.",
+      "start": "Play and analyze live", "restart": "Restart analysis", "stop": "Stop analysis", "yes": "Yes", "no": "No",
+      "idle": "Analysis off", "running": "Analyzing", "paused": "Paused — values frozen", "ended": "Track ended — last values", "waiting": "Waiting for audio…", "otherTrack": "A different track is playing", "playbackFailed": "Playback failed — check the player", "failed": "Live analysis could not start. Check Web Audio support in your browser and try again.",
+      "windowStart": "Measurement window start", "windowEnd": "Track time / window end", "lastBassTime": "Last bass pulse time", "lastBassStrength": "Last bass pulse strength relative to threshold", "lastOnsetTime": "Last energy increase time", "lastOnsetStrength": "Last energy increase strength relative to threshold", "silenceStart": "Current silence start",
+      "notes": "Fields refresh approximately every 100 ms with a 93 ms measurement window. Attacks are detected separately approximately every 20 ms, using a shorter 23 ms window and filtered bass. Glows react immediately; ringing is grouped into one event. Seeking resets history. The browser can delay reads, especially in the background. Tempo requires regular pulses; bars are not inferred. Stopping analysis does not stop playback."
+    },
+    "analysis": {
+      "title": "Audio analysis", "back": "Back to Library", "description": "Analyze the entire recording without playback. Results are computed in your browser and remain available until you leave this page. Click a track title in the Library to open its analysis.",
+      "limits": "First version: MP3/WAV, up to 50 MiB and 10 minutes, mono or stereo. Parameters every 100 ms; frequency analysis window approximately 93 ms. Band energy is a percentage of energy between 20 and 20,000 Hz. RMS and Peak measure digital signal levels, not LUFS.",
+      "analyze": "Analyze entire track", "cancel": "Cancel", "export": "Download JSON", "processing": "Analysis: {progress}%", "progress": "Analysis progress", "retry": "Try again",
+      "unsupported": "This browser does not support audio analysis.", "limit": "The file exceeds analysis limits: 50 MiB, 10 minutes, mono/stereo or the memory budget.", "failed": "Audio analysis failed. Try again.", "denied": "You do not have access to this recording.", "missing": "This recording is no longer available.", "noAudio": "This track has no audio file.",
+      "duration": "Duration", "sampleRate": "Analysis sample rate", "channels": "Channels", "tempo": "Estimated bass pulse tempo", "unknown": "No reliable estimate",
+      "estimates": "A bass pulse is an energy increase at 20–250 Hz, not instrument recognition. Tempo is based on pulse regularity and may be half or twice the musical BPM. Beats, meter and bars are not inferred yet. Strength is the increase relative to the detection threshold, not confidence.",
+      "view": "Show", "events": "Events", "timeline": "Parameters every 100 ms", "time": "Start time", "end": "End time", "event": "Event", "strength": "Strength relative to threshold", "dominant": "Strongest frequency",
+      "bassOnset": "Bass pulse (estimated)", "onset": "Energy increase", "silence": "Silence below −60 dBFS", "empty": "No events detected. Signal parameters are available in the other view.", "previous": "Previous", "next": "Next", "page": "Page {page} of {pages} · {count} entries"
+    },
     "player": {"volume":"Volume","mute":"Mute","unmute":"Unmute","label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
     "upload": {
       "addAnother": "Add another track",
@@ -63,7 +85,36 @@
       "audioAvailable": "Audio available", "noAudio": "No audio file"
     },
     "home": { "title": "Sounds home" },
+    "audioBands": {
+      "title": "Frequency detectors", "reset": "Reset detectors",
+      "description": "Choose a frequency range for each signal. Level follows its energy; attack generates one impulse at the start of a sound.",
+      "bass": "Bass", "mid": "Mid tones", "high": "High tones",
+      "fromHz": "From (Hz)", "toHz": "To (Hz)", "sensitivity": "Sensitivity",
+      "minDbfs": "Minimum level (dBFS)", "minIntervalMs": "Minimum hit spacing (ms)",
+      "lastAttack": "Last attack", "level": "{band} level",
+      "notes": "Ranges may overlap. Filters also pick up nearby frequencies and harmonics; they do not identify an instrument or a note. Settings last until reload or sign-out."
+    },
     "animations": {
+      "audio": {
+        "title": "Audio response",
+        "description": "Sliders below set the base values. Each mapping adds an audio response to the selected parameter.",
+        "enabled": "React to audio",
+        "start": "Start audio response",
+        "selectTrack": "Select a track in the library first, then return here.",
+        "kickNote": "Kick uses the attack of the configured bass range. All attacks detect energy changes in their band, not a specific instrument.",
+        "rowEnabled": "Active",
+        "source": "Signal",
+        "target": "Animation parameter",
+        "bass": "Bass level",
+        "kick": "Kick / bass attack",
+        "mid": "Mid level", "midAttack": "Mid attack", "high": "High level", "highAttack": "High attack",
+        "amount": "Strength",
+        "remove": "Remove",
+        "add": "Add mapping",
+        "reset": "Reset mappings",
+        "decay": "Hit decay",
+        "amountHelp": "Strength is a percentage of the parameter range added to its base value. Negative values reduce it. Mappings to the same parameter add together; the result stays within its limits. Pause and stop return the animation to its base values."
+      },
       "configuration": "Animation Settings",
       "description": "Adjust the settings to see the background animation change live. Settings last until you reload the page or sign out.",
       "colors": "Colors", "color": "Thread color", "coreColor": "Core color",

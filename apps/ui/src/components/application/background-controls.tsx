@@ -6,26 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useBackgroundSettings, type NumericBackgroundSetting } from "./background-settings";
+import { ANIMATION_PARAMETERS } from "@/lib/audio-animation";
 
-const NUMERIC_CONTROLS = {
-  threadCount: { min: 1, max: 24, step: 1 },
-  spread: { min: 0, max: 1, step: 0.001 },
-  speed: { min: 0, max: 5, step: 0.01 },
-  frequency: { min: 0, max: 20, step: 0.1 },
-  taper: { min: 0, max: 2, step: 0.01 },
-  position: { min: 0, max: 1, step: 0.01 },
-  pinch: { min: 0, max: 1, step: 0.01 },
-  nodes: { min: 1, max: 6, step: 1 },
-  angle: { min: -180, max: 180, step: 1 },
-  glow: { min: 0, max: 0.1, step: 0.001 },
-  falloff: { min: 0.05, max: 2, step: 0.01 },
-  brightness: { min: 0, max: 2, step: 0.01 },
-  depth: { min: 0, max: 1, step: 0.01 },
-  pulses: { min: 0, max: 5, step: 0.01 },
-  fade: { min: 0, max: 1, step: 0.01 },
-  grain: { min: 0, max: 1, step: 0.01 },
-  mouseStrength: { min: 0, max: 1, step: 0.01 },
-} satisfies Record<NumericBackgroundSetting, { min: number; max: number; step: number }>;
+const NUMERIC_CONTROLS = ANIMATION_PARAMETERS;
 
 export type BackgroundControlsLabels = {
   configuration: string;
@@ -89,7 +72,7 @@ export function BackgroundControls({ labels }: { labels: BackgroundControlsLabel
   const id = useId();
 
   return (
-    <details open className="group mt-6">
+    <details open className="group mt-6" data-background-base-controls>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg border px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
         <h2 className="text-lg">{labels.configuration}</h2>
         <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open:rotate-180" />

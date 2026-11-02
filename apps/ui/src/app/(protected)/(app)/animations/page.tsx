@@ -2,6 +2,8 @@ import { requireRoles } from "@/lib/auth";
 import { APP_ROLES } from "@/lib/route-access";
 import { getTranslations } from "next-intl/server";
 import { BackgroundControls } from "@/components/application/background-controls";
+import { AudioAnimationControls } from "@/components/application/audio-animation-controls";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export default async function AnimationsPage() {
   await requireRoles(APP_ROLES);
@@ -9,6 +11,9 @@ export default async function AnimationsPage() {
 
   return (
     <main className="py-6">
+      <ClientMessages namespaces={["app"]}>
+        <AudioAnimationControls />
+      </ClientMessages>
       <BackgroundControls labels={{
         configuration: controls("configuration"),
         description: controls("description"),

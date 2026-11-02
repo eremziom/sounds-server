@@ -85,6 +85,7 @@ try {
         assert.equal(await evaluate("!!document.querySelector('[data-application-runtime], [data-persistent-media]')"), false);
         const message = failure === "limited" ? messages.errors.rateLimited : messages.auth.session.unavailable;
         assert.equal(await evaluate("document.querySelector('[data-session-resume] [role=alert]').textContent"), message);
+        assert.equal(await evaluate("document.querySelector('#application-navigation').getClientRects().length + document.querySelector('[data-header-user-menu]').getClientRects().length"), 0, "Entry recovery hides session controls");
         // Updating translations must preserve the failure without another refresh.
         for (const nextLocale of ["en", "pl", "es"]) {
           const translated = JSON.parse(await readFile(new URL(`../messages/${nextLocale}.json`, import.meta.url), "utf8"));
@@ -191,6 +192,7 @@ try {
         assert.equal(await evaluate("!!document.querySelector('input[name=login]')"), false);
         const message = failure === "me-limited" ? messages.errors.rateLimited : messages.auth.session.unavailable;
         assert.equal(await evaluate("document.querySelector('[data-session-check] [role=alert]').textContent"), message);
+        assert.equal(await evaluate("document.querySelector('#application-navigation').getClientRects().length + document.querySelector('[data-header-user-menu]').getClientRects().length"), 0, "Failed session checks hide session controls");
         assert.equal((await send("Network.getCookies", { urls: [origin] })).cookies.find(c => c.name === "refreshToken").value, session.refreshToken);
         mode = "success";
         await evaluate("document.querySelector('[data-session-check] button').click()");

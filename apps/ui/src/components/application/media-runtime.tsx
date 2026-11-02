@@ -2,13 +2,16 @@ import {
   createContext, useContext, useLayoutEffect, useRef, useState,
   type ReactNode, type RefObject,
 } from "react";
+import { LiveAnalysisProvider } from "./live-analysis-runtime";
 import type { ApplicationSession } from "../../lib/application-session";
 import { useAudioPlayback } from "./use-audio-playback";
+import { createLiveAudioGraph } from "../../lib/live-audio-analysis";
 
 type MediaRuntimeContext = {
   audio: RefObject<HTMLAudioElement | null>;
   animationHost: RefObject<HTMLDivElement | null>;
   registerStop: (stop: () => void) => () => void;
+  analysisGraph: ReturnType<typeof createLiveAudioGraph>;
 };
 
 const MediaContext = createContext<MediaRuntimeContext | null>(null);
@@ -31,18 +34,22 @@ export function MediaRuntime({ children, session, blocked = false }: {
   session: ApplicationSession;
   blocked?: boolean;
 }) {
-  const playback = useAudioPlayback();
+  const [analysisGraph] = useState(createLiveAudioGraph);
+  const playback = useAudioPlayback(analysisGraph.resume);
   const { audio } = playback;
   const animationHost = useRef<HTMLDivElement>(null);
   const [stops] = useState(() => new Set<() => void>());
   const [media] = useState<MediaRuntimeContext>(() => ({
     audio,
+    analysisGraph,
     animationHost,
     registerStop(stop) {
       stops.add(stop);
       return () => { stops.delete(stop); };
     },
   }));
+
+  useLayoutEffect(() => () => analysisGraph.close(), [analysisGraph]);
 
   // Layout cleanup runs before host removal; detached elements no longer report
   // their running Web Animations through getAnimations().
@@ -75,7 +82,7 @@ export function MediaRuntime({ children, session, blocked = false }: {
           <audio ref={audio} preload="none" />
           <div ref={animationHost} data-animation-host />
         </div>
-        {children}
+        <LiveAnalysisProvider>{children}</LiveAnalysisProvider>
       </PlaybackContext.Provider>
     </MediaContext.Provider>
   );
