@@ -34,6 +34,23 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "liveAnalysis": {
+      "title": "Análisis en vivo", "description": "Mediciones actuales de la pista en reproducción en campos separados, actualizados aproximadamente cada 100 ms. No se necesita analizar el archivo completo.",
+      "start": "Reproducir y analizar en vivo", "restart": "Reiniciar análisis", "stop": "Detener análisis", "yes": "Sí", "no": "No",
+      "idle": "Análisis desactivado", "running": "Analizando", "paused": "En pausa — valores congelados", "ended": "Pista finalizada — últimos valores", "waiting": "Esperando audio…", "otherTrack": "Se está reproduciendo otra pista", "playbackFailed": "Error de reproducción — revisa el reproductor", "failed": "No se pudo iniciar el análisis en vivo. Comprueba la compatibilidad con Web Audio y reinténtalo.",
+      "windowStart": "Inicio de la ventana de medición", "windowEnd": "Tiempo de pista / fin de ventana", "lastBassTime": "Hora del último pulso grave", "lastBassStrength": "Intensidad del último pulso grave respecto al umbral", "lastOnsetTime": "Hora del último aumento de energía", "lastOnsetStrength": "Intensidad del último aumento de energía respecto al umbral", "silenceStart": "Inicio del silencio actual",
+      "notes": "Las mediciones provienen de Web Audio, no de la tabla. La ventana es de unos 93 ms; los valores pueden diferir del análisis completo. Los pulsos se estiman a partir de mediciones sucesivas. Cambiar de posición reinicia el historial. Las pestañas ocultas pueden reducir la frecuencia de actualización. El tempo requiere varios segundos de pulsos regulares; no se infieren compases. Detener el análisis no detiene la reproducción."
+    },
+    "analysis": {
+      "title": "Análisis de audio", "back": "Volver a la Biblioteca", "description": "Analiza la grabación completa sin reproducirla. Los resultados se calculan en el navegador y están disponibles hasta salir de esta página. Pulsa el título de una pista en la Biblioteca para abrir su análisis.",
+      "limits": "Primera versión: MP3/WAV, hasta 50 MiB y 10 minutos, mono o estéreo. Parámetros cada 100 ms; ventana de frecuencias de unos 93 ms. La energía por banda es un porcentaje entre 20 y 20 000 Hz. RMS y Peak miden niveles digitales, no LUFS.",
+      "analyze": "Analizar toda la pista", "cancel": "Cancelar", "export": "Descargar JSON", "processing": "Análisis: {progress}%", "progress": "Progreso del análisis", "retry": "Reintentar",
+      "unsupported": "Este navegador no admite el análisis de audio.", "limit": "El archivo supera los límites: 50 MiB, 10 minutos, mono/estéreo o el presupuesto de memoria.", "failed": "No se pudo analizar el audio. Reinténtalo.", "denied": "No tienes acceso a esta grabación.", "missing": "Esta grabación ya no está disponible.", "noAudio": "Esta pista no tiene archivo de audio.",
+      "duration": "Duración", "sampleRate": "Frecuencia de muestreo del análisis", "channels": "Canales", "tempo": "Tempo estimado de pulsos graves", "unknown": "Sin estimación fiable",
+      "estimates": "Un pulso grave es un aumento de energía entre 20 y 250 Hz, no una identificación de instrumentos. El tempo se basa en la regularidad de los pulsos y puede ser la mitad o el doble del BPM musical. Aún no se infieren beats, métrica ni compases. La intensidad es el aumento respecto al umbral de detección, no la confianza.",
+      "view": "Mostrar", "events": "Eventos", "timeline": "Parámetros cada 100 ms", "time": "Inicio", "end": "Fin", "event": "Evento", "strength": "Intensidad respecto al umbral", "dominant": "Frecuencia más intensa",
+      "bassOnset": "Pulso grave (estimado)", "onset": "Aumento de energía", "silence": "Silencio por debajo de −60 dBFS", "empty": "No se detectaron eventos. Los parámetros están disponibles en la otra vista.", "previous": "Anterior", "next": "Siguiente", "page": "Página {page} de {pages} · {count} entradas"
+    },
     "player": {"volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
     "upload": {
       "addAnother": "Añadir otra pista",

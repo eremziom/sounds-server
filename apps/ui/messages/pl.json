@@ -34,6 +34,23 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
+    "liveAnalysis": {
+      "title": "Analiza na żywo", "description": "Bieżące pomiary odtwarzanego utworu w osobnych polach, odświeżane co około 100 ms. Nie wymagają wcześniejszej analizy całego pliku.",
+      "start": "Odtwórz i analizuj na żywo", "restart": "Uruchom analizę od nowa", "stop": "Zatrzymaj analizę", "yes": "Tak", "no": "Nie",
+      "idle": "Analiza wyłączona", "running": "Analiza trwa", "paused": "Pauza — wartości zatrzymane", "ended": "Koniec utworu — ostatnie wartości", "waiting": "Oczekiwanie na dźwięk…", "otherTrack": "Odtwarzany jest inny utwór", "playbackFailed": "Błąd odtwarzania — sprawdź odtwarzacz", "failed": "Nie udało się uruchomić analizy na żywo. Sprawdź obsługę Web Audio w przeglądarce i spróbuj ponownie.",
+      "windowStart": "Początek okna pomiaru", "windowEnd": "Czas utworu / koniec okna", "lastBassTime": "Czas ostatniego impulsu basowego", "lastBassStrength": "Siła ostatniego impulsu basowego względem progu", "lastOnsetTime": "Czas ostatniego wzrostu energii", "lastOnsetStrength": "Siła ostatniego wzrostu energii względem progu", "silenceStart": "Początek bieżącej ciszy",
+      "notes": "Pomiary pochodzą z Web Audio, nie z tabeli. Okno sygnału ma około 93 ms; pomiary mogą różnić się od analizy całego pliku. Impulsy są szacowane z kolejnych pomiarów. Po przewinięciu historia detekcji jest zerowana. Ukryta karta może ograniczać odświeżanie. Tempo wymaga kilku sekund regularnych impulsów; nie wyznaczamy taktów. Zatrzymanie analizy nie zatrzymuje odtwarzania."
+    },
+    "analysis": {
+      "title": "Analiza audio", "back": "Wróć do Biblioteki", "description": "Analiza całego utworu bez odtwarzania. Wyniki są obliczane w przeglądarce i dostępne do opuszczenia tej strony. Kliknij tytuł utworu w Bibliotece, aby otworzyć analizę.",
+      "limits": "Pierwsza wersja: MP3/WAV, maksymalnie 50 MiB i 10 minut, mono lub stereo. Tabela parametrów co 100 ms; okno analizy częstotliwości około 93 ms. Energia pasm jest udziałem procentowym w zakresie 20–20 000 Hz. RMS i Peak odnoszą się do cyfrowego poziomu sygnału, nie do LUFS.",
+      "analyze": "Analizuj cały utwór", "cancel": "Anuluj", "export": "Pobierz JSON", "processing": "Analiza: {progress}%", "progress": "Postęp analizy", "retry": "Spróbuj ponownie",
+      "unsupported": "Ta przeglądarka nie obsługuje analizy audio.", "limit": "Plik przekracza limity analizy: 50 MiB, 10 minut, mono/stereo lub dostępny budżet pamięci.", "failed": "Nie udało się przeanalizować audio. Spróbuj ponownie.", "denied": "Nie masz dostępu do tego nagrania.", "missing": "Nagranie nie jest już dostępne.", "noAudio": "Ten utwór nie ma pliku audio.",
+      "duration": "Czas trwania", "sampleRate": "Próbkowanie analizy", "channels": "Kanały", "tempo": "Szacowane tempo impulsów basowych", "unknown": "Brak wiarygodnego wyniku",
+      "estimates": "Impuls basowy oznacza wzrost energii w paśmie 20–250 Hz, nie rozpoznanie instrumentu. Tempo wynika z regularności tych impulsów i może odpowiadać połowie lub dwukrotności BPM. Nie wyznaczamy jeszcze beatów, metrum ani taktów. Siła to stosunek wzrostu do progu detekcji, a nie pewność wyniku.",
+      "view": "Pokaż", "events": "Zdarzenia", "timeline": "Parametry co 100 ms", "time": "Czas od", "end": "Czas do", "event": "Zdarzenie", "strength": "Siła względem progu", "dominant": "Najsilniejsza częstotliwość",
+      "bassOnset": "Impuls basowy (szacowany)", "onset": "Wzrost energii", "silence": "Cisza poniżej −60 dBFS", "empty": "Nie wykryto zdarzeń. Parametry sygnału są dostępne w drugim widoku.", "previous": "Poprzednia", "next": "Następna", "page": "Strona {page} z {pages} · {count} wpisów"
+    },
     "player": {"volume":"Głośność","mute":"Wycisz","unmute":"Włącz dźwięk","label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
     "upload": {
       "addAnother": "Dodaj kolejny utwór",

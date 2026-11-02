@@ -8,6 +8,7 @@ import { formatCalendarDate, formatNumber } from "@/i18n/format";
 import { formats } from "@/i18n/formats";
 import { LibraryRetry } from "@/components/application/library-retry";
 import { TrackPlayButton } from "@/components/application/track-play-button";
+import { ProtectedLink } from "@/components/application/protected-link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default async function LibraryPage() {
@@ -53,7 +54,8 @@ export default async function LibraryPage() {
                 play: t("playTrack", { title: track.title }), pause: t("pauseTrack", { title: track.title }),
               }} />}</TableCell>
               <TableCell className="!whitespace-normal">
-                <a className="break-words font-medium no-underline">{track.title}</a>
+                {track.hasAudio ? <ProtectedLink href={`/library/${track.id}/analysis`} className="break-words font-medium underline underline-offset-4">{track.title}</ProtectedLink>
+                  : <span className="break-words font-medium">{track.title}</span>}
               </TableCell>
               <TableCell>{track.author ?? "—"}</TableCell>
               <TableCell>{track.genre ?? "—"}</TableCell>

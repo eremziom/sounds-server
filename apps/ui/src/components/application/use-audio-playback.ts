@@ -6,7 +6,7 @@ import { useApplicationSession } from "./application-runtime";
 export type PlaybackTrack = { id: number; title: string; author: string | null };
 export type PlaybackError = "failed" | "blocked" | "denied" | "missing";
 
-export function useAudioPlayback() {
+export function useAudioPlayback(beforePlay?: () => Promise<void>) {
   const audio = useRef<HTMLAudioElement>(null);
   const { runProtected, getStatus, end, subscribe } = useApplicationSession();
   const [track, setTrack] = useState<PlaybackTrack | null>(null);
@@ -102,6 +102,8 @@ export function useAudioPlayback() {
           element.load();
         }
         if (element.ended) element.currentTime = 0;
+        await beforePlay?.();
+        if (revision !== generation.current || getStatus() !== "active") return;
         await element.play();
       });
     } catch (failure) {

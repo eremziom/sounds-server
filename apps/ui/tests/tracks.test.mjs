@@ -3,13 +3,26 @@ import { test } from "node:test";
 import { register } from "node:module";
 import { translateApiError } from "../src/i18n/api-errors.ts";
 register("./helpers/server-only-loader.mjs", import.meta.url);
-const { getTracks } = await import("../src/api/tracks.ts");
+const { getTracks, getTrack } = await import("../src/api/tracks.ts");
 const { proxyTrack } = await import("../src/api/track-proxy.ts");
 const id = "c99d10b0-3235-4872-9585-01a44819b4fa";
 const track = { id: 1, ownerId: null, author: null, hasAudio: false, title: "Historic", description: null, genre: null, subgenre: null, publicationDate: "2020-01-01", bpm: { bpmFrom: 120, bpmTo: 130 } };
 const req = (method = "POST", body = "{}", headers = {}) => new Request("https://sounds.test/api/tracks/uploads", {
   method, headers: { origin: "https://sounds.test", "content-type": "application/json", ...headers },
   ...(!["GET", "HEAD", "DELETE"].includes(method) ? { body, duplex: "half" } : {}),
+});
+
+test("track details use authenticated no-store requests and preserve access/not-found errors", async () => {
+  const result = await getTrack(1, "cookie-token", { apiUrl: "https://api.test", request: async (url, init) => {
+    assert.equal(url, "https://api.test/tracks/1");
+    assert.equal(init.headers.Authorization, "Bearer cookie-token");
+    assert.equal(init.cache, "no-store");
+    return Response.json({ ...track, storageKey: "private" });
+  } });
+  assert.deepEqual(result, { ok: true, data: track });
+  assert.equal((await getTrack(1, undefined, { request: () => assert.fail() })).status, 401);
+  for (const status of [401, 403, 404]) assert.equal((await getTrack(1, "token", { request: async () => Response.json({ code: "TRACK_NOT_FOUND" }, { status }) })).status, status);
+  assert.equal((await getTrack(1, "token", { request: async () => Response.json({}) })).error.kind, "invalid-response");
 });
 
 test("track list validates the whole response and projects public fields", async () => {

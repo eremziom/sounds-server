@@ -46,6 +46,12 @@ export function getTracks(accessToken: string | undefined, options?: ApiOptions)
   }, options);
 }
 
+export function getTrack(id: number, accessToken: string | undefined, options?: ApiOptions): Promise<ApiResult<Track>> {
+  if (!accessToken) return Promise.resolve({ ok: false, status: 401,
+    error: { kind: "http", status: 401, body: { code: "AUTH_REQUIRED" } } });
+  return apiRequest(`/tracks/${id}`, { method: "GET", expectedStatus: 200, accessToken, parse: parseTrack }, options);
+}
+
 function parseUploadConfig(value: unknown): UploadConfig | undefined {
   if (
     !isRecord(value) || typeof value.maxFileBytes !== "number" ||
