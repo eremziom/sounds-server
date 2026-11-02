@@ -298,8 +298,11 @@ only its isolated database and temporary directory.
 Next.js proxies these operations under `/api/tracks/uploads` and GET/HEAD audio
 under `/api/tracks/:id/audio`. See [UI README](apps/ui/README.md) for CSRF origin,
 streaming limits, transport errors and `test:tracks-proxy`. The server-only
-`getTracks` module validates uncached list responses; Library/form/player UI is
-implemented in the subsequent audio-upload plan stages.
+`getTracks` module validates uncached list responses. Library, upload form and
+the persistent footer player are implemented through audio-upload stage 5.6.
+Library row play/pause and footer controls share one audio element and playback
+state across page/locale changes. See `pnpm --filter ui test:playback` for browser
+coverage with an isolated audio API, including Range seeking and error recovery.
 
 Read/deletion HTTP tests use real JWT guards and temporary disk storage with a
 mocked database: `pnpm --filter api exec jest --runInBand track-audio`.

@@ -47,6 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           errors: { page: messages.errors.page },
           common: { actions: messages.common.actions },
           auth: { session: messages.auth.session },
+          app: { player: messages.app.player },
         }}>
           <SiteHeader
             navigation={<div id="application-navigation" />}

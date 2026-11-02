@@ -70,7 +70,7 @@ mutations mean an unknown result; do not claim a definite failure or retry
 automatically. `AUDIO_FILE_TOO_LARGE` (413) also covers the proxy byte limit.
 Only code and allowlisted validation fields/bounds survive API JSON errors.
 New upload 404/409/410 messages are available in en/pl/es via operation `track`.
-The Library and upload form are available; playback controls remain in stage 5.6.
+The Library and upload form are available; shared playback controls are implemented.
 
 Run `pnpm --filter ui test` for domain/proxy unit tests. After a UI build,
 `pnpm --filter ui test:tracks-proxy` exercises the actual Next.js HTTP routes with
@@ -131,13 +131,28 @@ of this flow in en/pl/es.
 
 `/library` is available to USER/ARTIST, including combined ADMIN roles. Its page
 checks roles before fetching the uncached, server-validated track list. It shows
-title, optional description, localized release date, BPM range and audio availability
-in API order, including historical tracks without audio. Playback is planned in
-audio-upload stage 5.6. Loading, empty and failure states have en/pl/es messages;
+title, author, genre/subgenre, localized publication date and optional BPM range
+in API order, including historical tracks without audio. Row play/pause controls
+share playback state with the persistent footer player. Loading, empty and failure states have en/pl/es messages;
 manual retry checks the session through `runProtected` before refreshing.
 API 401 enters session recovery; 403 opens access-denied. After building, run
 `pnpm --filter ui test:library` for browser checks of roles, direct/navigation entry,
 recovery, list states and retry. This suite also runs in `test:browser`.
+
+`MediaRuntime` owns one audio element and `useAudioPlayback` manages the selected
+track, playback commands and media event state. `usePlayback` connects Library
+buttons and `AudioPlayer`: play/pause, title/author, time, duration, seeking,
+buffering, ended and explicit error retry. The sticky footer includes SessionFooter
+and occupies normal document space, with wrapped controls on narrow screens.
+The seek slider supports arrows (5 seconds), Home and End. Navigation and locale
+changes preserve audio; unavailable/ended sessions stop and clear the source.
+Playback checks the session through `runProtected`. A media error triggers a
+protected HEAD to classify access/missing-recording errors; 401 ends the session,
+403/404 and transport/decoding failures remain recoverable through explicit retry.
+Browser playback policy rejection has a separate message. No automatic replay.
+After building, `pnpm --filter ui test:playback` checks these behaviors in Chromium
+with an isolated API and WAV stream, including real Range seeking, en/pl/es,
+locale/page continuity, keyboard controls, mobile footer and logout.
 
 `/upload` requires an application role and live `tracks:create` permission before
 loading upload configuration. The fourth HeaderMenu item uses the same policy;

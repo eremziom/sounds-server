@@ -68,7 +68,7 @@ export function SessionFooter({ accessTokenExpiresAt, sessionExpiresAt, status, 
 
   return (
     <footer className="mt-auto border-t text-xs text-muted-foreground" data-session-footer>
-      <div className="mx-auto flex w-full max-w-[1200px] items-center justify-end gap-x-2 whitespace-nowrap px-4 py-2 sm:px-6">
+      <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-end gap-x-2 gap-y-1 px-4 py-2 sm:px-6">
         {status === "ended" ? labels.ended : (
           <>
             <div className="flex items-center justify-end gap-x-2">

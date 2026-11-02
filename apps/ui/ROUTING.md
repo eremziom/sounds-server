@@ -223,7 +223,7 @@ Recovery permits `/library` and checks APP_ROLES on return. Initial list data is
 fetched on the server without shared cache; 401 redirects to recovery and 403 to
 access-denied. Other list failures show an explicit retry guarded by runProtected.
 Loading/empty/error states and track metadata are localized in en/pl/es. Audio
-availability is informational until playback is implemented in stage 5.6.
+controls share the persistent playback state introduced in stage 5.6.
 
 Audio-upload stage 5.5 adds `/upload` under `(app)`. Its page requires APP_ROLES
 and live `tracks:create` before fetching configuration; the fourth HeaderMenu
@@ -231,6 +231,13 @@ entry follows the same policy. Recovery checks both roles and permission on retu
 to `/upload`. File upload and completion use separate HTTP mutations behind
 runProtected, never Server Actions for file data. Completion refreshes the Router
 Cache so Library navigation sees current data without replacing MediaRuntime.
+
+Audio-upload stage 5.6 uses the existing GET/HEAD `/api/tracks/[id]/audio`
+proxy and one audio element in MediaRuntime. Row controls and the sticky player
+footer share state across page/locale transitions. Playback and error HEAD probes
+use runProtected; a probe returning 401 ends the runtime, whereas 403/404 and
+other media errors show an explicit retry. Session unavailability clears audio
+without automatically resuming it after recovery. No new page route is required.
 The root UnsavedNavigation observer preserves framework history fields and blocks
 same-tab links and Back/Forward through the editor's AlertDialog. Language changes
 consult the same blocker before their Server Action. Native beforeunload covers

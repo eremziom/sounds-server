@@ -49,8 +49,8 @@ export default async function LibraryPage() {
           </TableHeader>
           <TableBody>
             {result.data.map((track) => <TableRow key={track.id} data-track-id={track.id}>
-              <TableCell>{track.hasAudio && <TrackPlayButton trackId={track.id} labels={{
-                play: t("playTrack", { title: track.title }), pause: t("pauseTrack", { title: track.title }), failed: t("playFailed"),
+              <TableCell>{track.hasAudio && <TrackPlayButton track={{ id: track.id, title: track.title, author: track.author ?? null }} labels={{
+                play: t("playTrack", { title: track.title }), pause: t("pauseTrack", { title: track.title }),
               }} />}</TableCell>
               <TableCell className="!whitespace-normal">
                 <a className="break-words font-medium no-underline">{track.title}</a>
