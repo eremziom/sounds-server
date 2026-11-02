@@ -451,9 +451,8 @@ async function main() {
       'POST',
       '/tracks',
       {
-        title: 'Session test',
+        title: 'Session test', publicationDate: '2026-11-01',
         description: 'Test track',
-        releaseDate: '2026-10-17',
         bpm: { bpmFrom: 100, bpmTo: 120 },
       },
       afterRoles.accessToken,

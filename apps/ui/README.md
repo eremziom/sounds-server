@@ -352,7 +352,7 @@ fails. Since request context/providers may be unavailable, it uses English,
 `lang="en"`, and only the three strings in `messages/emergency.en.json`.
 A test checks that this minimal emergency catalog matches the English source.
 
-`src/i18n/formats.ts` defines shared named Intl formats: `releaseDate`, `decimal`
+`src/i18n/formats.ts` defines shared named Intl formats: `publicationDate`, `decimal`
 and `bpm`. They are configured for both server `getFormatter()` and client
 `useFormatter()`. Plain code may call `formatDate`, `formatNumber` or
 `formatCalendarDate` from `src/i18n/format.ts`, always passing the resolved locale.

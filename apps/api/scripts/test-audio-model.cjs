@@ -48,6 +48,15 @@ async function main() {
     const migrated = await db.query('SELECT * FROM "Track"');
     assert.deepEqual(migrated.rows, [{ ...historical.rows[0], ownerId: null }]);
 
+    for (const entry of readdirSync(migrationsDir, { withFileTypes: true })
+      .filter(entry => entry.isDirectory() && entry.name > migrationName)
+      .sort((a, b) => a.name.localeCompare(b.name))) {
+      await db.query(readFileSync(path.join(migrationsDir, entry.name, 'migration.sql'), 'utf8'));
+    }
+    const publication = (await db.query('SELECT * FROM "Track"')).rows[0];
+    assert.equal(publication.publicationDate.getTime(), historical.rows[0].releaseDate.getTime());
+    assert.equal(publication.genre, null); assert.equal(publication.subgenre, null);
+
     process.env.DATABASE_URL = testUrl.toString();
     const { PrismaService } = require('../dist/src/prisma/prisma.service.js');
     const { TracksService } = require('../dist/src/tracks/tracks.service.js');
@@ -66,8 +75,7 @@ async function main() {
       },
     });
     const dto = {
-      title: 'Owned track',
-      releaseDate: '2026-01-01',
+      title: 'Owned track', publicationDate: '2026-11-01',
       description: null,
       bpm: { bpmFrom: 130, bpmTo: 135 },
     };
@@ -167,7 +175,7 @@ async function main() {
     assert.equal(await prisma.audioFile.count(), 0);
     assert.deepEqual(
       await db.query('SELECT * FROM "Track"').then((result) => result.rows),
-      migrated.rows,
+      [publication],
     );
     console.log(
       'Audio model: historical data, ownership, responses, atomic creation, deletion rollback/permissions/cleanup ordering, uniqueness, foreign keys and cascading metadata deletion passed.',

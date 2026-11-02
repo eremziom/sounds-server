@@ -29,10 +29,10 @@ export default async function LibraryPage() {
             <h2 id={`track-${track.id}`} className="break-words text-xl font-semibold">{track.title}</h2>
             {track.description && <p className="whitespace-pre-wrap break-words text-muted-foreground">{track.description}</p>}
             <dl className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <div><dt className="text-muted-foreground">{t("releaseDate")}</dt>
-                <dd><time dateTime={track.releaseDate}>{formatCalendarDate(track.releaseDate, locale)}</time></dd></div>
-              <div><dt className="text-muted-foreground">{t("bpm")}</dt>
-                <dd>{formatNumber(track.bpm.bpmFrom, locale, formats.number.bpm)}–{formatNumber(track.bpm.bpmTo, locale, formats.number.bpm)}</dd></div>
+              <div><dt className="text-muted-foreground">{t("publicationDate")}</dt>
+                <dd><time dateTime={track.publicationDate}>{formatCalendarDate(track.publicationDate, locale)}</time></dd></div>
+              {track.bpm && <div><dt className="text-muted-foreground">{t("bpm")}</dt>
+                <dd>{formatNumber(track.bpm.bpmFrom, locale, formats.number.bpm)}–{formatNumber(track.bpm.bpmTo, locale, formats.number.bpm)}</dd></div>}
               <div><dt className="text-muted-foreground">{t("audio")}</dt>
                 <dd>{track.hasAudio ? t("audioAvailable") : t("noAudio")}</dd></div>
             </dl>

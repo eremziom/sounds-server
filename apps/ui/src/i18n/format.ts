@@ -8,7 +8,7 @@ export function formatNumber(value: number, locale: Locale, options: Intl.Number
 export function formatDate(
   value: Date | number,
   locale: Locale,
-  options: Intl.DateTimeFormatOptions = formats.dateTime.releaseDate,
+  options: Intl.DateTimeFormatOptions = formats.dateTime.publicationDate,
 ) {
   return new Intl.DateTimeFormat(locale, { ...options, timeZone }).format(value);
 }

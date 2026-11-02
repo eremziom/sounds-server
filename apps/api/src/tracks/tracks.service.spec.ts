@@ -26,7 +26,7 @@ const initialTracks = [
     ownerId: null as number | null,
     audioFile: null as { id: number } | null,
     title: 'Solar Drift',
-    releaseDate: new Date('2024-01-01'),
+    publicationDate: new Date('2024-01-01'),
     description: 'Driving psy with warm bass',
     bpmFrom: 128,
     bpmTo: 132,
@@ -36,7 +36,7 @@ const initialTracks = [
     ownerId: 42,
     audioFile: { id: 10 },
     title: 'Night Pulse',
-    releaseDate: new Date('2024-02-01'),
+    publicationDate: new Date('2024-02-01'),
     description: 'Dark rolling groove',
     bpmFrom: 134,
     bpmTo: 138,
@@ -126,7 +126,7 @@ describe('TracksService', () => {
       ownerId: null,
       hasAudio: false,
       title: 'Solar Drift',
-      releaseDate: '2024-01-01',
+      publicationDate: '2024-01-01',
     });
   });
 
@@ -142,7 +142,7 @@ describe('TracksService', () => {
   it('create adds a track with incremented id', async () => {
     const dto: CreateTrackDto = {
       title: 'New Dawn',
-      releaseDate: '2025-01-01',
+      publicationDate: '2026-11-01',
       description: 'Uplifting psy with sharp leads',
       bpm: { bpmFrom: 132, bpmTo: 136 },
     };

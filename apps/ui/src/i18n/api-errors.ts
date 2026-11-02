@@ -15,7 +15,7 @@ type MessageKey =
   | "validation.length" | "validation.usernameNoAt" | "validation.passwordComplexity" | "validation.invalid";
 
 type Message = { key: MessageKey; values?: { min: number; max: number } };
-const formFields = ["username", "email", "password", "confirmPassword", "login", "title", "description", "releaseDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo"] as const;
+const formFields = ["username", "email", "password", "confirmPassword", "login", "title", "description", "genre", "subgenre", "publicationDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo"] as const;
 type FormField = (typeof formFields)[number];
 export type ApiErrorMessages = { message: string; fieldErrors: Partial<Record<FormField, string[]>> };
 type Translate = (key: MessageKey, values?: { min: number; max: number }) => string;

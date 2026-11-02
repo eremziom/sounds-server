@@ -4,10 +4,18 @@ import { validateDraft, validateUploadFile } from "../src/components/application
 import { registerNavigationBlocker, confirmNavigation, hasNavigationBlocker } from "../src/lib/unsaved-navigation.ts";
 import { translateApiError } from "../src/i18n/api-errors.ts";
 
-const valid = { title: "Track", description: "Description", releaseDate: "2024-02-29", bpmFrom: "60", bpmTo: "200" };
-test("upload metadata enforces DTO boundaries, real calendar dates, numeric BPM and range order", () => {
+const valid = { title: "Track", description: "Description", genre: "", subgenre: "", bpmFrom: "60", bpmTo: "200" };
+test("upload metadata validates optional description and genres, numeric BPM and range order", () => {
   assert.deepEqual(validateDraft(valid), {});
-  assert.equal(validateDraft({ ...valid, releaseDate: "2023-02-29" }).releaseDate, "dateInvalid");
+  assert.deepEqual(validateDraft({ ...valid, bpmFrom: "", bpmTo: "" }), {});
+  assert.deepEqual(validateDraft({ ...valid, description: "", genre: "", subgenre: "" }), {});
+  for (const key of ["genre", "subgenre"]) {
+    assert.deepEqual(validateDraft({ ...valid, [key]: "abc" }), {});
+    assert.deepEqual(validateDraft({ ...valid, [key]: "x".repeat(30) }), {});
+    assert.equal(validateDraft({ ...valid, [key]: "ab" })[key], "lengthGenre");
+    assert.equal(validateDraft({ ...valid, [key]: "x".repeat(31) })[key], "lengthGenre");
+  }
+  assert.equal(validateDraft({ ...valid, bpmFrom: "90", bpmTo: "" }).bpmTo, "bpmInvalid");
   assert.equal(validateDraft({ ...valid, bpmFrom: "" }).bpmFrom, "bpmInvalid");
   assert.equal(validateDraft({ ...valid, bpmTo: "201" }).bpmTo, "bpmInvalid");
   assert.equal(validateDraft({ ...valid, bpmFrom: "120", bpmTo: "100" }).bpmTo, "bpmOrder");

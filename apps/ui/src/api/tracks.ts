@@ -8,8 +8,9 @@ export type UploadConfig = {
 
 export type Track = {
   id: number; ownerId: number | null; hasAudio: boolean;
-  title: string; description: string | null; releaseDate: string;
-  bpm: { bpmFrom: number; bpmTo: number };
+  title: string; description: string | null; publicationDate: string;
+  genre: string | null; subgenre: string | null;
+  bpm: { bpmFrom: number; bpmTo: number } | null;
 };
 
 export function parseTrack(value: unknown): Track | undefined {
@@ -17,13 +18,18 @@ export function parseTrack(value: unknown): Track | undefined {
   if (!isRecord(value) || !positiveInt(value.id) ||
       !(value.ownerId === null || positiveInt(value.ownerId)) || typeof value.hasAudio !== "boolean" ||
       typeof value.title !== "string" || !(value.description === null || typeof value.description === "string") ||
-      typeof value.releaseDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value.releaseDate) ||
-      !Number.isFinite(Date.parse(value.releaseDate)) || new Date(value.releaseDate).toISOString().slice(0, 10) !== value.releaseDate ||
-      !isRecord(value.bpm) || !positiveInt(value.bpm.bpmFrom) || !positiveInt(value.bpm.bpmTo) ||
-      value.bpm.bpmFrom > value.bpm.bpmTo) return undefined;
+      !(value.genre === null || typeof value.genre === "string") || !(value.subgenre === null || typeof value.subgenre === "string") ||
+      typeof value.publicationDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value.publicationDate) ||
+      !Number.isFinite(Date.parse(value.publicationDate)) || new Date(value.publicationDate).toISOString().slice(0, 10) !== value.publicationDate) return undefined;
+  let bpm: Track["bpm"] = null;
+  if (value.bpm !== null) {
+    if (!isRecord(value.bpm) || !positiveInt(value.bpm.bpmFrom) || !positiveInt(value.bpm.bpmTo) ||
+        value.bpm.bpmFrom > value.bpm.bpmTo) return undefined;
+    bpm = { bpmFrom: value.bpm.bpmFrom, bpmTo: value.bpm.bpmTo };
+  }
   return { id: value.id, ownerId: value.ownerId, hasAudio: value.hasAudio,
-    title: value.title, description: value.description, releaseDate: value.releaseDate,
-    bpm: { bpmFrom: value.bpm.bpmFrom, bpmTo: value.bpm.bpmTo } };
+    title: value.title, description: value.description, publicationDate: value.publicationDate,
+    genre: value.genre, subgenre: value.subgenre, bpm };
 }
 
 export function getTracks(accessToken: string | undefined, options?: ApiOptions): Promise<ApiResult<Track[]>> {

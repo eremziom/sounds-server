@@ -5,6 +5,8 @@ export interface Track {
   hasAudio: boolean;
   title: string;
   description: string | null;
-  releaseDate: string;
-  bpm: BpmRangeDto;
+  genre: string | null;
+  subgenre: string | null;
+  publicationDate: string;
+  bpm: BpmRangeDto | null;
 }

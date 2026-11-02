@@ -75,10 +75,12 @@ export class TemporaryUploadsService {
         data: {
           ownerId,
           title: dto.title,
-          description: dto.description,
-          releaseDate: new Date(dto.releaseDate),
-          bpmFrom: dto.bpm.bpmFrom,
-          bpmTo: dto.bpm.bpmTo,
+          description: dto.description ?? null,
+          publicationDate: new Date(dto.publicationDate),
+          genre: dto.genre ?? null,
+          subgenre: dto.subgenre ?? null,
+          bpmFrom: dto.bpm?.bpmFrom ?? null,
+          bpmTo: dto.bpm?.bpmTo ?? null,
           audioFile: {
             create: {
               storageKey: upload.storageKey,
@@ -95,8 +97,13 @@ export class TemporaryUploadsService {
         hasAudio: true,
         title: track.title,
         description: track.description,
-        releaseDate: track.releaseDate.toISOString().split('T')[0],
-        bpm: { bpmFrom: track.bpmFrom, bpmTo: track.bpmTo },
+        publicationDate: track.publicationDate.toISOString().split('T')[0],
+        genre: track.genre ?? null,
+        subgenre: track.subgenre ?? null,
+        bpm:
+          track.bpmFrom === null || track.bpmTo === null
+            ? null
+            : { bpmFrom: track.bpmFrom, bpmTo: track.bpmTo },
       };
     });
   }

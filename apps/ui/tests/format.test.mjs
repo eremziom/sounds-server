@@ -16,7 +16,7 @@ test("dates and numbers use the same explicit locale and UTC on server and clien
     assert.equal(formatDate(date, locale), expectedDate);
     assert.equal(formatNumber(12345.5, locale).replace(/\s/g, " "), expectedNumber);
     const formatter = createFormatter({ locale, timeZone, formats });
-    assert.equal(formatter.dateTime(date, "releaseDate"), expectedDate);
+    assert.equal(formatter.dateTime(date, "publicationDate"), expectedDate);
     assert.equal(formatter.number(12345.5, "decimal"), formatNumber(12345.5, locale));
     assert.equal(formatter.number(128.25, "bpm"), locale === "en" ? "128.3" : "128,3");
   }

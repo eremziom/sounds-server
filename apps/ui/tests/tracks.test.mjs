@@ -6,7 +6,7 @@ register("./helpers/server-only-loader.mjs", import.meta.url);
 const { getTracks } = await import("../src/api/tracks.ts");
 const { proxyTrack } = await import("../src/api/track-proxy.ts");
 const id = "c99d10b0-3235-4872-9585-01a44819b4fa";
-const track = { id: 1, ownerId: null, hasAudio: false, title: "Historic", description: null, releaseDate: "2020-01-01", bpm: { bpmFrom: 120, bpmTo: 130 } };
+const track = { id: 1, ownerId: null, hasAudio: false, title: "Historic", description: null, genre: null, subgenre: null, publicationDate: "2020-01-01", bpm: { bpmFrom: 120, bpmTo: 130 } };
 const req = (method = "POST", body = "{}", headers = {}) => new Request("https://sounds.test/api/tracks/uploads", {
   method, headers: { origin: "https://sounds.test", "content-type": "application/json", ...headers },
   ...(!["GET", "HEAD", "DELETE"].includes(method) ? { body, duplex: "half" } : {}),
@@ -19,7 +19,8 @@ test("track list validates the whole response and projects public fields", async
     return Response.json([{ ...track, storageKey: "private" }, { ...track, id: 2, ownerId: 3, hasAudio: true }]);
   } });
   assert.deepEqual(result.data, [track, { ...track, id: 2, ownerId: 3, hasAudio: true }]);
-  for (const data of [null, {}, [track, null], [{ ...track, id: "1" }], [{ ...track, hasAudio: undefined }], [{ ...track, ownerId: -1 }], [{ ...track, releaseDate: "2026-02-30" }], [{ ...track, bpm: { bpmFrom: 130, bpmTo: 120 } }]]) {
+  assert.deepEqual((await getTracks("token", { request: async () => Response.json([{ ...track, bpm: null }]) })).data, [{ ...track, bpm: null }]);
+  for (const data of [null, {}, [track, null], [{ ...track, id: "1" }], [{ ...track, hasAudio: undefined }], [{ ...track, ownerId: -1 }], [{ ...track, publicationDate: "2026-02-30" }], [{ ...track, bpm: { bpmFrom: 130, bpmTo: 120 } }]]) {
     assert.equal((await getTracks("token", { request: async () => Response.json(data) })).error.kind, "invalid-response");
   }
   assert.deepEqual((await getTracks("token", { request: async () => Response.json([]) })).data, []);

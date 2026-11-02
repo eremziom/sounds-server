@@ -51,7 +51,7 @@ const api = createServer(async (req, res) => {
     if (mode === "validation") return res.writeHead(400).end(JSON.stringify({ code: "VALIDATION_FAILED", fieldErrors: [{ field: "title", code: "LENGTH", params: { min: 3, max: 50 } }] }));
     if (mode === "network") return req.socket.destroy();
     if (mode === "expired") return res.writeHead(410).end(JSON.stringify({ code: "AUDIO_UPLOAD_EXPIRED" }));
-    const track = { ...data, id: tracks.length + 1, ownerId: 1, hasAudio: true };
+    const track = { bpm: null, description: null, genre: null, subgenre: null, publicationDate: new Date().toISOString().slice(0,10), ...data, id: tracks.length + 1, ownerId: 1, hasAudio: true };
     tracks.push(track); uploads.delete(id);
     return res.writeHead(201).end(JSON.stringify(track));
   }
@@ -84,7 +84,6 @@ try {
       await fill({ title: "New recording", bpmFrom: "90", bpmTo: "120" });
       await evaluate("document.querySelector('textarea').focus()");
       await send("Input.insertText", { text: "A new description" });
-      await evaluate("(() => {const input=document.querySelector('[name=releaseDate]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'2026-11-01');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()");
     }
     const clickSave = () => evaluate("document.querySelector('[data-upload-form] button[type=submit]').click()");
     const stay = async () => { await waitFor("document.querySelector('[role=alertdialog]')"); await evaluate("document.querySelector('[data-slot=alert-dialog-cancel]').click()"); await waitFor("!document.querySelector('[role=alertdialog]')"); };
@@ -122,22 +121,59 @@ try {
       await file();
       await waitFor("document.querySelector('[name=title]') && document.querySelector('[data-upload-form]').getAttribute('aria-busy')==='true'");
       await details();
+      assert.equal(await evaluate("document.querySelector('[name=publicationDate]').disabled"), true);
+      assert.equal(await evaluate("document.querySelector('[name=description]').required || document.querySelector('[name=genre]').required || document.querySelector('[name=subgenre]').required"), false);
+      await fill({ genre: "ab", subgenre: "x".repeat(31) });
+      assert.equal(await evaluate("!!document.querySelector('#genre-error, #subgenre-error')"), false);
+      await fill({ genre: "", subgenre: "" });
+      assert.equal(await evaluate("document.querySelector('[name=bpmFrom]').required || document.querySelector('[name=bpmTo]').required"), false);
+      assert.equal(await evaluate("(() => {const a=document.querySelector('[name=bpmFrom]').getBoundingClientRect(), b=document.querySelector('[name=bpmTo]').getBoundingClientRect(), full=document.querySelector('[name=title]').getBoundingClientRect();return a.top===b.top && Math.abs(a.width-b.width)<1 && Math.abs(a.left-full.left)<1 && Math.abs(b.right-full.right)<1})()"), true);
+      assert.equal(await evaluate(`document.querySelector('[data-upload-form]').textContent.includes(${JSON.stringify(t.requirements)})`), false);
+      await waitFor("document.querySelector('progress')?.value===100");
+      assert.equal(await evaluate("document.querySelector('progress').max"), 100);
+      assert.ok((await evaluate("document.querySelector('#audio-help').textContent")).includes("MB"));
+      assert.equal(await evaluate("!!document.querySelector('#audio-file').parentElement.querySelector('button')"), true);
       await fill({ title: "ab", bpmFrom: "201" });
-      await waitFor(`document.querySelector('#title-error')?.textContent===${JSON.stringify(t.lengthTitle)} && document.querySelector('#bpmFrom-error')?.textContent===${JSON.stringify(t.bpmInvalid)}`);
+      assert.equal(await evaluate("!!document.querySelector('#title-error, #bpmFrom-error')"), false);
       await fill({ title: "New recording", bpmFrom: "90" });
       await waitFor("!document.querySelector('#title-error') && !document.querySelector('#bpmFrom-error')");
       assert.equal(await evaluate("document.querySelector('[data-upload-form] button[type=submit]').disabled"), true);
       await evaluate("void(window.mediaIdentity=document.querySelector('[data-persistent-media]'))");
       release(); gate = undefined;
       await waitFor("!document.querySelector('[data-upload-form] button[type=submit]').disabled");
+      const publicationDate = await evaluate("document.querySelector('[name=publicationDate]').value");
+      assert.match(publicationDate, /^\d{4}-\d{2}-\d{2}$/);
+      await fill({ title: "", bpmFrom: "201", genre: "ab", subgenre: "x".repeat(31) });
+      assert.equal(await evaluate("!!document.querySelector('#title-error, #bpmFrom-error, #genre-error, #subgenre-error')"), false);
+      const beforeInvalidSave = completeCalls;
+      await clickSave();
+      await waitFor("document.querySelector('#title-error') && document.querySelector('#bpmFrom-error') && document.querySelector('#genre-error') && document.querySelector('#subgenre-error')");
+      assert.equal(completeCalls, beforeInvalidSave);
+      await fill({ title: "New recording", genre: "", subgenre: "" });
+      await fill({ bpmFrom: "", bpmTo: "" });
+      await evaluate("document.querySelector('textarea').focus(); document.querySelector('textarea').select()");
+      await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8 });
+      await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8 });
+      await waitFor("!document.querySelector('[data-upload-form] button[type=submit]').disabled");
+      assert.equal(await evaluate("document.querySelector('progress')?.value"), 100);
       const beforeComplete = completeCalls;
       gate = new Promise(resolve => { release = resolve; });
       await clickSave(); await clickSave();
       await waitFor("document.querySelector('[data-upload-form]').getAttribute('aria-busy')==='true'");
       release(); gate = undefined;
-      await waitFor(`document.querySelector('[data-upload-form] [role=status]')?.textContent===${JSON.stringify(t.success)}`);
+      await waitFor(`document.querySelector('[data-upload-success] [role=status]')?.textContent===${JSON.stringify(t.success)}`);
       assert.equal(completeCalls, beforeComplete + 1);
+      assert.equal(tracks.at(-1).publicationDate, publicationDate);
+      assert.equal(tracks.at(-1).bpm, null);
+      assert.equal(tracks.at(-1).description, null);
+      assert.equal(tracks.at(-1).genre, null); assert.equal(tracks.at(-1).subgenre, null);
       assert.equal(await evaluate("!!document.querySelector('[name=title]')"), false);
+      assert.equal(await evaluate("!!document.querySelector('[data-upload-form], #audio-file, progress')"), false);
+      assert.deepEqual(await evaluate("Array.from(document.querySelectorAll('[data-upload-success] a')).map(a=>a.textContent)"), [t.library, t.addAnother]);
+      await evaluate("document.querySelector('[data-upload-success] a[href=\"/upload\"]').click()");
+      await waitFor("document.querySelector('#audio-file') && !document.querySelector('[data-upload-success]')");
+      assert.equal(await evaluate("document.querySelector('#audio-file').value"), "");
+      assert.equal(await evaluate("!!document.querySelector('[data-upload-form] fieldset')"), false);
       await evaluate("document.querySelector('[data-upload-form] a[href=\"/library\"]').click()");
       await waitFor("document.querySelector('[data-library] [data-track-id]')");
       assert.equal(await evaluate("window.mediaIdentity===document.querySelector('[data-persistent-media]')"), true);
@@ -149,11 +185,32 @@ try {
       await evaluate("document.querySelector('[data-user-menu-upload]').click()");
       await waitFor("document.querySelector('#audio-file')");
       await file("sample.mp3"); await waitFor("document.querySelector('[name=title]')"); await details();
+      await fill({ genre: "Electronic", subgenre: "Deep House" });
       await waitFor("!document.querySelector('[data-upload-form] button[type=submit]').disabled");
       mode = "validation"; await clickSave();
       await waitFor("document.querySelector('#title-error')");
       assert.equal(await evaluate("document.querySelector('[name=title]').value"), "New recording");
+      assert.equal(await evaluate("document.querySelector('[name=genre]').value"), "Electronic");
+      assert.equal(await evaluate("document.querySelector('[name=subgenre]').value"), "Deep House");
       assert.equal(await evaluate("document.querySelector('textarea[name=description]').value"), "A new description");
+
+      // Cancelling clears metadata, closes the editor and resets validation.
+      const beforeDirectCancel = cancelCalls;
+      await evaluate("document.querySelector('#audio-file').parentElement.querySelector('button').click()");
+      await stay();
+      assert.equal(cancelCalls, beforeDirectCancel);
+      await evaluate("document.querySelector('#audio-file').parentElement.querySelector('button').click()");
+      await leave();
+      await waitFor("!document.querySelector('[role=alertdialog]') && !document.querySelector('#audio-file').disabled");
+      assert.equal(cancelCalls, beforeDirectCancel + 1);
+      assert.equal(await evaluate("!!document.querySelector('[data-upload-form] fieldset')"), false);
+      assert.equal(await evaluate("document.querySelector('#audio-file').value"), "");
+      assert.equal(await evaluate("(() => {const e=new Event('beforeunload',{cancelable:true});window.dispatchEvent(e);return e.defaultPrevented})()"), false);
+      assert.equal(await evaluate("!!document.querySelector('#title-error')"), false);
+      mode = "success"; await file();
+      await waitFor("document.querySelector('[name=title]') && !document.querySelector('[data-upload-form] button[type=submit]').disabled");
+      assert.equal(await evaluate("Array.from(document.querySelectorAll('[data-upload-form] fieldset input:not([name=publicationDate]), [data-upload-form] textarea')).every(input => input.value === '')"), true);
+      assert.equal(await evaluate("!!document.querySelector('[aria-invalid=true]')"), false);
 
       // Links and history keep the current editor on Stay, cancel it on Leave.
       await evaluate("document.querySelector('a[href=\"/library\"]').click()"); await stay();
@@ -205,6 +262,10 @@ try {
       mode = "invalidFile"; await file();
       await waitFor(`document.querySelector('[role=alert]')?.textContent===${JSON.stringify(catalog.errors.audioFileInvalid)}`);
       await evaluate(`Array.from(document.querySelectorAll('[data-upload-form] button')).find(b=>b.textContent===${JSON.stringify(t.chooseAnother)}).click()`);
+      await stay();
+      assert.equal(await evaluate("!!document.querySelector('[data-upload-form] [role=alert]')"), true);
+      await evaluate(`Array.from(document.querySelectorAll('[data-upload-form] button')).find(b=>b.textContent===${JSON.stringify(t.chooseAnother)}).click()`);
+      await leave();
       await waitFor("!document.querySelector('[data-upload-form] [role=alert]')");
       mode = "success"; await file(); await waitFor("document.querySelector('[name=title]')"); await details();
       await waitFor("!document.querySelector('[data-upload-form] button[type=submit]').disabled");
@@ -226,6 +287,22 @@ try {
       await waitFor("location.pathname==='/library'");
       for (let i = 0; i < 40 && abortedUploads === beforeAbort; i++) await delay(50);
       assert.equal(abortedUploads, beforeAbort + 1);
+      release(); gate = undefined;
+
+      // The file's own cancel action also aborts an active HTTP transfer.
+      await enter(locale); await waitFor("document.querySelector('#audio-file')");
+      gate = new Promise(resolve => { release = resolve; });
+      const beforeDirectAbort = abortedUploads;
+      await file(); await waitFor("document.querySelector('progress')");
+      await evaluate("document.querySelector('#audio-file').parentElement.querySelector('button').click()");
+      await stay();
+      assert.equal(abortedUploads, beforeDirectAbort);
+      await evaluate("document.querySelector('#audio-file').parentElement.querySelector('button').click()");
+      await leave();
+      await waitFor("!document.querySelector('[role=alertdialog]') && !document.querySelector('#audio-file').disabled");
+      for (let i = 0; i < 40 && abortedUploads === beforeDirectAbort; i++) await delay(50);
+      assert.equal(abortedUploads, beforeDirectAbort + 1);
+      assert.equal(await evaluate("!!document.querySelector('progress')"), false);
       release(); gate = undefined;
 
       // Session termination cancels a transfer without a leave confirmation.

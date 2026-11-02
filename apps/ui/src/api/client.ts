@@ -34,7 +34,7 @@ const fields = new Set([
   "login",
   "password",
   "confirmPassword",
-  "title", "description", "releaseDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo",
+  "title", "description", "genre", "subgenre", "publicationDate", "bpm", "bpm.bpmFrom", "bpm.bpmTo",
 ]);
 const safeCode = (value: unknown) =>
   typeof value === "string" && /^[A-Z][A-Z0-9_]{0,63}$/.test(value);

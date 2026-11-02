@@ -43,7 +43,7 @@ async function main() {
       users.push({ id: user.id, token: (await app.get(SessionsService).create(user.id, prisma)).accessToken });
     }
     const [artist, other] = users;
-    const metadata = { title: 'Temporary upload', description: 'Synthetic audio', releaseDate: '2026-01-01', bpm: { bpmFrom: 120, bpmTo: 130 } };
+    const metadata = { title: 'Temporary upload', publicationDate: '2026-11-01', description: 'Synthetic audio', bpm: { bpmFrom: 120, bpmTo: 130 } };
     const bytes = Buffer.alloc(48);
     bytes.write('RIFF'); bytes.writeUInt32LE(40, 4); bytes.write('WAVEfmt ', 8); bytes.writeUInt32LE(16, 16);
     bytes.writeUInt16LE(1, 20); bytes.writeUInt16LE(1, 22); bytes.writeUInt32LE(8000, 24); bytes.writeUInt32LE(16000, 28);
@@ -107,6 +107,33 @@ async function main() {
     assert.equal((await prisma.audioUpload.findUniqueOrThrow({ where: { id } })).status, 'PENDING');
     await db.query('DROP TRIGGER fail_track ON "Track"; DROP FUNCTION fail_track()');
     assert.equal((await complete(id)).status, 201);
+
+    // Optional BPM survives validation, temporary completion, storage and listing.
+    id = await upload();
+    const { bpm: omittedBpm, ...withoutBpm } = metadata;
+    assert.equal((await complete(id, artist, { ...withoutBpm, bpm: { bpmFrom: 120 } })).status, 400);
+    const noBpmResponse = await complete(id, artist, withoutBpm);
+    assert.equal(noBpmResponse.status, 201);
+    const noBpmTrack = await noBpmResponse.json();
+    assert.equal(noBpmTrack.bpm, null);
+    const noBpmRecord = await prisma.track.findUniqueOrThrow({ where: { id: noBpmTrack.id } });
+    assert.equal(noBpmRecord.bpmFrom, null); assert.equal(noBpmRecord.bpmTo, null);
+    assert.equal((await (await send('', 'GET')).json()).find(track => track.id === noBpmTrack.id).bpm, null);
+
+    id = await upload();
+    for (const data of [{ genre: 'ab' }, { genre: 'x'.repeat(31) }, { subgenre: 'ab' }, { subgenre: 'x'.repeat(31) }, { genre: 123 }, { description: 'ab' }, { publicationDate: '2026-02-30' }]) {
+      assert.equal((await complete(id, artist, { publicationDate: '2025-04-03', title: 'Optional metadata', ...data })).status, 400);
+    }
+    const optionalResponse = await complete(id, artist, { publicationDate: '2025-04-03', title: 'Optional metadata', genre: 'abc', subgenre: 'x'.repeat(30) });
+    assert.equal(optionalResponse.status, 201);
+    const optionalTrack = await optionalResponse.json();
+    assert.equal(optionalTrack.description, null);
+    assert.equal(optionalTrack.genre, 'abc'); assert.equal(optionalTrack.subgenre, 'x'.repeat(30));
+    const optionalRecord = await prisma.track.findUniqueOrThrow({ where: { id: optionalTrack.id } });
+    assert.equal(optionalRecord.publicationDate.toISOString(), '2025-04-03T00:00:00.000Z');
+    assert.equal(optionalRecord.description, null);
+    assert.equal(optionalRecord.genre, 'abc'); assert.equal(optionalRecord.subgenre, 'x'.repeat(30));
+    assert.equal(optionalTrack.publicationDate, optionalRecord.publicationDate.toISOString().slice(0, 10));
 
     for (let i = 0; i < 8; i++) {
       id = await upload();

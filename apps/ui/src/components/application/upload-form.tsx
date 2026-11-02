@@ -14,6 +14,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { ProtectedLink } from "./protected-link";
 import { useApplicationSession } from "./application-runtime";
 import { emptyDraft, validateDraft, validateUploadFile, type TrackDraft } from "./upload-validation";
+import { uploadAudio } from "./upload-audio";
 
 type Stage = "idle" | "uploading" | "ready" | "saving" | "cancelling" | "failed" | "unknown" | "expired" | "success";
 type TemporaryUpload = { uploadId: string; expiresAt: string };
@@ -24,6 +25,8 @@ export function UploadForm({ config }: { config: UploadConfig }) {
   const router = useRouter();
   const { runProtected, end, subscribe, getStatus } = useApplicationSession();
   const [draft, setDraft] = useState<TrackDraft>(emptyDraft);
+  const [publicationDate, setPublicationDate] = useState("");
+  const [errors, setErrors] = useState<ReturnType<typeof validateDraft>>({});
   const [stage, setStage] = useState<Stage>("idle");
   const [started, setStarted] = useState(false);
   const [name, setName] = useState("");
@@ -31,6 +34,8 @@ export function UploadForm({ config }: { config: UploadConfig }) {
   const [message, setMessage] = useState("");
   const [serverFields, setServerFields] = useState<Record<string, string[]>>({});
   const [dialog, setDialog] = useState(false);
+  const [cancelDialog, setCancelDialog] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [denied, setDenied] = useState(false);
   const controller = useRef<AbortController | null>(null);
@@ -76,6 +81,7 @@ export function UploadForm({ config }: { config: UploadConfig }) {
           dirty.current = false;
           decision.current?.(false); decision.current = undefined; decisionPromise.current = undefined;
           setDialog(false);
+          setCancelDialog(false);
         } else {
           setStage("unknown"); setMessage(labels.current("unknownResult"));
         }
@@ -111,7 +117,7 @@ export function UploadForm({ config }: { config: UploadConfig }) {
       decision.current?.(true); decision.current = undefined; decisionPromise.current = undefined;
       if (mounted.current) {
         setDialog(false); setLeaving(false);
-        setUpload(undefined); setDraft(emptyDraft); setStarted(false); setName(""); setMessage(""); setStage("idle");
+        setUpload(undefined); setDraft(emptyDraft); setPublicationDate(""); setErrors({}); setServerFields({}); setStarted(false); setName(""); setMessage(""); setStage("idle");
         if (fileInput.current) fileInput.current.value = "";
       }
     });
@@ -144,14 +150,15 @@ export function UploadForm({ config }: { config: UploadConfig }) {
     try {
       const result = await runProtected(async () => {
         if (request.signal.aborted) return;
-        setStarted(true); setName(file.name); setStage("uploading");
-        const data = new FormData(); data.append("file", file);
-        const response = await fetch("/api/tracks/uploads", { method: "POST", body: data, signal: request.signal });
+        setStarted(true); setName(file.name); setProgress(0); setStage("uploading");
+        const response = await uploadAudio(file, request.signal, setProgress);
         if (request.signal.aborted) return;
         if (response.status !== 201) { await failure(response); return; }
         const value = await response.json() as TemporaryUpload;
         if (typeof value.uploadId !== "string" || !/^[0-9a-f-]{36}$/i.test(value.uploadId) || !Number.isFinite(Date.parse(value.expiresAt))) throw Error("Invalid upload response");
-        knownUpload.current = value; setUpload(value); setStage("ready");
+        const now = new Date();
+        setPublicationDate(new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10));
+        knownUpload.current = value; setUpload(value); setProgress(100); setStage("ready");
       });
       if (!result.executed && !request.signal.aborted) { setStage("failed"); setMessage(t("sessionUnavailable")); }
     } catch {
@@ -162,7 +169,13 @@ export function UploadForm({ config }: { config: UploadConfig }) {
   async function save(event: FormEvent) {
     event.preventDefault();
     const current = knownUpload.current;
-    if (!current || busy.current || denied || (stage !== "ready" && stage !== "failed") || Object.keys(validateDraft(draft)).length) return;
+    if (!current || busy.current || denied || (stage !== "ready" && stage !== "failed")) return;
+    const validation = validateDraft(draft);
+    setErrors(validation); setServerFields({}); setMessage("");
+    if (Object.keys(validation).length) {
+      document.getElementById(`track-${Object.keys(validation)[0]}`)?.focus();
+      return;
+    }
     if (Date.now() >= Date.parse(current.expiresAt)) { setStage("expired"); setMessage(t("expired")); return; }
     busy.current = true; setStage("saving"); setMessage(""); setServerFields({});
     const request = new AbortController(); controller.current = request;
@@ -171,15 +184,18 @@ export function UploadForm({ config }: { config: UploadConfig }) {
         if (request.signal.aborted) return;
         const response = await fetch(`/api/tracks/uploads/${current.uploadId}/complete`, {
           method: "POST", headers: { "Content-Type": "application/json" }, signal: request.signal,
-          body: JSON.stringify({ title: draft.title, description: draft.description, releaseDate: draft.releaseDate,
-            bpm: { bpmFrom: Number(draft.bpmFrom), bpmTo: Number(draft.bpmTo) } }),
+          body: JSON.stringify({ title: draft.title, publicationDate,
+            ...(draft.description ? { description: draft.description } : {}),
+            ...(draft.genre ? { genre: draft.genre } : {}),
+            ...(draft.subgenre ? { subgenre: draft.subgenre } : {}),
+            ...(draft.bpmFrom.trim() || draft.bpmTo.trim() ? { bpm: { bpmFrom: Number(draft.bpmFrom), bpmTo: Number(draft.bpmTo) } } : {}) }),
         });
         if (request.signal.aborted) return;
         if (response.status !== 201) { await failure(response); return; }
         const value = await response.json();
         if (!Number.isSafeInteger(value.id) || value.id <= 0) throw Error("Invalid completion response");
         dirty.current = false; knownUpload.current = undefined; setUpload(undefined);
-        setDraft(emptyDraft); setStarted(false); setName(""); setStage("success");
+        setDraft(emptyDraft); setPublicationDate(""); setErrors({}); setStarted(false); setName(""); setStage("success");
         if (fileInput.current) fileInput.current.value = "";
         router.refresh(); // Invalidate the visited Library RSC cache, preserving the runtime.
       });
@@ -190,19 +206,28 @@ export function UploadForm({ config }: { config: UploadConfig }) {
   }
 
   async function reset() {
-    if (busy.current) return;
+    if (stage === "saving" || stage === "cancelling") return;
     stop(); busy.current = true; setStage("cancelling");
     await cancelKnown();
     if (!mounted.current) return;
     busy.current = false;
-    setUpload(undefined); setStage("idle"); setMessage(""); setName("");
+    setUpload(undefined); setStage("idle"); setMessage(""); setName(""); setProgress(0); setServerFields({}); setCancelDialog(false);
+    setDraft(emptyDraft); setPublicationDate(""); setErrors({}); setStarted(false); dirty.current = false;
     if (fileInput.current) fileInput.current.value = "";
-    // Metadata stays available when selecting another file.
   }
 
-  const errors = validateDraft(draft);
   const pending = stage === "uploading" || stage === "saving" || stage === "cancelling";
-  const canSave = !!upload && (stage === "ready" || stage === "failed") && !denied && !Object.keys(errors).length;
+  const canSave = !!upload && (stage === "ready" || stage === "failed") && !denied;
+  if (stage === "success") return <section className="max-w-2xl space-y-6" data-upload-success>
+    <p role="status">{t("success")}</p>
+    <div className="flex flex-wrap gap-4">
+      <ProtectedLink href="/library" className="underline">{t("library")}</ProtectedLink>
+      <a href="/upload" className="underline" onClick={event => {
+        event.preventDefault();
+        setProgress(0); setMessage(""); setServerFields({}); setStage("idle");
+      }}>{t("addAnother")}</a>
+    </div>
+  </section>;
   return <>
     <form onSubmit={save} className="max-w-2xl space-y-6" data-upload-form noValidate aria-busy={pending}>
       <div className="space-y-2">
@@ -210,37 +235,56 @@ export function UploadForm({ config }: { config: UploadConfig }) {
         <input ref={fileInput} id="audio-file" name="file" type="file" accept={config.formats.map(f => f.extension).join(",")}
           disabled={pending || !!upload || denied} aria-describedby="audio-help" className="block w-full rounded-lg border p-3"
           onChange={event => { void chooseFile(event.target.files?.[0]); }} />
-        <p id="audio-help" className="text-sm text-muted-foreground">{t("fileHelp", { formats: config.formats.map(f => f.extension.toUpperCase()).join(", "), limit: config.maxFileBytes })}</p>
+        <p id="audio-help" className="text-sm text-muted-foreground">{t("fileHelp", { formats: config.formats.map(f => f.extension.toUpperCase()).join(", "), limit: config.maxFileBytes / (1024 * 1024) })}</p>
         {name && <p className="break-all">{name}</p>}
+        {(stage === "uploading" || !!upload) && <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <progress aria-label={t("progress")} value={progress} max={100} className="h-2 w-full accent-primary" />
+            <span className="text-sm tabular-nums">{progress}%</span>
+          </div>
+          {stage === "uploading" && progress === 100 && <p className="text-sm text-muted-foreground">{t("processing")}</p>}
+        </div>}
+        {name && <Button type="button" variant="outline" disabled={stage === "saving" || stage === "cancelling"}
+          onClick={() => setCancelDialog(true)}>{t("chooseAnother")}</Button>}
       </div>
       {pending && <p role="status">{stage === "uploading" ? t("uploading") : stage === "cancelling" ? t("cancelling") : t("saving")}</p>}
       {stage === "ready" && <p role="status">{t("uploaded")}</p>}
-      {stage === "success" && <p role="status">{t("success")}</p>}
       {message && <p role="alert" className="text-destructive">{message}</p>}
       {started && <fieldset className="space-y-4" disabled={stage === "saving"}>
         <legend className="mb-4 font-semibold">{t("metadata")}</legend>
-        {(["title", "description", "releaseDate", "bpmFrom", "bpmTo"] as const).map(key => {
-          const fieldError = serverFields[key]?.length ? serverFields[key] : (draft[key] && errors[key] ? [t(errors[key])] : []);
-          const props = { id: `track-${key}`, name: key, value: draft[key], required: true,
+        <div className="space-y-2"><Label htmlFor="track-publicationDate">{t("publicationDate")}</Label>
+          <Input id="track-publicationDate" name="publicationDate" type="date" value={publicationDate} disabled /></div>
+        {([["title", "description", "genre", "subgenre"], ["bpmFrom", "bpmTo"]] as const).map((group, index) =>
+          <div key={index} className={index === 1 ? "grid grid-cols-2 gap-4" : "space-y-4"}>
+          {group.map(key => {
+          const fieldError = serverFields[key]?.length ? serverFields[key] : (errors[key] ? [t(errors[key])] : []);
+          const props = { id: `track-${key}`, name: key, value: draft[key], required: key === "title", spellCheck: false, autoCorrect: "off",
             "aria-invalid": fieldError.length > 0, "aria-describedby": fieldError.length ? `${key}-error` : undefined,
             onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
               dirty.current = true; setDraft({ ...draft, [key]: event.target.value });
+              setErrors(fields => ({ ...fields, [key]: undefined, ...(key.startsWith("bpm") ? { bpmFrom: undefined, bpmTo: undefined } : {}) }));
               setServerFields(fields => ({ ...fields, [key]: [], ...(key.startsWith("bpm") ? { bpmFrom: [], bpmTo: [] } : {}) }));
             } };
           return <div key={key} className="space-y-2">
             <Label htmlFor={props.id}>{t(key === "title" ? "fieldTitle" : key)}</Label>
             {key === "description" ? <textarea {...props} rows={4} className="w-full rounded-lg border bg-transparent p-3" /> :
-              <Input {...props} type={key === "releaseDate" ? "date" : key.startsWith("bpm") ? "number" : "text"}
+              <Input {...props} type={key.startsWith("bpm") ? "number" : "text"}
                 min={key.startsWith("bpm") ? 60 : undefined} max={key.startsWith("bpm") ? 200 : undefined} step="any" />}
             {fieldError.length > 0 && <p id={`${key}-error`} className="text-sm text-destructive">{fieldError.join(" ")}</p>}
           </div>;
-        })}
-        <p className="text-sm text-muted-foreground">{t("requirements")}</p>
+        })}</div>)}
         <Button type="submit" disabled={!canSave || pending}>{t("save")}</Button>
       </fieldset>}
-      {started && !pending && <Button type="button" variant="outline" onClick={() => { void reset(); }}>{t("chooseAnother")}</Button>}
       <p><ProtectedLink href="/library" className="underline">{t("library")}</ProtectedLink></p>
     </form>
+    <AlertDialog open={cancelDialog} onOpenChange={open => { if (stage !== "cancelling") setCancelDialog(open); }}>
+      <AlertDialogContent aria-busy={stage === "cancelling"}>
+        <AlertDialogHeader><AlertDialogTitle>{t("cancelTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("cancelDescription")}</AlertDialogDescription></AlertDialogHeader>
+        <AlertDialogFooter><AlertDialogCancel disabled={stage === "cancelling"}>{t("keepUpload")}</AlertDialogCancel>
+          <AlertDialogAction disabled={stage === "cancelling"} onClick={() => { void reset(); }}>{t("confirmCancel")}</AlertDialogAction></AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     <AlertDialog open={dialog} onOpenChange={open => { if (!open && !leaving) decide(false); }}>
       <AlertDialogContent initialFocus={stayButton} aria-busy={leaving}>
         <AlertDialogHeader><AlertDialogTitle>{t("leaveTitle")}</AlertDialogTitle>

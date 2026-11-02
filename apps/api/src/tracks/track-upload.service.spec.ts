@@ -26,8 +26,8 @@ import { TracksModule } from './tracks.module';
 
 const metadata = {
   title: 'Upload test',
+  publicationDate: '2026-11-01',
   description: 'Synthetic recording',
-  releaseDate: '2026-01-01',
   bpm: { bpmFrom: 120, bpmTo: 130 },
 };
 
@@ -201,21 +201,31 @@ describe('Track upload HTTP and filesystem', () => {
 
   it.each([
     ['owner injection', { ...metadata, ownerId: 999 }],
-    [
-      'missing BPM',
-      {
-        title: metadata.title,
-        description: metadata.description,
-        releaseDate: metadata.releaseDate,
-      },
-    ],
+    ['incomplete BPM', { ...metadata, bpm: { bpmFrom: 120 } }],
     ['invalid BPM', { ...metadata, bpm: { bpmFrom: 180, bpmTo: 100 } }],
-    ['invalid date', { ...metadata, releaseDate: 'invalid' }],
+    [
+      'invalid publication date',
+      { ...metadata, publicationDate: '2026-02-30' },
+    ],
     ['non-object', []],
   ])('rejects %s and cleans received bytes', async (_name, data) => {
     await upload(data).attach('file', wav(), 'tone.wav').expect(400);
     expect(create).not.toHaveBeenCalled();
     expect(await readdir(join(directory, 'files'))).toEqual([]);
+  });
+
+  it('stores omitted BPM as null and returns an absent range', async () => {
+    const withoutBpm = {
+      title: metadata.title,
+      description: metadata.description,
+      publicationDate: metadata.publicationDate,
+    };
+    const response = await upload(withoutBpm)
+      .attach('file', wav(), 'tone.wav')
+      .expect(201);
+    expect(response.body).toHaveProperty('bpm', null);
+    expect(create.mock.calls[0]).toHaveProperty('0.data.bpmFrom', null);
+    expect(create.mock.calls[0]).toHaveProperty('0.data.bpmTo', null);
   });
 
   it('rejects malformed JSON with no leftover file', async () => {

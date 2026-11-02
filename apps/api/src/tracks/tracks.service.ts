@@ -16,7 +16,7 @@ type TrackWithAudio = Prisma.TrackGetPayload<{ include: typeof trackInclude }>;
 
 type UpdatableTrackFields = Pick<
   Track,
-  'title' | 'description' | 'bpm' | 'releaseDate'
+  'title' | 'description' | 'bpm' | 'genre' | 'subgenre'
 >;
 
 @Injectable()
@@ -34,11 +34,16 @@ export class TracksService {
       hasAudio: track.audioFile !== null,
       title: track.title,
       description: track.description ?? null,
-      releaseDate: track.releaseDate.toISOString().split('T')[0],
-      bpm: {
-        bpmFrom: track.bpmFrom,
-        bpmTo: track.bpmTo,
-      },
+      publicationDate: track.publicationDate.toISOString().split('T')[0],
+      genre: track.genre ?? null,
+      subgenre: track.subgenre ?? null,
+      bpm:
+        track.bpmFrom === null || track.bpmTo === null
+          ? null
+          : {
+              bpmFrom: track.bpmFrom,
+              bpmTo: track.bpmTo,
+            },
     };
   }
   async findAll(): Promise<Track[]> {
@@ -73,10 +78,12 @@ export class TracksService {
       data: {
         ownerId,
         title: createTrackDto.title,
-        description: createTrackDto.description,
-        releaseDate: new Date(createTrackDto.releaseDate),
-        bpmFrom: createTrackDto.bpm.bpmFrom,
-        bpmTo: createTrackDto.bpm.bpmTo,
+        description: createTrackDto.description ?? null,
+        publicationDate: new Date(createTrackDto.publicationDate),
+        genre: createTrackDto.genre ?? null,
+        subgenre: createTrackDto.subgenre ?? null,
+        bpmFrom: createTrackDto.bpm?.bpmFrom ?? null,
+        bpmTo: createTrackDto.bpm?.bpmTo ?? null,
       },
     });
 
@@ -99,10 +106,12 @@ export class TracksService {
       data: {
         ownerId,
         title: dto.title,
-        description: dto.description,
-        releaseDate: new Date(dto.releaseDate),
-        bpmFrom: dto.bpm.bpmFrom,
-        bpmTo: dto.bpm.bpmTo,
+        description: dto.description ?? null,
+        publicationDate: new Date(dto.publicationDate),
+        genre: dto.genre ?? null,
+        subgenre: dto.subgenre ?? null,
+        bpmFrom: dto.bpm?.bpmFrom ?? null,
+        bpmTo: dto.bpm?.bpmTo ?? null,
         audioFile: { create: audio },
       },
     });
@@ -131,9 +140,8 @@ export class TracksService {
         }),
         ...(data.bpm?.bpmFrom !== undefined && { bpmFrom: data.bpm.bpmFrom }),
         ...(data.bpm?.bpmTo !== undefined && { bpmTo: data.bpm.bpmTo }),
-        ...(data.releaseDate !== undefined && {
-          releaseDate: new Date(data.releaseDate),
-        }),
+        ...(data.genre !== undefined && { genre: data.genre }),
+        ...(data.subgenre !== undefined && { subgenre: data.subgenre }),
       },
     });
 

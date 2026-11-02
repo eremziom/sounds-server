@@ -1,0 +1,3 @@
+ALTER TABLE "Track" RENAME COLUMN "releaseDate" TO "publicationDate";
+ALTER TABLE "Track" ALTER COLUMN "publicationDate" SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE "Track" ADD COLUMN "genre" VARCHAR(30), ADD COLUMN "subgenre" VARCHAR(30);

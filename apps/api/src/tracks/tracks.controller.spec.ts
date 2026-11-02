@@ -20,8 +20,10 @@ const initialTracks: Track[] = [
     id: 1,
     ownerId: null,
     hasAudio: false,
+    genre: null,
+    subgenre: null,
     title: 'Solar Drift',
-    releaseDate: '2024-01-01',
+    publicationDate: '2024-01-01',
     description: 'Driving psy with warm bass',
     bpm: { bpmFrom: 128, bpmTo: 132 },
   },
@@ -29,8 +31,10 @@ const initialTracks: Track[] = [
     id: 2,
     ownerId: null,
     hasAudio: false,
+    genre: null,
+    subgenre: null,
     title: 'Night Pulse',
-    releaseDate: '2024-02-01',
+    publicationDate: '2024-02-01',
     description: 'Dark rolling groove',
     bpm: { bpmFrom: 134, bpmTo: 138 },
   },
@@ -49,7 +53,7 @@ describe('TracksController', () => {
   beforeEach(async () => {
     tracks = initialTracks.map((track) => ({
       ...track,
-      bpm: { ...track.bpm },
+      bpm: track.bpm ? { ...track.bpm } : null,
     }));
 
     tracksService = {
@@ -58,8 +62,15 @@ describe('TracksController', () => {
         const created: Track = {
           id: Math.max(...tracks.map((track) => track.id)) + 1,
           ...dto,
+          description: dto.description ?? null,
+          genre: dto.genre ?? null,
+          subgenre: dto.subgenre ?? null,
+          bpm: dto.bpm ?? null,
+          publicationDate: dto.publicationDate,
           ownerId,
           hasAudio: false,
+          genre: null,
+          subgenre: null,
         };
 
         tracks.push(created);
@@ -116,7 +127,7 @@ describe('TracksController', () => {
   it('creates a track using the dto', async () => {
     const dto = {
       title: 'Synth Bloom',
-      releaseDate: '2026-01-01',
+      publicationDate: '2026-11-01',
       description: 'Modular pads with driving groove',
       bpm: { bpmFrom: 130, bpmTo: 135 },
     };

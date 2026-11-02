@@ -11,8 +11,8 @@ const session = authSession({
   accessToken: `header.${Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 900 })).toString("base64url")}.signature`,
 });
 const tracks = [
-  { id: 1, ownerId: 1, title: "First recording", description: "Line one\nLine two", releaseDate: "2026-01-02", bpm: { bpmFrom: 90, bpmTo: 120 }, hasAudio: true },
-  { id: 2, ownerId: null, title: "Historical track", description: null, releaseDate: "2020-02-29", bpm: { bpmFrom: 100, bpmTo: 100 }, hasAudio: false },
+  { id: 1, ownerId: 1, title: "First recording", description: "Line one\nLine two", genre: null, subgenre: null, publicationDate: "2026-01-02", bpm: { bpmFrom: 90, bpmTo: 120 }, hasAudio: true },
+  { id: 2, ownerId: null, title: "Historical track", description: null, genre: null, subgenre: null, publicationDate: "2020-02-29", bpm: { bpmFrom: 100, bpmTo: 100 }, hasAudio: false },
 ];
 const api = createServer(async (req, res) => {
   res.setHeader("Content-Type", "application/json");
