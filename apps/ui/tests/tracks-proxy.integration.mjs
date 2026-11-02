@@ -6,7 +6,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const uploadId = "c99d10b0-3235-4872-9585-01a44819b4fa";
 const receipt = { uploadId, expiresAt: new Date(Date.now() + 86400000).toISOString() };
-const track = { id: 1, ownerId: 7, hasAudio: true, title: "Audio", description: "Test", genre: null, subgenre: null, publicationDate: "2026-01-01", bpm: { bpmFrom: 120, bpmTo: 130 } };
+const track = { id: 1, ownerId: 7, author: "Artist", hasAudio: true, title: "Audio", description: "Test", genre: null, subgenre: null, publicationDate: "2026-01-01", bpm: { bpmFrom: 120, bpmTo: 130 } };
 let mode = "normal", received = [], apiError, firstChunk, upstreamAborted, audioClosed;
 const json = (response, status, body) => { response.writeHead(status, { "Content-Type": "application/json", "Set-Cookie": "evil=secret", "X-Private": "secret" }); response.end(JSON.stringify(body)); };
 const api = createServer((request, response) => {

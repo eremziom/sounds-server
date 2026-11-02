@@ -175,6 +175,15 @@ uncertain session failures also stop requests. Unknown upload IDs and failed
 cleanup remain subject to the API's TTL policy; unload does not rely on DELETE.
 Run `pnpm --filter ui test:upload` after building for the en/pl/es browser suite.
 
+`pnpm --filter ui test:audio-upload` verifies the integrated upload → previously
+visited Library → playback → Range flow through production Next.js in Chromium.
+It sends actual WAV bytes to an isolated in-memory API, checks keyboard submission
+and seeking at 320px in en/pl/es, and preserves the same audio element across
+navigation and language changes. Subsequent Range 403/401, logout, the absolute
+session timer and refresh 503/recovery exercise media cleanup and explicit retry.
+It is included in `test:browser`; build UI first. This verifies UI/proxy integration,
+not real audio validation or persistence: the API suites cover those separately.
+
 The client session controller supports active/refreshing/unavailable/ended. The POST Server
 Action `refreshAction()` reads the HttpOnly refresh cookie, calls the API, writes
 both rotated cookies and returns only success and the new access expiry timestamp

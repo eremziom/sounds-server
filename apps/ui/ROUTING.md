@@ -242,3 +242,11 @@ The root UnsavedNavigation observer preserves framework history fields and block
 same-tab links and Back/Forward through the editor's AlertDialog. Language changes
 consult the same blocker before their Server Action. Native beforeunload covers
 reload/close; logout/session termination bypass confirmation and abort requests.
+
+Stage 5.7 verifies these routes together with `test:audio-upload`: populate the
+Library cache, enter Upload through HeaderMenu, save, follow the success link,
+play and seek via actual Range requests. Page and locale navigation preserve the
+audio element. Range 403 keeps the session active and offers explicit retry;
+Range 401 ends the session through the protected HEAD check. Logout and absolute
+expiry remove the source; refresh outages block the page and stop audio until
+recovery, after which playback still requires an explicit user action.

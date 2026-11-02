@@ -231,7 +231,7 @@ and disconnected transfers clean temporary files. Database failures remove the
 committed file. A disconnect after a successful database commit preserves the
 saved track and audio; clients must not automatically retry a mutation whose
 response was lost. Cleanup failures are logged and return `AUDIO_STORAGE_FAILED`.
-Process crashes can leave orphan files until the later cleanup-script stage.
+Process crashes can leave orphan files; use the audio cleanup command below.
 
 Upload HTTP/filesystem tests run with `pnpm --filter api exec jest --runInBand
 tracks/track-upload.service.spec.ts` using a temporary directory and mocked DB.
@@ -280,13 +280,59 @@ for retry. Upload registration failure removes its private file. Lost responses
 may leave a pending upload for TTL cleanup or an already-created track; clients
 must check the Library rather than automatically repeat a mutation.
 
-The future cleanup script must call `TemporaryUploadsService.expire` (or use the
-same conditional transaction) for expired pending records. It must protect all
-PENDING storage keys from orphan deletion and never unlink a CONSUMED key through
-the temporary-upload cleanup path. Consumed records retain the 409 tombstone;
-AudioFile owns their file lifecycle. There is no scheduled TTL sweep yet (plan
-stage 6); complete already enforces expiry. Process-crash orphans still need the
-stage-6 grace period and file/database comparison.
+The audio cleanup command uses the same conditional expiry transition as
+`TemporaryUploadsService.expire`, waiting for competing complete/cancel row locks
+and rechecking the predicate. Pending records and consumed keys are protected
+from orphan deletion. Consumed records retain the 409 tombstone; AudioFile owns
+their file lifecycle. Complete independently enforces expiry.
+
+### Audio cleanup
+
+Build the API first. The command loads `apps/api/.env` from the package working
+directory; environment variables take precedence. Use the same `DATABASE_URL`
+and absolute `AUDIO_STORAGE_DIR` as the API, pointing at the matching database
+and private persistent volume. Keep backups of both together.
+
+```powershell
+pnpm --filter api build
+# Read-only preview: does not change files or upload statuses.
+pnpm --filter api cleanup:audio
+# Explicitly apply expiry transitions and delete eligible files.
+pnpm --filter api cleanup:audio --delete
+# Optional longer file protection period (integer hours, minimum/default 24).
+pnpm --filter api cleanup:audio --grace-hours 48
+pnpm --filter api cleanup:audio --delete --grace-hours 48
+```
+
+The sweeper marks expired PENDING uploads EXPIRED, then examines only direct
+children of `tmp/` and `files/` with generated UUID names (`.tmp`, `.mp3`, `.wav`).
+File deletion requires all modification/change/creation timestamps to be at
+least the grace period old. It removes abandoned temporary files, unreferenced
+final files, and files of CANCELLED/EXPIRED uploads left by crashes or failed
+unlink. Before deleting final files it checks AudioFile and AudioUpload again;
+live PENDING uploads, all CONSUMED keys and AudioFile references are retained.
+It rechecks file identity/timestamps immediately before unlink, skips unknown
+names, nested directories and symbolic links, and rejects linked storage
+directories. It neither removes upload history nor deletes Track/AudioFile rows.
+A CONSUMED key without AudioFile is retained for manual investigation.
+
+Output is JSON Lines: each event has `scope`, `key`, `action` and optional
+`reason`/`applied`. A final `summary` includes mode and counts. In preview mode,
+`expired` and `removed` count proposed operations; `applied` is false. Error events
+identify a key without printing credentials or raw database errors. Exit status
+is 1 on configuration, database or filesystem failure, including partial cleanup;
+rerun after resolving it. Deletion is idempotent, with missing files tolerated.
+
+Run this manually or configure the same command in your scheduler, for example
+hourly with the API service account and access to its database and volume. No
+background job or system schedule is installed by the application. The grace
+period protects file creation/registration gaps; operations that can stay stalled
+longer than that period should be stopped before cleanup, or use a longer grace.
+
+`pnpm --filter api test:audio-cleanup` builds and tests preview, expiry, references,
+orphans, grace periods, retries, concurrent completion, DB failure, path protection
+and CLI arguments using an isolated PostgreSQL database and temporary directory.
+It requires CREATE DATABASE permission and never targets application files.
 
 `pnpm --filter api test:temporary-uploads` builds the API and verifies the new
 contract over real HTTP, PostgreSQL and temporary storage, including restart,
@@ -299,10 +345,13 @@ Next.js proxies these operations under `/api/tracks/uploads` and GET/HEAD audio
 under `/api/tracks/:id/audio`. See [UI README](apps/ui/README.md) for CSRF origin,
 streaming limits, transport errors and `test:tracks-proxy`. The server-only
 `getTracks` module validates uncached list responses. Library, upload form and
-the persistent footer player are implemented through audio-upload stage 5.6.
+the persistent footer player are implemented through audio-upload stage 5.7.
 Library row play/pause and footer controls share one audio element and playback
 state across page/locale changes. See `pnpm --filter ui test:playback` for browser
 coverage with an isolated audio API, including Range seeking and error recovery.
+`pnpm --filter ui test:audio-upload` covers upload through the refreshed Library
+to playback, including session termination and refresh outages in en/pl/es at
+320px. It uses an isolated API and never writes application records or audio files.
 
 Read/deletion HTTP tests use real JWT guards and temporary disk storage with a
 mocked database: `pnpm --filter api exec jest --runInBand track-audio`.

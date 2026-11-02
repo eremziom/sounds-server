@@ -52,8 +52,8 @@ async function main() {
       headers: { ...(user ? { Authorization: `Bearer ${user.token}` } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
-    const receive = async (blob = bytes, user = artist, extra = false) => {
-      const form = new FormData(); form.append('file', new Blob([blob]), 'recording.wav');
+    const receive = async (blob = bytes, user = artist, extra = false, filename = 'recording.wav') => {
+      const form = new FormData(); form.append('file', new Blob([blob]), filename);
       if (extra) form.append('metadata', '{}');
       return fetch(`${origin}/tracks/uploads`, { method: 'POST', headers: user ? { Authorization: `Bearer ${user.token}` } : {}, body: form });
     };
@@ -73,6 +73,23 @@ async function main() {
     assert.equal((await receive(bytes, artist, true)).status, 400);
     assert.deepEqual(await readdir(path.join(directory, 'tmp')), []);
     assert.deepEqual(await readdir(path.join(directory, 'files')), []);
+
+    // Rejected content must leave neither metadata nor bytes, including a forged extension.
+    const compressedWav = Buffer.from(bytes); compressedWav.writeUInt16LE(7, 20);
+    const mp3 = readFileSync(path.resolve('src/audio/fixtures/tone.mp3'));
+    for (const [input, filename, status] of [
+      [Buffer.from('not audio'), 'forged.mp3', 415],
+      [mp3.subarray(0, -10), 'broken.mp3', 400],
+      [bytes.subarray(0, -1), 'broken.wav', 400],
+      [compressedWav, 'unsupported.wav', 415],
+    ]) {
+      assert.equal((await receive(input, artist, false, filename)).status, status);
+      assert.equal(await prisma.track.count(), 0);
+      assert.equal(await prisma.audioUpload.count(), 0);
+      assert.equal(await prisma.audioFile.count(), 0);
+      assert.deepEqual(await readdir(path.join(directory, 'tmp')), []);
+      assert.deepEqual(await readdir(path.join(directory, 'files')), []);
+    }
 
     // Registration failure compensates the already validated/private disk file.
     await db.query(`CREATE FUNCTION fail_upload() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'test'; END $$;
@@ -98,6 +115,27 @@ async function main() {
     assert.equal((await cancel(id)).status, 409);
     assert.equal((await send(`/${track.id}/audio`, 'GET')).status, 200);
     assert.equal((await send(`/${track.id}/audio`, 'HEAD')).status, 200);
+
+    // Acceptance path for both actual formats through HTTP, PostgreSQL and disk.
+    for (const [format, input, mimeType] of [['mp3', mp3, 'audio/mpeg'], ['wav', bytes, 'audio/wav']]) {
+      const response = await receive(input, artist, false, `acceptance.${format}`);
+      assert.equal(response.status, 201);
+      const receipt = await response.json();
+      const data = { ...metadata, title: `Acceptance ${format.toUpperCase()}` };
+      const saved = await complete(receipt.uploadId, artist, data);
+      assert.equal(saved.status, 201);
+      const createdTrack = await saved.json();
+      const listResponse = await send('', 'GET'); assert.equal(listResponse.status, 200);
+      const listed = (await listResponse.json()).find(item => item.id === createdTrack.id);
+      assert.ok(listed); assert.equal(listed.hasAudio, true);
+      assert.equal(listed.title, data.title); assert.equal(listed.description, data.description);
+      assert.deepEqual(listed.bpm, data.bpm); assert.equal(listed.publicationDate, data.publicationDate);
+      const stored = await prisma.audioFile.findUniqueOrThrow({ where: { trackId: createdTrack.id } });
+      assert.equal(stored.mimeType, mimeType); assert.equal(stored.sizeBytes, input.length);
+      const audioResponse = await send(`/${createdTrack.id}/audio`, 'GET');
+      assert.equal(audioResponse.status, 200); assert.equal(audioResponse.headers.get('content-type'), mimeType);
+      assert.deepEqual(Buffer.from(await audioResponse.arrayBuffer()), input);
+    }
 
     // PostgreSQL failure after claiming the row rolls back both consumption and Track.
     id = await upload();
