@@ -54,7 +54,14 @@ try {
     const audio = "document.querySelector('[data-persistent-media] audio')";
     const row = id => `document.querySelector('[data-track-id="${id}"] button')`;
     const toggle = "document.querySelector('[data-player-toggle]')";
+    const volume = "document.querySelector('[data-player-volume]')";
+    const mute = "document.querySelector('[data-player-mute]')";
     const click = expression => send("Runtime.evaluate", { userGesture: true, expression: `${expression}.click()` });
+    const volumeKey = async (key, windowsVirtualKeyCode) => {
+      await evaluate(`${volume}.focus()`);
+      await send("Input.dispatchKeyEvent", { type: "keyDown", key, code: key, windowsVirtualKeyCode });
+      await send("Input.dispatchKeyEvent", { type: "keyUp", key, code: key, windowsVirtualKeyCode });
+    };
     for (const locale of ["en", "pl", "es"]) {
       failure = 0;
       const t = JSON.parse(await readFile(new URL(`../messages/${locale}.json`, import.meta.url), "utf8")).app.player;
@@ -82,6 +89,23 @@ try {
       })()`);
       await click(row(1));
       await waitFor(`${toggle}?.getAttribute('aria-pressed')==='true' && ${audio}.readyState>=3`);
+      assert.equal(await evaluate(`${volume}.getAttribute('aria-label')`), t.volume);
+      await volumeKey("Home", 36);
+      await waitFor(`${audio}.volume===0 && ${mute}.getAttribute('aria-label')===${JSON.stringify(t.unmute)}`);
+      await click(mute);
+      await waitFor(`${audio}.volume===1 && !${audio}.muted && ${volume}.value==='100'`);
+      await volumeKey("ArrowLeft", 37);
+      await waitFor(`${audio}.volume===0.99 && ${volume}.value==='99'`);
+      await click(mute);
+      await waitFor(`${audio}.muted && ${volume}.value==='0'`);
+      await click(mute);
+      await waitFor(`!${audio}.muted && ${audio}.volume===0.99 && ${volume}.value==='99'`);
+      await click(mute);
+      await volumeKey("ArrowRight", 39);
+      await waitFor(`!${audio}.muted && ${audio}.volume===0.01`);
+      // Changes from the media element must also update the visible controls.
+      await evaluate(`${audio}.volume=0.4`);
+      await waitFor(`${volume}.value==='40'`);
       await evaluate(`${audio}.dispatchEvent(new Event('waiting'))`);
       await waitFor(`document.querySelector('[data-audio-player] [role=status]')?.textContent===${JSON.stringify(t.waiting)}`);
       await evaluate(`${audio}.dispatchEvent(new Event('playing'))`);
@@ -112,6 +136,7 @@ try {
       await waitFor(`${audio}.currentTime<5 && !${audio}.paused`);
       await click(row(2));
       await waitFor(`${row(2)}.getAttribute('aria-pressed')==='true' && ${audio}.readyState>=3`);
+      assert.equal(await evaluate(`${audio}.volume`), 0.4);
       await evaluate("cancelAnimationFrame(playerFrame)");
       const bounds = await evaluate("playerBounds");
       assert.ok(bounds.length > 1);
@@ -125,6 +150,7 @@ try {
       await choose({ en: "pl", pl: "es", es: "en" }[locale]);
       assert.equal(await evaluate(`savedAudio===${audio} && !savedAudio.paused`), true);
       await choose(locale);
+      assert.equal(await evaluate(`${audio}.volume===0.4 && ${volume}.value==='40'`), true);
       await evaluate("window.next.router.push('/library')");
       await waitFor(row(2));
       await waitFor(`${row(2)}.getAttribute('aria-pressed')==='true'`);

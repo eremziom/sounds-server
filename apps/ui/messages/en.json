@@ -34,7 +34,7 @@
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": {
-    "player": {"label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
+    "player": {"volume":"Volume","mute":"Mute","unmute":"Unmute","label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
     "upload": {
       "addAnother": "Add another track",
       "genre": "Genre (optional)", "subgenre": "Subgenre (optional)", "lengthGenre": "Use 3–30 characters.", "publicationDateAutomatic": "Set automatically to the current date when the track is published.",

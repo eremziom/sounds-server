@@ -12,6 +12,8 @@ export function useAudioPlayback() {
   const [track, setTrack] = useState<PlaybackTrack | null>(null);
   const [state, setState] = useState({ playing: false, waiting: false, ended: false, currentTime: 0, duration: 0 });
   const [error, setError] = useState<PlaybackError | null>(null);
+  const [volumeState, setVolumeState] = useState({ volume: 1, muted: false });
+  const lastVolume = useRef(1);
   const selected = useRef<PlaybackTrack | null>(null);
   const generation = useRef(0);
   const pending = useRef(false);
@@ -27,6 +29,12 @@ export function useAudioPlayback() {
   useEffect(() => {
     const element = audio.current;
     if (!element) return;
+    const syncVolume = () => {
+      if (element.volume > 0) lastVolume.current = element.volume;
+      setVolumeState({ volume: element.volume, muted: element.muted });
+    };
+    syncVolume();
+    element.addEventListener("volumechange", syncVolume);
     const sync = (event: Event) => {
       setState({
         playing: !element.paused && !element.ended,
@@ -62,6 +70,7 @@ export function useAudioPlayback() {
       generation.current++;
       events.forEach(name => element.removeEventListener(name, sync));
       element.removeEventListener("error", onError);
+      element.removeEventListener("volumechange", syncVolume);
     };
   }, [audio, runProtected, getStatus, end]);
 
@@ -114,5 +123,23 @@ export function useAudioPlayback() {
     }
   }
 
-  return { audio, track, ...state, error, toggle, seek };
+  function setVolume(volume: number) {
+    const element = audio.current;
+    if (!element || getStatus() !== "active" || !Number.isFinite(volume)) return;
+    element.volume = Math.max(0, Math.min(volume, 1));
+    element.muted = false;
+  }
+
+  function toggleMute() {
+    const element = audio.current;
+    if (!element || getStatus() !== "active") return;
+    if (element.muted || element.volume === 0) {
+      if (element.volume === 0) element.volume = lastVolume.current;
+      element.muted = false;
+    } else {
+      element.muted = true;
+    }
+  }
+
+  return { audio, track, ...state, ...volumeState, error, toggle, seek, setVolume, toggleMute };
 }

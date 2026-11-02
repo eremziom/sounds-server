@@ -34,7 +34,7 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
-    "player": {"label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
+    "player": {"volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
     "upload": {
       "addAnother": "Añadir otra pista",
       "genre": "Género (opcional)", "subgenre": "Subgénero (opcional)", "lengthGenre": "Usa entre 3 y 30 caracteres.", "publicationDateAutomatic": "Se establece automáticamente en la fecha actual al publicar la pista.",

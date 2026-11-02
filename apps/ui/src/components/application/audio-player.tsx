@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { Button } from "../ui/button";
 import { usePlayback } from "./media-runtime";
 import { useApplicationSession } from "./application-runtime";
@@ -17,6 +17,8 @@ export function AudioPlayer() {
   const { status } = useApplicationSession();
   if (!player.track) return null;
   const disabled = status !== "active";
+  const silent = player.muted || player.volume === 0;
+  const volume = Math.round((player.muted ? 0 : player.volume) * 100);
   return <section aria-label={t("label")} data-audio-player className="border-t">
     <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
       <div className="min-w-0 flex-1 basis-40">
@@ -40,6 +42,16 @@ export function AudioPlayer() {
           aria-label={t("seek")} aria-valuetext={`${clock(player.currentTime)} / ${clock(player.duration)}`}
           className="min-w-0 flex-1 accent-primary" />
         <span className="w-[8ch] shrink-0 font-mono text-xs tabular-nums" aria-label={t("duration")}>{clock(player.duration)}</span>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <Button type="button" variant="ghost" size="icon" disabled={disabled} onClick={player.toggleMute}
+          data-player-mute aria-pressed={silent} aria-label={t(silent ? "unmute" : "mute")}>
+          {silent ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
+        </Button>
+        <input type="range" min={0} max={100} step={1} value={volume} disabled={disabled}
+          data-player-volume onChange={event => player.setVolume(Number(event.target.value) / 100)}
+          aria-label={t("volume")} aria-valuetext={`${volume}%`} className="w-24 accent-primary" />
+        <span aria-hidden="true" className="w-[4ch] text-right font-mono text-xs tabular-nums">{volume}%</span>
       </div>
       <p className="min-h-4 w-full truncate text-xs text-muted-foreground" role="status" aria-atomic="true">
         {!player.error && (player.waiting ? t("waiting") : player.ended ? t("ended") : "")}

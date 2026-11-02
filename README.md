@@ -178,7 +178,8 @@ these responses.
 The database now supports one `AudioFile` per track and unique storage keys.
 Deleting a user preserves their tracks with `ownerId: null`; deleting a track
 cascades to its audio metadata. Apply the migration with `pnpm prisma:migrate`
-before running the updated API. The orphan cleanup script is a later stage.
+before running the updated API. Use the [audio cleanup command](#audio-cleanup)
+to inspect and remove eligible orphan files.
 
 `pnpm --filter api test:audio-model` verifies the migration against historical
 records and exercises the model using a temporary database. It requires
@@ -217,8 +218,9 @@ alongside the compiled API and production dependencies. File buffers stay bounde
 during receipt and validation; decoded recordings are not retained in memory.
 
 `POST /tracks/upload` accepts `multipart/form-data` with exactly one `file` and
-one `metadata` field (JSON matching `CreateTrackDto`: `title`, `description`,
-`releaseDate`, `bpm: { bpmFrom, bpmTo }`). Either part order is accepted. Metadata
+one `metadata` field (JSON matching `CreateTrackDto`: required `title` and
+`publicationDate` in `YYYY-MM-DD` format; optional `description`, `genre`,
+`subgenre` and `bpm: { bpmFrom, bpmTo }`). Either part order is accepted. Metadata
 is limited to 8 KiB; unknown fields, extra files and missing/invalid data are
 rejected. JWT authentication and `tracks:create` are checked before file receipt.
 The owner always comes from the authenticated session; client `ownerId` is rejected.
@@ -255,7 +257,8 @@ The API checks ownership and deletes the track (with cascading audio metadata)
 in a database transaction, then removes its stored file. DB failure leaves the
 file in place. If disk cleanup fails after commit, deletion still returns 200;
 an error log records the track ID and storage key for later orphan cleanup.
-The orphan cleanup script remains planned; no automatic sweep runs yet.
+Use the [audio cleanup command](#audio-cleanup) for remaining files; no automatic
+sweep runs.
 
 The two-stage upload contract is also available. `POST /tracks/uploads` receives
 one multipart `file` and no metadata, validates it and returns HTTP 201 with
@@ -357,3 +360,45 @@ Read/deletion HTTP tests use real JWT guards and temporary disk storage with a
 mocked database: `pnpm --filter api exec jest --runInBand track-audio`.
 `test:audio-model` also verifies deletion permissions, cascading metadata deletion
 and rollback without invoking disk cleanup against temporary PostgreSQL.
+
+### Audio upload acceptance checks
+
+Run from the repository root with dependencies and Prisma Client installed.
+The database checks need the API's `DATABASE_URL` and CREATE DATABASE permission;
+they create and remove their own databases and temporary storage. Browser checks
+need Chrome/Edge/Chromium (or an absolute `BROWSER_PATH`) and start isolated Next.js
+servers against test APIs. Build UI before running its HTTP/browser checks.
+
+```powershell
+pnpm --filter api exec jest --runInBand
+pnpm --filter ui test
+pnpm --filter api exec eslint "{src,apps,libs,test}/**/*.ts"
+pnpm --filter ui lint
+pnpm --filter api exec tsc --noEmit
+pnpm --filter api build
+pnpm --filter ui build
+pnpm --filter ui exec tsc --noEmit
+pnpm --filter api test:audio-storage
+pnpm --filter api test:audio-model
+pnpm --filter api test:upload-access
+pnpm --filter api test:temporary-uploads
+pnpm --filter api test:audio-cleanup
+pnpm --filter ui test:routing
+pnpm --filter ui test:tracks-proxy
+pnpm --filter ui test:browser
+git diff --check
+```
+
+The browser suite includes upload, Library and playback acceptance checks in
+en/pl/es, keyboard and 320px layouts, navigation/language changes, session endings
+and refresh recovery. It uses test APIs; actual audio validation, persistence,
+transactions and cleanup are covered by the API checks above. See the
+[audio upload plan](docs/audio-upload-plan.md) for the acceptance criteria and
+verification results.
+
+Stage 7 passed on 2026-11-02: all 11 acceptance criteria confirmed, 273 API tests,
+105 UI tests, all five audio API/storage/database checks, both HTTP integration
+checks and all 14 browser scripts passed. TypeScript, lint, translations and both
+production builds passed. Next.js commands required execution outside the sandbox
+because it blocked access to the native SWC cache. Application data was not
+modified by these checks. The Library visual refactor remains a separate stage 8.

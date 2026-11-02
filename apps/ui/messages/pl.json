@@ -34,7 +34,7 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
-    "player": {"label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
+    "player": {"volume":"Głośność","mute":"Wycisz","unmute":"Włącz dźwięk","label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
     "upload": {
       "addAnother": "Dodaj kolejny utwór",
       "genre": "Gatunek (opcjonalnie)", "subgenre": "Subgatunek (opcjonalnie)", "lengthGenre": "Podaj od 3 do 30 znaków.", "publicationDateAutomatic": "Ustawiana automatycznie na bieżącą datę przy publikacji utworu.",
