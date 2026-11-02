@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { BANDS } from "@/lib/audio-analysis";
-import { createLiveDetector, type LiveSnapshot } from "@/lib/live-audio-analysis";
+import { createLiveDetector, DEFAULT_BASS_OPTIONS, TRANSIENT_INTERVAL_MS, type BassDetectionOptions, type BassPulse, type LiveSnapshot } from "@/lib/live-audio-analysis";
+import { BassPulseVisualizer } from "./bass-pulse-visualizer";
 import { useApplicationSession } from "./application-runtime";
 import { useMediaRuntime, usePlayback } from "./media-runtime";
 import type { PlaybackTrack } from "./use-audio-playback";
@@ -26,6 +27,8 @@ export function LiveAudioAnalysisPanel({ track }: { track: PlaybackTrack }) {
   const [starting, setStarting] = useState(false);
   const [failure, setFailure] = useState(false);
   const [snapshot, setSnapshot] = useState<LiveSnapshot | null>(null);
+  const [bassPulse, setBassPulse] = useState<BassPulse | null>(null);
+  const [bassOptions, setBassOptions] = useState<BassDetectionOptions>(DEFAULT_BASS_OPTIONS);
   const operation = useRef(0);
   useEffect(() => () => { operation.current++; }, []);
 
@@ -34,37 +37,54 @@ export function LiveAudioAnalysisPanel({ track }: { track: PlaybackTrack }) {
     const element = audio.current;
     if (!element) return;
     let detector = createLiveDetector();
-    let readyAt = performance.now() + 120;
+    let readyAt = performance.now() + 60;
+    let nextUiAt = performance.now() + 120;
+    let bassSinceUi = false, onsetSinceUi = false;
     const expectedSrc = `/api/tracks/${track.id}/audio`;
     const reset = (event: Event) => {
-      detector = createLiveDetector(); readyAt = performance.now() + 120;
+      detector = createLiveDetector(); readyAt = performance.now() + 60;
+      nextUiAt = performance.now() + 120; bassSinceUi = onsetSinceUi = false; setBassPulse(null);
       if (["seeking", "seeked", "emptied", "loadstart"].includes(event.type)) setSnapshot(null);
     };
     const tick = () => {
       if (["ended", "unavailable"].includes(getStatus()) || document.hidden || performance.now() < readyAt ||
           element.paused || element.ended || element.seeking || element.readyState < 3 || element.getAttribute("src") !== expectedSrc) return;
       try {
-        const measurement = analysisGraph.measure(element.currentTime);
-        if (measurement) setSnapshot(detector.sample(measurement));
+        const transient = analysisGraph.measureTransient(element.currentTime);
+        if (!transient) return;
+        const detection = detector.sampleTransient(transient, bassOptions);
+        bassSinceUi ||= detection.bassOnset; onsetSinceUi ||= detection.onset;
+        // Deliver attacks immediately to the visualizer, independently of numeric fields.
+        if (detection.bassOnset && detection.lastBassTime !== null) {
+          setBassPulse({ time: detection.lastBassTime, strength: detection.bassStrength! });
+        }
+        const now = performance.now();
+        if (now >= nextUiAt) {
+          const measurement = analysisGraph.measure(element.currentTime);
+          if (measurement) setSnapshot({ ...measurement, ...detection, bassOnset: bassSinceUi, onset: onsetSinceUi });
+          bassSinceUi = onsetSinceUi = false; nextUiAt = now + 100;
+        }
       } catch { setFailure(true); setEnabled(false); }
     };
-    const timer = setInterval(tick, 100);
+    const timer = setInterval(tick, TRANSIENT_INTERVAL_MS);
     const events = ["playing", "pause", "waiting", "seeking", "seeked", "emptied", "loadstart", "ratechange"];
     events.forEach(event => element.addEventListener(event, reset));
+    document.addEventListener("visibilitychange", reset);
     const unregister = registerStop(() => {
       clearInterval(timer); operation.current++;
-      setSnapshot(null); setEnabled(false); setStarting(false);
+      setSnapshot(null); setBassPulse(null); setEnabled(false); setStarting(false);
     });
     return () => {
       clearInterval(timer); unregister();
       events.forEach(event => element.removeEventListener(event, reset));
+      document.removeEventListener("visibilitychange", reset);
     };
-  }, [enabled, run, audio, analysisGraph, registerStop, track.id, getStatus]);
+  }, [enabled, run, audio, analysisGraph, registerStop, track.id, getStatus, bassOptions]);
 
   async function start() {
     if (starting || getStatus() !== "active" || !audio.current) return;
     const revision = ++operation.current;
-    setStarting(true); setFailure(false); setSnapshot(null);
+    setStarting(true); setFailure(false); setSnapshot(null); setBassPulse(null);
     try {
       // Initialize/resume directly from the user gesture, without replacing the player.
       analysisGraph.connect(audio.current);
@@ -96,6 +116,8 @@ export function LiveAudioAnalysisPanel({ track }: { track: PlaybackTrack }) {
       <span role="status" className="text-sm" data-live-status>{t(state)}</span>
     </div>
     {failure && <p role="alert" className="text-sm text-destructive">{t("failed")}</p>}
+    <BassPulseVisualizer snapshot={snapshot} pulse={bassPulse} active={state === "running"} options={bassOptions}
+      onOptionsChange={options => { setSnapshot(null); setBassPulse(null); setBassOptions(options); }} />
     <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 lg:grid-cols-4">
       {field("start", t("windowStart"), time(snapshot?.start))}
       {field("time", t("windowEnd"), time(snapshot?.end))}

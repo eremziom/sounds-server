@@ -34,12 +34,17 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
+    "bassVisual": {
+      "title": "Puls basu", "description": "Rozmiar okręgu pokazuje bieżącą energię basu. Rozchodzący się, wygasający błysk oznacza wykryty impuls; silniejsze impulsy dają mocniejszy błysk.",
+      "sensitivity": "Czułość: {value, number}×", "interval": "Odstęp między impulsami: {value, number} ms", "decay": "Wygaszanie: {value, number} ms", "reset": "Przywróć ustawienia",
+      "notes": "Wskaźnik działa podczas analizy na żywo i odtwarzania. Wyższa czułość obniża próg wykrywania impulsów basowych także w polach pomiarów. Zmiana czułości lub odstępu zeruje historię detekcji. To impulsy w paśmie 20–250 Hz, a nie potwierdzone rozpoznanie stopy. Przy ograniczeniu ruchu w systemie animowane błyski są wyłączone."
+    },
     "liveAnalysis": {
       "title": "Analiza na żywo", "description": "Bieżące pomiary odtwarzanego utworu w osobnych polach, odświeżane co około 100 ms. Nie wymagają wcześniejszej analizy całego pliku.",
       "start": "Odtwórz i analizuj na żywo", "restart": "Uruchom analizę od nowa", "stop": "Zatrzymaj analizę", "yes": "Tak", "no": "Nie",
       "idle": "Analiza wyłączona", "running": "Analiza trwa", "paused": "Pauza — wartości zatrzymane", "ended": "Koniec utworu — ostatnie wartości", "waiting": "Oczekiwanie na dźwięk…", "otherTrack": "Odtwarzany jest inny utwór", "playbackFailed": "Błąd odtwarzania — sprawdź odtwarzacz", "failed": "Nie udało się uruchomić analizy na żywo. Sprawdź obsługę Web Audio w przeglądarce i spróbuj ponownie.",
       "windowStart": "Początek okna pomiaru", "windowEnd": "Czas utworu / koniec okna", "lastBassTime": "Czas ostatniego impulsu basowego", "lastBassStrength": "Siła ostatniego impulsu basowego względem progu", "lastOnsetTime": "Czas ostatniego wzrostu energii", "lastOnsetStrength": "Siła ostatniego wzrostu energii względem progu", "silenceStart": "Początek bieżącej ciszy",
-      "notes": "Pomiary pochodzą z Web Audio, nie z tabeli. Okno sygnału ma około 93 ms; pomiary mogą różnić się od analizy całego pliku. Impulsy są szacowane z kolejnych pomiarów. Po przewinięciu historia detekcji jest zerowana. Ukryta karta może ograniczać odświeżanie. Tempo wymaga kilku sekund regularnych impulsów; nie wyznaczamy taktów. Zatrzymanie analizy nie zatrzymuje odtwarzania."
+      "notes": "Pola odświeżają się co około 100 ms, z oknem pomiarów około 93 ms. Uderzenia wykrywamy osobno co około 20 ms, w krótszym oknie około 23 ms i filtrowanym paśmie basu. Rozbłysk reaguje od razu; wybrzmiewanie jest scalane w jedno zdarzenie. Po przewinięciu zerujemy historię. Przeglądarka może opóźniać odczyty, zwłaszcza w tle. Tempo wymaga regularnych impulsów; nie wyznaczamy taktów. Zatrzymanie analizy nie zatrzymuje odtwarzania."
     },
     "analysis": {
       "title": "Analiza audio", "back": "Wróć do Biblioteki", "description": "Analiza całego utworu bez odtwarzania. Wyniki są obliczane w przeglądarce i dostępne do opuszczenia tej strony. Kliknij tytuł utworu w Bibliotece, aby otworzyć analizę.",

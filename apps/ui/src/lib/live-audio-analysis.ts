@@ -10,6 +10,13 @@ export type LiveSnapshot = LiveMeasurement & {
   bassStrength: number | null; onsetStrength: number | null;
   silenceStart: number | null; tempo: AudioAnalysis["tempo"];
 };
+export type BassDetectionOptions = { sensitivity: number; minIntervalMs: number };
+export const DEFAULT_BASS_OPTIONS: BassDetectionOptions = { sensitivity: 1, minIntervalMs: 180 };
+export const TRANSIENT_INTERVAL_MS = 20;
+export const TRANSIENT_WINDOW_SIZE = 1024;
+export type TransientMeasurement = Pick<LiveMeasurement, "start" | "end" | "rmsDbfs" | "amplitude" | "lowAmplitude">;
+export type LiveDetection = Omit<LiveSnapshot, keyof LiveMeasurement>;
+export type BassPulse = { time: number; strength: number };
 const db = (amplitude: number) => Math.max(-120, 20 * Math.log10(Math.max(1e-6, amplitude)));
 
 // Frequency arrays are Web Audio decibels. Sum linear powers, never decibels.
@@ -38,42 +45,75 @@ export function measureLiveAudio(samples: Float32Array[], frequencies: Float32Ar
   };
 }
 
+// An attack locks the gate until the envelope has fallen for at least 40 ms.
+// This groups the attack, body and ringing of one hit into a single event.
+function createAttackGate() {
+  let baseline: number | null = null;
+  let previous = 0, armed = true, peak = 0, releaseLevel = 0, releaseDuration = 0;
+  let lastTime: number | null = null;
+  let history: { time: number; delta: number }[] = [];
+  const median = (values: number[]) => {
+    const sorted = [...values].sort((a, b) => a - b);
+    return sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+  };
+  return (level: number, time: number, dt: number, sensitivity: number, spacing: number) => {
+    if (baseline === null) { baseline = previous = level; return null; }
+    const delta = Math.max(0, level - previous);
+    history = history.filter(item => time - item.time <= 1);
+    const noise = median(history.map(item => item.delta));
+    const deviation = median(history.map(item => Math.abs(item.delta - noise)));
+    const threshold = Math.max(0.008, noise + 3 * deviation) / sensitivity;
+    const before = baseline;
+    baseline += (1 - Math.exp(-dt / 0.25)) * (level - baseline);
+    previous = level;
+    history.push({ time, delta });
+    if (!armed) {
+      peak = Math.max(peak, level);
+      if (level <= Math.max(releaseLevel, peak * 0.55)) releaseDuration += dt;
+      else releaseDuration = 0;
+      if (releaseDuration >= 0.04) armed = true;
+    }
+    if (!armed || (lastTime !== null && time - lastTime < spacing) || delta <= threshold ||
+        level < before * (1 + 0.35 / sensitivity) + threshold) return null;
+    armed = false; peak = level; releaseLevel = before * 1.2; releaseDuration = 0; lastTime = time;
+    return delta / threshold;
+  };
+}
+
 export function createLiveDetector() {
-  let previous: LiveMeasurement | null = null;
-  let history: { time: number; bass: number; overall: number }[] = [];
+  let previous: TransientMeasurement | null = null;
+  let bassGate = createAttackGate(), overallGate = createAttackGate();
   let bassTimes: number[] = [];
   let lastBassTime: number | null = null, lastOnsetTime: number | null = null;
   let bassStrength: number | null = null, onsetStrength: number | null = null;
   let silenceStart: number | null = null;
-  return {
-    sample(frame: LiveMeasurement): LiveSnapshot {
+  const detect = (frame: TransientMeasurement, bassOptions: BassDetectionOptions = DEFAULT_BASS_OPTIONS): LiveDetection => {
       // Seeks, stalled polling and source changes must not fabricate transients.
       if (previous && (frame.end <= previous.end || frame.end - previous.end > 0.35)) {
-        previous = null; history = []; bassTimes = []; lastBassTime = lastOnsetTime = null;
+        previous = null; bassGate = createAttackGate(); overallGate = createAttackGate();
+        bassTimes = []; lastBassTime = lastOnsetTime = null;
         bassStrength = onsetStrength = null; silenceStart = null;
       }
-      const bass = previous ? Math.max(0, frame.lowAmplitude - previous.lowAmplitude) : 0;
-      const overall = previous ? Math.max(0, frame.amplitude - previous.amplitude) : 0;
-      history = history.filter(item => frame.end - item.time <= 1);
-      const threshold = (key: "bass" | "overall") => {
-        if (!history.length) return 0.008;
-        const mean = history.reduce((sum, item) => sum + item[key], 0) / history.length;
-        const deviation = Math.sqrt(history.reduce((sum, item) => sum + (item[key] - mean) ** 2, 0) / history.length);
-        return Math.max(0.008, mean + 1.5 * deviation);
-      };
-      const bassThreshold = threshold("bass"), overallThreshold = threshold("overall");
-      const bassOnset = bass > bassThreshold && (lastBassTime === null || frame.end - lastBassTime >= 0.18);
-      const onset = overall > overallThreshold && (lastOnsetTime === null || frame.end - lastOnsetTime >= 0.18);
-      if (bassOnset) { lastBassTime = frame.end; bassStrength = bass / bassThreshold; bassTimes.push(frame.end); }
-      if (onset) { lastOnsetTime = frame.end; onsetStrength = overall / overallThreshold; }
+      const dt = previous ? frame.end - previous.end : TRANSIENT_INTERVAL_MS / 1000;
+      const spacing = Math.max(120, Math.min(600, bassOptions.minIntervalMs)) / 1000;
+      const bassAttack = bassGate(frame.lowAmplitude, frame.end, dt, Math.max(0.5, Math.min(3, bassOptions.sensitivity)), spacing);
+      const overallAttack = overallGate(frame.amplitude, frame.end, dt, 1, 0.18);
+      const bassOnset = bassAttack !== null, onset = overallAttack !== null;
+      if (bassOnset) { lastBassTime = frame.end; bassStrength = bassAttack; bassTimes.push(frame.end); }
+      if (onset) { lastOnsetTime = frame.end; onsetStrength = overallAttack; }
       if (frame.rmsDbfs < -60) silenceStart ??= frame.start; else silenceStart = null;
       bassTimes = bassTimes.filter(time => frame.end - time <= 15);
-      history.push({ time: frame.end, bass, overall }); previous = frame;
+      previous = frame;
       return {
-        ...frame, bassOnset, onset, silence: silenceStart !== null && frame.end - silenceStart >= 0.3,
+        bassOnset, onset, silence: silenceStart !== null && frame.end - silenceStart >= 0.3,
         lastBassTime, lastOnsetTime, bassStrength, onsetStrength, silenceStart,
         tempo: estimateTempo(bassTimes),
       };
+  };
+  return {
+    sampleTransient: detect,
+    sample(frame: LiveMeasurement, options: BassDetectionOptions = DEFAULT_BASS_OPTIONS): LiveSnapshot {
+      return { ...frame, ...detect(frame, options) };
     },
   };
 }
@@ -84,7 +124,9 @@ export function createLiveAudioGraph() {
   let context: AudioContext | null = null;
   let source: MediaElementAudioSourceNode | null = null;
   let analysers: AnalyserNode[] = [];
+  let transientAnalysers: AnalyserNode[] = [], bassAnalysers: AnalyserNode[] = [];
   let samples: Float32Array<ArrayBuffer>[] = [], frequencies: Float32Array<ArrayBuffer>[] = [];
+  let transientSamples: Float32Array<ArrayBuffer>[] = [], bassSamples: Float32Array<ArrayBuffer>[] = [];
   return {
     connect(element: HTMLAudioElement) {
       if (source) return;
@@ -103,6 +145,21 @@ export function createLiveAudioGraph() {
       });
       samples = analysers.map(() => new Float32Array(FFT_SIZE));
       frequencies = analysers.map(node => new Float32Array(node.frequencyBinCount));
+      // Independent short time-domain windows avoid smearing attacks across the
+      // 93 ms spectrum window used by the slower numeric UI.
+      const highpass = context.createBiquadFilter();
+      highpass.type = "highpass"; highpass.frequency.value = 20; highpass.Q.value = Math.SQRT1_2;
+      const lowpass = context.createBiquadFilter();
+      lowpass.type = "lowpass"; lowpass.frequency.value = 250; lowpass.Q.value = Math.SQRT1_2;
+      const bassSplitter = context.createChannelSplitter(2);
+      stereo.connect(highpass); highpass.connect(lowpass); lowpass.connect(bassSplitter);
+      const shortAnalysers = (input: ChannelSplitterNode) => [0, 1].map(channel => {
+        const node = context!.createAnalyser(); node.fftSize = TRANSIENT_WINDOW_SIZE; node.smoothingTimeConstant = 0;
+        input.connect(node, channel); return node;
+      });
+      transientAnalysers = shortAnalysers(splitter); bassAnalysers = shortAnalysers(bassSplitter);
+      transientSamples = transientAnalysers.map(() => new Float32Array(TRANSIENT_WINDOW_SIZE));
+      bassSamples = bassAnalysers.map(() => new Float32Array(TRANSIENT_WINDOW_SIZE));
       source = context.createMediaElementSource(element);
       source.connect(context.destination);
       source.connect(stereo);
@@ -113,9 +170,23 @@ export function createLiveAudioGraph() {
       analysers.forEach((node, i) => { node.getFloatTimeDomainData(samples[i]); node.getFloatFrequencyData(frequencies[i]); });
       return measureLiveAudio(samples, frequencies, context.sampleRate, time);
     },
+    measureTransient(time: number): TransientMeasurement | null {
+      if (!context || context.state !== "running" || !source) return null;
+      const rms = (nodes: AnalyserNode[], buffers: Float32Array<ArrayBuffer>[]) => {
+        let power = 0;
+        nodes.forEach((node, channel) => {
+          node.getFloatTimeDomainData(buffers[channel]);
+          for (const sample of buffers[channel]) power += sample * sample;
+        });
+        return Math.sqrt(power / nodes.length / TRANSIENT_WINDOW_SIZE);
+      };
+      const amplitude = rms(transientAnalysers, transientSamples);
+      return { start: Math.max(0, time - TRANSIENT_WINDOW_SIZE / context.sampleRate), end: time,
+        amplitude, lowAmplitude: rms(bassAnalysers, bassSamples), rmsDbfs: db(amplitude) };
+    },
     close() {
       source?.disconnect();
-      analysers.forEach(node => node.disconnect());
+      [...analysers, ...transientAnalysers, ...bassAnalysers].forEach(node => node.disconnect());
       if (context && context.state !== "closed") void context.close().catch(() => {});
     },
   };

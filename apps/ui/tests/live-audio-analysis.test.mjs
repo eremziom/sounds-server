@@ -60,3 +60,70 @@ test("live silence needs 300 ms of measured silence", () => {
   assert.equal(detector.sample(frame(0.4)).silence, true);
   assert.equal(detector.sample(frame(0.5, 0.1)).silence, false);
 });
+
+test("bass sensitivity lowers the actual threshold while leaving overall onsets unchanged", () => {
+  const normal = createLiveDetector(), sensitive = createLiveDetector();
+  normal.sample(frame(0.1)); sensitive.sample(frame(0.1));
+  const normalPulse = normal.sample(frame(0.2, 0.004));
+  const sensitivePulse = sensitive.sample(frame(0.2, 0.004), { sensitivity: 3, minIntervalMs: 180 });
+  assert.equal(normalPulse.bassOnset, false);
+  assert.equal(sensitivePulse.bassOnset, true);
+  assert.ok(sensitivePulse.bassStrength > 1);
+  assert.equal(sensitivePulse.onset, normalPulse.onset);
+});
+
+test("configured spacing suppresses closely repeated bass events", () => {
+  const normal = createLiveDetector(), spaced = createLiveDetector();
+  const options = { sensitivity: 1, minIntervalMs: 600 };
+  for (const detector of [normal, spaced]) detector.sample(frame(0.1));
+  assert.equal(normal.sample(frame(0.2, 0.02)).bassOnset, true);
+  assert.equal(spaced.sample(frame(0.2, 0.02), options).bassOnset, true);
+  normal.sample(frame(0.3)); spaced.sample(frame(0.3), options);
+  assert.equal(normal.sample(frame(0.4, 0.2)).bassOnset, true);
+  assert.equal(spaced.sample(frame(0.4, 0.2), options).bassOnset, false);
+});
+
+test("20 ms sampling catches a short attack between the old 100 ms reads", () => {
+  const detector = createLiveDetector();
+  const hits = [];
+  for (let i = 0; i < 20; i++) {
+    const time = i * 0.02;
+    const snapshot = detector.sampleTransient(frame(time, time >= 0.04 && time < 0.08 ? 0.4 : 0));
+    if (snapshot.bassOnset) hits.push(snapshot.lastBassTime);
+  }
+  assert.deepEqual(hits, [0.04]);
+});
+
+test("one ringing attack does not retrigger after the refractory interval", () => {
+  const detector = createLiveDetector();
+  const hits = [];
+  for (let i = 0; i < 40; i++) {
+    const time = i * 0.02;
+    // A long body with ripples lasts past the default 180 ms spacing.
+    const amplitude = i < 3 || i > 30 ? 0 : i === 3 ? 0.8 : 0.55 + 0.05 * Math.sin(i * 1.8);
+    const snapshot = detector.sampleTransient(frame(time, amplitude));
+    if (snapshot.bassOnset) hits.push(snapshot.lastBassTime);
+  }
+  assert.deepEqual(hits, [0.06]);
+});
+
+test("steady bass with small envelope ripple does not create repeated onsets", () => {
+  const detector = createLiveDetector();
+  for (let i = 0; i < 200; i++) {
+    const snapshot = detector.sampleTransient(frame(i * 0.02, 0.4 + 0.025 * Math.sin(i * 1.1)));
+    assert.equal(snapshot.bassOnset, false);
+  }
+});
+
+test("distinct attacks rearm and a weaker hit after a strong hit is retained", () => {
+  const detector = createLiveDetector();
+  const hits = [];
+  for (let i = 0; i < 120; i++) {
+    const phase = i % 25;
+    const amplitude = phase >= 4 && phase <= 6 ? (i < 25 ? 0.8 : 0.15) : 0;
+    const snapshot = detector.sampleTransient(frame(i * 0.02, amplitude));
+    if (snapshot.bassOnset) hits.push(snapshot.lastBassTime);
+  }
+  assert.equal(hits.length, 5);
+  hits.forEach((time, i) => assert.ok(Math.abs(time - (0.08 + i * 0.5)) < 0.001));
+});

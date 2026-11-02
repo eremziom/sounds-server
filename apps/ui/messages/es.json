@@ -34,12 +34,17 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "bassVisual": {
+      "title": "Pulso de graves", "description": "El tamaño del círculo muestra la energía actual de graves. Un brillo que se expande y desvanece indica un pulso detectado; los pulsos más fuertes producen un brillo mayor.",
+      "sensitivity": "Sensibilidad: {value, number}×", "interval": "Separación de pulsos: {value, number} ms", "decay": "Desvanecimiento: {value, number} ms", "reset": "Restablecer ajustes",
+      "notes": "Activo durante el análisis en vivo y la reproducción. Una mayor sensibilidad reduce el umbral de graves también en los campos de medición. Cambiar la sensibilidad o la separación reinicia el historial. Son pulsos entre 20 y 250 Hz, no una identificación confirmada del bombo. Los brillos animados se desactivan si el sistema solicita movimiento reducido."
+    },
     "liveAnalysis": {
       "title": "Análisis en vivo", "description": "Mediciones actuales de la pista en reproducción en campos separados, actualizados aproximadamente cada 100 ms. No se necesita analizar el archivo completo.",
       "start": "Reproducir y analizar en vivo", "restart": "Reiniciar análisis", "stop": "Detener análisis", "yes": "Sí", "no": "No",
       "idle": "Análisis desactivado", "running": "Analizando", "paused": "En pausa — valores congelados", "ended": "Pista finalizada — últimos valores", "waiting": "Esperando audio…", "otherTrack": "Se está reproduciendo otra pista", "playbackFailed": "Error de reproducción — revisa el reproductor", "failed": "No se pudo iniciar el análisis en vivo. Comprueba la compatibilidad con Web Audio y reinténtalo.",
       "windowStart": "Inicio de la ventana de medición", "windowEnd": "Tiempo de pista / fin de ventana", "lastBassTime": "Hora del último pulso grave", "lastBassStrength": "Intensidad del último pulso grave respecto al umbral", "lastOnsetTime": "Hora del último aumento de energía", "lastOnsetStrength": "Intensidad del último aumento de energía respecto al umbral", "silenceStart": "Inicio del silencio actual",
-      "notes": "Las mediciones provienen de Web Audio, no de la tabla. La ventana es de unos 93 ms; los valores pueden diferir del análisis completo. Los pulsos se estiman a partir de mediciones sucesivas. Cambiar de posición reinicia el historial. Las pestañas ocultas pueden reducir la frecuencia de actualización. El tempo requiere varios segundos de pulsos regulares; no se infieren compases. Detener el análisis no detiene la reproducción."
+      "notes": "Los campos se actualizan cada 100 ms aproximadamente, con una ventana de 93 ms. Los ataques se detectan por separado cada 20 ms aproximadamente, con una ventana más corta de 23 ms y graves filtrados. El brillo reacciona de inmediato; la resonancia se agrupa en un evento. Cambiar de posición reinicia el historial. El navegador puede retrasar las lecturas, especialmente en segundo plano. El tempo requiere pulsos regulares; no se infieren compases. Detener el análisis no detiene la reproducción."
     },
     "analysis": {
       "title": "Análisis de audio", "back": "Volver a la Biblioteca", "description": "Analiza la grabación completa sin reproducirla. Los resultados se calculan en el navegador y están disponibles hasta salir de esta página. Pulsa el título de una pista en la Biblioteca para abrir su análisis.",
