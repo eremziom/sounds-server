@@ -31,6 +31,7 @@ export interface ArtworkPackage {
   readonly layers: readonly ArtworkLayer[];
   readonly coverage: Readonly<{ baseLayerId: string }>;
   readonly behaviors: readonly BehaviorDescriptor[];
+  readonly anchors: readonly { readonly id: string; readonly x: number; readonly y: number }[];
 }
 
 function record(value: unknown, keys: readonly string[]): Record<string, unknown> {
@@ -55,7 +56,7 @@ function unique<T extends { readonly id: string }>(items: readonly T[]): Map<str
 }
 
 export function parseArtworkPackage(input: unknown): ArtworkPackage {
-  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage", "behaviors"]);
+  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage", "behaviors", "anchors"]);
   if (data.schemaVersion !== 1) throw new Error("Unsupported artwork schema version");
   const canvas = record(data.canvas, ["width", "height"]);
   if (canvas.width !== 3840 || canvas.height !== 2160) throw new Error("Artwork canvas must be 3840x2160");
@@ -127,7 +128,15 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
       throw new Error("Coverage base cannot use spatial behaviors without authored extended coverage");
     }
   }
-  return Object.freeze({ schemaVersion: 1, id: id(data.id), version: id(data.version),
+  if (data.anchors !== undefined && !Array.isArray(data.anchors)) throw new Error("Anchors must be an array");
+  const anchors = ((data.anchors ?? []) as unknown[]).map(input => {
+    const anchor = record(input, ["id", "x", "y"]);
+    if (typeof anchor.x !== "number" || typeof anchor.y !== "number" || !Number.isFinite(anchor.x) || !Number.isFinite(anchor.y) ||
+        anchor.x < 0 || anchor.x > 3840 || anchor.y < 0 || anchor.y > 2160) throw new Error("Invalid artwork anchor");
+    return Object.freeze({ id: id(anchor.id), x: anchor.x, y: anchor.y });
+  });
+  unique(anchors);
+  return Object.freeze({ schemaVersion: 1, id: id(data.id), version: id(data.version), anchors: Object.freeze(anchors),
     canvas: Object.freeze({ width: 3840, height: 2160 }), assets: Object.freeze(assets),
     layers: Object.freeze(layers), coverage: Object.freeze({ baseLayerId }), behaviors: artworkBehaviors });
 }

@@ -1,6 +1,7 @@
 import { prepareArtwork } from "/engine/artwork/prepare-artwork.ts";
 import { createInfiniteZoomController } from "/engine/index.ts";
 import { decodeArtworkAsset } from "/engine/artwork/artwork-loader.ts";
+export { check, waitFor, pixels, hash, opaque };
 
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 const waitFor = async predicate => {

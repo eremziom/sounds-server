@@ -1,4 +1,5 @@
 import { FULL_FRAME, POSE_KEYS, ZERO_VELOCITY, validatePose, type CameraPose } from "./camera-math.ts";
+import { cameraInDestination, velocityInDestination, type ArtworkPlacement } from "../transition/placement.ts";
 
 interface Trajectory {
   readonly from: CameraPose;
@@ -25,7 +26,7 @@ function sample(path: Trajectory, tick: number) {
 export function createCameraController(isPoseValid: (pose: CameraPose) => boolean, initial: CameraPose = FULL_FRAME) {
   validatePose(initial);
   if (!isPoseValid(initial)) throw new Error("COVERAGE_INVALID: initial camera");
-  const origin = Object.freeze({ ...initial });
+  let origin = Object.freeze({ ...initial });
   let pose: CameraPose = origin, velocity: CameraPose = ZERO_VELOCITY;
   let path: Trajectory | null = null;
   let constraintReached = false;
@@ -75,6 +76,20 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
       if (!target) throw new Error(`Unknown camera bookmark: ${name}`);
       retarget(target, seconds);
     },
+    rebaseCoordinates(placement: ArtworkPlacement) {
+      // Prepare the complete replacement before changing live state. The same
+      // curve in B coordinates retains its elapsed tick and both derivatives.
+      const nextPose = cameraInDestination(pose, placement);
+      const nextVelocity = velocityInDestination(velocity, placement);
+      const nextPath = path ? { ...path, from: cameraInDestination(path.from, placement),
+        to: cameraInDestination(path.to, placement), velocity: velocityInDestination(path.velocity, placement) } : null;
+      pose = nextPose; velocity = nextVelocity; origin = FULL_FRAME; path = nextPath;
+      // Bookmarks are local to the active artwork. A can be unloaded after the
+      // handoff, so its bookmarks must not become unsafe returns in B. Journey
+      // reset separately restores its initial artwork and original camera.
+      bookmarks.clear(); bookmarks.set("full-frame", FULL_FRAME);
+    },
+    halt() { path = null; velocity = ZERO_VELOCITY; },
     step() {
       if (!path) return;
       const next = sample(path, path.elapsed + 1);
@@ -88,7 +103,11 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
       if (path.elapsed === path.ticks) path = null;
     },
     getSnapshot() { return Object.freeze({ pose, velocity, moving: path !== null, constraintReached }); },
-    reset() { pose = origin; velocity = ZERO_VELOCITY; path = null; constraintReached = false; bookmarks.clear(); bookmarks.set("full-frame", origin); },
+    reset(initialPose: CameraPose = origin) {
+      validatePose(initialPose);
+      origin = Object.freeze({ ...initialPose }); pose = origin; velocity = ZERO_VELOCITY; path = null;
+      constraintReached = false; bookmarks.clear(); bookmarks.set("full-frame", origin);
+    },
   };
 }
 

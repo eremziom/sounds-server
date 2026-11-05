@@ -16,7 +16,7 @@ const server = createServer(async (request, response) => {
     const pathname = new URL(request.url, "http://localhost").pathname;
     if (pathname === "/") {
       response.setHeader("Content-Type", "text/html");
-      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script>`);
+      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script><script type="module" src="/transition-fixture.mjs"></script>`);
       return;
     }
     let source;
@@ -29,7 +29,9 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL(pathname.slice("/three/".length), threeRoot));
     } else if (pathname === "/fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-browser-fixture.mjs", import.meta.url));
-    } else if (/^\/infinite-zoom\/samples\/foundation\/(manifest\.json|motion-manifest\.json|backdrop\.svg|foreground\.svg|influence\.svg)$/.test(pathname)) {
+    } else if (pathname === "/transition-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-transition-browser-fixture.mjs", import.meta.url));
+    } else if (/^\/infinite-zoom\/samples\/foundation\/(manifest\.json|motion-manifest\.json|destination\.json|destination-backdrop\.svg|destination-foreground\.svg|backdrop\.svg|foreground\.svg|influence\.svg)$/.test(pathname)) {
       response.setHeader("Content-Type", pathname.endsWith(".json") ? "application/json" : "image/svg+xml");
       response.end(await readFile(new URL(pathname.slice(1), publicRoot)));
       return;
@@ -52,7 +54,7 @@ try {
   await send("Page.navigate", { url: `http://127.0.0.1:${server.address().port}` });
   let loaded = false;
   for (let i = 0; i < 100; i++) {
-    loaded = (await send("Runtime.evaluate", { expression: "typeof window.runFoundationRenderer === 'function'", returnByValue: true })).result.value;
+    loaded = (await send("Runtime.evaluate", { expression: "typeof window.runFoundationRenderer === 'function' && typeof window.runTransitionRenderer === 'function'", returnByValue: true })).result.value;
     if (loaded) break;
     await delay(50);
   }
@@ -62,6 +64,11 @@ try {
   assert.deepEqual(errors, [], "No browser errors or shader failures");
   assert.equal(result.result.value.contextRecovery, true);
   console.log("Infinite Zoom WebGL2:", JSON.stringify(result.result.value));
+  const transition = await send("Runtime.evaluate", { expression: "window.runTransitionRenderer()", awaitPromise: true, returnByValue: true });
+  assert.equal(transition.exceptionDetails, undefined, JSON.stringify(transition.exceptionDetails));
+  assert.deepEqual(errors, [], "No transition browser/shader errors");
+  assert.equal(transition.result.value.transitions, true);
+  console.log("Infinite Zoom zoomThrough:", JSON.stringify(transition.result.value));
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));
