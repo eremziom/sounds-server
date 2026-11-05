@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+  <!-- Technical calibration artwork, not approved Forest/Nebula production art. -->
+  <rect width="3840" height="2160" fill="#184060"/>
+  <path d="M0 1080H3840M1920 0V2160" stroke="#3784a0" stroke-width="32"/>
+  <circle cx="1920" cy="1080" r="800" fill="none" stroke="#5098ac" stroke-width="48"/>
+  <circle cx="1920" cy="1080" r="400" fill="none" stroke="#5098ac" stroke-width="24"/>
+</svg>

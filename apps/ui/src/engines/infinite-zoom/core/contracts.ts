@@ -27,6 +27,8 @@ export interface FrameScheduler {
  * Failed preparation must clean up its own partial allocations. */
 export interface PreparedEngine {
   step(context: StepContext): void;
+  /** Presentation only; called once per frame, including frames with no step. */
+  render?(interpolation: number): void;
   reset(): void;
   dispose(): void;
 }

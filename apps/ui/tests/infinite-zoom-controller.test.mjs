@@ -254,3 +254,28 @@ test("scheduler and module reset failures enter error and leave cleanup availabl
     assert.equal(f.disposals, 1);
   }
 });
+
+test("render runs once per frame, independent of fixed-step count, and cannot advance paused state", async () => {
+  const f = fixture();
+  const renders = [];
+  f.lease.render = alpha => renders.push({ alpha, tick: f.engine.getSnapshot().session.tick });
+  await f.engine.prepare(); f.engine.start();
+  f.frame(0); f.frame(8); f.frame(1008);
+  assert.equal(renders.length, 3);
+  assert.equal(renders[0].tick, 0);
+  assert.equal(renders[1].tick, 0);
+  assert.equal(renders[2].tick, 5);
+  f.engine.pause();
+  assert.equal(f.frames.size, 0);
+  f.engine.dispose();
+});
+
+test("render failures freeze visuals and preserve disposal", async () => {
+  const f = fixture();
+  f.lease.render = () => { throw new Error("render failed"); };
+  await f.engine.prepare(); f.engine.start(); f.frame(0);
+  assert.equal(f.engine.getSnapshot().status, "error");
+  assert.equal(f.frames.size, 0);
+  f.engine.dispose();
+  assert.equal(f.disposals, 1);
+});

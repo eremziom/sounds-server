@@ -42,6 +42,9 @@ export function createInfiniteZoomController(dependencies: EngineDependencies) {
           if (expectedRevision !== revision || lifecycle.getStatus() !== "running") break;
           session.step(context => resources!.step(context));
         }
+        if (expectedRevision === revision && lifecycle.getStatus() === "running") {
+          resources!.render?.(clock.getInterpolation());
+        }
         schedule();
       } catch (failure) { fail(failure); }
     });

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "foundation",
+  "version": "0.1.0",
+  "canvas": { "width": 3840, "height": 2160 },
+  "assets": [
+    { "id": "backdrop", "uri": "/infinite-zoom/samples/foundation/backdrop.svg", "kind": "image", "width": 3840, "height": 2160, "critical": true },
+    { "id": "foreground", "uri": "/infinite-zoom/samples/foundation/foreground.svg", "kind": "image", "width": 3840, "height": 2160, "critical": true }
+  ],
+  "layers": [
+    { "id": "backdrop", "zIndex": 0, "imageAssetId": "backdrop" },
+    { "id": "foreground", "zIndex": 1, "imageAssetId": "foreground" }
+  ],
+  "coverage": { "baseLayerId": "backdrop" }
+}
