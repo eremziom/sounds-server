@@ -1,3 +1,6 @@
+import { parseBehaviors, validateComposition, type BehaviorDescriptor } from "../behaviors/behavior-contract.ts";
+import { behaviorGroups, type BehaviorRegion } from "../behaviors/behavior-evaluator.ts";
+
 export interface ArtworkAsset {
   readonly id: string;
   readonly uri: string;
@@ -12,11 +15,13 @@ export interface ArtworkLayer {
   readonly zIndex: number;
   readonly imageAssetId: string;
   readonly maskAssetId?: string;
+  readonly behaviors: readonly BehaviorDescriptor[];
+  readonly regions: readonly BehaviorRegion[];
 }
 
-/** IZ-182 subset. Unsupported features are rejected rather than ignored.
+/** IZ-183 subset. Unsupported features are rejected rather than ignored.
  * coverage declares an opaque bottom layer; decoded pixels are checked by the
- * browser loader. Transition envelopes and behaviors belong to later stages. */
+ * browser loader. Transition envelopes belong to the next stage. */
 export interface ArtworkPackage {
   readonly schemaVersion: 1;
   readonly id: string;
@@ -25,6 +30,7 @@ export interface ArtworkPackage {
   readonly assets: readonly ArtworkAsset[];
   readonly layers: readonly ArtworkLayer[];
   readonly coverage: Readonly<{ baseLayerId: string }>;
+  readonly behaviors: readonly BehaviorDescriptor[];
 }
 
 function record(value: unknown, keys: readonly string[]): Record<string, unknown> {
@@ -49,7 +55,7 @@ function unique<T extends { readonly id: string }>(items: readonly T[]): Map<str
 }
 
 export function parseArtworkPackage(input: unknown): ArtworkPackage {
-  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage"]);
+  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage", "behaviors"]);
   if (data.schemaVersion !== 1) throw new Error("Unsupported artwork schema version");
   const canvas = record(data.canvas, ["width", "height"]);
   if (canvas.width !== 3840 || canvas.height !== 2160) throw new Error("Artwork canvas must be 3840x2160");
@@ -70,8 +76,19 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
       width: asset.width, height: asset.height, critical: asset.critical });
   });
   const references = unique(assets);
+  function validateMask(reference: string | undefined) {
+    if (reference === undefined) return;
+    const mask = references.get(reference);
+    if (!mask || mask.kind !== "mask" || !mask.critical) throw new Error("Influence mask must reference a critical mask");
+  }
+  function behaviors(input: unknown) {
+    const parsed = parseBehaviors(input);
+    for (const behavior of parsed) validateMask(behavior.influenceMaskAssetId);
+    return parsed;
+  }
+  const artworkBehaviors = behaviors(data.behaviors);
   const layers: ArtworkLayer[] = data.layers.map(input => {
-    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId"]);
+    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId", "behaviors", "regions"]);
     if (typeof layer.zIndex !== "number" || !Number.isSafeInteger(layer.zIndex)) throw new Error("Invalid layer zIndex");
     const imageAssetId = id(layer.imageAssetId);
     const image = references.get(imageAssetId);
@@ -81,7 +98,17 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
       const mask = references.get(maskAssetId);
       if (!mask || mask.kind !== "mask" || !mask.critical) throw new Error("Layer mask must reference a critical mask");
     }
+    if (layer.regions !== undefined && !Array.isArray(layer.regions)) throw new Error("Regions must be an array");
+    const regions: BehaviorRegion[] = ((layer.regions ?? []) as unknown[]).map(input => {
+      const region = record(input, ["id", "influenceMaskAssetId", "behaviors"]);
+      const influenceMaskAssetId = id(region.influenceMaskAssetId);
+      validateMask(influenceMaskAssetId);
+      return Object.freeze({ id: id(region.id), influenceMaskAssetId, behaviors: behaviors(region.behaviors) });
+    });
+    unique(regions);
+    if (regions.some(region => region.id === "layer")) throw new Error("Reserved region id: layer");
     return Object.freeze({ id: id(layer.id), zIndex: layer.zIndex, imageAssetId,
+      behaviors: behaviors(layer.behaviors), regions: Object.freeze(regions),
       ...(maskAssetId === undefined ? {} : { maskAssetId }) });
   });
   unique(layers);
@@ -92,7 +119,15 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   if (layers[0].id !== baseLayerId || layers[0].maskAssetId !== undefined) {
     throw new Error("Coverage requires an unmasked bottom layer");
   }
+  for (const layer of layers) for (const group of behaviorGroups(artworkBehaviors, layer)) {
+    validateComposition(group.behaviors);
+    if (layer.id === baseLayerId && group.behaviors.some(behavior =>
+      (behavior.kind === "translate" && (behavior.params.x !== 0 || behavior.params.y !== 0)) ||
+      (behavior.kind === "wave" && behavior.params.amplitude !== 0))) {
+      throw new Error("Coverage base cannot use spatial behaviors without authored extended coverage");
+    }
+  }
   return Object.freeze({ schemaVersion: 1, id: id(data.id), version: id(data.version),
     canvas: Object.freeze({ width: 3840, height: 2160 }), assets: Object.freeze(assets),
-    layers: Object.freeze(layers), coverage: Object.freeze({ baseLayerId }) });
+    layers: Object.freeze(layers), coverage: Object.freeze({ baseLayerId }), behaviors: artworkBehaviors });
 }

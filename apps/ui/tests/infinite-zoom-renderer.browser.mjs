@@ -29,7 +29,7 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL(pathname.slice("/three/".length), threeRoot));
     } else if (pathname === "/fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-browser-fixture.mjs", import.meta.url));
-    } else if (/^\/infinite-zoom\/samples\/foundation\/(manifest\.json|backdrop\.svg|foreground\.svg)$/.test(pathname)) {
+    } else if (/^\/infinite-zoom\/samples\/foundation\/(manifest\.json|motion-manifest\.json|backdrop\.svg|foreground\.svg|influence\.svg)$/.test(pathname)) {
       response.setHeader("Content-Type", pathname.endsWith(".json") ? "application/json" : "image/svg+xml");
       response.end(await readFile(new URL(pathname.slice(1), publicRoot)));
       return;

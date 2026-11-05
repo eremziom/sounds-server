@@ -5,6 +5,8 @@ import {
 } from "three";
 import { coversViewport, getCoverView, type ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
+import { FULL_FRAME, type CameraController } from "../camera/index.ts";
+import { buildBehaviorShader, behaviorUniform } from "../behaviors/behavior-shader.ts";
 
 export interface ArtworkViewport {
   readonly width: number;
@@ -15,6 +17,7 @@ export interface ArtworkViewport {
 
 export interface ArtworkRendererOptions {
   readonly viewport: ArtworkViewport;
+  readonly camera?: CameraController;
   /** Map availability to the controller's context-lost suspension. */
   readonly onAvailabilityChange: (available: boolean) => void;
   readonly onError: (error: unknown) => void;
@@ -28,19 +31,23 @@ const vertexShader = `
   }
 `;
 
-const layerFragmentShader = `
+function layerFragmentShader(declarations: string, body: string) { return `
   uniform sampler2D imageMap;
   uniform sampler2D maskMap;
   uniform float hasMask;
   uniform float opacity;
   varying vec2 vUv;
+  ${declarations}
   void main() {
+    ${body}
     // sRGB image textures decode to linear through their GPU internal format.
-    vec4 color = texture2D(imageMap, vUv);
-    color.a *= opacity * mix(1.0, texture2D(maskMap, vUv).r, hasMask);
+    vec4 color = texture2D(imageMap, sampleUv);
+    float inside = step(0.0, sampleUv.x) * step(sampleUv.x, 1.0) * step(0.0, sampleUv.y) * step(sampleUv.y, 1.0);
+    color.rgb *= pulseGain;
+    color.a *= inside * opacity * mix(1.0, texture2D(maskMap, sampleUv).r, hasMask);
     gl_FragColor = vec4(color.rgb * color.a, color.a);
   }
-`;
+`; }
 
 /** One renderer, no RAF and no simulation clock. Compose premultiplied layers
  * into a linear-light target, then encode once for the display. CPU bitmaps are
@@ -68,6 +75,7 @@ export function createArtworkRenderer(
   let outputMaterial: ShaderMaterial | null = null;
   const textures = new Map<string, Texture>();
   const meshes: Mesh<PlaneGeometry, ShaderMaterial>[] = [];
+  const behaviorShaders = instance.getSnapshot().layers.map(layer => buildBehaviorShader(layer.groups));
 
   function releaseGpu() {
     scene.clear(); outputScene.clear();
@@ -125,10 +133,15 @@ export function createArtworkRenderer(
     geometry = new PlaneGeometry(3840, 2160);
     for (const [index, layer] of loaded.manifest.layers.entries()) {
       const image = textureFor(layer.imageAssetId);
+      const behavior = behaviorShaders[index];
+      if (2 + behavior.masks.length > renderer.capabilities.maxTextures) throw new Error("Behavior masks exceed GPU sampler limit");
+      const behaviorUniforms: Record<string, { value: unknown }> = {};
+      for (const mask of behavior.masks) behaviorUniforms[mask.name] = { value: textureFor(mask.assetId) };
+      for (const effect of behavior.effects) behaviorUniforms[effect.name] = { value: [0, 0, 0, 0] };
       const material = new ShaderMaterial({
-        vertexShader, fragmentShader: layerFragmentShader,
+        vertexShader, fragmentShader: layerFragmentShader(behavior.declarations, behavior.body),
         uniforms: { imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
-          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 } },
+          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, ...behaviorUniforms },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
       });
       const mesh = new Mesh(geometry, material);
@@ -160,7 +173,12 @@ export function createArtworkRenderer(
     if (!available) return;
     const snapshot = instance.getSnapshot();
     const base = snapshot.layers.find(layer => layer.id === loaded.manifest.coverage.baseLayerId)!;
-    if (!coversViewport(base, getCoverView(viewport.width, viewport.height))) throw new Error("COVERAGE_INVALID: opaque base does not cover viewport");
+    const pose = options.camera?.getSnapshot().pose ?? FULL_FRAME;
+    if (!coversViewport(base, getCoverView(viewport.width, viewport.height), pose)) throw new Error("COVERAGE_INVALID: opaque base does not cover viewport");
+    camera.position.set(pose.x - 1920, -(pose.y - 1080), 1);
+    camera.rotation.z = -pose.rotation;
+    camera.zoom = Math.exp(pose.logScale);
+    camera.updateProjectionMatrix();
     for (const [index, layer] of snapshot.layers.entries()) {
       const mesh = meshes[index];
       // Runtime uses artwork pixels (x right, y down) and clockwise radians.
@@ -168,6 +186,9 @@ export function createArtworkRenderer(
       mesh.rotation.z = -layer.rotation;
       mesh.scale.setScalar(layer.scale);
       mesh.material.uniforms.opacity.value = layer.opacity;
+      for (const effect of behaviorShaders[index].effects) {
+        mesh.material.uniforms[effect.name].value = behaviorUniform(layer.groups[effect.group].effects[effect.effect]);
+      }
     }
     renderer.setRenderTarget(target);
     renderer.render(scene, camera);
@@ -223,7 +244,7 @@ export function createArtworkRenderer(
       if (disposed) throw new Error("Renderer is disposed");
       // Check coverage before resizing exposes a newly unsafe viewport.
       const base = instance.getSnapshot().layers.find(layer => layer.id === loaded.manifest.coverage.baseLayerId)!;
-      if (!coversViewport(base, getCoverView(next.width, next.height))) throw new Error("COVERAGE_INVALID: resize blocked");
+      if (!coversViewport(base, getCoverView(next.width, next.height), options.camera?.getSnapshot().pose ?? FULL_FRAME)) throw new Error("COVERAGE_INVALID: resize blocked");
       if (!available) { dimensions(next); viewport = Object.freeze({ ...next }); return; }
       applyViewport(next); render();
     },

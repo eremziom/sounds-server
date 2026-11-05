@@ -169,5 +169,131 @@ window.runFoundationRenderer = async () => {
     check(Math.abs(pixels(blendCanvas, blend.render)[0] - 128) <= 1, "sRGB image round trip retains source color");
   } finally { blend.dispose(); blendCanvas.remove(); }
   check(closes === 2, "CPU bitmap leases close exactly once");
-  return { cycles, blendValue, contextRecovery: true, opaqueViewport: true };
+  const cameraBehaviors = await runCameraBehaviors();
+  const maskPixels = await runMaskPixels(manifest);
+  return { cycles, blendValue, contextRecovery: true, opaqueViewport: true, cameraBehaviors, maskPixels };
 };
+
+async function runCameraBehaviors() {
+  const manifest = await (await fetch("/infinite-zoom/samples/foundation/motion-manifest.json")).json();
+  const canvas = document.createElement("canvas"); document.body.append(canvas);
+  const frames = new Map(), errors = [];
+  let lease, engine, next = 0, timestamp = 0;
+  const frame = () => {
+    check(frames.size === 1, "Camera test keeps one pending frame");
+    const [id, callback] = frames.entries().next().value;
+    frames.delete(id); callback(timestamp); timestamp += 1000 / 60;
+    check(engine.getSnapshot().status === "running", `Camera frame failed: ${String(engine.getSnapshot().error)}`);
+  };
+  const advance = ticks => {
+    for (let i = 0; i < ticks; i++) { frame(); opaque(pixels(canvas, lease.render)); }
+  };
+  engine = createInfiniteZoomController({ seed: 9,
+    scheduler: { request(callback) { const id = next++; frames.set(id, callback); return id; }, cancel(id) { frames.delete(id); } },
+    prepare: async signal => {
+      lease = await prepareArtwork({ canvas, manifest, instanceId: "motion", viewport: { width: 640, height: 360, dpr: 1, renderScale: 1 },
+        onAvailabilityChange(available) { engine.setSuspended("context-lost", !available); },
+        onError(error) { errors.push(String(error)); },
+      }, signal);
+      return lease;
+    },
+  });
+  try {
+    await engine.prepare();
+    const initial = hash(pixels(canvas, lease.render));
+    engine.start(); frame();
+    lease.camera.zoomIn(2, 0.5); advance(30);
+    check(lease.camera.getSnapshot().pose.logScale === Math.log(2), "GPU camera reaches zoom target");
+    lease.camera.move(2050, 1120, 0.5); advance(30);
+    lease.camera.rotate(0.15, 0.5); advance(30);
+    lease.camera.hold(0.25); advance(15);
+    check(hash(pixels(canvas, lease.render)) !== initial, "Camera/behaviors visibly change the frame");
+    const layers = lease.instance.getSnapshot().layers;
+    check(layers[1].groups[0].effects.some(effect => effect.kind === "wave" && effect.phase !== 0), "Wave phase advances only on fixed steps");
+    lease.camera.saveBookmark("detail");
+    engine.stop();
+    const frozen = JSON.stringify({ camera: lease.camera.getSnapshot(), instance: lease.instance.getSnapshot() });
+    lease.render(); lease.render();
+    check(JSON.stringify({ camera: lease.camera.getSnapshot(), instance: lease.instance.getSnapshot() }) === frozen, "Stopped renders freeze camera and behavior phases");
+    engine.resume(); timestamp += 100_000; frame();
+    check(JSON.stringify({ camera: lease.camera.getSnapshot(), instance: lease.instance.getSnapshot() }) === frozen, "Resume never catches up paused camera/behavior time");
+    engine.pause();
+    const stablePixels = hash(pixels(canvas, lease.render));
+    const extension = canvas.getContext("webgl2").getExtension("WEBGL_lose_context");
+    extension.loseContext(); await waitFor(() => !lease.getDiagnostics().available);
+    extension.restoreContext(); await waitFor(() => lease.getDiagnostics().available || errors.length);
+    check(errors.length === 0, errors.join("; "));
+    check(hash(pixels(canvas, lease.render)) === stablePixels, "Context recovery preserves camera, masks and current effects");
+    check(engine.getSnapshot().status === "paused", "Recovery preserves pause with moving camera");
+    engine.resume(); frame();
+    lease.camera.returnTo("full-frame", 1); advance(60);
+    check(JSON.stringify(lease.camera.getSnapshot().pose) === JSON.stringify({ x: 1920, y: 1080, rotation: 0, logScale: 0 }), "Camera returns to exact full frame");
+    engine.reset();
+    check(hash(pixels(canvas, lease.render)) === initial, "Reset restores camera, regions and every behavior phase");
+    return true;
+  } finally {
+    engine.dispose();
+    const dead = lease.getDiagnostics();
+    check(dead.textures === 0 && dead.geometries === 0 && dead.programs === 0, "Camera/region/mask GPU resources are disposed");
+    canvas.remove();
+  }
+}
+
+async function runMaskPixels(manifest) {
+  const results = {};
+  for (const caseName of ["translate", "wave", "pulse", "region"]) {
+    const kind = caseName === "region" ? "translate" : caseName;
+    const values = [];
+    for (const maskLevel of [0, 128, 255]) {
+      const input = structuredClone(manifest);
+      input.assets.push({ ...input.assets[0], id: "influence", kind: "mask" });
+      const params = kind === "translate" ? { x: 120, y: 0, frequencyHz: 0, phase: Math.PI / 2 }
+        : kind === "wave" ? { amplitude: 120, wavelength: 2160, axis: "x", frequencyHz: 0, phase: 0 }
+        : { amount: 1, frequencyHz: 0, phase: Math.PI / 2 };
+      input.layers[1].behaviors = [{ id: "test-effect", kind, order: 0, influenceMaskAssetId: "influence", params }];
+      if (caseName === "region") {
+        input.layers[1].behaviors = [{ id: "test-effect", kind, order: 0, params: { ...params, x: 0 } }];
+        input.layers[1].regions = [{ id: "tip", influenceMaskAssetId: "influence",
+          behaviors: [{ id: "test-effect", kind, order: 0, params }] }];
+      }
+      const canvas = document.createElement("canvas"); document.body.append(canvas);
+      const lease = await prepareArtwork({ canvas, manifest: input, instanceId: `${kind}-${maskLevel}`,
+        viewport: { width: 640, height: 360, dpr: 1, renderScale: 1 },
+        onAvailabilityChange() {}, onError(error) { throw error; },
+        async decode(asset) {
+          const source = new OffscreenCanvas(3840, 2160), context = source.getContext("2d");
+          if (asset.id === "influence") {
+            context.fillStyle = `rgb(${maskLevel},${maskLevel},${maskLevel})`;
+            context.fillRect(0, 0, 3840, 2160);
+          } else if (asset.id === "backdrop") {
+            context.fillStyle = "black"; context.fillRect(0, 0, 3840, 2160);
+          } else {
+            context.fillStyle = kind === "pulse" ? "rgb(128,128,128)" : "white";
+            context.fillRect(1500, 0, 120, 2160);
+          }
+          const image = await createImageBitmap(source, { premultiplyAlpha: "none", imageOrientation: "flipY" });
+          source.width = source.height = 1;
+          return { image, width: 3840, height: 2160, opaque: asset.id !== "foreground", close() { image.close(); } };
+        },
+      }, new AbortController().signal);
+      try {
+        const bytes = pixels(canvas, lease.render); opaque(bytes);
+        let total = 0, weighted = 0, maximum = 0;
+        for (let x = 0; x < 640; x++) {
+          const value = bytes[(270 * 640 + x) * 4];
+          total += value; weighted += value * x; maximum = Math.max(maximum, value);
+        }
+        values.push(kind === "pulse" ? maximum : weighted / total);
+      } finally { lease.dispose(); canvas.remove(); }
+    }
+    if (kind === "pulse") {
+      check(Math.abs(values[0] - 128) <= 1 && Math.abs(values[1] - 154) <= 2 && Math.abs(values[2] - 176) <= 2,
+        `Pulse influence must scale intensity without changing alpha: ${values}`);
+    } else {
+      check(Math.abs(values[1] - values[0] - 10) < 1 && Math.abs(values[2] - values[0] - 20) < 1,
+        `${kind} mask black/gray/white must scale displacement 0/half/full: ${values}`);
+    }
+    results[caseName] = values;
+  }
+  return results;
+}

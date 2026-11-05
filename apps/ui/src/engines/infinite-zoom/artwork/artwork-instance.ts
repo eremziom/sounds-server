@@ -1,4 +1,7 @@
 import type { ArtworkPackage } from "./artwork-package.ts";
+import type { StepContext } from "../core/contracts.ts";
+import { behaviorGroups, createBehaviorEvaluator } from "../behaviors/behavior-evaluator.ts";
+import { FULL_FRAME, viewportCorners, type CameraPose } from "../camera/camera-math.ts";
 
 export interface LayerTransform {
   readonly x: number;
@@ -13,6 +16,8 @@ const INITIAL: LayerTransform = Object.freeze({ x: 0, y: 0, scale: 1, rotation: 
 export function createArtworkInstance(instanceId: string, manifest: ArtworkPackage) {
   if (!instanceId.trim()) throw new Error("Artwork instance requires an identity");
   const layers = new Map(manifest.layers.map(layer => [layer.id, { ...INITIAL }]));
+  const evaluators = new Map(manifest.layers.map(layer => [layer.id,
+    createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer))]));
   return {
     id: instanceId,
     manifest,
@@ -27,29 +32,35 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
       if (id === manifest.coverage.baseLayerId && next.opacity !== 1) throw new Error("Coverage base must remain opaque");
       layers.set(id, next);
     },
+    stepBehaviors(context: StepContext) {
+      for (const evaluator of evaluators.values()) evaluator.step(context.dt);
+    },
     getSnapshot() {
       return Object.freeze({ id: instanceId, packageId: manifest.id,
-        layers: Object.freeze(manifest.layers.map(layer => Object.freeze({ id: layer.id, ...layers.get(layer.id)! }))) });
+        layers: Object.freeze(manifest.layers.map(layer => Object.freeze({ id: layer.id, ...layers.get(layer.id)!,
+          groups: evaluators.get(layer.id)!.getSnapshot() }))) });
     },
-    reset() { for (const layer of manifest.layers) layers.set(layer.id, { ...INITIAL }); },
+    reset() {
+      for (const layer of manifest.layers) layers.set(layer.id, { ...INITIAL });
+      for (const evaluator of evaluators.values()) evaluator.reset();
+    },
   };
 }
 
 export type ArtworkInstance = ReturnType<typeof createArtworkInstance>;
 
-/** Initial cover projection crops artwork to fill the viewport, without camera
- * motion. Validate the transformed opaque rectangle using inverse-mapped
- * viewport corners. This is not the future deformation/transition validator. */
+/** Baseline cover projection; camera zoom/rotation/translation are applied on
+ * top. This is not the future deformation/transition coverage validator. */
 export function getCoverView(width: number, height: number) {
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) throw new Error("Invalid viewport");
   const scale = Math.max(width / 3840, height / 2160);
   return { width: width / scale, height: height / scale };
 }
 
-export function coversViewport(transform: LayerTransform, view: { width: number; height: number }): boolean {
+export function coversViewport(transform: LayerTransform, view: { width: number; height: number }, camera: CameraPose = FULL_FRAME): boolean {
   const cos = Math.cos(transform.rotation), sin = Math.sin(transform.rotation);
-  for (const x of [-view.width / 2, view.width / 2]) for (const y of [-view.height / 2, view.height / 2]) {
-    const dx = x - transform.x, dy = y - transform.y;
+  for (const point of viewportCorners(camera, view)) {
+    const dx = point.x - 1920 - transform.x, dy = point.y - 1080 - transform.y;
     const localX = (cos * dx + sin * dy) / transform.scale;
     const localY = (-sin * dx + cos * dy) / transform.scale;
     if (Math.abs(localX) > 1920 + 1e-7 || Math.abs(localY) > 1080 + 1e-7) return false;
