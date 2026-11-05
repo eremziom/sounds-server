@@ -5,6 +5,7 @@ import { loadArtwork, type AssetDecoder } from "./artwork-loader.ts";
 import { createCameraController } from "../camera/camera-controller.ts";
 import { FULL_FRAME } from "../camera/camera-math.ts";
 import { createTransitionCoordinator, estimatedTextureBytes, type ArtworkLease } from "../transition/transition-coordinator.ts";
+import type { BehaviorModulation } from "../modulation/audio-modulation.ts";
 
 export interface ArtworkPreparationOptions extends Omit<ArtworkRendererOptions, "camera"> {
   readonly canvas: HTMLCanvasElement;
@@ -12,6 +13,7 @@ export interface ArtworkPreparationOptions extends Omit<ArtworkRendererOptions, 
   readonly instanceId: string;
   readonly evaluate?: (instance: ArtworkInstance, context: StepContext) => void;
   readonly decode?: AssetDecoder;
+  readonly modulation?: () => BehaviorModulation;
   /** Admission estimate, not a measured device limit. Default: 256 MiB. */
   readonly gpuBudgetBytes?: number;
 }
@@ -60,7 +62,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       step(context: StepContext) {
         if (disposed) throw new Error("Artwork is disposed");
         options.evaluate?.(current.instance, context);
-        transition.step(context);
+        transition.step(context, options.modulation?.());
       },
       render() {
         try { renderer.render(); }

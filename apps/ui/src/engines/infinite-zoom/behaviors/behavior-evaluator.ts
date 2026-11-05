@@ -40,6 +40,7 @@ export function behaviorGroups(artwork: readonly BehaviorDescriptor[], layer: {
  * result to that region's resolved result, in manifest region order. */
 export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
   let tick = 0;
+  let strength = 1;
   function evaluate(): readonly BehaviorGroupOutput[] {
     return Object.freeze(groups.map(group => Object.freeze({ id: group.id, influenceMaskAssetId: group.influenceMaskAssetId,
       effects: Object.freeze(group.behaviors.map(behavior => {
@@ -47,22 +48,23 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
         const common = { id: behavior.id, influenceMaskAssetId: behavior.influenceMaskAssetId };
         switch (behavior.kind) {
           case "translate": return Object.freeze({ ...common, kind: "translate" as const,
-            x: behavior.params.x * Math.sin(phase), y: behavior.params.y * Math.sin(phase) });
-          case "wave": return Object.freeze({ ...common, kind: "wave" as const, amplitude: behavior.params.amplitude,
+            x: behavior.params.x * Math.sin(phase) * strength, y: behavior.params.y * Math.sin(phase) * strength });
+          case "wave": return Object.freeze({ ...common, kind: "wave" as const, amplitude: behavior.params.amplitude * strength,
             wavelength: behavior.params.wavelength, axis: behavior.params.axis, phase });
-          case "pulse": return Object.freeze({ ...common, kind: "pulse" as const, gain: 1 + behavior.params.amount * Math.sin(phase) });
+          case "pulse": return Object.freeze({ ...common, kind: "pulse" as const, gain: 1 + behavior.params.amount * Math.sin(phase) * strength });
         }
       })),
     })));
   }
   let outputs = evaluate();
   return {
-    step(dt: number) {
+    step(dt: number, nextStrength = 1) {
       if (dt !== 1 / 60) throw new Error("Behaviors require a fixed 1/60-second step");
+      if (!Number.isFinite(nextStrength) || nextStrength < 0 || nextStrength > 1) throw new Error("Invalid behavior strength");
       if (tick === Number.MAX_SAFE_INTEGER) throw new Error("Behavior tick exhausted");
-      tick++; outputs = evaluate();
+      tick++; strength = nextStrength; outputs = evaluate();
     },
     getSnapshot: () => outputs,
-    reset() { tick = 0; outputs = evaluate(); },
+    reset() { tick = 0; strength = 1; outputs = evaluate(); },
   };
 }

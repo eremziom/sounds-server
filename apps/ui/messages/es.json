@@ -34,6 +34,13 @@
     "logoutAll": { "action": "Cerrar sesión en todos los dispositivos", "localOnly": "Se ha cerrado la sesión en este navegador. No se pudo confirmar el cierre de sesión en los demás dispositivos." }
   },
   "app": {
+    "infiniteZoom": {
+      "description": "Una demo técnica con imágenes de ejemplo. Reproduce música de tu biblioteca para animar la escena. La pausa conserva tu recorrido.",
+      "immersive": "Vista inmersiva", "exitImmersive": "Salir de la vista inmersiva", "transition": "Escena siguiente", "cancel": "Cancelar transición", "reset": "Reiniciar recorrido",
+      "camera": "Controles de cámara", "zoomIn": "Acercar", "zoomOut": "Alejar", "rotate": "Girar", "hold": "Detener cámara", "return": "Volver al encuadre completo",
+      "modulation": "Reaccionar a la música", "failed": "La visualización no está disponible o la operación solicitada no es segura para la imagen. La música que ya se reproduce continúa.", "retry": "Reintentar visualización",
+      "states": { "idle": "Preparando visualización…", "preparing": "Cargando imágenes…", "ready": "Listo — reproduce música para comenzar", "running": "Recorrido en curso", "paused": "En pausa — recorrido conservado", "stopped": "Pista terminada — recorrido conservado", "suspended": "Esperando reanudar la visualización", "error": "Visualización no disponible", "disposed": "Recorrido terminado" }
+    },
     "bassVisual": {
       "title": "Pulso de graves", "description": "El tamaño del círculo muestra la energía actual de graves. Un brillo que se expande y desvanece indica un pulso detectado; los pulsos más fuertes producen un brillo mayor.",
       "sensitivity": "Sensibilidad: {value, number}×", "interval": "Separación de pulsos: {value, number} ms", "decay": "Desvanecimiento: {value, number} ms", "reset": "Restablecer ajustes",
@@ -56,7 +63,7 @@
       "view": "Mostrar", "events": "Eventos", "timeline": "Parámetros cada 100 ms", "time": "Inicio", "end": "Fin", "event": "Evento", "strength": "Intensidad respecto al umbral", "dominant": "Frecuencia más intensa",
       "bassOnset": "Pulso grave (estimado)", "onset": "Aumento de energía", "silence": "Silencio por debajo de −60 dBFS", "empty": "No se detectaron eventos. Los parámetros están disponibles en la otra vista.", "previous": "Anterior", "next": "Siguiente", "page": "Página {page} de {pages} · {count} entradas"
     },
-    "player": {"volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
+    "player": {"visual":"La visualizaci?n no est? lista. Reintenta la reproducci?n o abre Animaciones para reintentar la visualizaci?n.","volume":"Volumen","mute":"Silenciar","unmute":"Activar sonido","label":"Reproductor de audio","play":"Reproducir","pause":"Pausar","currentTime":"Tiempo actual","duration":"Duración","seek":"Buscar en el audio","waiting":"Cargando audio…","ended":"La reproducción ha terminado.","failed":"No se pudo reproducir la grabación. Inténtalo de nuevo.","blocked":"El navegador bloqueó la reproducción. Pulsa reproducir para continuar.","denied":"No tienes permiso para reproducir esta grabación.","missing":"Esta grabación ya no está disponible.","retry":"Intentar de nuevo"},
     "upload": {
       "addAnother": "Añadir otra pista",
       "genre": "Género (opcional)", "subgenre": "Subgénero (opcional)", "lengthGenre": "Usa entre 3 y 30 caracteres.", "publicationDateAutomatic": "Se establece automáticamente en la fecha actual al publicar la pista.",

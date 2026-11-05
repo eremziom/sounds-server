@@ -2,6 +2,7 @@ import type { ArtworkPackage } from "./artwork-package.ts";
 import type { StepContext } from "../core/contracts.ts";
 import { behaviorGroups, createBehaviorEvaluator } from "../behaviors/behavior-evaluator.ts";
 import { FULL_FRAME, viewportCorners, type CameraPose } from "../camera/camera-math.ts";
+import { NEUTRAL_MODULATION, type BehaviorModulation } from "../modulation/audio-modulation.ts";
 
 export interface LayerTransform {
   readonly x: number;
@@ -16,6 +17,7 @@ const INITIAL: LayerTransform = Object.freeze({ x: 0, y: 0, scale: 1, rotation: 
 export function createArtworkInstance(instanceId: string, manifest: ArtworkPackage) {
   if (!instanceId.trim()) throw new Error("Artwork instance requires an identity");
   const layers = new Map(manifest.layers.map(layer => [layer.id, { ...INITIAL }]));
+  let audioGain = 1;
   const evaluators = new Map(manifest.layers.map(layer => [layer.id,
     createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer))]));
   return {
@@ -32,15 +34,19 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
       if (id === manifest.coverage.baseLayerId && next.opacity !== 1) throw new Error("Coverage base must remain opaque");
       layers.set(id, next);
     },
-    stepBehaviors(context: StepContext) {
-      for (const evaluator of evaluators.values()) evaluator.step(context.dt);
+    stepBehaviors(context: StepContext, modulation: BehaviorModulation = NEUTRAL_MODULATION) {
+      if (!Number.isFinite(modulation.strength) || modulation.strength < 0 || modulation.strength > 1 ||
+          !Number.isFinite(modulation.intensity) || modulation.intensity < 1 || modulation.intensity > 1.25) throw new Error("Invalid behavior modulation");
+      for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength);
+      audioGain = modulation.intensity;
     },
     getSnapshot() {
       return Object.freeze({ id: instanceId, packageId: manifest.id,
         layers: Object.freeze(manifest.layers.map(layer => Object.freeze({ id: layer.id, ...layers.get(layer.id)!,
-          groups: evaluators.get(layer.id)!.getSnapshot() }))) });
+          groups: evaluators.get(layer.id)!.getSnapshot(), audioGain }))) });
     },
     reset() {
+      audioGain = 1;
       for (const layer of manifest.layers) layers.set(layer.id, { ...INITIAL });
       for (const evaluator of evaluators.values()) evaluator.reset();
     },

@@ -6,6 +6,8 @@ import { LiveAnalysisProvider } from "./live-analysis-runtime";
 import type { ApplicationSession } from "../../lib/application-session";
 import { useAudioPlayback } from "./use-audio-playback";
 import { createLiveAudioGraph } from "../../lib/live-audio-analysis";
+import { createVisualBridge, VisualReadinessError } from "../infinite-zoom/visual-bridge";
+import { InfiniteZoomProvider } from "../infinite-zoom/infinite-zoom-provider";
 
 type MediaRuntimeContext = {
   audio: RefObject<HTMLAudioElement | null>;
@@ -35,7 +37,11 @@ export function MediaRuntime({ children, session, blocked = false }: {
   blocked?: boolean;
 }) {
   const [analysisGraph] = useState(createLiveAudioGraph);
-  const playback = useAudioPlayback(analysisGraph.resume);
+  const [visual] = useState(createVisualBridge);
+  const playback = useAudioPlayback(() => {
+    const ready = visual.prepareForPlayback().catch(() => { throw new VisualReadinessError(); });
+    return Promise.all([analysisGraph.resume(), ready]).then(() => {});
+  });
   const { audio } = playback;
   const animationHost = useRef<HTMLDivElement>(null);
   const [stops] = useState(() => new Set<() => void>());
@@ -80,9 +86,8 @@ export function MediaRuntime({ children, session, blocked = false }: {
       <PlaybackContext.Provider value={playback}>
         <div data-persistent-media hidden={blocked}>
           <audio ref={audio} preload="none" />
-          <div ref={animationHost} data-animation-host />
         </div>
-        <LiveAnalysisProvider>{children}</LiveAnalysisProvider>
+        <LiveAnalysisProvider><InfiniteZoomProvider runtime={visual}>{children}</InfiniteZoomProvider></LiveAnalysisProvider>
       </PlaybackContext.Provider>
     </MediaContext.Provider>
   );

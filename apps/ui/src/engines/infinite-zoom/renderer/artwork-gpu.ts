@@ -43,7 +43,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
       const material = new ShaderMaterial({ vertexShader: VERTEX_SHADER,
         fragmentShader: `
           uniform sampler2D imageMap; uniform sampler2D maskMap;
-          uniform float hasMask; uniform float opacity;
+          uniform float hasMask; uniform float opacity; uniform float audioGain;
           uniform float reveal; uniform vec2 revealCenter; uniform float revealAngle; uniform float revealScale;
           varying vec2 vUv; varying vec2 artworkWorld;
           ${shader.declarations}
@@ -58,12 +58,12 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
             ${shader.body}
             vec4 color = texture2D(imageMap, sampleUv);
             float inside = step(0.0,sampleUv.x)*step(sampleUv.x,1.0)*step(0.0,sampleUv.y)*step(sampleUv.y,1.0);
-            color.rgb *= pulseGain;
+            color.rgb *= min(4.0, pulseGain * audioGain);
             color.a *= inside * opacity * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
             gl_FragColor = vec4(color.rgb*color.a,color.a);
           }`,
         uniforms: { imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
-          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, reveal: { value: -1 },
+          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, reveal: { value: -1 },
           revealCenter: { value: new Vector2() }, revealAngle: { value: 0 }, revealScale: { value: 1 }, ...uniforms },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
       });
@@ -80,6 +80,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         const mesh = meshes[index], uniforms = mesh.material.uniforms;
         mesh.position.set(layer.x, -layer.y, 0); mesh.rotation.z = -layer.rotation; mesh.scale.setScalar(layer.scale);
         mesh.renderOrder = firstOrder + index; uniforms.opacity.value = layer.opacity;
+        uniforms.audioGain.value = layer.audioGain;
         uniforms.reveal.value = reveal; uniforms.revealCenter.value.set(center.x - 1920, -(center.y - 1080));
         uniforms.revealAngle.value = placement.rotation; uniforms.revealScale.value = placement.scale;
         for (const effect of shaders[index].effects) uniforms[effect.name].value = behaviorUniform(layer.groups[effect.group].effects[effect.effect]);

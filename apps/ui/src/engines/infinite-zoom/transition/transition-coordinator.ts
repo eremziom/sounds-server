@@ -7,6 +7,7 @@ import type { CameraController } from "../camera/camera-controller.ts";
 import type { CameraPose } from "../camera/camera-math.ts";
 import type { ArtworkViewport, SceneComposition } from "../renderer/artwork-renderer.ts";
 import { cameraInDestination, placePoint, validatePlacement, type ArtworkPlacement } from "./placement.ts";
+import type { BehaviorModulation } from "../modulation/audio-modulation.ts";
 
 export interface ArtworkLease { readonly loaded: LoadedArtwork; readonly instance: ArtworkInstance }
 export interface TransitionRequest {
@@ -122,11 +123,11 @@ export function createTransitionCoordinator(ports: TransitionPorts) {
         throw failure;
       } finally { clearTimeout(timeout); if (abort === operation) abort = null; }
     },
-    step(context: StepContext) {
+    step(context: StepContext, modulation?: BehaviorModulation) {
       if (phase === "disposed") throw new Error("Transition coordinator is disposed");
       const source = ports.current();
-      source.instance.stepBehaviors(context);
-      pending?.instance.stepBehaviors(context);
+      source.instance.stepBehaviors(context, modulation);
+      pending?.instance.stepBehaviors(context, modulation);
       if (phase === "prepared") {
         startPose = ports.camera.getSnapshot().pose;
         const center = placePoint({ x: 1920, y: 1080 }, placement!);

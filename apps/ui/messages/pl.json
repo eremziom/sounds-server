@@ -34,6 +34,13 @@
     "logoutAll": { "action": "Wyloguj ze wszystkich urządzeń", "localOnly": "Wylogowano Cię w tej przeglądarce. Nie udało się potwierdzić wylogowania na pozostałych urządzeniach." }
   },
   "app": {
+    "infiniteZoom": {
+      "description": "Techniczne demo z przykładową grafiką. Odtwórz muzykę z biblioteki, aby animować scenę. Pauza zachowuje Twoją podróż.",
+      "immersive": "Widok immersyjny", "exitImmersive": "Wyjdź z widoku immersyjnego", "transition": "Następna scena", "cancel": "Anuluj przejście", "reset": "Zresetuj podróż",
+      "camera": "Sterowanie kamerą", "zoomIn": "Przybliż", "zoomOut": "Oddal", "rotate": "Obróć", "hold": "Zatrzymaj kamerę", "return": "Wróć do pełnego kadru",
+      "modulation": "Reaguj na muzykę", "failed": "Wizualizacja jest niedostępna lub żądana operacja jest niebezpieczna dla obrazu. Odtwarzana muzyka będzie kontynuowana.", "retry": "Ponów wizualizację",
+      "states": { "idle": "Przygotowywanie wizualizacji…", "preparing": "Ładowanie grafiki…", "ready": "Gotowe — odtwórz muzykę, aby rozpocząć", "running": "Podróż trwa", "paused": "Pauza — podróż zachowana", "stopped": "Utwór zakończony — podróż zachowana", "suspended": "Oczekiwanie na wznowienie wizualizacji", "error": "Wizualizacja niedostępna", "disposed": "Podróż zakończona" }
+    },
     "bassVisual": {
       "title": "Puls basu", "description": "Rozmiar okręgu pokazuje bieżącą energię basu. Rozchodzący się, wygasający błysk oznacza wykryty impuls; silniejsze impulsy dają mocniejszy błysk.",
       "sensitivity": "Czułość: {value, number}×", "interval": "Odstęp między impulsami: {value, number} ms", "decay": "Wygaszanie: {value, number} ms", "reset": "Przywróć ustawienia",
@@ -56,7 +63,7 @@
       "view": "Pokaż", "events": "Zdarzenia", "timeline": "Parametry co 100 ms", "time": "Czas od", "end": "Czas do", "event": "Zdarzenie", "strength": "Siła względem progu", "dominant": "Najsilniejsza częstotliwość",
       "bassOnset": "Impuls basowy (szacowany)", "onset": "Wzrost energii", "silence": "Cisza poniżej −60 dBFS", "empty": "Nie wykryto zdarzeń. Parametry sygnału są dostępne w drugim widoku.", "previous": "Poprzednia", "next": "Następna", "page": "Strona {page} z {pages} · {count} wpisów"
     },
-    "player": {"volume":"Głośność","mute":"Wycisz","unmute":"Włącz dźwięk","label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
+    "player": {"visual":"Wizualizacja nie jest gotowa. Pon?w odtwarzanie lub otw?rz Animacje, aby ponowi? wizualizacj?.","volume":"Głośność","mute":"Wycisz","unmute":"Włącz dźwięk","label":"Odtwarzacz audio","play":"Odtwórz","pause":"Wstrzymaj","currentTime":"Bieżący czas","duration":"Czas trwania","seek":"Przewiń","waiting":"Ładowanie audio…","ended":"Koniec nagrania.","failed":"Nie udało się odtworzyć nagrania. Spróbuj ponownie.","blocked":"Przeglądarka zablokowała odtwarzanie. Naciśnij odtwórz, aby kontynuować.","denied":"Nie masz uprawnień do odtworzenia tego nagrania.","missing":"To nagranie nie jest już dostępne.","retry":"Spróbuj ponownie"},
     "upload": {
       "addAnother": "Dodaj kolejny utwór",
       "genre": "Gatunek (opcjonalnie)", "subgenre": "Subgatunek (opcjonalnie)", "lengthGenre": "Podaj od 3 do 30 znaków.", "publicationDateAutomatic": "Ustawiana automatycznie na bieżącą datę przy publikacji utworu.",
