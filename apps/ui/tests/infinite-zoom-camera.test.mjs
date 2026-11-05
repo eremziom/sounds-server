@@ -3,6 +3,8 @@ import { test } from "node:test";
 import { createCameraController, cameraMatrix, viewportCorners, FULL_FRAME } from "../src/engines/infinite-zoom/camera/index.ts";
 import { coversViewport, getCoverView } from "../src/engines/infinite-zoom/artwork/artwork-instance.ts";
 
+import * as placementMath from "../src/engines/infinite-zoom/transition/placement.ts";
+
 const base = { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1 };
 const safe = pose => coversViewport(base, getCoverView(1920, 1080), pose);
 const run = (camera, ticks) => { for (let i = 0; i < ticks; i++) camera.step(); };
@@ -98,4 +100,31 @@ test("camera rejects nonfinite parameters and invalid durations without mutating
   camera.saveBookmark("local"); camera.reset();
   assert.throws(() => camera.returnTo("local", 1));
   assert.throws(() => createCameraController(() => false), /COVERAGE_INVALID/);
+});
+
+
+test("framing can finish at rest before zoom without changing incoming velocity or rebase continuity", () => {
+  const a=createCameraController(()=>true), b=createCameraController(()=>true);
+  for(const camera of [a,b]) {
+    camera.retarget({...FULL_FRAME,x:1980,y:1040,rotation:0.1,logScale:1},1);
+    run(camera,12);
+    const before=camera.getSnapshot();
+    camera.retarget({...FULL_FRAME,x:1950,y:1030,rotation:0.2,logScale:2},2,0.5);
+    assert.deepEqual(camera.getSnapshot(),before);
+    run(camera,30);
+    const state=camera.getSnapshot();
+    assert.equal(state.pose.x,1950); assert.equal(state.pose.y,1030);
+    assert.ok(state.pose.rotation<0.2 && state.velocity.rotation>0);
+    assert.deepEqual([state.velocity.x,state.velocity.y],[0,0]);
+    assert.ok(state.moving && state.velocity.logScale>0 && state.pose.logScale<2);
+  }
+  const placement={x:1920,y:1080,rotation:0.1,scale:0.5,anchorX:1920,anchorY:1080};
+  b.rebaseCoordinates(placement);
+  const {cameraInDestination,velocityInDestination}=placementMath;
+  for(let i=0;i<90;i++) {
+    const expected=cameraInDestination(a.getSnapshot().pose,placement), velocity=velocityInDestination(a.getSnapshot().velocity,placement);
+    for(const key of Object.keys(expected)) {close(b.getSnapshot().pose[key],expected[key]);close(b.getSnapshot().velocity[key],velocity[key]);}
+    a.step();b.step();
+  }
+  for(const invalid of [0,NaN,3]) assert.throws(()=>a.retarget(FULL_FRAME,2,invalid),/framing/);
 });

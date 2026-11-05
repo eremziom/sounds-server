@@ -8,6 +8,7 @@ export interface VisualView {
   readonly status: EngineStatus; readonly tick: number; readonly artwork: string; readonly transition: string;
   readonly error: boolean; readonly ready: boolean; readonly retryable: boolean;
   readonly diagnostics?: Readonly<Record<string, unknown>>;
+  readonly canTransition?: boolean;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;

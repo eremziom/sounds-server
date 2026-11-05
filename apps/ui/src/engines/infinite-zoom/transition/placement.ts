@@ -12,7 +12,9 @@ export interface ArtworkPlacement {
 export const IDENTITY_PLACEMENT: ArtworkPlacement = Object.freeze({ x: 0, y: 0, rotation: 0, scale: 1, anchorX: 0, anchorY: 0 });
 
 export function validatePlacement(p: ArtworkPlacement) {
-  if (!p || (["x", "y", "rotation", "scale", "anchorX", "anchorY"] as const).some(key => !Number.isFinite(p[key])) || p.scale < 0.01 || p.scale > 100 ||
+  // Render placements may compose two portals or compensate a stopped B view.
+  // Authored portal scales retain their stricter 0.01..100 validation.
+  if (!p || (["x", "y", "rotation", "scale", "anchorX", "anchorY"] as const).some(key => !Number.isFinite(p[key])) || p.scale < Math.exp(-16) || p.scale > Math.exp(16) ||
       p.anchorX < 0 || p.anchorX > 3840 || p.anchorY < 0 || p.anchorY > 2160 ||
       Math.abs(p.x) > 1e7 || Math.abs(p.y) > 1e7 || Math.abs(p.rotation) > 1e6) throw new Error("Invalid artwork placement");
 }

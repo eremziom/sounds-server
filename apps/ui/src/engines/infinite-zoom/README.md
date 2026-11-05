@@ -1,8 +1,37 @@
-# Infinite Zoom engine: IZ-181 through IZ-183
+# Infinite Zoom engine — foundation and embedded zoomThrough
 
-The implementation follows `docs/infinite-zoom/`. It is not mounted in the
-application yet. MediaRuntime, audio playback and the experimental background
-are unchanged.
+## Current demo: Forest -> Nebula -> Underwater Cavern (2026-11-05)
+
+The user authorized integrating the third artwork. The demo now has two authored
+links and stops in Underwater Cavern. Each use of the existing transition control
+travels to the next world; destinations settle at full frame while the previous
+world completes its approach. C is already embedded in B while B is seen inside A,
+so neither command nor the A/B handoff introduces the next image.
+
+Preparation validates and loads a bounded chain of at most three worlds before
+initial readiness. The same renderer draws nested compositions with both ancestor
+apertures. No planner, extra clock, audio player, renderer or runtime generation
+is added. Masks are uploaded at unchanged 3840x2160 resolution as exact R8 red
+channels, matching existing shader sampling. Color images remain RGBA8. The three
+packages require 223,948,800 bytes (213.57 MiB) of texture storage before the
+viewport target and driver overhead, within the unchanged 256 MiB admission
+estimate at supported target sizes. All three initial packages stay cached until
+terminal disposal, enabling synchronous Reset from C without loads or pixel changes.
+This is a bounded demo cache, not an unbounded journey/resource strategy.
+
+Evidence: 83 Infinite Zoom unit tests, production build, the WebGL renderer suite
+(including both handoffs with maximum pixel difference 0, real R8 allocation,
+B/C rollback, context recovery, portrait/wide coverage and reset from C), and the
+application integration suite with actual audio and C readiness/failure/retry.
+Visual acceptance remains separate from these automated checks.
+
+The historical two-world descriptions below predate this integration.
+
+
+The implementation follows `docs/infinite-zoom/`, including the 2026-11-05
+embedded-artwork contract. The persistent application integration uses the
+existing MediaRuntime/audio graph and one renderer across display modes.
+The first authored connection is Forest→Nebula; further portals are not authored.
 
 ## Entry points
 
@@ -21,7 +50,7 @@ RAF, audio element or simulation clock.
 The caller must route `onAvailabilityChange(available)` to the controller's
 `setSuspended("context-lost", !available)` and handle `onError`. Recovery rebuilds
 GPU objects and draws the preserved state before reporting availability. Other
-suspensions and a user pause remain in force. The future playback adapter must
+suspensions and a user pause remain in force. The playback adapter must
 call start/resume only after confirmed audio playback.
 
 ## Supported package subset
@@ -34,8 +63,8 @@ Behaviors may be defined on the artwork, layers and influence-masked regions.
 Definitions with the same ID override artwork → layer → region; resolved order
 is numeric `order`, then lexical ID. Each region blends its resolved result over
 the inherited layer result using its mask, in manifest region order. Region masks
-do not cut image alpha. Dedicated region visibility masks, depth/flow, anchors
-and transition coverage remain unsupported and are rejected explicitly.
+do not cut image alpha. Dedicated region visibility masks and depth/flow remain
+unsupported. Point anchors and one optional authored `portal` are validated.
 
 Packages are detached, deeply frozen descriptors. Instances own layer transforms
 in artwork pixels: x right, y down, clockwise rotation in radians and scale about
@@ -44,7 +73,9 @@ the artwork center. Manifest identity and instance identity are separate.
 The loader verifies decoded dimensions and every alpha pixel of the opaque base.
 The renderer uses a cover projection and validates inverse-mapped viewport
 corners before drawing or resizing. It blocks unsafe base transforms. This is
-rectangle coverage with camera pose, not general deformation/transition coverage.
+rectangle coverage with camera pose. Embedded handoff additionally requires all
+viewport corners to be inside the static portal ellipse's fully opaque interior;
+no part of A or the feathered edge may contribute at commit.
 Viewport × DPR × renderScale determines GPU target size; artwork resolution does
 not determine render-target resolution. The renderer rejects unsupported GPU
 dimensions instead of silently resampling critical assets.
@@ -53,7 +84,37 @@ Layer shaders compose premultiplied colors into a linear-light target. The final
 pass encodes to sRGB. Visibility masks use their red channel as linear data,
 separately from image alpha. CPU bitmaps survive context loss and close on terminal
 disposal. The renderer owns all GPU textures, geometry, materials and targets;
-there is no cache/LRU or adaptive quality policy yet.
+the initial pair is retained as a bounded CPU cache for explicit reset. Admission
+uses raw texture/target estimates, while the browser adapter owns adaptive render
+scale. There is no general shared LRU cache.
+
+## Authored embedded portal
+
+Forest's manifest describes an ellipse at `(1920,1030)`, radii `(90,48)`, feather
+`0.24`, B scale `0.055`, a sixteen-second approach and a versioned Nebula manifest/
+anchor link. Region coordinates belong to A; the destination point anchor belongs
+to B. They are separate from behavior influence masks. This schema extends the
+existing optional v1 package subset; older packages without `portal` still load
+as standalone artworks. Unknown fields are still rejected.
+
+`prepareArtwork` resolves only the initial destination, validates its identity,
+loads the pair before the first draw is exposed, and mounts the fixed composition
+before visual readiness. It does not recursively expand a scene graph.
+`transition.start()` queues camera travel for the next simulation step, without
+fetching, resizing B or changing its aperture. Direct engine clients may use
+`transition.request(...)` to prepare an embedded composition before displaying it;
+that method no longer starts travel implicitly.
+
+The shader has a static feathered ellipse in A space; there is no timed reveal
+uniform. B's root scale/pose remain constant. Handoff rebases camera pose, velocity
+and the remaining trajectory only after B covers the viewport inside the opaque
+ellipse. Normal cancellation retains the visible B and returns the camera; only
+unused or unusable failed GPU destinations are released. Explicit journey reset
+restores the cached initial pair/phases without network requests. A fatal visual
+failure still cannot manipulate ongoing audio.
+
+The controls disable onward travel after reaching Nebula. Use explicit Reset to
+review the first connection again; track changes never invoke reset.
 
 `public/infinite-zoom/samples/foundation/` contains manually authored SVG test
 artwork, with an opaque backdrop and transparent foreground. It is a technical

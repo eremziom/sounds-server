@@ -9,7 +9,7 @@ export function InfiniteZoomControls() {
   const runtime = useInfiniteZoom(), snapshot = useVisualSnapshot(), t = useTranslations("app.infiniteZoom");
   const modulation = useSyncExternalStore(runtime.subscribe, runtime.getModulation, () => true);
   const running = snapshot.status === "running";
-  const busy = ["preparing", "prepared", "revealing", "rollingBack"].includes(snapshot.transition);
+  const busy = ["preparing", "approaching", "rollingBack"].includes(snapshot.transition);
   return <section data-infinite-zoom-controls className="space-y-4 rounded-lg border bg-background/90 p-5">
     <h1 className="text-xl font-semibold">Infinite Zoom</h1>
     <p className="text-sm text-muted-foreground">{t("description")}</p>
@@ -21,7 +21,7 @@ export function InfiniteZoomControls() {
         const trigger = event.currentTarget;
         runtime.setMode("immersive", () => { if (trigger.isConnected) trigger.focus(); });
       }}>{t("immersive")}</Button>
-      <Button type="button" variant="outline" data-iz-transition disabled={!snapshot.ready || busy} onClick={() => void runtime.transition()}>{t("transition")}</Button>
+      <Button type="button" variant="outline" data-iz-transition disabled={!snapshot.ready || busy || !snapshot.canTransition} onClick={() => void runtime.transition()}>{t("transition")}</Button>
       <Button type="button" variant="outline" data-iz-cancel disabled={!running || !busy} onClick={() => runtime.command("cancel")}>{t("cancel")}</Button>
       <Button type="button" variant="outline" data-iz-reset disabled={!snapshot.ready} onClick={() => runtime.reset()}>{t("reset")}</Button>
     </div>

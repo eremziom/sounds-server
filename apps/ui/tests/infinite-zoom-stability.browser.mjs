@@ -83,11 +83,12 @@ try {
     assert.ok(resumed-frozen <= Math.ceil((Date.now()-resumeStarted)*60/1000)+2,"Only visible elapsed time advances, including the UI polling delay");
 
     // Actual WEBGL_lose_context during A/B; restore the same logical session.
-    await click('[data-iz-transition]'); await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='revealing'");
+    await click('[data-iz-transition]'); await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='approaching'");
     await evaluate("void(window.izLose=izCanvas.getContext('webgl2').getExtension('WEBGL_lose_context')); izLose.loseContext()");
     await waitFor(`${canvas}.dataset.visualStatus==='suspended'`); frozen = await tick();
     await delay(300); assert.equal(await tick(),frozen); assert.equal(await evaluate("izAudio.paused"),false);
     await evaluate("izLose.restoreContext()"); await waitFor(`${canvas}.dataset.visualStatus==='running'`);
+    await waitFor("JSON.parse(document.querySelector('[data-iz-diagnostic-snapshot]').textContent).camera.pose.logScale>1.5");
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='committed'");
     assert.ok((await snapshot()).events.some(event=>event.code==='CONTEXT_RESTORED'));
     // Restoration cannot override a user pause.
@@ -113,7 +114,7 @@ try {
       assert.ok((await snapshot()).events.some(event=>event.code==='QUALITY_PROFILE_CHANGED'));
     }
 
-    let switches = 0, transitions = 1, nextTransitionAt = 25, nextReportAt = 30, previousTick = await tick(), playedSeconds = 0;
+    let switches = 0, transitions = 1, explicitResets = 0, nextTransitionAt = 25, nextReportAt = 30, previousTick = await tick(), playedSeconds = 0;
     await evaluate("void(window.izPlaybackSeconds=0); void(window.izPreviousAudioTime=izAudio.currentTime)");
     while ((Date.now()-started)/1000 < duration) {
       await delay(1000);
@@ -131,7 +132,14 @@ try {
         await waitFor("document.querySelector('[data-iz-state]')");
       } else assert.equal(state.paused,false);
       const elapsed = (Date.now()-started)/1000;
-      if (elapsed>=nextTransitionAt && !['preparing','prepared','revealing','rollingBack'].includes(await evaluate("document.querySelector('[data-iz-state]').dataset.transition"))) {
+      if (elapsed>=nextTransitionAt && !['preparing','approaching','rollingBack'].includes(await evaluate("document.querySelector('[data-iz-state]').dataset.transition"))) {
+        // This bounded slice authors Forest→Nebula only. Exercise the existing
+        // explicit reset control before repeating; track changes never reset it.
+        if (await evaluate("document.querySelector('[data-iz-transition]').disabled")) {
+          await click('[data-iz-reset]'); explicitResets++;
+          await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='prepared'");
+          previousTick = await tick();
+        }
         await click('[data-iz-transition]'); transitions++; nextTransitionAt=elapsed+25;
       }
       if (elapsed>=nextReportAt) {
@@ -148,10 +156,10 @@ try {
     await signOut(); await waitFor("location.pathname==='/login'");
     const cleanup = await evaluate("({gpu:Object.fromEntries(Object.entries(izResources).map(([key,value])=>[key,[...value].filter(resource=>izGl['is'+key](resource)).length])),bitmaps:izBitmaps.size,audioPaused:izAudio.paused})");
     assert.deepEqual(cleanup,{gpu:{Texture:0,Buffer:0,Program:0},bitmaps:0,audioPaused:true});
-    const report = { durationSeconds:(Date.now()-started)/1000, playedSeconds, switches, transitions, machine, initial, checkpoints, final, cleanup,
+    const report = { durationSeconds:(Date.now()-started)/1000, playedSeconds, switches, transitions, explicitResets, machine, initial, checkpoints, final, cleanup,
       caveats:["Headless browser calibration, hardware-dependent; frame intervals are not GPU timer queries.","Buffering and visibility events emulated; context loss uses actual WEBGL_lose_context.","GPU bytes are raw RGBA8 estimates, excluding driver overhead and the browser default framebuffer."] };
     const directory = new URL("../../../.tmp/",import.meta.url); await mkdir(directory,{recursive:true});
-    const reportPath = new URL(`infinite-zoom-stability${duration<300?'-smoke':''}.json`,directory); await writeFile(reportPath,JSON.stringify(report,null,2));
+    const reportPath = new URL(`infinite-zoom-portal-stability${duration<300?'-smoke':''}.json`,directory); await writeFile(reportPath,JSON.stringify(report,null,2));
     console.log(`IZ stability passed: ${playedSeconds.toFixed(1)}s audio, ${switches} track switches, ${transitions} transitions; report ${reportPath.pathname}`);
   });
 } finally { await new Promise(resolve=>api.close(resolve)); }

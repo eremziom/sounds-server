@@ -55,10 +55,10 @@ try {
     await send("Network.setCookies",{cookies:[{name:"accessToken",value:session.accessToken,url:origin,path:"/",httpOnly:true},{name:"refreshToken",value:session.refreshToken,url:origin,path:"/",httpOnly:true},{name:"locale",value:"en",url:origin,path:"/"}]});
     const held = [];
     listeners.set("Fetch.requestPaused",event => { held.push(event.requestId); });
-    await send("Fetch.enable",{patterns:[{urlPattern:"*/infinite-zoom/samples/foundation/backdrop.svg",requestStage:"Request"}]});
+    await send("Fetch.enable",{patterns:[{urlPattern:"*/infinite-zoom/samples/underwater-cavern/backdrop.png",requestStage:"Request"}]});
     await send("Page.navigate",{url:`${origin}/library`}); await waitFor(row(1)); await waitFor(canvas);
     for(let i=0;i<100 && !held.length;i++) await delay(25);
-    assert.ok(held.length,"Critical visual request intercepted");
+    assert.ok(held.length,"Third artwork is requested before initial readiness");
     await click(row(1)); await delay(150);
     assert.equal(await evaluate(`${audio}.paused`),true,"Audio waits for critical artwork"); assert.equal(await tick(),0);
     await click(row(1)); // cancel pending Play
@@ -67,6 +67,10 @@ try {
     await waitFor(`${canvas}.dataset.visualStatus==='ready'`);
     await delay(100); assert.equal(await evaluate(`${audio}.paused`),true,"Cancelled Play never starts late");
     assert.equal(await tick(),0);
+    const lateArtworkLoads = [];
+    listeners.set("Network.requestWillBeSent",event => {
+      if (new URL(event.request.url).pathname.startsWith("/infinite-zoom/")) lateArtworkLoads.push(event.request.url);
+    });
 
     await click(row(1)); await waitFor(`!${audio}.paused && ${canvas}.dataset.visualStatus==='running'`);
     await waitFor(`window.izGain>1.01`);
@@ -75,6 +79,7 @@ try {
     await click(toggle); await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
     const paused = await tick(); await delay(250); assert.equal(await tick(),paused);
     await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest","Forest is the initial scene");
     assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`),true);
     await click("document.querySelector('[data-iz-immersive]')");
     await waitFor("document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='immersive'");
@@ -94,12 +99,15 @@ try {
     await evaluate("void(izAudio.play=izOriginalPlay)"); await click(toggle);
     await waitFor(`${canvas}.dataset.visualStatus==='running'`);
     await click("document.querySelector('[data-iz-transition]')");
-    await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='revealing'");
+    await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='approaching'");
     await click("document.querySelector('[data-iz-immersive]')");
     assert.equal(await evaluate(`${canvas}===izCanvas && !${audio}.paused`),true);
     await click("document.querySelector('[data-iz-exit]')");
+    // Observe a middle camera pose before waiting for the slower final handoff;
+    // each wait remains within the harness's bounded polling interval.
+    await waitFor("JSON.parse(document.querySelector('[data-iz-diagnostic-snapshot]').textContent).camera.pose.logScale>1.5");
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='committed'");
-    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"foundation-destination");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"nebula");
     const afterTransition = await tick();
     await evaluate("izAudio.currentTime=29.9"); await waitFor(`${audio}.ended`);
     await waitFor(`${canvas}.dataset.visualStatus==='stopped'`);
@@ -109,11 +117,23 @@ try {
     assert.ok(await tick()>=ended,"New track preserves logical time");
     assert.deepEqual(await evaluate("[izGraphs,izSources]"),[1,1]);
     await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-iz-state]')");
-    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"foundation-destination","New track does not reset artwork");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"nebula","New track does not reset artwork");
+    assert.equal(await evaluate("document.querySelector('[data-iz-transition]').disabled"),false,"Nebula has the next authored portal ready");
+    await click("document.querySelector('[data-iz-transition]')");
+    await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='approaching'");
+    await waitFor("JSON.parse(document.querySelector('[data-iz-diagnostic-snapshot]').textContent).camera.pose.logScale>1.5");
+    await waitFor("document.querySelector('[data-iz-state]').dataset.artwork==='underwater-cavern'");
+    assert.equal(await evaluate("document.querySelector('[data-iz-transition]').disabled"),true,"C ends the authored demo chain");
+    assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio && !${audio}.paused`),true,"Both transitions preserve canvas and playing audio");
+    const nativeScale = await evaluate("JSON.parse(document.querySelector('[data-iz-diagnostic-snapshot]').textContent).camera.pose.logScale");
+    assert.ok(Math.abs(nativeScale)<1e-8,"C stops at full frame");
     await click(toggle); await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
     await click("document.querySelector('[data-iz-reset]')");
     await waitFor(`${canvas}.dataset.simulationTick==='0'`); assert.equal(await evaluate(`${audio}.paused`),true);
-    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"foundation-motion");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest");
+    await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='prepared'");
+    assert.equal(await evaluate("document.querySelector('[data-iz-transition]').disabled"),false,"Reset restores the embedded portal without another load");
+    assert.deepEqual(lateArtworkLoads, [], "Travel, track changes and explicit reset use the initially prepared chain without network loads");
     await click(toggle); await waitFor(`${canvas}.dataset.visualStatus==='running'`);
     // Throw inside the actual IZ context; failure must not touch music.
     const beforeFailure = await evaluate("izAudio.currentTime");
@@ -129,7 +149,7 @@ try {
     // first Play and recover from a fresh explicit Play, without late autoplay.
     await send("Network.setCacheDisabled",{cacheDisabled:true});
     listeners.set("Fetch.requestPaused",event => send("Fetch.fulfillRequest",{requestId:event.requestId,responseCode:404,body:""}));
-    await send("Fetch.enable",{patterns:[{urlPattern:"*/infinite-zoom/samples/foundation/backdrop.svg",requestStage:"Request"}]});
+    await send("Fetch.enable",{patterns:[{urlPattern:"*/infinite-zoom/samples/underwater-cavern/backdrop.png",requestStage:"Request"}]});
     await send("Network.setCookies",{cookies:[{name:"accessToken",value:session.accessToken,url:origin,path:"/",httpOnly:true},{name:"refreshToken",value:session.refreshToken,url:origin,path:"/",httpOnly:true}]});
     await send("Page.navigate",{url:`${origin}/library`}); await waitFor(row(1));
     await waitFor(`${canvas}?.dataset.visualStatus==='error'`);

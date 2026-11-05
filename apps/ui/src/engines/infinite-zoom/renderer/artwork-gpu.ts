@@ -1,8 +1,9 @@
-import { Group, LinearFilter, Mesh, NoColorSpace, PlaneGeometry, ShaderMaterial, SRGBColorSpace, Texture, Vector2 } from "three";
+import { Group, LinearFilter, Mesh, NoColorSpace, PlaneGeometry, ShaderMaterial, SRGBColorSpace, Texture, DataTexture, RedFormat, UnsignedByteType, Vector2, Vector4 } from "three";
 import type { ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
 import { buildBehaviorShader, behaviorUniform } from "../behaviors/behavior-shader.ts";
 import { placePoint, type ArtworkPlacement } from "../transition/placement.ts";
+import type { PortalRegion } from "../transition/portal.ts";
 
 export const VERTEX_SHADER = `
   varying vec2 vUv; varying vec2 artworkWorld;
@@ -20,7 +21,22 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
   function textureFor(id: string) {
     const previous = textures.get(id); if (previous) return previous;
     const descriptor = loaded.manifest.assets.find(asset => asset.id === id)!;
-    const texture = new Texture(loaded.getAsset(id).image); textures.set(id, texture);
+    const asset = loaded.getAsset(id);
+    let texture: Texture;
+    if (descriptor.kind === "mask") {
+      const canvas = new OffscreenCanvas(descriptor.width, descriptor.height);
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) throw new Error("Cannot extract mask channel");
+      try {
+        context.drawImage(asset.image as CanvasImageSource, 0, 0);
+        const rgba = context.getImageData(0, 0, descriptor.width, descriptor.height).data;
+        const red = new Uint8Array(descriptor.width * descriptor.height);
+        for (let i = 0; i < red.length; i++) red[i] = rgba[i * 4];
+        texture = new DataTexture(red, descriptor.width, descriptor.height, RedFormat, UnsignedByteType);
+        texture.unpackAlignment = 1;
+      } finally { canvas.width = canvas.height = 1; }
+    } else texture = new Texture(asset.image);
+    textures.set(id, texture);
     texture.colorSpace = descriptor.kind === "image" ? SRGBColorSpace : NoColorSpace;
     texture.flipY = false; texture.premultiplyAlpha = false; texture.generateMipmaps = false;
     texture.minFilter = texture.magFilter = LinearFilter; texture.needsUpdate = true;
@@ -44,27 +60,30 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         fragmentShader: `
           uniform sampler2D imageMap; uniform sampler2D maskMap;
           uniform float hasMask; uniform float opacity; uniform float audioGain;
-          uniform float reveal; uniform vec2 revealCenter; uniform float revealAngle; uniform float revealScale;
+          uniform int portalCount; uniform vec4 portalData[2]; uniform vec2 portalStyle[2];
           varying vec2 vUv; varying vec2 artworkWorld;
           ${shader.declarations}
           void main() {
-            // Geometric B window, independent of image/visibility/influence.
-            if (reveal >= 0.0) {
-              vec2 d = artworkWorld - revealCenter;
-              float c = cos(revealAngle), s = sin(revealAngle);
-              vec2 b = vec2(c*d.x - s*d.y, s*d.x + c*d.y) / revealScale;
-              if (max(abs(b.x)/1920.0, abs(b.y)/1080.0) > reveal || reveal == 0.0) discard;
+            // Each aperture belongs to its authored parent, including nested C.
+            float portalAlpha = 1.0;
+            for (int i = 0; i < 2; i++) {
+              if (i >= portalCount) break;
+              vec2 d = artworkWorld - portalData[i].xy;
+              float c = cos(portalStyle[i].x), s = sin(portalStyle[i].x);
+              vec2 b = vec2(c*d.x - s*d.y, s*d.x + c*d.y) / portalData[i].zw;
+              portalAlpha *= 1.0 - smoothstep(1.0 - portalStyle[i].y, 1.0, length(b));
+              if (portalAlpha <= 0.0) discard;
             }
             ${shader.body}
             vec4 color = texture2D(imageMap, sampleUv);
             float inside = step(0.0,sampleUv.x)*step(sampleUv.x,1.0)*step(0.0,sampleUv.y)*step(sampleUv.y,1.0);
             color.rgb *= min(4.0, pulseGain * audioGain);
-            color.a *= inside * opacity * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
+            color.a *= inside * opacity * portalAlpha * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
             gl_FragColor = vec4(color.rgb*color.a,color.a);
           }`,
         uniforms: { imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
-          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, reveal: { value: -1 },
-          revealCenter: { value: new Vector2() }, revealAngle: { value: 0 }, revealScale: { value: 1 }, ...uniforms },
+          hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, portalCount: { value: 0 },
+          portalData: { value: [new Vector4(), new Vector4()] }, portalStyle: { value: [new Vector2(), new Vector2()] }, ...uniforms },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
       });
       const mesh = new Mesh(geometry, material); meshes.push(mesh); mesh.frustumCulled = false; group.add(mesh);
@@ -72,7 +91,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
   } catch (failure) { dispose(); throw failure; }
   return {
     group,
-    update(placement: ArtworkPlacement, reveal: number, firstOrder: number) {
+    update(placement: ArtworkPlacement, portals: readonly PortalRegion[], firstOrder: number) {
       const center = placePoint({ x: 1920, y: 1080 }, placement);
       group.position.set(center.x - 1920, -(center.y - 1080), 0);
       group.rotation.z = -placement.rotation; group.scale.setScalar(placement.scale);
@@ -81,8 +100,11 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         mesh.position.set(layer.x, -layer.y, 0); mesh.rotation.z = -layer.rotation; mesh.scale.setScalar(layer.scale);
         mesh.renderOrder = firstOrder + index; uniforms.opacity.value = layer.opacity;
         uniforms.audioGain.value = layer.audioGain;
-        uniforms.reveal.value = reveal; uniforms.revealCenter.value.set(center.x - 1920, -(center.y - 1080));
-        uniforms.revealAngle.value = placement.rotation; uniforms.revealScale.value = placement.scale;
+        uniforms.portalCount.value = portals.length;
+        for (const [i, portal] of portals.entries()) {
+          uniforms.portalData.value[i].set(portal.x - 1920, -(portal.y - 1080), portal.radiusX, portal.radiusY);
+          uniforms.portalStyle.value[i].set(portal.rotation, portal.feather);
+        }
         for (const effect of shaders[index].effects) uniforms[effect.name].value = behaviorUniform(layer.groups[effect.group].effects[effect.effect]);
       }
       return firstOrder + meshes.length;

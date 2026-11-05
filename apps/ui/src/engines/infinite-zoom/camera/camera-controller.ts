@@ -6,6 +6,7 @@ interface Trajectory {
   readonly velocity: CameraPose;
   readonly to: CameraPose;
   readonly ticks: number;
+  readonly framingTicks: number;
   elapsed: number;
 }
 
@@ -13,9 +14,11 @@ interface Trajectory {
  * the exact target with zero velocity. No wall clock or scheduler lives here. */
 function sample(path: Trajectory, tick: number) {
   if (tick === path.ticks) return { pose: path.to, velocity: ZERO_VELOCITY };
-  const t = tick / path.ticks, duration = path.ticks / 60;
   const pose = { ...ZERO_VELOCITY }, velocity = { ...ZERO_VELOCITY };
   for (const key of POSE_KEYS) {
+    const ticks = key === "x" || key === "y" ? path.framingTicks : path.ticks;
+    if (tick >= ticks) { pose[key] = path.to[key]; velocity[key] = 0; continue; }
+    const t = tick / ticks, duration = ticks / 60;
     const a = path.from[key], b = path.to[key], v = path.velocity[key] * duration;
     pose[key] = (2 * t ** 3 - 3 * t ** 2 + 1) * a + (t ** 3 - 2 * t ** 2 + t) * v + (-2 * t ** 3 + 3 * t ** 2) * b;
     velocity[key] = ((6 * t ** 2 - 6 * t) * a + (3 * t ** 2 - 4 * t + 1) * v + (-6 * t ** 2 + 6 * t) * b) / duration;
@@ -32,11 +35,12 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
   let constraintReached = false;
   const bookmarks = new Map<string, CameraPose>([["full-frame", origin]]);
 
-  function retarget(target: CameraPose, durationSeconds: number) {
+  function retarget(target: CameraPose, durationSeconds: number, framingSeconds = durationSeconds) {
     validatePose(target);
     if (!Number.isFinite(durationSeconds) || durationSeconds < 1 / 60 || durationSeconds > 60) throw new Error("Camera duration must be 1/60..60 seconds");
+    if (!Number.isFinite(framingSeconds) || framingSeconds < 1 / 60 || framingSeconds > durationSeconds) throw new Error("Camera framing duration must fit the trajectory");
     const candidate: Trajectory = { from: pose, velocity, to: Object.freeze({ ...target }),
-      ticks: Math.round(durationSeconds * 60), elapsed: 0 };
+      ticks: Math.round(durationSeconds * 60), framingTicks: Math.round(framingSeconds * 60), elapsed: 0 };
     // Certify every state that this fixed-step trajectory can present. Renderer
     // uses current states, with no interpolated poses between these samples.
     for (let tick = 0; tick <= candidate.ticks; tick++) {

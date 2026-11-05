@@ -1,5 +1,6 @@
 import { parseBehaviors, validateComposition, type BehaviorDescriptor } from "../behaviors/behavior-contract.ts";
 import { behaviorGroups, type BehaviorRegion } from "../behaviors/behavior-evaluator.ts";
+import { parseArtworkPortal, type ArtworkPortal } from "../transition/portal.ts";
 
 export interface ArtworkAsset {
   readonly id: string;
@@ -32,6 +33,7 @@ export interface ArtworkPackage {
   readonly coverage: Readonly<{ baseLayerId: string }>;
   readonly behaviors: readonly BehaviorDescriptor[];
   readonly anchors: readonly { readonly id: string; readonly x: number; readonly y: number }[];
+  readonly portal?: ArtworkPortal;
 }
 
 function record(value: unknown, keys: readonly string[]): Record<string, unknown> {
@@ -56,7 +58,7 @@ function unique<T extends { readonly id: string }>(items: readonly T[]): Map<str
 }
 
 export function parseArtworkPackage(input: unknown): ArtworkPackage {
-  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage", "behaviors", "anchors"]);
+  const data = record(input, ["schemaVersion", "id", "version", "canvas", "assets", "layers", "coverage", "behaviors", "anchors", "portal"]);
   if (data.schemaVersion !== 1) throw new Error("Unsupported artwork schema version");
   const canvas = record(data.canvas, ["width", "height"]);
   if (canvas.width !== 3840 || canvas.height !== 2160) throw new Error("Artwork canvas must be 3840x2160");
@@ -138,5 +140,6 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   unique(anchors);
   return Object.freeze({ schemaVersion: 1, id: id(data.id), version: id(data.version), anchors: Object.freeze(anchors),
     canvas: Object.freeze({ width: 3840, height: 2160 }), assets: Object.freeze(assets),
-    layers: Object.freeze(layers), coverage: Object.freeze({ baseLayerId }), behaviors: artworkBehaviors });
+    layers: Object.freeze(layers), coverage: Object.freeze({ baseLayerId }), behaviors: artworkBehaviors,
+    ...(data.portal === undefined ? {} : { portal: parseArtworkPortal(data.portal) }) });
 }

@@ -2,6 +2,7 @@ import { prepareArtwork } from "/engine/artwork/prepare-artwork.ts";
 import { createInfiniteZoomController } from "/engine/index.ts";
 import { decodeArtworkAsset, loadArtwork } from "/engine/artwork/artwork-loader.ts";
 import { createArtworkInstance } from "/engine/artwork/artwork-instance.ts";
+import { destinationRenderPlacement } from "/engine/transition/destination-view.ts";
 import { createCameraController } from "/engine/camera/index.ts";
 import { createArtworkRenderer } from "/engine/renderer/artwork-renderer.ts";
 import { check, waitFor, pixels, hash, opaque } from "/fixture.mjs";
@@ -34,7 +35,8 @@ window.runTransitionRenderer = async () => {
     },
   });
   const request = patch => lease.transition.request({ sourceInstanceId: lease.instance.id, manifest: destination,
-    anchorId: "center", placement: { x: 1920, y: 1080, scale: 0.5, rotation: 0.12 }, durationSeconds: 1, ...patch });
+    anchorId: "center", placement: { x: 1920, y: 1080, scale: 0.5, rotation: 0.12 },
+    region: { x: 1920, y: 1080, radiusX: 900, radiusY: 450, rotation: 0.12, feather: 0.2 }, durationSeconds: 1, ...patch });
   let handoff;
   try {
     await engine.prepare(); const context = canvas.getContext("webgl2"), initial = hash(pixels(canvas, lease.render));
@@ -57,17 +59,17 @@ window.runTransitionRenderer = async () => {
 
     const beforePreparation = hash(pixels(canvas, lease.render));
     await request(); check(lease.getDiagnostics().artworks === 2, "A and B share one renderer");
-    check(hash(pixels(canvas, lease.render)) === beforePreparation, "Preparation does not reveal B");
-    advance(20);
+    check(hash(pixels(canvas, lease.render)) !== beforePreparation, "Prepared B is already visibly embedded before travel");
+    lease.transition.start(); advance(20);
     const cancelledPose = JSON.stringify(lease.camera.getSnapshot().pose);
     lease.transition.cancel();
     check(lease.transition.getSnapshot().phase === "rollingBack", "Cancellation begins smooth rollback");
     check(JSON.stringify(lease.camera.getSnapshot().pose) === cancelledPose, "Rollback does not teleport");
     advance(60);
-    check(lease.transition.getSnapshot().phase === "cancelled" && lease.getDiagnostics().artworks === 1, "Rollback releases B GPU leases");
+    check(lease.transition.getSnapshot().phase === "cancelled" && lease.getDiagnostics().artworks === 2, "Rollback retains visible B GPU leases");
     check(lease.instance.id === "source", "Rollback preserves A identity");
 
-    await request(); advance(15);
+    lease.transition.start(); advance(15);
     engine.pause();
     const frozen = JSON.stringify({ transition: lease.transition.getSnapshot(), camera: lease.camera.getSnapshot(), artwork: lease.instance.getSnapshot() });
     const stablePixels = hash(pixels(canvas, lease.render));
@@ -100,7 +102,9 @@ window.runTransitionRenderer = async () => {
     // opaque coverage through reveal and after handoff.
     for (const size of [{ width: 240, height: 360 }, { width: 960, height: 240 }]) {
       lease.resize({ ...viewport, ...size }); engine.start(); frame();
-      await request({ placement: { x: 1920, y: 1080, scale: 0.6, rotation: -0.15 } });
+      await request({ placement: { x: 1920, y: 1080, scale: 0.6, rotation: -0.15 },
+        region: { x: 1920, y: 1080, radiusX: 900, radiusY: 450, rotation: -0.15, feather: 0.2 } });
+      lease.transition.start();
       advance(65); check(lease.transition.getSnapshot().phase === "committed", "Aspect-ratio transition commits safely");
       engine.reset();
     }
@@ -117,7 +121,7 @@ window.runTransitionRenderer = async () => {
     acquiredBitmaps: decoded.length, continuity };
 };
 
-async function checkHandoffPixels(source, destination, handoff) {
+export async function checkHandoffPixels(source, destination, handoff, authoredPlacement, authoredRegion) {
   const signal = new AbortController().signal;
   const a = await loadArtwork(source, signal), b = await loadArtwork(destination, signal);
   const ai = createArtworkInstance("a", a.manifest), bi = createArtworkInstance("b", b.manifest);
@@ -127,10 +131,12 @@ async function checkHandoffPixels(source, destination, handoff) {
     onAvailabilityChange() {}, onError(error) { throw error; } });
   try {
     renderer.attach(b, bi);
-    const placement = { x: 1920, y: 1080, scale: 0.5, rotation: 0.12, anchorX: 1920, anchorY: 1080 };
-    renderer.setComposition({ sourceId: "a", destinationId: "b", placement, reveal: 1 });
+    const placement = authoredPlacement ?? { x: 1920, y: 1080, scale: 0.5, rotation: 0.12, anchorX: 1920, anchorY: 1080 };
+    renderer.setComposition({ sourceId: "a", destinationId: "b", placement,
+      destinationCamera: source.portal?.destinationCamera,
+      portal: authoredRegion ?? { x: 1920, y: 1080, radiusX: 900, radiusY: 450, rotation: 0.12, feather: 0.2 } });
     const before = pixels(canvas, renderer.render); opaque(before);
-    camera.rebaseCoordinates(placement); renderer.setComposition({ sourceId: "b" }); renderer.detach("a");
+    camera.rebaseCoordinates(destinationRenderPlacement(handoff.before.pose, placement, source.portal?.destinationCamera)); renderer.setComposition({ sourceId: "b" }); renderer.detach("a");
     const after = pixels(canvas, renderer.render); opaque(after);
     let maximum = 0, total = 0;
     for (let i = 0; i < before.length; i++) { const error = Math.abs(before[i]-after[i]); maximum = Math.max(maximum,error); total += error; }
