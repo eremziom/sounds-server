@@ -35,6 +35,7 @@
   },
   "app": {
     "infiniteZoom": {
+      "diagnostics": "Diagnostyka sesji",
       "description": "Techniczne demo z przykładową grafiką. Odtwórz muzykę z biblioteki, aby animować scenę. Pauza zachowuje Twoją podróż.",
       "immersive": "Widok immersyjny", "exitImmersive": "Wyjdź z widoku immersyjnego", "transition": "Następna scena", "cancel": "Anuluj przejście", "reset": "Zresetuj podróż",
       "camera": "Sterowanie kamerą", "zoomIn": "Przybliż", "zoomOut": "Oddal", "rotate": "Obróć", "hold": "Zatrzymaj kamerę", "return": "Wróć do pełnego kadru",

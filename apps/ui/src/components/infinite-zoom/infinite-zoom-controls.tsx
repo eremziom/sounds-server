@@ -29,6 +29,10 @@ export function InfiniteZoomControls() {
       {(["zoomIn", "zoomOut", "rotate", "hold", "return"] as const).map(command => <Button key={command} type="button" variant="outline" disabled={!running || busy} data-iz-command={command} onClick={() => runtime.command(command)}>{t(command)}</Button>)}
     </div>
     <label className="flex items-center gap-2 text-sm"><input data-iz-modulation type="checkbox" checked={modulation} onChange={event => runtime.setModulation(event.target.checked)} />{t("modulation")}</label>
+    <details className="text-xs" data-iz-diagnostics>
+      <summary>{t("diagnostics")}</summary>
+      <pre className="max-h-72 overflow-auto whitespace-pre-wrap" data-iz-diagnostic-snapshot>{JSON.stringify(snapshot.diagnostics ?? {}, null, 2)}</pre>
+    </details>
     {snapshot.error && <div role="alert" className="space-y-2 text-sm"><p>{t("failed")}</p>
       {snapshot.retryable && <Button type="button" variant="outline" data-iz-retry onClick={() => void runtime.retry().catch(() => {})}>{t("retry")}</Button>}
     </div>}

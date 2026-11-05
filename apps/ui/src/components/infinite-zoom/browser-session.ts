@@ -1,5 +1,7 @@
 import { createInfiniteZoomController } from "../../engines/infinite-zoom/index.ts";
 import { createAudioModulation } from "../../engines/infinite-zoom/modulation/audio-modulation.ts";
+import { createAdaptiveQuality } from "../../engines/infinite-zoom/quality/adaptive-quality.ts";
+import { createSessionDiagnostics } from "../../engines/infinite-zoom/diagnostics/session-diagnostics.ts";
 import type { prepareArtwork } from "../../engines/infinite-zoom/artwork/prepare-artwork.ts";
 import type { AudioSignals } from "../../lib/audio-animation.ts";
 import { bindPlaybackToVisuals } from "./playback-adapter.ts";
@@ -13,6 +15,8 @@ export function createBrowserVisualSession(options: {
 }) {
   const { canvas, audio, bridge } = options;
   const lifetime = new AbortController(), modulation = createAudioModulation();
+  const quality = createAdaptiveQuality(), diagnostics = createSessionDiagnostics(crypto.randomUUID());
+  let lastFrame: number | null = null, lastState = "", lastTransition = "", lastResizeError = false;
   let lease: Awaited<ReturnType<typeof prepareArtwork>> | null = null;
   let hasPlayed = false, disposed = false, fault = false, operation = 0, loadingTransition = false;
   let targetSize = { width: 1, height: 1, dpr: 1, renderScale: 1 };
@@ -20,7 +24,8 @@ export function createBrowserVisualSession(options: {
   const commands: Parameters<VisualBridge["command"]>[0][] = [];
   function measure() {
     const bounds = canvas.parentElement!.getBoundingClientRect();
-    targetSize = { width: Math.max(1, bounds.width), height: Math.max(1, bounds.height), dpr: Math.min(window.devicePixelRatio || 1, 2), renderScale: 1 };
+    const profile = quality.getSnapshot();
+    targetSize = { width: Math.max(1, bounds.width), height: Math.max(1, bounds.height), dpr: Math.min(window.devicePixelRatio || 1, profile.maxDpr), renderScale: profile.renderScale };
     pendingResize = true;
   }
   function runCommands() {
@@ -45,10 +50,24 @@ export function createBrowserVisualSession(options: {
   function buildEngine() {
     return createInfiniteZoomController({ seed: 181,
       scheduler: {
-        request(callback) { return requestAnimationFrame(time => { callback(time); if (engine.getSnapshot().status === "error") fault = true; }); },
-        cancel(handle) { cancelAnimationFrame(handle); },
+        request(callback) { return requestAnimationFrame(time => {
+          if (lastFrame !== null) {
+            const interval = time - lastFrame;
+            diagnostics.frame(interval);
+            if (quality.sample(interval, loadingTransition || !!lease?.transition.getSnapshot().qualityLocked)) {
+              diagnostics.event("QUALITY_PROFILE_CHANGED", engine.getSnapshot().session.tick, "warning");
+              measure();
+            }
+          }
+          lastFrame = time;
+          callback(time);
+          if (engine.getSnapshot().status === "error") fault = true;
+        }); },
+        cancel(handle) { lastFrame = null; quality.interrupt(); cancelAnimationFrame(handle); },
       },
       prepare: async signal => {
+        // One abortable deadline covers manifest, decode and critical GPU warmup.
+        signal = AbortSignal.any([signal, AbortSignal.timeout(15000)]);
         measure();
         const response = await fetch("/infinite-zoom/samples/foundation/motion-manifest.json", { signal });
         if (!response.ok) throw new Error("Cannot load initial artwork manifest");
@@ -58,9 +77,10 @@ export function createBrowserVisualSession(options: {
         const prepared = await artworkModule.prepareArtwork({ canvas, manifest, instanceId: "initial", viewport: targetSize,
           onAvailabilityChange(available) {
             const status = engine.getSnapshot().status;
+            diagnostics.event(available ? "CONTEXT_RESTORED" : "CONTEXT_LOST", engine.getSnapshot().session.tick, available ? "info" : "warning");
             if (!["disposed", "error"].includes(status)) engine.setSuspended("context-lost", !available);
           },
-          onError() { fault = true; publish(); },
+          onError() { diagnostics.event("CONTEXT_RESTORE_FAILED", engine.getSnapshot().session.tick, "error"); fault = true; publish(); },
           evaluate() { runCommands(); },
           modulation: () => modulation.getSnapshot(),
         }, signal);
@@ -81,23 +101,35 @@ export function createBrowserVisualSession(options: {
   const playback = bindPlaybackToVisuals(audio, document, () => engine, () => modulation.reset(), () => { hasPlayed = true; }, options.actualPlayback.current);
   function applyResize() {
     if (!pendingResize || !lease || lease.transition.getSnapshot().qualityLocked || !lease.getDiagnostics().available) return;
-    try { lease.resize(targetSize); pendingResize = false; fault = false; }
+    try { lease.resize(targetSize); pendingResize = false; lastResizeError = false; }
     catch {
       // Keep the existing valid projection/frame. Never restart camera or
       // audio to make a resize fit; retry after movement/transition completes.
-      fault = true;
+      if (!lastResizeError) diagnostics.event("RESIZE_DEFERRED", engine.getSnapshot().session.tick, "warning");
+      lastResizeError = true;
     }
   }
   function publish() {
     if (disposed) return;
     applyResize();
     const snapshot = engine.getSnapshot();
+    const transition = loadingTransition ? "preparing" : lease?.transition.getSnapshot().phase ?? "idle";
+    if (snapshot.status !== lastState) {
+      diagnostics.event(`ENGINE_${snapshot.status.toUpperCase()}`, snapshot.session.tick, snapshot.status === "error" ? "error" : "info");
+      lastState = snapshot.status;
+    }
+    if (transition !== lastTransition) { diagnostics.event(`TRANSITION_${transition.toUpperCase()}`, snapshot.session.tick); lastTransition = transition; }
     bridge.publish({ status: snapshot.status, tick: snapshot.session.tick, artwork: lease?.instance.manifest.id ?? "",
-      transition: loadingTransition ? "preparing" : lease?.transition.getSnapshot().phase ?? "idle", error: fault || snapshot.status === "error" || !!lease?.transition.getSnapshot().error,
+      transition, error: fault || lastResizeError || snapshot.status === "error" || !!lease?.transition.getSnapshot().error,
       retryable: !hasPlayed && snapshot.status === "error",
+      diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
+        tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
+        resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
+        suspensions: snapshot.suspensions, resizePending: pendingResize }),
       ready: !["idle", "preparing", "error", "disposed"].includes(snapshot.status) });
     canvas.dataset.simulationTick = String(snapshot.session.tick);
     canvas.dataset.visualStatus = snapshot.status;
+    canvas.dataset.qualityProfile = quality.getSnapshot().profile;
     canvas.dataset.visualError = snapshot.error instanceof Error ? snapshot.error.message : "";
   }
   async function prepare() {
@@ -124,7 +156,7 @@ export function createBrowserVisualSession(options: {
       publish();
       try {
         const filename = lease.instance.manifest.id === "foundation-destination" ? "motion-manifest.json" : "destination.json";
-        const response = await fetch(`/infinite-zoom/samples/foundation/${filename}`, { signal: lifetime.signal });
+        const response = await fetch(`/infinite-zoom/samples/foundation/${filename}`, { signal: AbortSignal.any([lifetime.signal, AbortSignal.timeout(15000)]) });
         if (!response.ok) throw new Error("Cannot load destination manifest");
         const manifest = await response.json();
         if (disposed || revision !== operation || sourceId !== lease.instance.id) return;

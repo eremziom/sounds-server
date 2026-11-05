@@ -97,8 +97,15 @@ window.runFoundationRenderer = async () => {
     const memoryBeforeLoss = lease.getDiagnostics();
     const extension = canvas.getContext("webgl2").getExtension("WEBGL_lose_context");
     check(extension, "Context loss extension available");
+    const lossDelivered = new Promise(resolve => canvas.addEventListener("webglcontextlost", resolve, { once: true }));
     extension.loseContext();
+    // Force the draw/event race: loss is observable synchronously, while the
+    // cancellable DOM event has not yet been delivered.
+    lease.render();
+    check(engine.getSnapshot().status !== "error", "Loss before DOM event never poisons controller");
     await waitFor(() => !lease.getDiagnostics().available);
+    await lossDelivered; // The browser must deliver/cancel loss before restoreContext.
+    await new Promise(resolve => setTimeout(resolve, 25)); // Leave the event-dispatch task.
     check(frames.size === 0, "Context loss suspends scheduling");
     lease.resize({ ...viewport, width: 320, height: 480 });
     lease.resize(viewport);
@@ -144,6 +151,24 @@ window.runFoundationRenderer = async () => {
   }
   check(cycles.every(value => JSON.stringify(value) === JSON.stringify(cycles[0])), "Repeated prepare has stable GPU object counts");
   check(acquiredBitmaps === 8 && closedBitmaps === acquiredBitmaps, "Repeated dispose closes every real decoded bitmap exactly once");
+
+  // A loss during the first critical draw must reject readiness, even though
+  // a loss during normal rendering is recoverable suspension.
+  const earlyCanvas = document.createElement("canvas"); document.body.append(earlyCanvas);
+  const earlyGl = earlyCanvas.getContext("webgl2"), earlyLoss = earlyGl.getExtension("WEBGL_lose_context");
+  let earlyCloses = 0, earlyFailure = false;
+  earlyGl.drawElements = () => { earlyLoss.loseContext(); throw new Error("Interrupted first draw"); };
+  try {
+    await prepareArtwork({ canvas: earlyCanvas, manifest, instanceId: "early-loss", viewport,
+      onAvailabilityChange() {}, onError(error) { throw error; },
+      async decode(asset, signal) {
+        const decoded = await decodeArtworkAsset(asset, signal);
+        return { ...decoded, close() { earlyCloses++; decoded.close(); } };
+      },
+    }, new AbortController().signal);
+  } catch (error) { earlyFailure = String(error).includes("GPU unavailable during critical preparation"); }
+  finally { earlyCanvas.remove(); }
+  check(earlyFailure && earlyCloses === 2, "First-draw loss rejects readiness and releases CPU leases");
 
   // Independent pixel oracle: half-alpha white over sRGB 128 gray must be
   // about 205, rather than the gamma-space blend of 192.

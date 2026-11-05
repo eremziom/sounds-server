@@ -88,7 +88,17 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     if (gl.isContextLost()) throw new Error("GPU context unavailable during rendering");
     const error = gl.getError(); if (error !== gl.NO_ERROR) throw new Error(`GPU rejected artwork rendering (${error})`);
   }
-  function render() { checkAlive(); if (available) { validateSource(); draw(composition, true); } }
+  function render() {
+    checkAlive(); if (!available) return;
+    try { validateSource(); draw(composition, true); }
+    catch (failure) {
+      // Context loss can become observable in a draw before the browser emits
+      // webglcontextlost. Suspend immediately instead of poisoning the logical
+      // controller with a terminal render error; the event still gets cancelled.
+      if (renderer.getContext().isContextLost()) { onLost(new Event("webglcontextlost")); return; }
+      throw failure;
+    }
+  }
   function setComposition(next: SceneComposition) {
     checkAlive(); entry(next.sourceId);
     if (next.destinationId) {
@@ -103,12 +113,12 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     value.gpu?.dispose(); entries.delete(id);
   }
   function onLost(event: Event) {
-    event.preventDefault(); if (disposed) return;
+    event.preventDefault(); if (disposed || !available) return;
     available = false; releaseGpu(); options.onAvailabilityChange(false);
   }
   function onRestored() {
     if (disposed) return;
-    try { buildGpu(); available = true; render(); options.onAvailabilityChange(true); }
+    try { buildGpu(); available = true; render(); if (available) options.onAvailabilityChange(true); }
     catch (failure) { available = false; releaseGpu(); options.onError(failure); }
   }
   function dispose() {
@@ -119,7 +129,10 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   if (instance.manifest !== loaded.manifest) { dispose(); throw new Error("Renderer and instance must share a loaded package"); }
   entries.set(instance.id, { loaded, instance, gpu: null });
   canvas.addEventListener("webglcontextlost", onLost); canvas.addEventListener("webglcontextrestored", onRestored);
-  try { buildGpu(); render(); } catch (failure) { dispose(); throw failure; }
+  try {
+    buildGpu(); render();
+    if (!available) throw new Error("GPU unavailable during critical preparation");
+  } catch (failure) { dispose(); throw failure; }
   return {
     render, setComposition, detach,
     attach(artwork: LoadedArtwork, artworkInstance: ArtworkInstance) {
@@ -137,6 +150,8 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
       applyViewport(next); render();
     },
     getDiagnostics() { return Object.freeze({ available, disposed, width: canvas.width, height: canvas.height,
+      estimatedTextureBytes: [...entries.values()].reduce((sum, value) => sum + value.loaded.manifest.assets.filter(asset => asset.critical).reduce((bytes, asset) => bytes + asset.width * asset.height * 4, 0), 0),
+      estimatedTargetBytes: target ? canvas.width * canvas.height * 4 : 0,
       artworks: entries.size, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries,
       programs: renderer.info.programs?.length ?? 0 }); },
     dispose,

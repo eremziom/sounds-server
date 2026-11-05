@@ -35,6 +35,7 @@
   },
   "app": {
     "infiniteZoom": {
+      "diagnostics": "Session diagnostics",
       "description": "A technical demo using sample artwork. Play music from your library to animate the scene. Pause preserves your journey.",
       "immersive": "Immersive view", "exitImmersive": "Exit immersive view", "transition": "Next scene", "cancel": "Cancel transition", "reset": "Reset journey",
       "camera": "Camera controls", "zoomIn": "Zoom in", "zoomOut": "Zoom out", "rotate": "Rotate", "hold": "Hold", "return": "Return to full frame",
