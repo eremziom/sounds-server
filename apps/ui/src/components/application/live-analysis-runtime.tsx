@@ -26,6 +26,7 @@ function useLiveAnalysisRuntime() {
   const [bandOptions, setBandOptions] = useState<BandOptions>(DEFAULT_BAND_OPTIONS);
   const [bandReadings, setBandReadings] = useState<BandReadings | null>(null);
   const signals = useRef<AudioSignals>(createEmptyAudioSignals());
+  const explicitlyStopped = useRef(false);
   const bassOptions = bandOptions.bass;
   function updateBand(band: AudioBand, patch: Partial<BandOptions[AudioBand]>) {
     signals.current = createEmptyAudioSignals();
@@ -109,6 +110,7 @@ function useLiveAnalysisRuntime() {
 
   async function start(track: PlaybackTrack) {
     if (starting || getStatus() !== "active" || !audio.current) return;
+    explicitlyStopped.current = false;
     const revision = ++operation.current;
     setStarting(true); setFailure(false); setSnapshot(null); setBassPulse(null);
     try {
@@ -124,13 +126,20 @@ function useLiveAnalysisRuntime() {
     } finally { if (revision === operation.current) setStarting(false); }
   }
   function stop() {
+    explicitlyStopped.current = true;
     operation.current++;
     signals.current = createEmptyAudioSignals();
     setBandReadings(null); setEnabled(false); setStarting(false);
   }
+  // Used by ordinary Play without creating another graph or starting audio.
+  function enableForPlayback() {
+    if (!audio.current || getStatus() !== "active" || explicitlyStopped.current) return;
+    try { analysisGraph.connect(audio.current); setEnabled(true); }
+    catch { signals.current = createEmptyAudioSignals(); setFailure(true); setEnabled(false); }
+  }
   const state = failure ? "failed" : !enabled ? "idle" : playback.error ? "playbackFailed"
     : playback.ended ? "ended" : playback.waiting ? "waiting" : !playback.playing ? "paused" : "running" as const;
-  return { bandOptions, bandReadings, updateBand, resetBands: () => setBandOptions(DEFAULT_BAND_OPTIONS), enabled, starting, snapshot, bassPulse, bassOptions, setBassOptions, start, stop, state: state as typeof state, signals };
+  return { bandOptions, bandReadings, updateBand, resetBands: () => setBandOptions(DEFAULT_BAND_OPTIONS), enabled, starting, snapshot, bassPulse, bassOptions, setBassOptions, start, stop, enableForPlayback, state: state as typeof state, signals };
 }
 
 export function LiveAnalysisProvider({ children }: { children: ReactNode }) {

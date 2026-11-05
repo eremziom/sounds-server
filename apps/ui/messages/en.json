@@ -34,6 +34,14 @@
     "logoutAll": { "action": "Sign out on all devices", "localOnly": "You have been signed out on this browser. We could not confirm sign-out on other devices." }
   },
   "app": {
+    "infiniteZoom": {
+      "diagnostics": "Session diagnostics",
+      "description": "A technical demo using sample artwork. Play music from your library to animate the scene. Pause preserves your journey.",
+      "immersive": "Immersive view", "exitImmersive": "Exit immersive view", "transition": "Next scene", "cancel": "Cancel transition", "reset": "Reset journey",
+      "camera": "Camera controls", "zoomIn": "Zoom in", "zoomOut": "Zoom out", "rotate": "Rotate", "hold": "Hold", "return": "Return to full frame",
+      "modulation": "React to music", "failed": "The visualization is unavailable or the requested operation is unsafe. Music already playing continues.", "retry": "Retry visualization",
+      "states": { "idle": "Preparing visualization…", "preparing": "Loading artwork…", "ready": "Ready — play music to begin", "running": "Journey in progress", "paused": "Paused — journey preserved", "stopped": "Track ended — journey preserved", "suspended": "Waiting to resume visualization", "error": "Visualization unavailable", "disposed": "Journey ended" }
+    },
     "bassVisual": {
       "title": "Bass pulse", "description": "The circle size shows current bass energy. An expanding, fading glow indicates a detected pulse; stronger pulses produce a stronger glow.",
       "sensitivity": "Sensitivity: {value, number}×", "interval": "Pulse spacing: {value, number} ms", "decay": "Fade: {value, number} ms", "reset": "Reset settings",
@@ -56,7 +64,7 @@
       "view": "Show", "events": "Events", "timeline": "Parameters every 100 ms", "time": "Start time", "end": "End time", "event": "Event", "strength": "Strength relative to threshold", "dominant": "Strongest frequency",
       "bassOnset": "Bass pulse (estimated)", "onset": "Energy increase", "silence": "Silence below −60 dBFS", "empty": "No events detected. Signal parameters are available in the other view.", "previous": "Previous", "next": "Next", "page": "Page {page} of {pages} · {count} entries"
     },
-    "player": {"volume":"Volume","mute":"Mute","unmute":"Unmute","label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
+    "player": {"visual":"The visualization is not ready. Retry playback or open Animations to retry visualization.","volume":"Volume","mute":"Mute","unmute":"Unmute","label":"Audio player","play":"Play","pause":"Pause","currentTime":"Current time","duration":"Duration","seek":"Seek","waiting":"Loading audio…","ended":"Playback ended.","failed":"Could not play this recording. Try again.","blocked":"Your browser blocked playback. Press play to continue.","denied":"You do not have permission to play this recording.","missing":"This recording is no longer available.","retry":"Try again"},
     "upload": {
       "addAnother": "Add another track",
       "genre": "Genre (optional)", "subgenre": "Subgenre (optional)", "lengthGenre": "Use 3–30 characters.", "publicationDateAutomatic": "Set automatically to the current date when the track is published.",

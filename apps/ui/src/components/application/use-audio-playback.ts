@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useApplicationSession } from "./application-runtime";
+import { VisualReadinessError } from "../infinite-zoom/visual-bridge";
 
 export type PlaybackTrack = { id: number; title: string; author: string | null };
-export type PlaybackError = "failed" | "blocked" | "denied" | "missing";
+export type PlaybackError = "failed" | "blocked" | "denied" | "missing" | "visual";
 
 export function useAudioPlayback(beforePlay?: () => Promise<void>) {
   const audio = useRef<HTMLAudioElement>(null);
+  const actualPlayback = useRef(false);
   const { runProtected, getStatus, end, subscribe } = useApplicationSession();
   const [track, setTrack] = useState<PlaybackTrack | null>(null);
   const [state, setState] = useState({ playing: false, waiting: false, ended: false, currentTime: 0, duration: 0 });
@@ -36,6 +38,8 @@ export function useAudioPlayback(beforePlay?: () => Promise<void>) {
     syncVolume();
     element.addEventListener("volumechange", syncVolume);
     const sync = (event: Event) => {
+      if (event.type === "playing") actualPlayback.current = true;
+      else if (["pause", "ended", "emptied", "loadstart"].includes(event.type)) actualPlayback.current = false;
       setState({
         playing: !element.paused && !element.ended,
         waiting: ["waiting", "stalled", "loadstart"].includes(event.type)
@@ -46,6 +50,7 @@ export function useAudioPlayback(beforePlay?: () => Promise<void>) {
       });
     };
     const onError = () => {
+      actualPlayback.current = false;
       if (!selected.current || !element.error || element.getAttribute("src") !== `/api/tracks/${selected.current.id}/audio`) return;
       element.pause();
       setError("failed");
@@ -94,6 +99,10 @@ export function useAudioPlayback(beforePlay?: () => Promise<void>) {
     setState(previous => ({ ...previous, playing: false, waiting: true, ended: false,
       ...(!same ? { currentTime: 0, duration: 0 } : {}) }));
     try {
+      // Begin visual preparation and graph resume in the user's activation
+      // task. Only guarded audio.play below can start playback after readiness.
+      const preparation = beforePlay?.();
+      const readiness = preparation?.then(() => ({ ok: true as const }), failure => ({ ok: false as const, failure }));
       await runProtected(async () => {
         if (revision !== generation.current || getStatus() !== "active") return;
         const src = `/api/tracks/${next.id}/audio`;
@@ -102,13 +111,14 @@ export function useAudioPlayback(beforePlay?: () => Promise<void>) {
           element.load();
         }
         if (element.ended) element.currentTime = 0;
-        await beforePlay?.();
+        const result = await readiness;
+        if (result && !result.ok) throw result.failure;
         if (revision !== generation.current || getStatus() !== "active") return;
         await element.play();
       });
     } catch (failure) {
       if (revision === generation.current && getStatus() === "active" && !(failure instanceof DOMException && failure.name === "AbortError")) {
-        setError(failure instanceof DOMException && failure.name === "NotAllowedError" ? "blocked" : "failed");
+        setError(failure instanceof VisualReadinessError ? "visual" : failure instanceof DOMException && failure.name === "NotAllowedError" ? "blocked" : "failed");
       }
     } finally {
       if (revision === generation.current) {
@@ -143,5 +153,5 @@ export function useAudioPlayback(beforePlay?: () => Promise<void>) {
     }
   }
 
-  return { audio, track, ...state, ...volumeState, error, toggle, seek, setVolume, toggleMute };
+  return { audio, actualPlayback, track, ...state, ...volumeState, error, toggle, seek, setVolume, toggleMute };
 }

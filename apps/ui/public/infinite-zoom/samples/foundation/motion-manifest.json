@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "foundation-motion",
+  "version": "0.1.0",
+  "canvas": { "width": 3840, "height": 2160 },
+  "anchors": [{ "id": "center", "x": 1920, "y": 1080 }],
+  "assets": [
+    { "id": "backdrop", "uri": "/infinite-zoom/samples/foundation/backdrop.svg", "kind": "image", "width": 3840, "height": 2160, "critical": true },
+    { "id": "foreground", "uri": "/infinite-zoom/samples/foundation/foreground.svg", "kind": "image", "width": 3840, "height": 2160, "critical": true },
+    { "id": "influence", "uri": "/infinite-zoom/samples/foundation/influence.svg", "kind": "mask", "width": 3840, "height": 2160, "critical": true }
+  ],
+  "behaviors": [
+    { "id": "ambient-pulse", "kind": "pulse", "order": 2, "params": { "amount": 0.08, "frequencyHz": 0.2, "phase": 0 } }
+  ],
+  "layers": [
+    { "id": "backdrop", "zIndex": 0, "imageAssetId": "backdrop" },
+    { "id": "foreground", "zIndex": 1, "imageAssetId": "foreground", "behaviors": [
+      { "id": "sway", "kind": "translate", "order": 0, "params": { "x": 100, "y": 30, "frequencyHz": 0.3, "phase": 0 } },
+      { "id": "ripple", "kind": "wave", "order": 1, "influenceMaskAssetId": "influence", "params": { "amplitude": 24, "wavelength": 900, "axis": "x", "frequencyHz": 0.5, "phase": 0 } }
+    ], "regions": [
+      { "id": "right-tip", "influenceMaskAssetId": "influence", "behaviors": [
+        { "id": "ambient-pulse", "kind": "pulse", "order": 2, "params": { "amount": 0.3, "frequencyHz": 0.2, "phase": 0 } }
+      ] }
+    ] }
+  ],
+  "coverage": { "baseLayerId": "backdrop" }
+}

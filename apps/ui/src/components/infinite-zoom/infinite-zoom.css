@@ -1,0 +1,22 @@
+body:has([data-infinite-zoom-layout][data-mode="immersive"]) .site-header {
+  display: none;
+}
+[data-infinite-zoom-layout][data-mode="immersive"] [data-application-page],
+[data-infinite-zoom-layout][data-mode="immersive"] [data-session-footer] {
+  display: none;
+}
+[data-infinite-zoom-layout][data-mode="immersive"] [data-application-background] {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+[data-infinite-zoom-layout][data-mode="immersive"] [data-application-background-dimmer] {
+  display: none;
+}
+[data-infinite-zoom-layout][data-mode="immersive"] [data-application-footer] {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}

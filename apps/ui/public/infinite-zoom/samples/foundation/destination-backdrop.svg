@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+  <!-- Contrasting technical transition fixture; not production Nebula artwork. -->
+  <rect width="3840" height="2160" fill="#641c50"/>
+  <path d="M0 0L3840 2160M3840 0L0 2160" stroke="#ad5688" stroke-width="100"/>
+  <circle cx="1920" cy="1080" r="700" fill="none" stroke="#e0a0c0" stroke-width="40"/>
+</svg>

@@ -143,73 +143,47 @@ try {
       await waitFor(`parseFloat(${value("bass")}.replace(',','.'))>95`);
       assert.equal(await evaluate("sourceCreations"), 1, "Restart reuses the media source node");
       if (locale === "en") {
-        await evaluate(`window.savedAudioCanvas=document.querySelector('[data-application-background] canvas'); ${audio}.currentTime=0.1`);
-        await click("a[href='/animations']");
-        await waitFor(`document.querySelector('[data-audio-animation]') && document.querySelector('[data-audio-status]').textContent===${JSON.stringify(t.running)}`);
-        assert.equal(await evaluate("document.querySelectorAll('[data-audio-mapping]').length"), 4);
-        await click("[data-audio-reactive]");
-        await waitFor("audioUniforms.uSpread>0.1");
-        assert.equal(await evaluate("document.querySelector('input[name=spread]').value"), "0.01", "Audio leaves the base slider unchanged");
-        await evaluate(`(() => {
-          const input=document.querySelector('[data-audio-mapping="bass-spread"] [data-mapping-target]');
-          input.value='pulses'; input.dispatchEvent(new Event('change',{bubbles:true}));
-        })()`);
-        await waitFor("audioUniforms.uSpread===0.01 && audioUniforms.uPulses>1");
-        await click("[data-player-toggle]");
-        await waitFor("audioUniforms.uPulses<0.751");
-        await click("[data-player-toggle]");
-        await evaluate(`${audio}.currentTime=0.1`);
-        await waitFor("audioUniforms.uPulses>1");
-        await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
-        await waitFor("audioUniforms.uPulses===0.75");
-        await send("Emulation.setEmulatedMedia", { features: [] });
-        await evaluate(`${audio}.currentTime=9.2`);
-        await waitFor("audioUniforms.uBrightness>0.4 && audioUniforms.uGlow>0.01");
-        await click("[data-audio-reactive]");
-        await waitFor("audioUniforms.uBrightness===0.35 && audioUniforms.uPulses===0.75");
-        await click("[data-mapping-add]");
-        assert.equal(await evaluate("document.querySelectorAll('[data-audio-mapping]').length"), 5);
-        await click("[data-audio-mapping]:last-child input[type=checkbox]");
-        // Tune actual filters and observe independent mid/high attacks and shader responses.
+        // Retain detector/filter regression coverage on the analysis page.
         await fill({ "band-mid-fromHz": "900", "band-mid-toHz": "1100", "band-high-fromHz": "7000", "band-high-toHz": "9000" });
-        const selectSource = source => evaluate(`(() => {
-          const input=document.querySelector('[data-audio-mapping="bass-spread"] [data-mapping-source]');
-          input.value=${JSON.stringify(source)}; input.dispatchEvent(new Event('change',{bubbles:true}));
-        })()`);
-        await selectSource("highAttack");
-        await click("[data-audio-reactive]");
         await evaluate(`${audio}.currentTime=16.1; window.bandHits=[]; window.bandObserver=new MutationObserver(()=>{
           const time=Number(document.querySelector('[data-audio-band="high"]').dataset.bandLastAttack);
           if(time>0 && bandHits.at(-1)!==time) bandHits.push(time);
         }); bandObserver.observe(document.querySelector('[data-audio-band="high"]'),{attributes:true,attributeFilter:['data-band-last-attack']})`);
-        await waitFor("bandHits.length>=4 && audioUniforms.uPulses>1");
-        assert.equal(await evaluate("document.querySelector('[data-audio-band=mid]').dataset.bandLastAttack"), "", "Out-of-band high tones do not trigger the narrow mid detector");
+        await waitFor("bandHits.length>=4");
+        assert.equal(await evaluate("document.querySelector('[data-audio-band=mid]').dataset.bandLastAttack"), "");
         const bandHits = await evaluate("bandHits.slice(0,4)");
-        assert.ok(bandHits[3] - bandHits[0] < 0.7, "High tones retain hits faster than bass spacing");
+        assert.ok(bandHits[3] - bandHits[0] < 0.7);
         await evaluate("bandObserver.disconnect()");
-        await selectSource("midAttack");
         await evaluate(`${audio}.currentTime=20.1`);
-        await waitFor("document.querySelector('[data-audio-band=mid]').dataset.bandLastAttack!=='' && audioUniforms.uPulses>1");
-        assert.equal(await evaluate("document.querySelector('[data-audio-band=high]').dataset.bandLastAttack"), "", "Mid tones do not trigger high attacks after a seek");
-        // Retuning onto a sustained tone initializes the baseline without fabricating an attack.
+        await waitFor("document.querySelector('[data-audio-band=mid]').dataset.bandLastAttack!==''");
+        assert.equal(await evaluate("document.querySelector('[data-audio-band=high]').dataset.bandLastAttack"), "");
         await evaluate(`${audio}.currentTime=24.2`);
         await waitFor("Number(document.querySelector('[data-audio-band=mid]').dataset.bandLevel)>0.5");
         await fill({ "band-mid-fromHz": "950" });
         await evaluate("document.querySelector('input[name=band-mid-fromHz]').blur()");
         await delay(350);
         assert.equal(await evaluate("document.querySelector('[data-audio-band=mid]').dataset.bandLastAttack"), "");
-        await waitFor("audioUniforms.uPulses===0.75");
-        await selectSource("mid");
-        await waitFor("audioUniforms.uPulses>1");
-        // Invalid drafts never reach the filter configuration.
         await fill({ "band-mid-fromHz": "20000" });
         await evaluate("document.querySelector('input[name=band-mid-fromHz]').blur()");
         await waitFor("document.querySelector('input[name=band-mid-fromHz]').value==='950'");
         await click("[data-bands-reset]");
         await waitFor("document.querySelector('input[name=band-mid-fromHz]').value==='250'");
-        await click("[data-audio-reactive]");
+
+        // Infinite Zoom replaces experimental WebThreads mapping controls.
+        await evaluate(`void(window.savedAudioCanvas=document.querySelector('[data-application-background] canvas')); ${audio}.currentTime=0.1`);
+        await click("a[href='/animations']");
+        await waitFor("document.querySelector('[data-infinite-zoom-controls]') && audioUniforms.audioGain>1.01");
+        await click("[data-iz-modulation]");
+        await waitFor("audioUniforms.audioGain<1.001");
+        await click("[data-iz-modulation]");
+        await waitFor("audioUniforms.audioGain>1.01");
+        await click("[data-player-toggle]");
+        await waitFor("document.querySelector('[data-infinite-zoom-canvas]').dataset.visualStatus==='paused'");
+        const frozenGain = await evaluate("audioUniforms.audioGain");
+        await delay(250); assert.equal(await evaluate("audioUniforms.audioGain"), frozenGain);
+        await click("[data-player-toggle]");
         await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 800, deviceScaleFactor: 1, mobile: true });
-        assert.ok(await evaluate("document.documentElement.scrollWidth<=innerWidth"), "Mapping controls fit narrow screens");
+        assert.ok(await evaluate("document.documentElement.scrollWidth<=innerWidth"));
         await send("Emulation.clearDeviceMetricsOverride");
         await click("a[href='/library']");
         await waitFor("document.querySelector('[data-library]')");
@@ -217,8 +191,8 @@ try {
         await waitFor("document.querySelector('[data-live-start]')");
         await evaluate(`${audio}.currentTime=0.1`);
         await waitFor(`parseFloat(${value("bass")}.replace(',','.'))>95`);
-        assert.equal(await evaluate("savedAudioCanvas===document.querySelector('[data-application-background] canvas') && sourceCreations===1"), true, "Routing and remapping reuse canvas and audio graph");
-        console.log("Audio mappings: shader changes, mid/high filters, fast attacks, retuning, invalid ranges, reset, pause, reduced motion, narrow screen and persistent analysis passed.");
+        assert.equal(await evaluate("savedAudioCanvas===document.querySelector('[data-application-background] canvas') && sourceCreations===1"), true);
+        console.log("Audio integration: band filters, attacks, retuning, invalid ranges, modulation, phase freeze and persistent graph passed.");
       }
       await choose(locale === "en" ? "pl" : "en");
       await waitFor("document.querySelector('[data-live-analysis]').dataset.liveState==='running'");
