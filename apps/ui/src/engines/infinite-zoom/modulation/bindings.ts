@@ -1,4 +1,4 @@
-export type ModulationSignal = "bass" | "mid" | "high" | "energy";
+export type ModulationSignal = "bass" | "mid" | "high" | "energy" | "kick";
 export type NormalizedSignals = Readonly<Partial<Record<ModulationSignal, number>>>;
 export interface ModulationBinding {
   readonly id: string; readonly signal: ModulationSignal; readonly operation: "multiply" | "add" | "replace";
@@ -16,7 +16,7 @@ export function parseBindings(input: unknown): readonly ModulationBinding[] {
     if (Object.keys(b).some(key => !["id", "signal", "operation", "priority", "min", "max", "attackSeconds", "releaseSeconds"].includes(key))) throw new Error("Unsupported modulation field");
     if (typeof b.id !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(b.id) || ids.has(b.id)) throw new Error("Invalid modulation id");
     ids.add(b.id);
-    if (!["bass", "mid", "high", "energy"].includes(String(b.signal)) || !["multiply", "add", "replace"].includes(String(b.operation))) throw new Error("Invalid modulation operation/signal");
+    if (!["bass", "mid", "high", "energy", "kick"].includes(String(b.signal)) || !["multiply", "add", "replace"].includes(String(b.operation))) throw new Error("Invalid modulation operation/signal");
     for (const key of ["priority", "min", "max", "attackSeconds", "releaseSeconds"]) if (typeof b[key] !== "number" || !Number.isFinite(b[key])) throw new Error("Invalid modulation parameter");
     if (!Number.isSafeInteger(b.priority) || (b.min as number) < -1 || (b.max as number) > 1 || (b.min as number) > (b.max as number) || (b.attackSeconds as number) < 1/60 || (b.releaseSeconds as number) < 1/60 || (b.attackSeconds as number) > 10 || (b.releaseSeconds as number) > 10) throw new Error("Invalid modulation range");
     return Object.freeze({ ...b }) as unknown as ModulationBinding;

@@ -35,6 +35,13 @@
   },
   "app": {
     "infiniteZoom": {
+      "kick": {
+        "title": "Ataque de graves · kick",
+        "interval": "Intervalo entre ataques",
+        "count": "Ataques detectados",
+        "note": "Un impulso breve de bajas frecuencias de 0 a 1, todavía sin efecto gráfico asignado. Con un bombo por pulso: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. Son ataques de graves detectados, no una medición de BPM ni reconocimiento de instrumentos.",
+        "inactive": "Reproduce música y activa la reacción a la música y el análisis en vivo."
+      },
       "sceneLabel": "Escena",
       "alienScene": "Planeta alienígena — ciudad insectoide",
       "rimLightingLabel": "Luz en los marcos quitinosos",

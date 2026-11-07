@@ -135,12 +135,39 @@ operators until an extended-coverage contract is separately implemented. This
 preserves coverage under all foreground deformations.
 
 Bindings target an operator's strength, not arbitrary JSON parameters. Each has
-`id`, signal (`bass`,`mid`,`high`,`energy`), operation (`multiply`,`add`,`replace`),
+`id`, signal (`bass`,`mid`,`high`,`energy`,`kick`), operation (`multiply`,`add`,`replace`),
 integer `priority`, `min`,`max` within -1..1, attack/release seconds 1/60..10.
 Lower priority executes first, ties use ASCII ID. Each binding owns smoothing
 state. Missing/nonfinite input approaches neutral (0 for add, 1 otherwise).
 The combined strength is clamped to 0..1, so audio cannot exceed authored limits.
 The existing overall intensity adapter remains bounded to 1..1.25.
+
+`kick` (2026-11-07) samples the existing live bass attack detector (default
+20..250 Hz, 20 ms polling, 180 ms minimum spacing). It is separate from bass
+level: instantaneous normalized attack strength, followed by a quadratic release
+to exact zero in 160 ms. No additional smoothing precedes a binding's own
+attack/release. Missing, nonfinite, future or expired attacks produce zero;
+disabled analysis/modulation supplies no signals. Seek, source change and
+playback interruptions clear the upstream attack timestamps. Sampling uses
+performance milliseconds only at the application boundary; normalized fixed-tick
+values, including kick, are preserved by logical recording/replay. Existing
+recordings without kick remain valid. It does not affect overall energy, gain,
+camera timing or any existing artwork until explicitly bound. The Animations
+panel previews the same envelope and observed inter-attack spacing; 600/400 ms
+correspond to 100/150 BPM only for one detected kick per beat. This is bass
+transient detection, not instrument classification or semantic tempo tracking.
+
+Kick QA: `node --test tests/infinite-zoom-kick.test.mjs
+tests/infinite-zoom-modulation.test.mjs tests/infinite-zoom-phase2.test.mjs
+tests/audio-band-detection.test.mjs tests/live-audio-analysis.test.mjs` passes
+34 tests. `node --test tests/infinite-zoom-kick.browser.mjs` plays synthetic
+100/150 BPM WAVs through the real media/analysis graph (without tempo metadata),
+checks separate pulses and approximately 600/400 ms intervals, verifies kick in
+the engine recording, pause/seek clearing, modulation off/on with uninterrupted
+audio, and one audio graph/source/canvas. Production build (including translation
+validation and TypeScript) and focused ESLint pass. These fixtures establish
+timing support, not detection accuracy for arbitrary mixed/mastered music;
+sustained bass, syncopation and multiple kicks per beat can change detected spacing.
 
 ## Camera
 

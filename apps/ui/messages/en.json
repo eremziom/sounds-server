@@ -35,6 +35,13 @@
   },
   "app": {
     "infiniteZoom": {
+      "kick": {
+        "title": "Bass attack · kick",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short low-frequency impulse from 0 to 1, with no artwork effect assigned yet. With one kick per beat: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. These are detected bass attacks, not BPM measurement or instrument recognition.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
       "sceneLabel": "Scene",
       "alienScene": "Alien planet — insectoid city",
       "rimLightingLabel": "Light in the chitin frames",

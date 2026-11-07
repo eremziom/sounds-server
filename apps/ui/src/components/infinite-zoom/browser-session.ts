@@ -1,6 +1,7 @@
 import {STUDIO_ARTWORKS,type BehaviorKind,type VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
 import { createInfiniteZoomController } from "../../engines/infinite-zoom/index.ts";
 import { createAudioModulation } from "../../engines/infinite-zoom/modulation/audio-modulation.ts";
+import { sampleKickAttack } from "../../engines/infinite-zoom/modulation/kick-signal.ts";
 import { createAdaptiveQuality } from "../../engines/infinite-zoom/quality/adaptive-quality.ts";
 import { createSessionDiagnostics } from "../../engines/infinite-zoom/diagnostics/session-diagnostics.ts";
 import type { prepareArtwork } from "../../engines/infinite-zoom/artwork/prepare-artwork.ts";
@@ -88,6 +89,7 @@ export function createBrowserVisualSession(options: {
             const levels = options.signals.current;
             modulation.step(bridge.getModulation() && options.analysisEnabled() ? {
               bass: levels?.bass?.level ?? NaN, mid: levels?.mid?.level ?? NaN, high: levels?.high?.level ?? NaN,
+              kick: sampleKickAttack(levels?.bass ?? null, performance.now()),
             } : null, context.dt);
             prepared.step(context);
           },
