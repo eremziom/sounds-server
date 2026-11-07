@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+  <!-- Linear red-channel motion weight; the anchor stays relatively calm. -->
+  <defs>
+    <radialGradient id="clouds" cx="50%" cy="50%" r="70%">
+      <stop offset="0" stop-color="black"/>
+      <stop offset="0.35" stop-color="#606060"/>
+      <stop offset="1" stop-color="white"/>
+    </radialGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#clouds)"/>
+</svg>

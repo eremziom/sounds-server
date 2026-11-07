@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "id": "forest",
+  "version": "0.1.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "portal": {
+    "id": "distant-clearing",
+    "region": { "x": 1920, "y": 1030, "radiusX": 90, "radiusY": 48, "rotation": 0, "feather": 0.24 },
+    "scale": 0.055,
+    "durationSeconds": 16,
+    "destinationCamera": "stop-at-full-frame",
+    "destination": { "manifestUri": "/infinite-zoom/samples/nebula/manifest.json", "artworkId": "nebula", "version": "0.1.0", "anchorId": "center" }
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ],
+  "assets": [
+    {
+      "id": "backdrop",
+      "uri": "/infinite-zoom/samples/forest/backdrop.png",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "foreground",
+      "uri": "/infinite-zoom/samples/forest/foreground.png",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "influence",
+      "uri": "/infinite-zoom/samples/forest/influence.svg",
+      "kind": "mask",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "backdrop",
+      "zIndex": 0,
+      "imageAssetId": "backdrop",
+      "behaviors": [
+        {
+          "id": "ambient-light",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "amount": 0.08,
+            "frequencyHz": 0.12,
+            "phase": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "foreground",
+      "zIndex": 1,
+      "imageAssetId": "foreground",
+      "behaviors": [
+        {
+          "id": "drift",
+          "kind": "translate",
+          "order": 0,
+          "influenceMaskAssetId": "influence",
+          "params": {
+            "x": 18,
+            "y": 8,
+            "frequencyHz": 0.13,
+            "phase": 0
+          }
+        },
+        {
+          "id": "flow",
+          "kind": "wave",
+          "order": 1,
+          "params": {
+            "amplitude": 10,
+            "wavelength": 1100,
+            "axis": "x",
+            "frequencyHz": 0.22,
+            "phase": 0
+          }
+        },
+        {
+          "id": "fluorescence",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "amount": 0.18,
+            "frequencyHz": 0.21,
+            "phase": 1.2
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "backdrop"
+  }
+}

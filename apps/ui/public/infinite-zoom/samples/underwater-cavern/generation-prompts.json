@@ -1,0 +1,16 @@
+{
+  "tool": "built-in image_gen",
+  "sourceDimensions": {
+    "width": 1672,
+    "height": 941
+  },
+  "deliveryDimensions": {
+    "width": 3840,
+    "height": 2160
+  },
+  "processing": "Upscaled demonstration assets, not native 4K. System.Drawing HighQualityBicubic, SourceCopy, HighQuality pixel offset, TileFlipXY edge sampling. Slight source aspect discrepancy normalized to exact 16:9. Foreground alpha retained.",
+  "prompts": {
+    "backdrop": "Use case: stylized-concept. Asset type: Infinite Zoom third artwork, underwater-cavern BACKDROP layer. Deliver a single exact 3840x2160 pixel image, landscape 16:9. Primary request: an immersive psychedelic underwater cavern, exquisite painterly organic detail, luminous turquoise and deep ultramarine water, sculptural natural rock arches receding into a clear central passage, bioluminescent corals in cyan, violet, magenta and restrained amber, rippling caustic light and gently curling aquatic vegetation. Rich depth and saturated colors consistent with a psychedelic forest and multicolored nebula sequence, but clearly recognizable as a new underwater world. Composition: wide full-bleed complete scene; rocky arches and coral gardens frame an inviting open luminous turquoise depth at exact image center (1920,1080), center remains legible as a tiny embedded view and at full frame; broad flowing forms, not a dense cluttered collage. Detailed continuous opaque background beneath a separate animated foreground; every pixel including every edge fully painted, no transparent holes. No people, divers, submarines, text, logos, borders, watermarks or embedded images. Format is a hard requirement: width 3840, height 2160, 16:9.",
+    "foreground": "Use case: stylized-concept. Asset type: Infinite Zoom underwater-cavern FOREGROUND layer. Generate one exact 3840x2160 pixel landscape 16:9 RGBA PNG with genuinely transparent background. Sparse isolated painterly bioluminescent coral fronds, delicate ribbon-like kelp and flowing sea-anemone tentacles for overlay on a psychedelic underwater rock-arch cavern. Palette: luminous cyan and turquoise, electric violet, magenta, restrained golden-orange highlights, exquisite organic detail. Composition: a few slender kelp ribbons in outer upper corners, sparse branched glowing coral and soft waving anemones near lower corners and outer side thirds, visual elements inset with transparent padding for gentle wave/translation animation. Leave the entire central 50 percent of canvas empty and transparent, and leave most of the image transparent; do not build a dense full frame border. Smooth antialiased alpha, delicate natural feathered edges. No opaque water, no cave background, no sky, no solid black or checkerboard background, no floating rectangular backdrop, no text, no logos, no borders, no animals. This is a separate animated overlay, not a complete illustration or a split-panel sheet. Format hard requirement: exactly 3840 pixels wide by 2160 pixels tall."
+  }
+}

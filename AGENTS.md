@@ -21,6 +21,9 @@
 - A source change does not by itself reset the journey; seeking does not reset it.
 - Simulation advances in fixed 1/60-second steps, with deterministic inputs and seeded randomness. Do not bind animation progress to React rerenders.
 - Never sacrifice coverage to improve rendering quality. Transitions require coverage validation and camera continuity.
+- `zoomThrough` MUST follow `docs/infinite-zoom/zoomthrough-contract.md` (user clarification, 2026-11-05): B is initially a very small, visible, integral element in an authored portal region of A; the travel command must not introduce B.
+- Latest user amendment (2026-11-05): Forest -> Nebula uses independent destination zoom. B stops at its original full-frame view while A continues until its authored portal fills the viewport. This supersedes the shared-camera/fixed rendered B-root requirement for this pair. Preserve one journey/renderer/clock and the source-authored aperture; see the latest amendment in `docs/infinite-zoom/zoomthrough-contract.md`. The authored Nebula -> Underwater Cavern link uses the same policy. Other portals retain fixed placement and common-camera growth unless explicitly configured.
+- Distinguish the source portal region in A from the destination anchor in B. Preserve visual composition and C0/C1 camera continuity at handoff; coverage/stability tests alone do not establish visual acceptance.
 - Never let an Infinite Zoom failure stop or manipulate music after audio playback has begun.
 - Full Audio Data Contract, Journey Planner, all 12 behaviors, full Artwork Production Pipeline, and WebGPU are **outside the first vertical slice**.
 

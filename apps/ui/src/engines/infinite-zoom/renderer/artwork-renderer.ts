@@ -3,8 +3,13 @@ import { LinearFilter, LinearSRGBColorSpace, Mesh, NoToneMapping, OrthographicCa
 import { coversViewport, getCoverView, type ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
 import { FULL_FRAME, type CameraController } from "../camera/index.ts";
-import { IDENTITY_PLACEMENT, validatePlacement, type ArtworkPlacement } from "../transition/placement.ts";
+import { validatePlacement } from "../transition/placement.ts";
 import { createArtworkGpu, VERTEX_SHADER, type ArtworkGpu } from "./artwork-gpu.ts";
+import { validatePortalPlacement } from "../transition/portal.ts";
+
+import { artworkTextureBytes } from "../resources/texture-budget.ts";
+import { compositionDraws, type SceneComposition } from "./composition.ts";
+export type { SceneComposition } from "./composition.ts";
 
 export interface ArtworkViewport {
   readonly width: number; readonly height: number; readonly dpr: number; readonly renderScale: number;
@@ -16,10 +21,6 @@ export interface ArtworkRendererOptions {
   readonly onError: (error: unknown) => void;
 }
 interface Entry { loaded: LoadedArtwork; instance: ArtworkInstance; gpu: ArtworkGpu | null }
-export interface SceneComposition {
-  readonly sourceId: string; readonly destinationId?: string;
-  readonly placement?: ArtworkPlacement; readonly reveal?: number;
-}
 
 /** Session-owned renderer. Artwork leases attach/detach without disposing the
  * one context. No RAF, playback or simulation ownership. */
@@ -76,13 +77,20 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     const pose = options.camera?.getSnapshot().pose ?? FULL_FRAME;
     camera.position.set(pose.x - 1920, -(pose.y - 1080), 1); camera.rotation.z = -pose.rotation; camera.zoom = Math.exp(pose.logScale); camera.updateProjectionMatrix();
     scene.clear();
-    const source = entry(current.sourceId).gpu!;
-    const nextOrder = source.update(IDENTITY_PLACEMENT, -1, 0); scene.add(source.group);
-    if (current.destinationId) {
-      const destination = entry(current.destinationId).gpu!;
-      destination.update(current.placement!, current.reveal!, nextOrder); scene.add(destination.group);
-    }
-    renderer.setRenderTarget(target); renderer.render(scene, camera);
+    let order = 0;
+    const batch = new Set<string>();
+    renderer.setRenderTarget(target); renderer.clear(); renderer.autoClear = false;
+    try {
+      for (const draw of compositionDraws(current, pose)) {
+        // Repeated cycle placements share the same GPU artwork and textures.
+        // Flush before reusing its meshes with a different transform/aperture.
+        if (batch.has(draw.id)) { renderer.render(scene, camera); scene.clear(); batch.clear(); }
+        batch.add(draw.id);
+        const artwork = entry(draw.id).gpu!;
+        order = artwork.update(draw.placement, draw.portals, order); scene.add(artwork.group);
+      }
+      renderer.render(scene, camera);
+    } finally { renderer.autoClear = true; }
     renderer.setRenderTarget(null); if (display) renderer.render(output, outputCamera);
     const gl = renderer.getContext();
     if (gl.isContextLost()) throw new Error("GPU context unavailable during rendering");
@@ -100,16 +108,27 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     }
   }
   function setComposition(next: SceneComposition) {
-    checkAlive(); entry(next.sourceId);
-    if (next.destinationId) {
-      entry(next.destinationId); validatePlacement(next.placement!);
-      if (!Number.isFinite(next.reveal) || next.reveal! < 0 || next.reveal! > 1 || next.sourceId === next.destinationId) throw new Error("Invalid reveal composition");
+    checkAlive();
+    function freeze(node: SceneComposition, depth = 0): SceneComposition {
+      if (depth > 5) throw new Error("Artwork nesting exceeds demo limit");
+      entry(node.sourceId);
+      if (node.destinationId) {
+        entry(node.destinationId); validatePlacement(node.placement!);
+        if (!node.portal || node.sourceId === node.destinationId) throw new Error("Invalid portal composition");
+        validatePortalPlacement(node.portal, node.placement!);
+      } else if (node.destinationComposition) throw new Error("Nested composition needs a destination");
+      return Object.freeze({ ...node, ...(node.placement ? { placement: Object.freeze({ ...node.placement }) } : {}),
+        ...(node.portal ? { portal: Object.freeze({ ...node.portal }) } : {}),
+        ...(node.destinationComposition ? { destinationComposition: freeze(node.destinationComposition, depth + 1) } : {}) });
     }
-    composition = Object.freeze({ ...next, ...(next.placement ? { placement: Object.freeze({ ...next.placement }) } : {}) });
+    const candidate = freeze(next);
+    compositionDraws(candidate, options.camera?.getSnapshot().pose ?? FULL_FRAME);
+    composition = candidate;
   }
+
   function detach(id: string) {
     const value = entries.get(id); if (!value) return;
-    if (id === composition.sourceId || id === composition.destinationId) throw new Error("Cannot release a visible artwork");
+    if (compositionDraws(composition, options.camera?.getSnapshot().pose ?? FULL_FRAME).some(draw => draw.id === id)) throw new Error("Cannot release a visible artwork");
     value.gpu?.dispose(); entries.delete(id);
   }
   function onLost(event: Event) {
@@ -136,9 +155,14 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   return {
     render, setComposition, detach,
     attach(artwork: LoadedArtwork, artworkInstance: ArtworkInstance) {
-      checkAlive(); if (!available) throw new Error("GPU is unavailable");
-      if (entries.has(artworkInstance.id) || artwork.manifest !== artworkInstance.manifest) throw new Error("Invalid artwork attachment");
+      checkAlive();
+      const existing = entries.get(artworkInstance.id);
+      if (existing?.loaded === artwork && existing.instance === artworkInstance) return;
+      if (existing || artwork.manifest !== artworkInstance.manifest) throw new Error("Invalid artwork attachment");
       const value: Entry = { loaded: artwork, instance: artworkInstance, gpu: null }; entries.set(artworkInstance.id, value);
+      // Reset during context loss updates retained descriptors only. Recovery
+      // will rebuild the whole embedded composition before releasing suspension.
+      if (!available) return;
       try {
         value.gpu = createArtworkGpu(artwork, artworkInstance, renderer.capabilities.maxTextures);
         draw({ sourceId: artworkInstance.id }, false); render();
@@ -150,7 +174,7 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
       applyViewport(next); render();
     },
     getDiagnostics() { return Object.freeze({ available, disposed, width: canvas.width, height: canvas.height,
-      estimatedTextureBytes: [...entries.values()].reduce((sum, value) => sum + value.loaded.manifest.assets.filter(asset => asset.critical).reduce((bytes, asset) => bytes + asset.width * asset.height * 4, 0), 0),
+      estimatedTextureBytes: [...entries.values()].reduce((sum, value) => sum + artworkTextureBytes(value.loaded.manifest), 0),
       estimatedTargetBytes: target ? canvas.width * canvas.height * 4 : 0,
       artworks: entries.size, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries,
       programs: renderer.info.programs?.length ?? 0 }); },
