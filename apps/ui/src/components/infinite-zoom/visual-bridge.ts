@@ -9,12 +9,14 @@ export interface VisualView {
   readonly error: boolean; readonly ready: boolean; readonly retryable: boolean;
   readonly diagnostics?: Readonly<Record<string, unknown>>;
   readonly canTransition?: boolean;
+  readonly looping?: boolean;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;
   retry(): Promise<void>;
   command(command: "zoomIn" | "zoomOut" | "rotate" | "return" | "hold" | "cancel"): void;
   transition(): Promise<void>;
+  setLoop?(enabled: boolean): void;
   reset(): void;
   dispose(): void;
 }
@@ -47,6 +49,7 @@ export function createVisualBridge() {
     retry() { return connection?.retry() ?? Promise.reject(new Error("Visual host is not mounted")); },
     command(command: Parameters<VisualConnection["command"]>[0]) { connection?.command(command); },
     transition() { return connection?.transition() ?? Promise.reject(new Error("Visual host is not mounted")); },
+    setLoop(enabled: boolean) { connection?.setLoop?.(enabled); },
     reset() { connection?.reset(); },
     dispose() { const current = connection; connection = null; current?.dispose(); mode = "background"; view = Object.freeze({ ...view, status: "disposed", ready: false, retryable: false }); notify(); },
   };

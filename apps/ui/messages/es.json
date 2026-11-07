@@ -37,7 +37,7 @@
     "infiniteZoom": {
       "diagnostics": "Diagnóstico de sesión",
       "description": "Una demo técnica con imágenes de ejemplo. Reproduce música de tu biblioteca para animar la escena. La pausa conserva tu recorrido.",
-      "immersive": "Vista inmersiva", "exitImmersive": "Salir de la vista inmersiva", "transition": "Escena siguiente", "cancel": "Cancelar transición", "reset": "Reiniciar recorrido",
+      "immersive": "Vista inmersiva", "exitImmersive": "Salir de la vista inmersiva", "loop": "Loop", "stopLoop": "Detener Loop", "transition": "Escena siguiente", "cancel": "Cancelar transición", "reset": "Reiniciar recorrido",
       "camera": "Controles de cámara", "zoomIn": "Acercar", "zoomOut": "Alejar", "rotate": "Girar", "hold": "Detener cámara", "return": "Volver al encuadre completo",
       "modulation": "Reaccionar a la música", "failed": "La visualización no está disponible o la operación solicitada no es segura para la imagen. La música que ya se reproduce continúa.", "retry": "Reintentar visualización",
       "states": { "idle": "Preparando visualización…", "preparing": "Cargando imágenes…", "ready": "Listo — reproduce música para comenzar", "running": "Recorrido en curso", "paused": "En pausa — recorrido conservado", "stopped": "Pista terminada — recorrido conservado", "suspended": "Esperando reanudar la visualización", "error": "Visualización no disponible", "disposed": "Recorrido terminado" }

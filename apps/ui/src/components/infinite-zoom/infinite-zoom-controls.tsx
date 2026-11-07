@@ -21,12 +21,13 @@ export function InfiniteZoomControls() {
         const trigger = event.currentTarget;
         runtime.setMode("immersive", () => { if (trigger.isConnected) trigger.focus(); });
       }}>{t("immersive")}</Button>
+      <Button type="button" variant={snapshot.looping ? "default" : "outline"} data-iz-loop aria-pressed={!!snapshot.looping} disabled={!snapshot.ready} onClick={() => runtime.setLoop(!snapshot.looping)}>{t(snapshot.looping ? "stopLoop" : "loop")}</Button>
       <Button type="button" variant="outline" data-iz-transition disabled={!snapshot.ready || busy || !snapshot.canTransition} onClick={() => void runtime.transition()}>{t("transition")}</Button>
       <Button type="button" variant="outline" data-iz-cancel disabled={!running || !busy} onClick={() => runtime.command("cancel")}>{t("cancel")}</Button>
       <Button type="button" variant="outline" data-iz-reset disabled={!snapshot.ready} onClick={() => runtime.reset()}>{t("reset")}</Button>
     </div>
     <div className="flex flex-wrap gap-2" aria-label={t("camera")}>
-      {(["zoomIn", "zoomOut", "rotate", "hold", "return"] as const).map(command => <Button key={command} type="button" variant="outline" disabled={!running || busy} data-iz-command={command} onClick={() => runtime.command(command)}>{t(command)}</Button>)}
+      {(["zoomIn", "zoomOut", "rotate", "hold", "return"] as const).map(command => <Button key={command} type="button" variant="outline" disabled={!running || busy || snapshot.looping} data-iz-command={command} onClick={() => runtime.command(command)}>{t(command)}</Button>)}
     </div>
     <label className="flex items-center gap-2 text-sm"><input data-iz-modulation type="checkbox" checked={modulation} onChange={event => runtime.setModulation(event.target.checked)} />{t("modulation")}</label>
     <details className="text-xs" data-iz-diagnostics>

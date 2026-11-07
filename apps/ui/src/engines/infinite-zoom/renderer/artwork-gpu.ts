@@ -60,13 +60,13 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         fragmentShader: `
           uniform sampler2D imageMap; uniform sampler2D maskMap;
           uniform float hasMask; uniform float opacity; uniform float audioGain;
-          uniform int portalCount; uniform vec4 portalData[2]; uniform vec2 portalStyle[2];
+          uniform int portalCount; uniform vec4 portalData[5]; uniform vec2 portalStyle[5];
           varying vec2 vUv; varying vec2 artworkWorld;
           ${shader.declarations}
           void main() {
             // Each aperture belongs to its authored parent, including nested C.
             float portalAlpha = 1.0;
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 5; i++) {
               if (i >= portalCount) break;
               vec2 d = artworkWorld - portalData[i].xy;
               float c = cos(portalStyle[i].x), s = sin(portalStyle[i].x);
@@ -83,7 +83,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
           }`,
         uniforms: { imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
           hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, portalCount: { value: 0 },
-          portalData: { value: [new Vector4(), new Vector4()] }, portalStyle: { value: [new Vector2(), new Vector2()] }, ...uniforms },
+          portalData: { value: Array.from({ length: 5 }, () => new Vector4()) }, portalStyle: { value: Array.from({ length: 5 }, () => new Vector2()) }, ...uniforms },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
       });
       const mesh = new Mesh(geometry, material); meshes.push(mesh); mesh.frustumCulled = false; group.add(mesh);

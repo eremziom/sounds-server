@@ -6,6 +6,14 @@
     "width": 3840,
     "height": 2160
   },
+  "portal": {
+    "id": "distant-forest",
+    "region": { "x": 1920, "y": 1260, "radiusX": 90, "radiusY": 48, "rotation": 0, "feather": 0.24 },
+    "scale": 0.055,
+    "durationSeconds": 16,
+    "destinationCamera": "stop-at-full-frame",
+    "destination": { "manifestUri": "/infinite-zoom/samples/forest/manifest.json", "artworkId": "forest", "version": "0.1.0", "anchorId": "center" }
+  },
   "anchors": [
     {
       "id": "center",

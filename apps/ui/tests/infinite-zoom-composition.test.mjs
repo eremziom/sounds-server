@@ -50,7 +50,9 @@ test("first handoff retains C landmarks and its B aperture, with independent B f
     const pose={...target,logScale:z};
     assert.deepEqual(destinationView(pose,ab.placement,ab.destinationCamera),FULL_FRAME);
   }
-  assert.throws(()=>compositionDraws({...chain,destinationComposition:{...bc,destinationId:"a"}},FULL_FRAME),/bounded/);
+  const repeat=(depth)=>depth===0?{sourceId:"a"}:{...ab,destinationId:"a",destinationComposition:repeat(depth-1)};
+  assert.equal(compositionDraws(repeat(5),FULL_FRAME).length,6);
+  assert.throws(()=>compositionDraws(repeat(6),FULL_FRAME),/bounded/);
 });
 
 test("three full-resolution image pairs and exact R8 masks fit the unchanged 256 MiB budget", () => {
@@ -59,8 +61,8 @@ test("three full-resolution image pairs and exact R8 masks fit the unchanged 256
   assert.ok(bytes.reduce((a,b)=>a+b,0)+3840*2160*4 < 256*1024*1024);
 });
 
-test("third-world failures, cyclic links and admission refusal clean up before readiness", async () => {
-  for (const mode of ["missing", "identity", "decode", "budget", "cycle", "too-deep", "abort"]) {
+test("third-world failures, invalid links and admission refusal clean up before readiness", async () => {
+  for (const mode of ["missing", "identity", "decode", "budget", "too-deep", "abort"]) {
     const closed=[], controller=new AbortController(); let resolved=0;
     const source=structuredClone(manifests[0]);
     await assert.rejects(prepareArtwork({ canvas:{}, manifest:source, instanceId:"a",

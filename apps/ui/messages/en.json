@@ -37,7 +37,7 @@
     "infiniteZoom": {
       "diagnostics": "Session diagnostics",
       "description": "A technical demo using sample artwork. Play music from your library to animate the scene. Pause preserves your journey.",
-      "immersive": "Immersive view", "exitImmersive": "Exit immersive view", "transition": "Next scene", "cancel": "Cancel transition", "reset": "Reset journey",
+      "immersive": "Immersive view", "exitImmersive": "Exit immersive view", "loop": "Loop", "stopLoop": "Stop Loop", "transition": "Next scene", "cancel": "Cancel transition", "reset": "Reset journey",
       "camera": "Camera controls", "zoomIn": "Zoom in", "zoomOut": "Zoom out", "rotate": "Rotate", "hold": "Hold", "return": "Return to full frame",
       "modulation": "React to music", "failed": "The visualization is unavailable or the requested operation is unsafe. Music already playing continues.", "retry": "Retry visualization",
       "states": { "idle": "Preparing visualization…", "preparing": "Loading artwork…", "ready": "Ready — play music to begin", "running": "Journey in progress", "paused": "Paused — journey preserved", "stopped": "Track ended — journey preserved", "suspended": "Waiting to resume visualization", "error": "Visualization unavailable", "disposed": "Journey ended" }

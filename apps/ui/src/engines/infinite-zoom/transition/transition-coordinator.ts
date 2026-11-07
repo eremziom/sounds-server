@@ -164,11 +164,12 @@ export function createTransitionCoordinator(ports: TransitionPorts) {
       if (!pending || !["prepared", "cancelled", "failed"].includes(phase)) throw new Error("No embedded portal ready for travel");
       startRequested = true;
     },
-    step(context: StepContext, modulation?: BehaviorModulation) {
+    step(context: StepContext, modulation?: BehaviorModulation, travelPaused = false) {
       if (phase === "disposed") throw new Error("Transition coordinator is disposed");
       const source = ports.current();
       source.instance.stepBehaviors(context, modulation);
       pending?.instance.stepBehaviors(context, modulation);
+      if (travelPaused) return;
       if (startRequested) {
         startRequested = false;
         startPose = ports.camera.getSnapshot().pose;

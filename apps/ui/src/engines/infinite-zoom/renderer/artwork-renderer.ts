@@ -78,11 +78,19 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     camera.position.set(pose.x - 1920, -(pose.y - 1080), 1); camera.rotation.z = -pose.rotation; camera.zoom = Math.exp(pose.logScale); camera.updateProjectionMatrix();
     scene.clear();
     let order = 0;
-    for (const draw of compositionDraws(current, pose)) {
-      const artwork = entry(draw.id).gpu!;
-      order = artwork.update(draw.placement, draw.portals, order); scene.add(artwork.group);
-    }
-    renderer.setRenderTarget(target); renderer.render(scene, camera);
+    const batch = new Set<string>();
+    renderer.setRenderTarget(target); renderer.clear(); renderer.autoClear = false;
+    try {
+      for (const draw of compositionDraws(current, pose)) {
+        // Repeated cycle placements share the same GPU artwork and textures.
+        // Flush before reusing its meshes with a different transform/aperture.
+        if (batch.has(draw.id)) { renderer.render(scene, camera); scene.clear(); batch.clear(); }
+        batch.add(draw.id);
+        const artwork = entry(draw.id).gpu!;
+        order = artwork.update(draw.placement, draw.portals, order); scene.add(artwork.group);
+      }
+      renderer.render(scene, camera);
+    } finally { renderer.autoClear = true; }
     renderer.setRenderTarget(null); if (display) renderer.render(output, outputCamera);
     const gl = renderer.getContext();
     if (gl.isContextLost()) throw new Error("GPU context unavailable during rendering");
@@ -102,7 +110,7 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   function setComposition(next: SceneComposition) {
     checkAlive();
     function freeze(node: SceneComposition, depth = 0): SceneComposition {
-      if (depth > 2) throw new Error("Artwork nesting exceeds demo limit");
+      if (depth > 5) throw new Error("Artwork nesting exceeds demo limit");
       entry(node.sourceId);
       if (node.destinationId) {
         entry(node.destinationId); validatePlacement(node.placement!);

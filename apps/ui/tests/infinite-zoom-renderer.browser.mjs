@@ -110,7 +110,16 @@ try {
   for (const [name, data] of Object.entries(chainFrames.result.value)) {
     await writeFile(new URL(`chain-${name}.png`, reportDirectory), Buffer.from(data.split(",")[1], "base64"));
   }
-  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ samples, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
+  const loop = await send("Runtime.evaluate", { expression: "window.runDemoLoop()", awaitPromise: true, returnByValue: true });
+  assert.equal(loop.exceptionDetails, undefined, JSON.stringify(loop.exceptionDetails));
+  assert.deepEqual(errors, [], "No loop shader/browser errors");
+  assert.equal(loop.result.value.sequence.length, 9);
+  console.log("Infinite Zoom loop:", JSON.stringify(loop.result.value));
+  const loopFrames = await send("Runtime.evaluate", { expression: "window.demoLoopCaptures", returnByValue: true });
+  for (const [name, data] of Object.entries(loopFrames.result.value)) {
+    await writeFile(new URL(`loop-${name}.png`, reportDirectory), Buffer.from(data.split(",")[1], "base64"));
+  }
+  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

@@ -49,19 +49,20 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     for (let index = 0; index < cached.length; index++) {
       const source = cached[index], portal = source.loaded.manifest.portal;
       if (!portal) break;
-      if (cached.length >= 3) throw new Error("Demo artwork chain exceeds three worlds");
       const manifest = parseArtworkPackage(await resolve(portal.destination.manifestUri, signal));
       signal.throwIfAborted();
+      if (manifest.id === source.loaded.manifest.id) throw new Error("Self-linked demo artwork");
       if (manifest.id !== portal.destination.artworkId || manifest.version !== portal.destination.version) throw new Error("Embedded destination identity/version mismatch");
-      if (cached.some(lease => lease.loaded.manifest.id === manifest.id)) throw new Error("Cyclic demo artwork chain");
+      const existing = cached.find(lease => lease.loaded.manifest.id === manifest.id);
+      if (!existing && cached.length >= 3) throw new Error("Demo artwork chain exceeds three worlds");
       const anchor = manifest.anchors.find(anchor => anchor.id === portal.destination.anchorId);
       if (!anchor) throw new Error("Unknown transition anchor");
       validatePortalPlacement(portal.region, { x: portal.region.x, y: portal.region.y, rotation: portal.region.rotation,
         scale: portal.scale, anchorX: anchor.x, anchorY: anchor.y });
-      if (cached.reduce((sum, lease) => sum + estimatedTextureBytes(lease), 0) + artworkTextureBytes(manifest) + targetBytes > budget) throw new Error("GPU_BUDGET_EXCEEDED: initial embedded chain");
-      const loaded = await loadArtwork(manifest, signal, options.decode);
-      const destination = { loaded, instance: createArtworkInstance(`${options.instanceId}:embedded-${index + 1}`, loaded.manifest) };
-      cached.push(destination);
+      if (!existing && cached.reduce((sum, lease) => sum + estimatedTextureBytes(lease), 0) + artworkTextureBytes(manifest) + targetBytes > budget) throw new Error("GPU_BUDGET_EXCEEDED: initial embedded chain");
+      const loaded = existing?.loaded ?? await loadArtwork(manifest, signal, options.decode);
+      const destination = existing ?? { loaded, instance: createArtworkInstance(`${options.instanceId}:embedded-${index + 1}`, loaded.manifest) };
+      if (!existing) cached.push(destination);
       links.set(source.instance.id, { destination, request: { sourceInstanceId: source.instance.id, manifest: loaded.manifest,
         anchorId: portal.destination.anchorId, placement: { x: portal.region.x, y: portal.region.y, scale: portal.scale, rotation: portal.region.rotation },
         region: portal.region, durationSeconds: portal.durationSeconds, destinationCamera: portal.destinationCamera } });
@@ -72,20 +73,22 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     graphics = renderer; signal.throwIfAborted();
     // The three-world demo pins this bounded cache on GPU. Exact R8 masks let
     // all three fit the unchanged budget, preserving nested pixels and sync reset.
-    const pinChain = cached.length === 3;
-    let decorateEnabled = true;
+    const pinChain = cached.length === 3 || [...links.values()].some(link => link.destination === initial);
+    let decorateEnabled = true, looping = false, travelPaused = false;
     const disabledLinks = new Set<string>();
-    function decorate(input: SceneComposition): SceneComposition {
+    // Two turns of the three-world ring preserve nested pixels at handoff.
+    // This bounds composition size while all placements reuse three GPU leases.
+    function decorate(input: SceneComposition, depth = 0): SceneComposition {
       let node = input;
       const link = links.get(node.sourceId);
-      if (decorateEnabled && link && !disabledLinks.has(node.sourceId) && !node.destinationId) {
+      if (decorateEnabled && link && depth < 5 && !disabledLinks.has(node.sourceId) && !node.destinationId) {
         const anchor = link.destination.loaded.manifest.anchors.find(a => a.id === link.request.anchorId)!;
         node = { ...node, destinationId: link.destination.instance.id,
           placement: { ...link.request.placement, anchorX: anchor.x, anchorY: anchor.y },
           portal: link.request.region, destinationCamera: link.request.destinationCamera };
       }
       return node.destinationId && links.has(node.destinationId) && decorateEnabled ?
-        { ...node, destinationComposition: decorate({ sourceId: node.destinationId }) } : node;
+        { ...node, destinationComposition: decorate({ sourceId: node.destinationId }, depth + 1) } : node;
     }
     function compose(input: SceneComposition) { renderer.setComposition(decorate(input)); }
     function release(lease: ArtworkLease) {
@@ -119,7 +122,9 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     const nextLink = () => transition.getSnapshot().phase === "committed" && !disabledLinks.has(current.instance.id) ? links.get(current.instance.id) : undefined;
     const journeyTransition = {
       ...transition,
+      cancel() { looping = false; travelPaused = false; transition.cancel(); },
       start() {
+        travelPaused = false;
         const next = nextLink();
         if (next) transition.restore(next.request, next.destination);
         transition.start();
@@ -130,14 +135,25 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     if (!renderer.getDiagnostics().available) throw new Error("GPU unavailable during critical preparation");
     return {
       get instance() { return current.instance; }, camera, transition: journeyTransition,
+      setLoop(enabled: boolean) {
+        if (disposed) return;
+        looping = enabled;
+        travelPaused = !enabled && transition.getSnapshot().phase === "approaching";
+      },
+      getLoop() { return looping; },
       step(context: StepContext) {
         if (disposed) throw new Error("Artwork is disposed");
         options.evaluate?.(current.instance, context);
         const modulation = options.modulation?.();
+        if (looping) {
+          const state = journeyTransition.getSnapshot();
+          if (state.error || state.phase === "rollingBack" || !state.canStart && state.phase === "committed") looping = false;
+          else if (state.canStart) journeyTransition.start();
+        }
         const sourceId = current.instance.id, pendingId = transition.getSnapshot().destinationInstanceId;
-        transition.step(context, modulation);
+        transition.step(context, modulation, travelPaused);
         for (const lease of cached) {
-          if (lease.instance.id !== sourceId && lease.instance.id !== pendingId && lease !== initial) lease.instance.stepBehaviors(context, modulation);
+          if (lease.instance.id !== sourceId && lease.instance.id !== pendingId) lease.instance.stepBehaviors(context, modulation);
         }
       },
       render() {
@@ -152,6 +168,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       },
       reset() {
         if (disposed) throw new Error("Artwork is disposed");
+        looping = false; travelPaused = false;
         decorateEnabled = false;
         transition.reset();
         const previous = current;

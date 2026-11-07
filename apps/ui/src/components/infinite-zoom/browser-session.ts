@@ -123,6 +123,7 @@ export function createBrowserVisualSession(options: {
       transition, error: fault || lastResizeError || snapshot.status === "error" || !!lease?.transition.getSnapshot().error,
       retryable: !hasPlayed && snapshot.status === "error",
       canTransition: lease?.transition.getSnapshot().canStart ?? false,
+      looping: lease?.getLoop() ?? false,
       diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
         tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
         resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
@@ -155,6 +156,10 @@ export function createBrowserVisualSession(options: {
       if (!lease || disposed || !lease.transition.getSnapshot().canStart) return;
       try { lease.transition.start(); fault = false; } catch { fault = true; }
       publish();
+    },
+    setLoop(enabled: boolean) {
+      if (!lease || disposed) return;
+      lease.setLoop(enabled); publish();
     },
     reset() {
       if (!lease || disposed) return;

@@ -24,7 +24,7 @@ function link(source,a,b) {
     portal:p.region,destinationCamera:p.destinationCamera};
 }
 
-async function handoffPixels(manifests,handoffs) {
+async function handoffPixels(manifests,handoffs,cyclic=false) {
   const loaded=[],signal=new AbortController().signal;
   const canvas=document.createElement("canvas");document.body.append(canvas);
   let renderer;
@@ -37,10 +37,15 @@ async function handoffPixels(manifests,handoffs) {
     const bc=link(manifests[1],instances[1].id,instances[2].id);
     const abc={...link(manifests[0],instances[0].id,instances[1].id),destinationComposition:bc};
     const differences=[];
-    for(let i=0;i<2;i++) {
-      camera.reset(handoffs[i].before.pose);renderer.setComposition(i===0?abc:bc);
+    for(let i=0;i<(cyclic?3:2);i++) {
+      const nested=(start,depth=0)=>{
+        const first=start%3,second=(start+1)%3;
+        return depth===5?{sourceId:instances[first].id}:{...link(manifests[first],instances[first].id,instances[second].id),
+          destinationComposition:nested(start+1,depth+1)};
+      };
+      camera.reset(handoffs[i].before.pose);renderer.setComposition(cyclic?nested(i):i===0?abc:bc);
       const before=pixels(canvas,renderer.render);opaque(before);
-      camera.reset(handoffs[i].after.pose);renderer.setComposition(i===0?bc:{sourceId:instances[2].id});
+      camera.reset(handoffs[i].after.pose);renderer.setComposition(cyclic?nested(i+1):i===0?bc:{sourceId:instances[2].id});
       const after=pixels(canvas,renderer.render);opaque(after);
       const max=difference(before,after);check(max<=2,`Nested handoff ${i+1} retains pixels: ${max}`);differences.push(max);
     }
@@ -50,6 +55,7 @@ async function handoffPixels(manifests,handoffs) {
 
 window.runDemoChain=async()=>{
   const manifests=await Promise.all(["forest","nebula","underwater-cavern"].map(async n=>still(await(await fetch(`/infinite-zoom/samples/${n}/manifest.json`)).json())));
+  delete manifests[2].portal; // Keep the historical linear-chain oracle independent of the loop.
   const canvas=document.createElement("canvas");document.body.append(canvas);
   const closed=[],errors=[],handoffs=[];
   let r8=0;
@@ -117,4 +123,71 @@ window.runDemoChain=async()=>{
   }
   return {worlds:3,decodedBitmaps:closed.length,r8Allocations:r8,textureBytes:223948800,resetFromC:true,
     rollbackToB:true,contextRecovery:true,portraitWide:true,handoffMaximumDifferences:await handoffPixels(manifests,handoffs)};
+};
+
+
+window.runDemoLoop=async()=>{
+  const manifests=await Promise.all(["forest","nebula","underwater-cavern"].map(async n=>still(await(await fetch(`/infinite-zoom/samples/${n}/manifest.json`)).json())));
+  const canvas=document.createElement("canvas");document.body.append(canvas);
+  const closed=[],errors=[],sequence=[],handoffs=[];
+  const captures=window.demoLoopCaptures={};
+  let lease,tick=0;
+  const step=()=>lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>0.5});
+  try {
+    lease=await prepareArtwork({canvas,manifest:manifests[0],instanceId:"loop",viewport,
+      resolveManifest:async uri=>manifests.find(m=>uri.endsWith(`/${m.id}/manifest.json`)),
+      onAvailabilityChange(){},onError(e){errors.push(String(e));},
+      async decode(asset,signal){const value=await decodeArtworkAsset(asset,signal),entry={closes:0};closed.push(entry);
+        return {...value,close(){entry.closes++;value.close();}};}
+    },new AbortController().signal);
+    const baseline=lease.getDiagnostics();
+    check(closed.length===9,"Cycle reuses exactly three decoded packages");
+    const initial=pixels(canvas,lease.render);lease.setLoop(true);
+    check(difference(initial,pixels(canvas,lease.render))===0,"Loop click preserves already embedded destination");
+    for(let cycle=0;cycle<3;cycle++) {
+      for(const name of ["nebula","underwater-cavern","forest"]) {
+        const previous=lease.instance.manifest.id;
+        for(let j=0;j<1000&&lease.instance.manifest.id===previous;j++) {
+          step();if(j%120===0)opaque(pixels(canvas,lease.render));
+          if(cycle===0&&name==="nebula"&&j===120) {
+            lease.setLoop(false);
+            const frozen=JSON.stringify({camera:lease.camera.getSnapshot(),transition:lease.transition.getSnapshot()});
+            const frame=pixels(canvas,lease.render);
+            for(let k=0;k<120;k++)step();
+            check(frozen===JSON.stringify({camera:lease.camera.getSnapshot(),transition:lease.transition.getSnapshot()}),"Manual stop freezes the exact travel state");
+            check(difference(frame,pixels(canvas,lease.render))===0,"Manual stop preserves visible pixels");
+            lease.setLoop(true);
+          }
+        }
+        check(lease.instance.manifest.id===name,`Loop reaches ${name} in cycle ${cycle+1}`);
+        check(lease.getLoop(),"Loop stays enabled across handoff");
+        check(Math.abs(lease.camera.getSnapshot().pose.logScale)<1e-8,"Every repeated destination reaches full frame");
+        opaque(pixels(canvas,lease.render));sequence.push(name);
+        if(cycle===0) {
+          handoffs.push(lease.transition.getSnapshot().handoff);
+          captures[name]=canvas.toDataURL("image/png");
+        }
+        const resources=lease.getDiagnostics();
+        check(resources.textures===baseline.textures&&resources.artworks===3&&resources.estimatedTextureBytes===baseline.estimatedTextureBytes,"Repeated cycles keep fixed GPU resources");
+      }
+    }
+    lease.setLoop(false);const pose=JSON.stringify(lease.camera.getSnapshot());
+    for(let j=0;j<120;j++)step();
+    check(JSON.stringify(lease.camera.getSnapshot())===pose,"Manual stop at handoff prevents the next travel");
+    lease.setLoop(true);step();lease.reset();
+    check(!lease.getLoop()&&lease.instance.manifest.id==="forest","Explicit Reset disables Loop and restores Forest");
+    check(difference(initial,pixels(canvas,lease.render))===0,"Reset restores exact cyclic composition");
+    for(const size of [{width:240,height:360},{width:960,height:240}]) {
+      lease.resize({...viewport,...size});lease.setLoop(true);
+      for(const name of ["nebula","underwater-cavern","forest"]) {
+        const previous=lease.instance.manifest.id;
+        for(let j=0;j<1000&&lease.instance.manifest.id===previous;j++)step();
+        check(lease.instance.manifest.id===name,"Cycle works at portrait and wide aspect ratios");opaque(pixels(canvas,lease.render));
+      }
+      lease.reset();
+    }
+    check(errors.length===0,errors.join(";"));
+  } finally {lease?.dispose();canvas.remove();check(closed.every(a=>a.closes===1),"Cyclic cache closes each bitmap exactly once");}
+  const handoffMaximumDifferences=await handoffPixels(manifests,handoffs,true);
+  return {sequence,handoffMaximumDifferences,manualStop:true,resume:true,reset:true,portraitWide:true,decodedBitmaps:closed.length};
 };
