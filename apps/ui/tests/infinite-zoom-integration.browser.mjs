@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
+import { mkdir,writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { setTimeout as delay } from "node:timers/promises";
 import { authSession } from "./helpers/auth-fixtures.mjs";
@@ -42,6 +43,13 @@ try {
     await send("Emulation.setFocusEmulationEnabled",{enabled:true});
     await send("Page.addScriptToEvaluateOnNewDocument",{source:`
       (() => {
+      // Reproduce a browser profile whose disk-backed response Blob storage
+      // fails. Critical PNGs and pilot SVGs must still prepare and play music.
+      const responseBlob=Response.prototype.blob;
+      Response.prototype.blob=function(...args) {
+        if(this.url.includes('/infinite-zoom/')) return Promise.reject(new TypeError('Failed to fetch: profile Blob storage unavailable'));
+        return responseBlob.apply(this,args);
+      };
       window.izGraphs=0; window.izSources=0; window.izGain=1;
       const Original=window.AudioContext;
       window.AudioContext=class extends Original { constructor(...args) { super(...args); izGraphs++; } };
@@ -81,6 +89,70 @@ try {
     await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]')");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest","Forest is the initial scene");
     assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`),true);
+    const selectScene=async name=>{
+      await evaluate(`(()=>{const select=document.querySelector('[data-iz-scene]');select.value=${JSON.stringify(name)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+      await waitFor(`document.querySelector('[data-iz-scene]').value===${JSON.stringify(name)} && !document.querySelector('[data-iz-scene]').disabled`);
+    };
+    const sceneTick=await tick();
+    await evaluate("void(window.izGl=izCanvas.getContext('webgl2'))");
+    await selectScene("pilot");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest-pilot");
+    assert.equal(await tick(),sceneTick,"Selecting a pilot cannot advance paused simulation");
+    assert.equal(await evaluate(`${audio}.paused && izCanvas.getContext('webgl2')===izGl`),true,"Selection preserves audio pause and context");
+    assert.equal(await evaluate("document.querySelectorAll('[data-iz-pilot] [data-iz-behavior]').length"),12);
+    await click("document.querySelector('[data-iz-behavior=wave] [data-iz-solo]')");
+    assert.equal(await evaluate("document.querySelectorAll('[data-iz-behavior-enabled]:checked').length"),1,"Solo enables only its operator");
+    await evaluate(`(()=>{const input=document.querySelector('[data-iz-behavior=wave] [data-iz-behavior-strength]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'0.25');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await waitFor("document.querySelector('[data-iz-behavior=wave] output').textContent==='25%'");
+    await click("document.querySelector('[data-iz-preset=all]')");
+    assert.equal(await evaluate("[...document.querySelectorAll('[data-iz-behavior] output')].every(o=>o.textContent==='100%')"),true,"Maximum test preset restores every slider to full strength");
+    await click("document.querySelector('[data-iz-behavior=wave] [data-iz-solo]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-behavior=wave] output').textContent"),"100%","Solo shows its effect at full test strength");
+    assert.equal(await tick(),sceneTick,"Live effect controls preserve audio pause");
+    await selectScene("layered");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest-layered");
+    assert.equal(await evaluate("document.querySelectorAll('[data-iz-pilot] [data-iz-behavior]').length"),12);
+    assert.equal(await tick(),sceneTick,"Layered artwork selection preserves paused simulation");
+    assert.equal(await evaluate(`${audio}===izAudio && ${audio}.paused && izCanvas.getContext('webgl2')===izGl`),true,"Layered artwork retains the audio element and renderer");
+    if(process.argv.includes("--layered-ui")) {
+      await click("document.querySelector('[data-iz-preset=all]')");
+      await click("document.querySelector('[data-iz-immersive]')");
+      await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
+      const report=new URL("../../../.tmp/infinite-zoom-artwork/",import.meta.url);await mkdir(report,{recursive:true});
+      const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("forest-layered-app.png",report),Buffer.from(screenshot.data,"base64"));
+      console.log("Layered artwork UI: three scenes, twelve controls, paused audio, immersive and one canvas/context OK");return;
+    }
+    await selectScene("clockwork");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"clockwork");
+    assert.equal(await evaluate("document.querySelectorAll('[data-iz-pilot] [data-iz-behavior]').length"),3,"Mechanical scene shows only applicable controls");
+    await evaluate(`(()=>{const input=document.querySelector('[data-iz-behavior=rotate] [data-iz-behavior-strength]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'0.5');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await waitFor("document.querySelector('[data-iz-behavior=rotate] output').textContent==='50%'");
+    assert.equal(await tick(),sceneTick,"Clockwork selection and speed changes preserve paused time");
+    assert.equal(await evaluate(`${audio}===izAudio && ${audio}.paused && izCanvas.getContext('webgl2')===izGl`),true);
+    await click("document.querySelector('[data-iz-preset=all]')");
+    if(process.argv.includes("--clockwork-ui")) {
+      await click("document.querySelector('[data-iz-immersive]')");await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
+      const report=new URL("../../../.tmp/infinite-zoom-artwork/",import.meta.url);await mkdir(report,{recursive:true});
+      const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("clockwork-app.png",report),Buffer.from(screenshot.data,"base64"));
+      console.log("Clockwork UI: selector, three applicable controls, speed slider, paused audio, immersive and same context OK");return;
+    }
+    await selectScene("pilot");
+    await click("document.querySelector('[data-iz-immersive]')");
+    await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
+    await click("document.querySelector('[data-iz-immersive-pilot] summary')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-immersive-pilot]').open"),true,"Pilot has visible immersive controls");
+    if(process.argv.includes("--pilot-ui")) {
+      await click("document.querySelector('[data-iz-immersive-pilot] [data-iz-preset=subtle]')");
+      await delay(250);
+      const report=new URL("../../../.tmp/infinite-zoom-artwork/",import.meta.url);await mkdir(report,{recursive:true});
+      const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("forest-pilot-app-controls.png",report),Buffer.from(screenshot.data,"base64"));
+      console.log("Pilot UI: selector, twelve controls, solo/strength, pause and immersive panel OK");return;
+    }
+    await click("document.querySelector('[data-iz-exit]')");
+    await selectScene("journey");
+    assert.equal(await tick(),sceneTick);assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest");
+    lateArtworkLoads.length=0; // Pilot's first preparation legitimately reads its shared forest assets.
+
     await click("document.querySelector('[data-iz-immersive]')");
     await waitFor("document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='immersive'");
     assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio && ${audio}.paused`),true);
@@ -108,6 +180,14 @@ try {
     await waitFor("JSON.parse(document.querySelector('[data-iz-diagnostic-snapshot]').textContent).camera.pose.logScale>1.5");
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='committed'");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"nebula");
+    const musicBeforePilot=await evaluate("izAudio.currentTime");
+    await selectScene("clockwork");await delay(200);
+    assert.equal(await evaluate("izAudio.paused"),false);assert.ok(await evaluate("izAudio.currentTime")>musicBeforePilot,"Clockwork keeps already playing music progressing");
+    await selectScene("layered");await delay(250);
+    assert.equal(await evaluate("izAudio.paused"),false);assert.ok(await evaluate("izAudio.currentTime")>musicBeforePilot,"Artwork selection never pauses or seeks playing music");
+    await selectScene("journey");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"nebula","Journey artwork is preserved across the pilot");
+    assert.equal(await evaluate("izCanvas.getContext('webgl2')===izGl && document.querySelectorAll('[data-infinite-zoom-canvas]').length===1"),true,"Artwork selection keeps one application canvas/context");
     const afterTransition = await tick();
     await evaluate("izAudio.currentTime=119.9"); await waitFor(`${audio}.ended`);
     await waitFor(`${canvas}.dataset.visualStatus==='stopped'`);
@@ -149,7 +229,7 @@ try {
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest");
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='prepared'");
     assert.equal(await evaluate("document.querySelector('[data-iz-transition]').disabled"),false,"Reset restores the embedded portal without another load");
-    assert.deepEqual(lateArtworkLoads, [], "Travel, track changes and explicit reset use the initially prepared chain without network loads");
+    assert.deepEqual(lateArtworkLoads.filter(url=>!url.includes("/forest-pilot/")), [], "Travel, track changes and explicit reset use the initially prepared chain without network loads");
     await click(toggle); await waitFor(`${canvas}.dataset.visualStatus==='running'`);
     // Throw inside the actual IZ context; failure must not touch music.
     const beforeFailure = await evaluate("izAudio.currentTime");

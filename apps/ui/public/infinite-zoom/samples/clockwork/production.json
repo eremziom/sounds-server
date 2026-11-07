@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "artworkId": "clockwork",
+  "version": "0.4.0",
+  "tool": "built-in image_gen",
+  "externalApiCalls": 0,
+  "sources": [
+    {
+      "id": "plate",
+      "file": "plate.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "2c56f3030c00010d8bdf4f75263a324dceebff24f9e827140a2484a05cbd19d6"
+    },
+    {
+      "id": "gear",
+      "file": "gear.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "a23af36613e7a7afc96c6b0f0141c729e3bb959821db8d83b436d122bbe02ac7"
+    }
+  ],
+  "sourceHub": {
+    "x": 625,
+    "y": 622.5,
+    "radius": 590
+  },
+  "rotors": [
+    {
+      "id": "wheel-left",
+      "x": 469,
+      "y": 477,
+      "radius": 166,
+      "turnsPerSecond": 0.041666666666666664
+    },
+    {
+      "id": "wheel-center",
+      "x": 845,
+      "y": 477,
+      "radius": 166,
+      "turnsPerSecond": -0.041666666666666664
+    },
+    {
+      "id": "wheel-right",
+      "x": 1223,
+      "y": 477,
+      "radius": 166,
+      "turnsPerSecond": 0.041666666666666664
+    },
+    {
+      "id": "wheel-upper-left",
+      "x": 700,
+      "y": 237,
+      "radius": 86,
+      "turnsPerSecond": -0.08333333333333333
+    },
+    {
+      "id": "wheel-upper-right",
+      "x": 1005,
+      "y": 237,
+      "radius": 86,
+      "turnsPerSecond": 0.08333333333333333
+    }
+  ],
+  "runtimeTexture": {
+    "width": 1600,
+    "height": 900,
+    "native4K": false
+  },
+  "cleanPlate": "Complete recessed backing and fixed bearing stubs were generated before moving wheels. No duplicate moving wheel is baked into the five rotor wells.",
+  "masks": "Cleaned PNG alpha follows tooth/spoke/axle silhouettes. Each rotor has a separate source-luminance highlight mask intersected with a small reflection footprint. Three fixed jewel/bearing masks localize pulse. Fixed axle caps and all unselected metal remain protected.",
+  "motion": "Five rigid continuous spins share one fixed-step clock and a common user speed multiplier; adjacent large wheels counter-rotate. No texture deformation is applied to metal.",
+  "lighting": {
+    "pulseDetails": [
+      {
+        "id": "upper-left-bearing",
+        "x": 428,
+        "y": 133,
+        "radius": 12,
+        "phase": 0
+      },
+      {
+        "id": "upper-right-bearing",
+        "x": 1238,
+        "y": 210,
+        "radius": 11,
+        "phase": 2.1
+      },
+      {
+        "id": "lower-bearing",
+        "x": 841,
+        "y": 838,
+        "radius": 14,
+        "phase": 4.2
+      }
+    ],
+    "pulse": "Three small selected bearing interiors, phase-staggered; no whole-frame or rotor pulse",
+    "glint": "Bright source pixels only: sRGB luminance ramp .46.. .70 intersected with a local footprint. Warm specular color [1,.92,.72], intensity 3 within the unchanged intensity budget, linear luminance threshold .06, sharpness 3, staggered phases and an initial peak on the first rotor. Dark metal is unchanged; no exposure or contrast adjustment."
+  },
+  "limitations": [
+    "Artistic clockwork, not a CAD or contact-dynamics simulation",
+    "Only five separated rotors are animated; background microgears are stationary",
+    "Source resolution is recorded, not native 4K",
+    "No portal in this standalone studio scene"
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "artworkId": "forest-layered",
+  "version": "0.2.0",
+  "tool": "built-in image_gen",
+  "paidApiCalls": 0,
+  "sources": [
+    {
+      "id": "plate",
+      "file": "plate.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "ba3b629ae784ebefc4e0b1c1c08af5581e3a7f348f5a71aff1348501d835ee97"
+    },
+    {
+      "id": "foliage",
+      "file": "foliage.png",
+      "width": 1671,
+      "height": 941,
+      "sha256": "96956e021c3a721607ced532693b865a4ef1d95ed2879d1834245c819f2f52b2"
+    },
+    {
+      "id": "mist",
+      "file": "mist.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "896cf7052f17116c9f1733a1fd592c5358ad8f1ed2ccadf71cbd44ba469803a3"
+    }
+  ],
+  "runtimeTexture": {
+    "width": 1600,
+    "height": 900,
+    "native4K": false,
+    "registration": "Each unmodified PNG maps to the same full-frame 16:9 domain; generator rounded dimensions are registered by SVG image containers."
+  },
+  "cleanPlate": "Generated complete moss, earth, rocks and river before separate foreground foliage and mist. No fern is baked into the plate at the two authored root sites.",
+  "water": "Hand-traced banks and exposed-rock exclusions. Static bank/rock layer above river; distance-limited wave+flow cannot sample protected rock/bank pixels. Original plate remains unchanged; no AI inpainting is claimed.",
+  "riverGuard": {
+    "stationaryRocks": [
+      "center-rock",
+      "near-left-islet",
+      "distant-rock"
+    ],
+    "maximumTravelTexels": 39.60575994548432,
+    "rampTexels": 41,
+    "safetyTexels": 3,
+    "method": "Offline conservative chessboard distance to non-water; influence rounded down. Bound includes both operators at full authored strength, all phases and bilinear slack."
+  },
+  "layers": [
+    {
+      "id": "plate",
+      "source": "plate",
+      "behaviors": []
+    },
+    {
+      "id": "river",
+      "source": "plate",
+      "behaviors": [
+        "wave",
+        "flow"
+      ]
+    },
+    {
+      "id": "stationary-banks-rocks",
+      "source": "plate",
+      "behaviors": []
+    },
+    {
+      "id": "mushroom-light",
+      "source": "plate",
+      "behaviors": [
+        "pulse",
+        "glow",
+        "colorShift"
+      ]
+    },
+    {
+      "id": "river-mist",
+      "source": "mist",
+      "behaviors": [
+        "translate",
+        "displace",
+        "opacity"
+      ]
+    },
+    {
+      "id": "left-ferns",
+      "source": "foliage",
+      "behaviors": [
+        "bend",
+        "rotate"
+      ]
+    },
+    {
+      "id": "right-ferns",
+      "source": "foliage",
+      "behaviors": [
+        "scale",
+        "parallax"
+      ]
+    }
+  ],
+  "limitations": [
+    "Flow is bounded periodic texture deformation, not continuously advected water",
+    "No authored portal for the new scene",
+    "Target-device performance and artistic approval still required"
+  ]
+}

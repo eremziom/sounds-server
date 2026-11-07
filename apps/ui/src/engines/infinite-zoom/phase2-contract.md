@@ -55,6 +55,28 @@ LOD boundaries. This version supports full-frame LOD, not sparse tiled patches.
 
 ## Operators
 
+### Additive rigid-layer spin for mechanical artwork
+
+Schema 2 layers may optionally declare `spin: {pivotX,pivotY,turnsPerSecond,
+phaseTurns?}`. The pivot is in the shared artwork domain, signed speed is
+−0.5..0.5 turns/second and initial phase is −1..1 turns (default 0). Unknown fields,
+nonfinite values, schema 1 usage and any spinning coverage base are rejected.
+It is a rigid layer transform, separate from the existing periodic `rotate`
+deformation operator. Alpha and visibility masks rotate with the full layer;
+other layers retain their own geometry. Authoring must provide complete backing,
+correct pivots, travel/occlusion margins and appropriate matte boundaries.
+
+Each artwork instance integrates bounded angles in its existing fixed 1/60 step.
+The studio `rotate` control scales this drive's speed; zero freezes the current
+angle and changing speed does not recompute it from elapsed time. Audio modulation
+does not alter the drive ratio. Reset restores initial phase and retains control
+settings. Parking a studio preserves angles and context restore uses its existing
+snapshot. There is no new timer, renderer, clock or audio owner. This additive
+capability was needed for the user-authorized Clockwork artwork; the twelve
+existing operator definitions and their hard constraints remain unchanged.
+
+### Existing behavior operators
+
 Every operator has stable `id`, integer `order`, `kind` and typed `params`.
 Common optional fields: `enabled` (default true), `weight` (0..1),
 `influenceMaskAssetId` and `modulation`. All parameters are finite and checked.
@@ -75,12 +97,23 @@ not oscillate on its own. Repeated placements share the same artwork phase.
 | pulse | amount 0..1 | oscillatory light intensity |
 | opacity | base,amount 0..1, base±amount within 0..1 | bounded alpha envelope |
 | colorShift | hue ±π; saturation ±1; lightness ±0.5 | hue rotation, saturation multiplier and lightness offset |
-| glow | amount,threshold 0..1 | local emissive contribution above threshold |
+| glow | amount,threshold 0..1; optional sharpness 1..16, intensity 1..3, color RGB 0..1 | local emission or tinted specular contribution above threshold |
 
 Flow is a bounded procedural deformation, not accumulated particle advection.
 Glow is emission in the existing composition pass, not a screen-space bloom
 buffer. These choices keep memory bounded and map requirements explicit. A
 future advection/bloom implementation must declare its additional contract.
+Optional `sharpness` raises the bounded glow envelope `(0.5+0.5*sin(phase))` to
+that exponent. Existing definitions keep their original envelope. It changes
+duration around a peak, never peak intensity or the hard constraint budget.
+Authored influence maps select material highlights independently of this timing.
+`intensity` defaults to 1 and multiplies the emission amplitude; its full maximum
+is included in the existing hard intensity budget, not exempted by a small mask.
+Without `color`, legacy per-channel emission is unchanged. Optional immutable
+RGB `color` adds a tinted specular contribution from linear source luminance above
+threshold. It fades at alpha 0.8..1, preserving translucent silhouette pixels and
+openings. The artwork still authors spatial highlight masks; this does not infer
+material, add global exposure, allocate bloom targets or change the renderer clock.
 
 Inheritance is artwork → layer → region; the same ID replaces an inherited
 definition. `enabled:false` explicitly disables inherited behavior. Stable order

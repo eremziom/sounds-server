@@ -1,7 +1,7 @@
 export type EngineStatus = "idle" | "preparing" | "ready" | "running" |
   "paused" | "stopped" | "suspended" | "error" | "disposed";
 
-export type SuspensionReason = "hidden" | "buffering" | "seeking" | "context-lost";
+export type SuspensionReason = "hidden" | "buffering" | "seeking" | "context-lost" | "artwork-loading";
 
 export interface SessionSnapshot {
   readonly seed: number;

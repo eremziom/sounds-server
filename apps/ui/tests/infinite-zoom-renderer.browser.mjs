@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
@@ -16,7 +17,7 @@ const server = createServer(async (request, response) => {
     const pathname = new URL(request.url, "http://localhost").pathname;
     if (pathname === "/") {
       response.setHeader("Content-Type", "text/html");
-      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script><script type="module" src="/transition-fixture.mjs"></script><script type="module" src="/samples-fixture.mjs"></script><script type="module" src="/embedded-fixture.mjs"></script><script type="module" src="/chain-fixture.mjs"></script><script type="module" src="/phase2-fixture.mjs"></script>`);
+      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script><script type="module" src="/transition-fixture.mjs"></script><script type="module" src="/samples-fixture.mjs"></script><script type="module" src="/embedded-fixture.mjs"></script><script type="module" src="/chain-fixture.mjs"></script><script type="module" src="/phase2-fixture.mjs"></script><script type="module" src="/pilot-fixture.mjs"></script>`);
       return;
     }
     let source;
@@ -33,6 +34,15 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL("./helpers/infinite-zoom-transition-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/samples-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-samples-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/pilot-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-pilot-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/layered-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-layered-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/clockwork-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-clockwork-browser-fixture.mjs", import.meta.url));
+    } else if (/^\/infinite-zoom\/samples\/(forest-pilot|forest-layered|clockwork)\/[a-zA-Z0-9-]+\.(json|svg|png)$/.test(pathname)) {
+      response.setHeader("Content-Type",pathname.endsWith(".json")?"application/json":pathname.endsWith(".png")?"image/png":"image/svg+xml");
+      response.end(await readFile(new URL(pathname.slice(1),publicRoot)));return;
     } else if (pathname === "/phase2-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-phase2-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/phase2-data.mjs") {
@@ -43,11 +53,11 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL("./helpers/infinite-zoom-embedded-browser-fixture.mjs", import.meta.url));
     } else if (/^\/infinite-zoom\/samples\/(forest|nebula|underwater-cavern)\/(manifest\.json|backdrop\.png|foreground\.png|influence\.svg)$/.test(pathname)) {
       response.setHeader("Content-Type", pathname.endsWith(".json") ? "application/json" : pathname.endsWith(".png") ? "image/png" : "image/svg+xml");
-      response.end(await readFile(new URL(pathname.slice(1), publicRoot)));
+      const bytes=await readFile(new URL(pathname.slice(1),publicRoot));response.setHeader("Content-Length",bytes.length);response.end(bytes);
       return;
     } else if (/^\/infinite-zoom\/samples\/foundation\/(manifest\.json|motion-manifest\.json|destination\.json|destination-backdrop\.svg|destination-foreground\.svg|backdrop\.svg|foreground\.svg|influence\.svg)$/.test(pathname)) {
       response.setHeader("Content-Type", pathname.endsWith(".json") ? "application/json" : "image/svg+xml");
-      response.end(await readFile(new URL(pathname.slice(1), publicRoot)));
+      const bytes=await readFile(new URL(pathname.slice(1),publicRoot));response.setHeader("Content-Length",bytes.length);response.end(bytes);
       return;
     } else { response.writeHead(404).end(); return; }
     response.setHeader("Content-Type", "text/javascript");
@@ -59,20 +69,52 @@ let browser;
 try {
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
-  browser = await startChromium();
+  browser = await startChromium({profileRoot:fileURLToPath(new URL("../../../.tmp/browser-profiles/",import.meta.url))});
   const { send, listeners } = browser;
-  const errors = [];
+  const errors = [], networkFailures = [], requests = new Map();
+  await send("Network.enable");
+  listeners.set("Network.requestWillBeSent",event=>requests.set(event.requestId,event.request.url));
+  listeners.set("Network.loadingFailed",event=>networkFailures.push({url:requests.get(event.requestId),networkError:event.errorText}));
   listeners.set("Runtime.exceptionThrown", event => errors.push(event));
   listeners.set("Runtime.consoleAPICalled", event => { if (event.type === "error") errors.push(event); });
   await send("Page.enable"); await send("Runtime.enable");
   await send("Page.navigate", { url: `http://127.0.0.1:${server.address().port}` });
   let loaded = false;
   for (let i = 0; i < 100; i++) {
-    loaded = (await send("Runtime.evaluate", { expression: "typeof window.runFoundationRenderer === 'function' && typeof window.runTransitionRenderer === 'function' && typeof window.runSampleArtwork === 'function' && typeof window.runDemoChain === 'function'", returnByValue: true })).result.value;
+    loaded = (await send("Runtime.evaluate", { expression: "typeof window.runFoundationRenderer === 'function' && typeof window.runTransitionRenderer === 'function' && typeof window.runSampleArtwork === 'function' && typeof window.runDemoChain === 'function' && typeof window.runForestPilot === 'function'", returnByValue: true })).result.value;
     if (loaded) break;
     await delay(50);
   }
   assert.ok(loaded, JSON.stringify(errors));
+  const reportDirectory = new URL("../../../.tmp/infinite-zoom-artwork/", import.meta.url);
+  await mkdir(reportDirectory, {recursive:true});
+  async function runLayered(){
+    await send("Runtime.evaluate",{expression:"import('/layered-fixture.mjs')",awaitPromise:true});
+    const result=await send("Runtime.evaluate",{expression:"window.runLayeredArtwork()",awaitPromise:true,returnByValue:true});
+    assert.equal(result.exceptionDetails,undefined,JSON.stringify(result.exceptionDetails));assert.deepEqual(errors,[]);
+    console.log("Infinite Zoom layered artwork:",JSON.stringify(result.result.value));
+    const names=await send("Runtime.evaluate",{expression:"Object.keys(window.layeredCaptures)",returnByValue:true});
+    for(const name of names.result.value){const frame=await send("Runtime.evaluate",{expression:`window.layeredCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`forest-layered-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
+  }
+  async function runClockwork(){
+    await send("Runtime.evaluate",{expression:"import('/clockwork-fixture.mjs')",awaitPromise:true});
+    const result=await send("Runtime.evaluate",{expression:"window.runClockworkArtwork()",awaitPromise:true,returnByValue:true});
+    assert.equal(result.exceptionDetails,undefined,JSON.stringify(result.exceptionDetails));assert.deepEqual(errors,[]);
+    console.log("Infinite Zoom clockwork:",JSON.stringify(result.result.value));
+    const names=await send("Runtime.evaluate",{expression:"Object.keys(window.clockworkCaptures)",returnByValue:true});
+    for(const name of names.result.value){const frame=await send("Runtime.evaluate",{expression:`window.clockworkCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`clockwork-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
+  }
+  if (process.argv.includes("--clockwork-only")) {
+    await runClockwork();
+  } else if (process.argv.includes("--layered-only")) {
+    await runLayered();
+  } else if (process.argv.includes("--pilot-only")) {
+    const pilot=await send("Runtime.evaluate",{expression:"window.runForestPilot()",awaitPromise:true,returnByValue:true});
+    assert.equal(pilot.exceptionDetails,undefined,JSON.stringify(pilot.exceptionDetails));
+    assert.deepEqual(errors,[]);console.log("Infinite Zoom forest pilot:",JSON.stringify(pilot.result.value));
+    const captures=await send("Runtime.evaluate",{expression:"Object.keys(window.forestPilotCaptures)",returnByValue:true});
+    for(const name of captures.result.value){const frame=await send("Runtime.evaluate",{expression:`window.forestPilotCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`forest-pilot-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
+  } else {
   const result = await send("Runtime.evaluate", { expression: "window.runFoundationRenderer()", awaitPromise: true, returnByValue: true });
   assert.equal(result.exceptionDetails, undefined, JSON.stringify(result.exceptionDetails));
   assert.deepEqual(errors, [], "No browser errors or shader failures");
@@ -84,11 +126,10 @@ try {
   assert.equal(transition.result.value.transitions, true);
   console.log("Infinite Zoom zoomThrough:", JSON.stringify(transition.result.value));
   const samples = [];
-  const reportDirectory = new URL("../../../.tmp/infinite-zoom-artwork/", import.meta.url);
-  await mkdir(reportDirectory, { recursive: true });
+
   for (const name of ["forest", "nebula", "underwater-cavern"]) {
     const sample = await send("Runtime.evaluate", { expression: `window.runSampleArtwork(${JSON.stringify(name)})`, awaitPromise: true, returnByValue: true });
-    assert.equal(sample.exceptionDetails, undefined, JSON.stringify(sample.exceptionDetails));
+    assert.equal(sample.exceptionDetails, undefined, JSON.stringify({exception:sample.exceptionDetails,errors,networkFailures}));
     assert.deepEqual(errors, [], "No sample artwork browser/shader errors");
     console.log("Infinite Zoom sample:", JSON.stringify(sample.result.value));
     samples.push(sample.result.value);
@@ -128,7 +169,16 @@ try {
   assert.deepEqual(errors, [], "No Phase 2 shader/browser errors");
   assert.equal(phase2.result.value.operators.length,12);
   console.log("Infinite Zoom Phase 2:",JSON.stringify(phase2.result.value));
-  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ phase2:phase2.result.value, samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
+  const pilot = await send("Runtime.evaluate", { expression:"window.runForestPilot()",awaitPromise:true,returnByValue:true });
+  assert.equal(pilot.exceptionDetails,undefined,JSON.stringify(pilot.exceptionDetails));
+  assert.deepEqual(errors,[],"No pilot shader/browser errors");
+  console.log("Infinite Zoom forest pilot:",JSON.stringify(pilot.result.value));
+  const pilotFrames=await send("Runtime.evaluate",{expression:"Object.keys(window.forestPilotCaptures)",returnByValue:true});
+  for(const name of pilotFrames.result.value){const frame=await send("Runtime.evaluate",{expression:`window.forestPilotCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`forest-pilot-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
+  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ pilot:pilot.result.value, phase2:phase2.result.value, samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
+  await runLayered();
+  await runClockwork();
+  }
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

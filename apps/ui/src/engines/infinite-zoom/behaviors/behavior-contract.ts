@@ -23,7 +23,7 @@ export type BehaviorDescriptor = CommonBehavior & (
   { readonly kind: "flow"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "opacity"; readonly params: Periodic & { readonly base: number; readonly amount: number } } |
   { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number } } |
-  { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number } }
+  { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number; readonly sharpness?: number; readonly intensity?: number; readonly color?: readonly [number,number,number] } }
 );
 
 function finite(value: unknown, min: number, max: number): number {
@@ -96,8 +96,13 @@ export function parseBehaviors(input: unknown): readonly BehaviorDescriptor[] {
         keys = ["frequencyHz", "phase", "hue", "saturation", "lightness"];
         behavior = { ...common, kind: "colorShift", params: { ...periodic, hue: finite(params.hue, -Math.PI, Math.PI), saturation: finite(params.saturation, -1, 1), lightness: finite(params.lightness, -0.5, 0.5) } }; break;
       case "glow":
-        keys = ["frequencyHz", "phase", "amount", "threshold"];
-        behavior = { ...common, kind: "glow", params: { ...periodic, amount: finite(params.amount, 0, 1), threshold: finite(params.threshold, 0, 1) } }; break;
+        keys = ["frequencyHz", "phase", "amount", "threshold", "sharpness", "intensity", "color"];
+        if(params.color!==undefined&&(!Array.isArray(params.color)||params.color.length!==3))throw new Error("Invalid glow color");
+        behavior = { ...common, kind: "glow", params: { ...periodic, amount: finite(params.amount, 0, 1), threshold: finite(params.threshold, 0, 1),
+          ...(params.sharpness === undefined ? {} : {sharpness:finite(params.sharpness,1,16)}),
+          ...(params.intensity === undefined ? {} : {intensity:finite(params.intensity,1,3)}),
+          ...(params.color === undefined ? {} : {color:Object.freeze((params.color as unknown[]).map(c=>finite(c,0,1))) as readonly [number,number,number]}),
+        } }; break;
       default: throw new Error(`Unsupported behavior kind: ${data.kind}`);
     }
     if (Object.keys(params).some(key => !keys.includes(key))) throw new Error("Unsupported behavior parameter");
@@ -129,7 +134,7 @@ export function behaviorEnvelope(behavior: BehaviorDescriptor) {
     case "bend": displacement = Math.abs(behavior.params.amount); slope = 2*displacement/2160; break;
     case "displace": case "flow": displacement = behavior.params.amplitude*Math.SQRT2; break;
     case "pulse": intensity = 1+behavior.params.amount*weight; break;
-    case "glow": intensity = 1+behavior.params.amount*weight; break;
+    case "glow": intensity = 1+behavior.params.amount*(behavior.params.intensity ?? 1)*weight; break;
   }
   return { displacement: displacement*weight, slope: slope*weight, intensity };
 }

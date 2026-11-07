@@ -83,7 +83,8 @@ export function buildBehaviorShader(groups: readonly BehaviorGroupOutput[]) {
     glows.push(`vec3 emission${g}=vec3(0.0);`);
     for (const [e,effect] of group.effects.entries()) if (effect.kind === "glow") {
       const name=`effect_${g}_${e}`, w=effect.influenceMaskAssetId?`texture2D(influence_${g}_${e},vUv).r`:"1.0";
-      glows.push(`emission${g} += max(color.rgb-vec3(${name}.y),vec3(0.0))*${name}.x*${w};`);
+      const source=effect.color ? `vec3(${effect.color.map(c=>c.toFixed(8)).join(",")})*max(dot(color.rgb,vec3(0.2126,0.7152,0.0722))-${name}.y,0.0)*smoothstep(0.8,1.0,color.a)` : `max(color.rgb-vec3(${name}.y),vec3(0.0))`;
+      glows.push(`emission${g} += ${source}*${name}.x*${w};`);
     }
     if (g === 0) { colors.push("vec3 shiftedColor=shifted0; float behaviorAlpha=alpha0;"); glows.push("vec3 emission=emission0;"); }
     else { const w=`texture2D(region_${g},vUv).r`; colors.push(`shiftedColor=mix(shiftedColor,shifted${g},${w}); behaviorAlpha=mix(behaviorAlpha,alpha${g},${w});`); glows.push(`emission=mix(emission,emission${g},${w});`); }

@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 2,
+  "id": "forest-layered",
+  "version": "0.2.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "plate",
+      "uri": "/infinite-zoom/samples/forest-layered/plate.svg",
+      "kind": "image",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "foliage",
+      "uri": "/infinite-zoom/samples/forest-layered/foliage.svg",
+      "kind": "image",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mist",
+      "uri": "/infinite-zoom/samples/forest-layered/mist.svg",
+      "kind": "image",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-water",
+      "uri": "/infinite-zoom/samples/forest-layered/mask-water.png",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-stationary",
+      "uri": "/infinite-zoom/samples/forest-layered/mask-stationary.png",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "water-influence",
+      "uri": "/infinite-zoom/samples/forest-layered/water-influence.png",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-left",
+      "uri": "/infinite-zoom/samples/forest-layered/mask-left.svg",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-right",
+      "uri": "/infinite-zoom/samples/forest-layered/mask-right.svg",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-lights",
+      "uri": "/infinite-zoom/samples/forest-layered/mask-lights.svg",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "leaf-influence",
+      "uri": "/infinite-zoom/samples/forest-layered/leaf-influence.svg",
+      "kind": "mask",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "depth",
+      "uri": "/infinite-zoom/samples/forest-layered/depth.svg",
+      "kind": "depth",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "water-field",
+      "uri": "/infinite-zoom/samples/forest-layered/water-field.svg",
+      "kind": "flow",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "plate",
+      "zIndex": 0,
+      "imageAssetId": "plate"
+    },
+    {
+      "id": "river",
+      "zIndex": 1,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-water",
+      "behaviors": [
+        {
+          "id": "wave",
+          "kind": "wave",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "amplitude": 30,
+            "wavelength": 1100,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "water-influence"
+        },
+        {
+          "id": "flow",
+          "kind": "flow",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.13,
+            "phase": 0,
+            "amplitude": 46,
+            "fieldAssetId": "water-field"
+          },
+          "influenceMaskAssetId": "water-influence"
+        }
+      ]
+    },
+    {
+      "id": "stationary-banks-rocks",
+      "zIndex": 2,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-stationary"
+    },
+    {
+      "id": "mushroom-light",
+      "zIndex": 3,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-lights",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.16,
+            "phase": 0,
+            "amount": 0.5
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "amount": 0.6,
+            "threshold": 0.15
+          }
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.09,
+            "phase": 0,
+            "hue": 0.2,
+            "saturation": 0.15,
+            "lightness": 0.025
+          }
+        }
+      ]
+    },
+    {
+      "id": "river-mist",
+      "zIndex": 4,
+      "imageAssetId": "mist",
+      "behaviors": [
+        {
+          "id": "translate",
+          "kind": "translate",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.09,
+            "phase": 0,
+            "x": 45,
+            "y": 7
+          }
+        },
+        {
+          "id": "displace",
+          "kind": "displace",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.12,
+            "phase": 0,
+            "amplitude": 35,
+            "fieldAssetId": "water-field"
+          }
+        },
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.1,
+            "phase": 0,
+            "base": 0.75,
+            "amount": 0.25
+          }
+        }
+      ]
+    },
+    {
+      "id": "left-ferns",
+      "zIndex": 5,
+      "imageAssetId": "foliage",
+      "maskAssetId": "mask-left",
+      "behaviors": [
+        {
+          "id": "bend",
+          "kind": "bend",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.24,
+            "phase": 0,
+            "amount": 160,
+            "pivotX": 690,
+            "pivotY": 0,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "leaf-influence"
+        },
+        {
+          "id": "rotate",
+          "kind": "rotate",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "radians": 0.022,
+            "pivotX": 690,
+            "pivotY": 1960
+          },
+          "influenceMaskAssetId": "leaf-influence"
+        }
+      ]
+    },
+    {
+      "id": "right-ferns",
+      "zIndex": 6,
+      "imageAssetId": "foliage",
+      "maskAssetId": "mask-right",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "x": 0.04,
+            "y": 0.025,
+            "pivotX": 3380,
+            "pivotY": 2040
+          },
+          "influenceMaskAssetId": "leaf-influence"
+        },
+        {
+          "id": "parallax",
+          "kind": "parallax",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "amount": 90,
+            "depthAssetId": "depth",
+            "referenceDepth": 0.3
+          },
+          "influenceMaskAssetId": "leaf-influence"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "plate"
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ]
+}

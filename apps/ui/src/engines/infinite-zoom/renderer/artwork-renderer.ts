@@ -183,6 +183,36 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   } catch (failure) { dispose(); throw failure; }
   return {
     render, setComposition, detach, evictOptional,
+    getComposition() { return composition; },
+    getArtworks() { return Object.freeze([...entries.values()].map(value=>({loaded:value.loaded,instance:value.instance}))); },
+    /** Exchange GPU residency in the same context. CPU leases remain owned by
+     * the journey. Old textures are released before warming the replacement;
+     * failures rebuild the previous composition from its retained descriptors. */
+    replaceArtworks(artworks: readonly { loaded: LoadedArtwork; instance: ArtworkInstance }[], next: SceneComposition,
+      transaction: { apply(): void; rollback(): void }) {
+      checkAlive();
+      if (!available) throw new Error("GPU unavailable during artwork selection");
+      const bytes=artworks.reduce((sum,value)=>sum+value.loaded.manifest.assets.filter(a=>a.critical).reduce((n,a)=>n+assetTextureBytes(a),0),0);
+      if (bytes+canvas.width*canvas.height*4 > (options.gpuBudgetBytes ?? 256*1024*1024)) throw new Error("GPU_BUDGET_EXCEEDED: artwork selection");
+      const previous=[...entries], previousComposition=composition;
+      evictOptional();
+      for (const [,value] of previous) value.gpu?.dispose();
+      entries.clear(); scene.clear();
+      try {
+        transaction.apply();
+        for (const artwork of artworks) {
+          artwork.loaded.evictOptional();
+          const value: Entry={ ...artwork,gpu:null }; entries.set(artwork.instance.id,value); value.gpu=buildArtwork(value);
+        }
+        setComposition(next); render();
+      } catch (failure) {
+        for (const value of entries.values()) value.gpu?.dispose();
+        entries.clear(); scene.clear(); renderer.resetState(); transaction.rollback();
+        for (const [id,value] of previous) { value.gpu=buildArtwork(value); entries.set(id,value); }
+        composition=previousComposition; render();
+        throw failure;
+      }
+    },
     setDetailLocked(locked: boolean) { detailLocked=locked; },
     setDetailEnabled(enabled: boolean) { checkAlive(); if (enabled === detailEnabled) return; detailEnabled = enabled; if (!enabled) evictOptional(); },
     attach(artwork: LoadedArtwork, artworkInstance: ArtworkInstance) {

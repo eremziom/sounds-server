@@ -11,6 +11,12 @@ interface Trajectory {
   elapsed: number;
 }
 
+export interface SavedCameraState {
+  readonly origin: CameraPose; readonly pose: CameraPose; readonly velocity: CameraPose;
+  readonly path: Readonly<Trajectory> | null; readonly queue: readonly CameraWaypoint[];
+  readonly bookmarks: readonly (readonly [string, CameraPose])[]; readonly constraintReached: boolean;
+}
+
 /** Cubic Hermite retargeting preserves incoming position/velocity and ends at
  * the exact target with zero velocity. No wall clock or scheduler lives here. */
 function sample(path: Trajectory, tick: number) {
@@ -56,6 +62,22 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
 
   return {
     retarget,
+    captureState(): SavedCameraState {
+      return Object.freeze({ origin, pose, velocity, path:path ? Object.freeze({ ...path }) : null,
+        queue:Object.freeze([...queue]), bookmarks:Object.freeze([...bookmarks].map(([id,value]) => Object.freeze([id,value] as const))), constraintReached });
+    },
+    restoreState(state: SavedCameraState) {
+      validatePose(state.pose);
+      if (!isPoseValid(state.pose)) throw new Error("COVERAGE_INVALID: saved camera");
+      if (state.path) for (let tick=state.path.elapsed; tick<=state.path.ticks; tick++) {
+        const candidate=sample(state.path,tick).pose;
+        validatePose(candidate);
+        if (!isPoseValid(candidate)) throw new Error("COVERAGE_INVALID: saved camera trajectory");
+      }
+      origin=state.origin; pose=state.pose; velocity=state.velocity; path=state.path ? { ...state.path } : null;
+      queue=[...state.queue]; constraintReached=state.constraintReached;
+      bookmarks.clear(); for (const [id,value] of state.bookmarks) bookmarks.set(id,value);
+    },
     followPath(waypoints: readonly CameraWaypoint[], options?: CameraPathOptions) {
       const planned = planCameraPath(pose,waypoints,options);
       // Transactional preflight uses temporary state and preserves the live

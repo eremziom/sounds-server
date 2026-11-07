@@ -92,8 +92,12 @@ export async function loadArtwork(input: unknown, signal: AbortSignal, decode: A
 export async function decodeArtworkAsset(asset: ArtworkAsset, signal: AbortSignal): Promise<DecodedArtworkAsset> {
   const response = await fetch(asset.uri, { signal, credentials: "same-origin" });
   if (!response.ok) throw new Error(`RESOURCE_LOAD_FAILED: ${asset.id} (${response.status})`);
-  const blob = await response.blob();
+  // Large response.blob() downloads can spill into Chromium's profile storage
+  // and fail when that drive has little space. Artwork is decoded sequentially;
+  // consume bytes in memory before creating the short-lived image Blob instead.
+  const bytes = await response.arrayBuffer();
   signal.throwIfAborted();
+  const blob = new Blob([bytes], { type: response.headers.get("content-type")?.split(";")[0] || (asset.uri.endsWith(".svg") ? "image/svg+xml" : "") });
   // Chromium cannot decode SVG Blob directly with createImageBitmap. Decode
   // through an image and rasterize first; use the same path for all formats.
   const image = new Image();

@@ -1,3 +1,4 @@
+import type { BehaviorKind, PilotControl, VisualScene } from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
 import type { LogicalRecording } from "../../engines/infinite-zoom/diagnostics/logical-replay.ts";
 import type { EngineStatus } from "../../engines/infinite-zoom/core/contracts.ts";
 
@@ -11,6 +12,8 @@ export interface VisualView {
   readonly diagnostics?: Readonly<Record<string, unknown>>;
   readonly canTransition?: boolean;
   readonly looping?: boolean;
+  readonly scene?: VisualScene; readonly sceneLoading?: boolean;
+  readonly pilotControls?: readonly PilotControl[]; readonly pilotCameraMotion?: boolean;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;
@@ -19,6 +22,10 @@ export interface VisualConnection {
   transition(): Promise<void>;
   setLoop?(enabled: boolean): void;
   exportReplay?(): LogicalRecording | null;
+  selectScene?(scene: VisualScene): Promise<void>;
+  setPilotControl?(kind: BehaviorKind, enabled: boolean, strength: number): void;
+  setPilotPreset?(preset: "subtle" | "all" | "none" | BehaviorKind): void;
+  setPilotCameraMotion?(enabled: boolean): void;
   reset(): void;
   dispose(): void;
 }
@@ -52,6 +59,10 @@ export function createVisualBridge() {
     command(command: Parameters<VisualConnection["command"]>[0]) { connection?.command(command); },
     transition() { return connection?.transition() ?? Promise.reject(new Error("Visual host is not mounted")); },
     setLoop(enabled: boolean) { connection?.setLoop?.(enabled); },
+    selectScene(scene: VisualScene) { return connection?.selectScene?.(scene) ?? Promise.reject(new Error("Visual host is not mounted")); },
+    setPilotControl(kind: BehaviorKind, enabled: boolean, strength: number) { connection?.setPilotControl?.(kind,enabled,strength); },
+    setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) { connection?.setPilotPreset?.(preset); },
+    setPilotCameraMotion(enabled: boolean) { connection?.setPilotCameraMotion?.(enabled); },
     exportReplay() { return connection?.exportReplay?.() ?? null; },
     reset() { connection?.reset(); },
     dispose() { const current = connection; connection = null; current?.dispose(); mode = "background"; view = Object.freeze({ ...view, status: "disposed", ready: false, retryable: false }); notify(); },

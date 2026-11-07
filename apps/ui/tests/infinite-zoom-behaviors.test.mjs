@@ -38,6 +38,31 @@ test("inheritance overrides stable IDs and resolves explicit order then lexical 
   assert.equal(groups[1].behaviors[1].params.x, 30);
 });
 
+test("glow sharpness makes short glints while preserving legacy peaks and hard intensity bounds",()=>{
+  const descriptor=sharpness=>({id:"glint",kind:"glow",order:0,params:{frequencyHz:1,phase:0,amount:1,threshold:.1,...(sharpness===undefined?{}:{sharpness})}});
+  const evaluator=sharpness=>createBehaviorEvaluator([{id:"layer",behaviors:parseBehaviors([descriptor(sharpness)])}]);
+  const legacy=evaluator(),explicit=evaluator(1),glint=evaluator(6);
+  assert.equal(legacy.getSnapshot()[0].effects[0].amount,.5);
+  assert.equal(glint.getSnapshot()[0].effects[0].amount,.5**6);
+  for(let i=0;i<15;i++){legacy.step(1/60);explicit.step(1/60);glint.step(1/60);}
+  assert.deepEqual(legacy.getSnapshot(),explicit.getSnapshot());
+  assert.equal(glint.getSnapshot()[0].effects[0].amount,1);
+  validateComposition(parseBehaviors([descriptor(16)]));
+  for(const sharpness of [0,17,NaN,Infinity])assert.throws(()=>parseBehaviors([descriptor(sharpness)]));
+});
+
+test("colored specular emission validates immutable color and includes intensity in the hard budget",()=>{
+  const input={id:"specular",kind:"glow",order:0,params:{frequencyHz:1,phase:Math.PI/2,amount:1,threshold:.015,intensity:3,color:[1,.92,.72]}};
+  const parsed=parseBehaviors([input]);input.params.color[0]=0;
+  assert.equal(parsed[0].params.color[0],1);assert.ok(Object.isFrozen(parsed[0].params.color));validateComposition(parsed);
+  assert.throws(()=>validateComposition(parseBehaviors([{...input,params:{...input.params,intensity:3}},pulse()])));
+  const evaluator=createBehaviorEvaluator([{id:"layer",behaviors:parsed}]);
+  assert.equal(evaluator.getSnapshot()[0].effects[0].amount,3);assert.deepEqual(evaluator.getSnapshot()[0].effects[0].color,[1,.92,.72]);
+  for(const params of [{intensity:3.1},{intensity:0},{color:[1,1]},{color:[1,1,1,1]},{color:[1,NaN,1]},{color:[1,1,2]}]){
+    assert.throws(()=>parseBehaviors([{...input,params:{...input.params,...params}}]));
+  }
+});
+
 test("hard constraints apply to the composed displacement, wave slope and pulse gain", () => {
   validateComposition(parseBehaviors([translate("a"), wave(), pulse()]));
   assert.throws(() => validateComposition(parseBehaviors([translate("a", 300), translate("b", 300)])), /Composed/);

@@ -1,0 +1,486 @@
+{
+  "schemaVersion": 2,
+  "id": "forest-pilot",
+  "version": "0.2.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "plate",
+      "uri": "/infinite-zoom/samples/forest/backdrop.png",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "foreground",
+      "uri": "/infinite-zoom/samples/forest/foreground.png",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "mask-translate",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-translate.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-translate",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-translate.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-rotate",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-rotate.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-rotate",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-rotate.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-scale",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-scale.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-scale",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-scale.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-parallax",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-parallax.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "mask-bend",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-bend.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-bend",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-bend.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-wave",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-wave.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-wave",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-wave.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-displace",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-displace.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-displace",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-displace.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-flow",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-flow.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-flow",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-flow.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-pulse",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-pulse.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "mask-opacity",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-opacity.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-opacity",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-opacity.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "mask-colorShift",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-colorShift.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "mask-glow",
+      "uri": "/infinite-zoom/samples/forest-pilot/mask-glow.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "objects-glow",
+      "uri": "/infinite-zoom/samples/forest-pilot/objects-glow.svg",
+      "kind": "image",
+      "width": 1280,
+      "height": 720,
+      "critical": true
+    },
+    {
+      "id": "depth",
+      "uri": "/infinite-zoom/samples/forest-pilot/depth.svg",
+      "kind": "depth",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "field",
+      "uri": "/infinite-zoom/samples/forest-pilot/field.svg",
+      "kind": "flow",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "influence",
+      "uri": "/infinite-zoom/samples/forest-pilot/influence.svg",
+      "kind": "mask",
+      "width": 960,
+      "height": 540,
+      "critical": true
+    },
+    {
+      "id": "fern-detail",
+      "uri": "/infinite-zoom/samples/forest-pilot/fern-detail.svg",
+      "kind": "detail",
+      "width": 3840,
+      "height": 2160,
+      "critical": false
+    }
+  ],
+  "layers": [
+    {
+      "id": "plate",
+      "zIndex": 0,
+      "imageAssetId": "plate"
+    },
+    {
+      "id": "translate",
+      "zIndex": 1,
+      "imageAssetId": "objects-translate",
+      "maskAssetId": "mask-translate",
+      "behaviors": [
+        {
+          "id": "translate",
+          "kind": "translate",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.28,
+            "phase": 0,
+            "x": 160,
+            "y": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "rotate",
+      "zIndex": 2,
+      "imageAssetId": "objects-rotate",
+      "maskAssetId": "mask-rotate",
+      "behaviors": [
+        {
+          "id": "rotate",
+          "kind": "rotate",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.34,
+            "phase": 0,
+            "radians": 0.11,
+            "pivotX": 1420,
+            "pivotY": 305
+          }
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "zIndex": 3,
+      "imageAssetId": "objects-scale",
+      "maskAssetId": "mask-scale",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.4,
+            "phase": 0,
+            "x": 0.08,
+            "y": 0.1,
+            "pivotX": 3000,
+            "pivotY": 1350
+          }
+        }
+      ]
+    },
+    {
+      "id": "parallax",
+      "zIndex": 4,
+      "imageAssetId": "foreground",
+      "maskAssetId": "mask-parallax",
+      "behaviors": [
+        {
+          "id": "parallax",
+          "kind": "parallax",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.28,
+            "phase": 0,
+            "amount": 256,
+            "depthAssetId": "depth",
+            "referenceDepth": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "bend",
+      "zIndex": 5,
+      "imageAssetId": "objects-bend",
+      "maskAssetId": "mask-bend",
+      "behaviors": [
+        {
+          "id": "bend",
+          "kind": "bend",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.34,
+            "phase": 0,
+            "amount": 256,
+            "pivotX": 650,
+            "pivotY": 0,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence"
+        }
+      ],
+      "lods": [
+        {
+          "assetId": "fern-detail",
+          "minPixelsPerTexel": 1.25
+        }
+      ]
+    },
+    {
+      "id": "wave",
+      "zIndex": 6,
+      "imageAssetId": "objects-wave",
+      "maskAssetId": "mask-wave",
+      "behaviors": [
+        {
+          "id": "wave",
+          "kind": "wave",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.4,
+            "phase": 0,
+            "amplitude": 90,
+            "wavelength": 1500,
+            "axis": "x"
+          }
+        }
+      ]
+    },
+    {
+      "id": "displace",
+      "zIndex": 7,
+      "imageAssetId": "objects-displace",
+      "maskAssetId": "mask-displace",
+      "behaviors": [
+        {
+          "id": "displace",
+          "kind": "displace",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.28,
+            "phase": 0,
+            "amplitude": 180,
+            "fieldAssetId": "field"
+          }
+        }
+      ]
+    },
+    {
+      "id": "flow",
+      "zIndex": 8,
+      "imageAssetId": "objects-flow",
+      "maskAssetId": "mask-flow",
+      "behaviors": [
+        {
+          "id": "flow",
+          "kind": "flow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.34,
+            "phase": 0,
+            "amplitude": 180,
+            "fieldAssetId": "field"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pulse",
+      "zIndex": 9,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-pulse",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.4,
+            "phase": 0,
+            "amount": 0.95
+          }
+        }
+      ]
+    },
+    {
+      "id": "opacity",
+      "zIndex": 10,
+      "imageAssetId": "objects-opacity",
+      "maskAssetId": "mask-opacity",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.28,
+            "phase": 0,
+            "base": 0.5,
+            "amount": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorShift",
+      "zIndex": 11,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-colorShift",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "hue": 2,
+            "saturation": 0.8,
+            "lightness": 0.18
+          }
+        }
+      ]
+    },
+    {
+      "id": "glow",
+      "zIndex": 12,
+      "imageAssetId": "objects-glow",
+      "maskAssetId": "mask-glow",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.4,
+            "phase": 0,
+            "amount": 1,
+            "threshold": 0
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "plate"
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ]
+}

@@ -28,6 +28,21 @@
 - Full Audio Data Contract, Journey Planner, all 12 behaviors, full Artwork Production Pipeline, and WebGPU are **outside the first vertical slice**.
 
 ## Engineering workflow
+
+### Mandatory artwork authoring instructions
+- For every new or revised Infinite Zoom artwork, read and follow
+  [the shared artwork-authoring guidelines](apps/ui/src/engines/infinite-zoom/artwork-authoring-guidelines.md)
+  before writing a scene brief, generating/editing images, authoring masks or
+  packaging the artwork. These rules apply regardless of subject or style.
+- Include the guideline version/link and scene-specific application in the
+  package's `authoring-brief.md`; carry relevant requirements into each generation
+  or editing prompt. Do not assume image tools read repository instructions.
+- Report motion/zoom QA evidence, uncertain boundaries and remaining corrections.
+  A still preview or changed-pixel test alone does not establish production readiness.
+- Describe engine extensions separately from artwork production. A future creator
+  must consume the shared guidelines rather than maintain a divergent copy.
+
+### Implementation workflow
 1. Inspect actual code and existing tests; identify ownership and potential conflicts.
 2. Propose a bounded file-level change, then implement only the authorized scope.
 3. Add focused tests for changed modules and direct dependencies; run those first.

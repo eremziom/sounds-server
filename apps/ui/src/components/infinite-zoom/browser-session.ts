@@ -1,3 +1,4 @@
+import {STUDIO_ARTWORKS,type BehaviorKind,type VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
 import { createInfiniteZoomController } from "../../engines/infinite-zoom/index.ts";
 import { createAudioModulation } from "../../engines/infinite-zoom/modulation/audio-modulation.ts";
 import { createAdaptiveQuality } from "../../engines/infinite-zoom/quality/adaptive-quality.ts";
@@ -20,7 +21,10 @@ export function createBrowserVisualSession(options: {
   let lease: Awaited<ReturnType<typeof prepareArtwork>> | null = null;
   let hasPlayed = false, disposed = false, fault = false;
   let targetSize = { width: 1, height: 1, dpr: 1, renderScale: 1 };
-  let pendingResize = false;
+  let pendingResize = false, sceneLoading=false;
+  const studioManifests=new Map<VisualScene,unknown>();
+  let scenePreparation: Promise<void> | null = null;
+  const selectionLifetime=new AbortController();
   const commands: Parameters<VisualBridge["command"]>[0][] = [];
   function measure() {
     const bounds = canvas.parentElement!.getBoundingClientRect();
@@ -90,7 +94,7 @@ export function createBrowserVisualSession(options: {
   let engine = buildEngine();
   const playback = bindPlaybackToVisuals(audio, document, () => engine, () => modulation.reset(), () => { hasPlayed = true; }, options.actualPlayback.current);
   function applyResize() {
-    if (!pendingResize || !lease || lease.transition.getSnapshot().qualityLocked || !lease.getDiagnostics().available) return;
+    if (!pendingResize || !lease || sceneLoading || lease.transition.getSnapshot().qualityLocked || !lease.getDiagnostics().available) return;
     try { lease.resize(targetSize); pendingResize = false; lastResizeError = false; }
     catch {
       // Keep the existing valid projection/frame. Never restart camera or
@@ -115,6 +119,8 @@ export function createBrowserVisualSession(options: {
       retryable: !hasPlayed && snapshot.status === "error",
       canTransition: lease?.transition.getSnapshot().canStart ?? false,
       looping: lease?.getLoop() ?? false,
+      scene:lease?.getScene() ?? "journey", sceneLoading,
+      pilotControls:lease?.getPilotControls(), pilotCameraMotion:lease?.getPilotCameraMotion() ?? false,
       diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
         tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
         resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
@@ -136,8 +142,9 @@ export function createBrowserVisualSession(options: {
   const observer = new ResizeObserver(() => { measure(); applyResize(); }); observer.observe(canvas.parentElement!);
   const timer = setInterval(publish, 200); // UI/resize polling only; never advances simulation.
   const connection = {
-    prepareForPlayback() {
+    async prepareForPlayback() {
       options.enableAnalysis();
+      if (scenePreparation) await scenePreparation;
       if (hasPlayed && (fault || engine.getSnapshot().status === "error")) return Promise.resolve();
       return prepare();
     },
@@ -152,6 +159,31 @@ export function createBrowserVisualSession(options: {
       if (!lease || disposed) return;
       lease.setLoop(enabled); publish();
     },
+    async selectScene(next: VisualScene) {
+      if (!lease || disposed || sceneLoading || next === lease.getScene()) return;
+      sceneLoading=true; commands.length=0;
+      engine.setSuspended("artwork-loading",true); publish();
+      const operation=(async()=>{
+        try {
+          const signal=AbortSignal.any([selectionLifetime.signal,AbortSignal.timeout(15000)]);
+          if (next !== "journey" && !studioManifests.has(next)) {
+            const response=await fetch(`/infinite-zoom/samples/${STUDIO_ARTWORKS[next]}/manifest.json`,{signal});
+            if (!response.ok) throw new Error("Cannot load pilot manifest");
+            studioManifests.set(next,await response.json());
+          }
+          await lease!.selectScene(next,studioManifests.get(next),signal); fault=false;
+        } catch (failure) { if (!disposed) fault=true; throw failure; }
+        finally {
+          sceneLoading=false;
+          if (!disposed) { engine.setSuspended("artwork-loading",false); publish(); }
+        }
+      })();
+      scenePreparation=operation;
+      try { await operation; } finally { if (scenePreparation===operation) scenePreparation=null; }
+    },
+    setPilotControl(kind: BehaviorKind, enabled: boolean, strength: number) { if (lease && !disposed && !sceneLoading) { lease.setPilotControl(kind,enabled,strength); publish(); } },
+    setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) { if (lease && !disposed && !sceneLoading) { lease.setPilotPreset(preset); publish(); } },
+    setPilotCameraMotion(enabled: boolean) { if (lease && !disposed && !sceneLoading) { lease.setPilotCameraMotion(enabled); publish(); } },
     exportReplay() { return lease?.exportReplay() ?? null; },
     reset() {
       if (!lease || disposed) return;
@@ -161,7 +193,7 @@ export function createBrowserVisualSession(options: {
     },
     dispose() {
       if (disposed) return; disposed = true;
-      observer.disconnect(); clearInterval(timer); playback.dispose(); commands.length = 0; engine.dispose(); lease = null;
+      selectionLifetime.abort(); observer.disconnect(); clearInterval(timer); playback.dispose(); commands.length = 0; engine.dispose(); lease = null;
     },
   };
   return { connection, prewarm: prepare };

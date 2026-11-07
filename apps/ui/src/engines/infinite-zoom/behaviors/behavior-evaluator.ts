@@ -1,3 +1,4 @@
+import { validateBehaviorControl, type BehaviorKind } from "../artwork/pilot-controls.ts";
 import { composeConstraints, type MotionConstraints } from "./motion-constraints.ts";
 import { createBindingEvaluator, type NormalizedSignals } from "../modulation/bindings.ts";
 import { resolveBehaviors, type BehaviorDescriptor } from "./behavior-contract.ts";
@@ -27,7 +28,7 @@ export type BehaviorOutput = Readonly<{ id: string; influenceMaskAssetId?: strin
   { kind: "displace" | "flow"; amplitude: number; fieldAssetId: string } |
   { kind: "opacity"; opacity: number } |
   { kind: "colorShift"; hue: number; saturation: number; lightness: number } |
-  { kind: "glow"; amount: number; threshold: number }
+  { kind: "glow"; amount: number; threshold: number; color?: readonly [number,number,number] }
 )>;
 
 export interface BehaviorGroupOutput {
@@ -55,13 +56,14 @@ export function behaviorGroups(artwork: readonly BehaviorDescriptor[], layer: {
 export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
   let tick = 0;
   let strength = 1;
+  const controls = new Map<BehaviorKind,number>();
   const bindings = groups.map(group => group.behaviors.map(b => createBindingEvaluator(b.modulation ?? [])));
   let gains = groups.map(group => group.behaviors.map(() => 1));
   function evaluate(): readonly BehaviorGroupOutput[] {
     return Object.freeze(groups.map((group,g) => Object.freeze({ id: group.id, influenceMaskAssetId: group.influenceMaskAssetId, maxDisplacement:group.constraints?.maxDisplacement ?? 512,
       effects: Object.freeze(group.behaviors.map((behavior,e) => {
         const phase = (behavior.params.phase + 2 * Math.PI * behavior.params.frequencyHz * (tick / 60)) % (2 * Math.PI);
-        const amount = behavior.enabled === false ? 0 : strength*(behavior.weight ?? 1)*(group.constraints?.softStrength ?? 1)*gains[g][e];
+        const amount = behavior.enabled === false ? 0 : strength*(controls.get(behavior.kind) ?? 1)*(behavior.weight ?? 1)*(group.constraints?.softStrength ?? 1)*gains[g][e];
         const oscillation = Math.sin(phase)*amount;
         const common = { id: behavior.id, influenceMaskAssetId: behavior.influenceMaskAssetId };
         switch (behavior.kind) {
@@ -76,7 +78,8 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
           case "displace": case "flow": return Object.freeze({ ...common, kind: behavior.kind, amplitude: behavior.params.amplitude*oscillation, fieldAssetId: behavior.params.fieldAssetId });
           case "opacity": return Object.freeze({ ...common, kind: "opacity" as const, opacity: 1+(behavior.params.base-1)*amount+behavior.params.amount*oscillation });
           case "colorShift": return Object.freeze({ ...common, kind: "colorShift" as const, hue: behavior.params.hue*oscillation, saturation: 1+behavior.params.saturation*oscillation, lightness: behavior.params.lightness*oscillation });
-          case "glow": return Object.freeze({ ...common, kind: "glow" as const, amount: behavior.params.amount*(0.5+0.5*Math.sin(phase))*amount, threshold: behavior.params.threshold });
+          case "glow": return Object.freeze({ ...common, kind: "glow" as const, amount: behavior.params.amount*(behavior.params.intensity ?? 1)*Math.pow(0.5+0.5*Math.sin(phase),behavior.params.sharpness ?? 1)*amount, threshold: behavior.params.threshold,
+            ...(behavior.params.color ? {color:behavior.params.color} : {}) });
           case "pulse": return Object.freeze({ ...common, kind: "pulse" as const, gain: 1 + behavior.params.amount * oscillation });
         }
       })),
@@ -91,6 +94,7 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
       gains = groups.map((group,g) => group.behaviors.map((_,e) => bindings[g][e].step(signals,dt)));
       tick++; strength = nextStrength; outputs = evaluate();
     },
+    setBehaviorStrength(kind: BehaviorKind, value: number) { validateBehaviorControl(kind,value); controls.set(kind,value); outputs=evaluate(); },
     getSnapshot: () => outputs,
     reset() { tick = 0; strength = 1; for (const group of bindings) for (const b of group) b.reset(); gains = groups.map(group => group.behaviors.map(() => 1)); outputs = evaluate(); },
   };

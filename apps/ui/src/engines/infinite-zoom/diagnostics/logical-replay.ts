@@ -19,14 +19,17 @@ export function createLogicalRecorder(seed: number, packages: LogicalRecording["
   if (!Number.isSafeInteger(seed) || seed < 0 || seed > 0xffff_ffff || !Number.isSafeInteger(capacity) || capacity < 1 || capacity > 432000) throw new Error("Invalid replay limits");
   if (!packages.length || packages.length > 64 || packages.some(p => !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(p.id) || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(p.version)) || new Set(packages.map(p => p.id)).size !== packages.length) throw new Error("Invalid replay package identity");
   const identities = Object.freeze(packages.map(p => Object.freeze({ id:p.id,version:p.version })));
-  let frames: ReplayFrame[] = [], pending: JourneyCommand[] = [], complete = true;
+  let frames: ReplayFrame[] = [], pending: JourneyCommand[] = [], complete = true, stopped = false;
   return {
+    stop() { stopped=true; complete=false; pending=[]; },
     command(command: JourneyCommand) {
+      if (stopped) return;
       if (!COMMANDS.includes(command)) throw new Error("Invalid replay command");
       if (pending.length >= 32) { complete = false; return; }
       pending.push(command);
     },
     capture(tick: number, signals: NormalizedSignals | null) {
+      if (stopped) return;
       if (!Number.isSafeInteger(tick) || tick !== frames.length+1) {
         if (frames.length === capacity && tick > capacity) { complete = false; pending = []; return; }
         throw new Error("Replay requires consecutive fixed ticks from reset");
@@ -41,7 +44,7 @@ export function createLogicalRecorder(seed: number, packages: LogicalRecording["
     },
     getSnapshot() { return Object.freeze({ frames:frames.length, capacity, complete }); },
     export(): LogicalRecording { return Object.freeze({ schemaVersion:1, seed, packages:identities, complete, frames:Object.freeze([...frames]) }); },
-    reset() { frames = []; pending = []; complete = true; },
+    reset() { frames = []; pending = []; complete = true; stopped=false; },
   };
 }
 

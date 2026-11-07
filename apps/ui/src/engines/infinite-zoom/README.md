@@ -1,5 +1,32 @@
 # Infinite Zoom engine — foundation and embedded zoomThrough
 
+## In-app production pilot (2026-11-07)
+
+**Time mechanism — black and gold** is another studio selection with five
+separated rigid rotors, cleaned raster alpha, fixed bearing caps and three
+applicable controls. See the [Clockwork package](../../../public/infinite-zoom/samples/clockwork/README.md)
+for authoring rules, source provenance and review evidence. Its optional schema 2
+layer `spin` runs on the existing instance step and retains angles across pause,
+studio switches and context recovery. It does not change the original Loop.
+
+The selector also offers **Forest stream — layered artwork**. Its actual painted
+water surface, transparent foliage and mist, shore/root influence masks and
+complete clean plate are documented in the
+[layered package](../../../public/infinite-zoom/samples/forest-layered/README.md).
+The studio packages retain separate cameras/phases and bounded CPU leases;
+only the selected one is GPU-resident. The generated source resolution is recorded
+truthfully; this pilot is not a native-4K master or a new portal in the Loop.
+
+The protected `/animations` page can select the Forest clearing pilot with twelve
+live strength/enable controls and immersive access. See the
+[pilot package](../../../public/infinite-zoom/samples/forest-pilot/README.md)
+for source provenance, clean-plate strategy, resource estimates and review gates.
+A scene selection saves/restores the existing journey in the same renderer and
+camera; it is not another portal. The pilot is a bounded test mode, with no paid
+image generation. Replay stops at a studio switch and resumes as a fresh recording
+only after journey Reset; preview controls are not silently omitted from a replay.
+
+
 ## Phase 2 runtime (2026-11-07)
 
 The runtime now supports all twelve typed operators, scoped hard/soft constraints,
