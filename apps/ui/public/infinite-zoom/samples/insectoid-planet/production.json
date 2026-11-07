@@ -1,0 +1,601 @@
+{
+  "schemaVersion": 1,
+  "artworkId": "insectoid-planet",
+  "version": "0.3.0",
+  "tool": "built-in image_gen",
+  "externalApiCalls": 0,
+  "sources": [
+    {
+      "file": "source.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "63422d1010861374abf1411abd001c94b7900eb77e8874fd71044e6eebdc1643"
+    },
+    {
+      "file": "vapor-source.png",
+      "width": 1671,
+      "height": 941,
+      "sha256": "37551ba789f6c425ddd8dbb19c77717f0f96c99418f71f8db111fbefc3b21a7b"
+    },
+    {
+      "file": "volcano-clean-source.png",
+      "width": 1671,
+      "height": 941,
+      "sha256": "4e1748f1ba56728bbc21856ce369f1788a298d877bf4a9d8b5248cb134d84da4"
+    },
+    {
+      "file": "volcano-smoke-source.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "6fe54e037157a4b46b82c8b0bb895132ce9c50655a5401e51948dc2c9e6fa3d9"
+    },
+    {
+      "file": "volcano-smoke-refined-source.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "dae214ab3194f7e385eaefcfbbfacd1cfbb87c0e1388d4b2d1d34128d42f2eee"
+    }
+  ],
+  "runtimeTexture": {
+    "width": 1600,
+    "height": 900,
+    "native4K": false
+  },
+  "guidelines": {
+    "version": "1.0",
+    "file": "../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md"
+  },
+  "membranes": [
+    {
+      "id": "near-membrane",
+      "pivot": [
+        1210,
+        615
+      ],
+      "frequency": 0.135,
+      "phase": 0,
+      "points": [
+        [
+          1080,
+          689
+        ],
+        [
+          1099,
+          629
+        ],
+        [
+          1134,
+          575
+        ],
+        [
+          1185,
+          533
+        ],
+        [
+          1247,
+          503
+        ],
+        [
+          1303,
+          480
+        ],
+        [
+          1355,
+          465
+        ],
+        [
+          1348,
+          511
+        ],
+        [
+          1325,
+          565
+        ],
+        [
+          1289,
+          613
+        ],
+        [
+          1235,
+          657
+        ],
+        [
+          1170,
+          689
+        ],
+        [
+          1112,
+          713
+        ]
+      ]
+    },
+    {
+      "id": "upper-membrane",
+      "pivot": [
+        1548,
+        486
+      ],
+      "frequency": 0.173,
+      "phase": 2.2,
+      "points": [
+        [
+          1451,
+          544
+        ],
+        [
+          1475,
+          496
+        ],
+        [
+          1508,
+          456
+        ],
+        [
+          1558,
+          411
+        ],
+        [
+          1611,
+          381
+        ],
+        [
+          1651,
+          374
+        ],
+        [
+          1641,
+          425
+        ],
+        [
+          1615,
+          477
+        ],
+        [
+          1574,
+          511
+        ],
+        [
+          1514,
+          538
+        ]
+      ]
+    },
+    {
+      "id": "lower-membrane",
+      "pivot": [
+        1487,
+        679
+      ],
+      "frequency": 0.112,
+      "phase": 4.1,
+      "points": [
+        [
+          1380,
+          714
+        ],
+        [
+          1391,
+          682
+        ],
+        [
+          1420,
+          654
+        ],
+        [
+          1461,
+          636
+        ],
+        [
+          1503,
+          627
+        ],
+        [
+          1543,
+          630
+        ],
+        [
+          1564,
+          646
+        ],
+        [
+          1553,
+          681
+        ],
+        [
+          1525,
+          703
+        ],
+        [
+          1481,
+          716
+        ],
+        [
+          1429,
+          722
+        ]
+      ]
+    }
+  ],
+  "materialSelections": [
+    {
+      "id": "city-amber",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          525,
+          0
+        ],
+        [
+          568,
+          343
+        ],
+        [
+          864,
+          447
+        ],
+        [
+          831,
+          471
+        ],
+        [
+          0,
+          440
+        ]
+      ],
+      "type": "warm",
+      "hue": 1.45,
+      "frequency": 0.083,
+      "phase": 0.3
+    },
+    {
+      "id": "foreground-cold",
+      "points": [
+        [
+          580,
+          821
+        ],
+        [
+          695,
+          741
+        ],
+        [
+          844,
+          654
+        ],
+        [
+          926,
+          527
+        ],
+        [
+          1129,
+          430
+        ],
+        [
+          1336,
+          340
+        ],
+        [
+          1555,
+          202
+        ],
+        [
+          1672,
+          104
+        ],
+        [
+          1672,
+          941
+        ],
+        [
+          1271,
+          941
+        ],
+        [
+          1197,
+          873
+        ],
+        [
+          895,
+          858
+        ]
+      ],
+      "type": "cold",
+      "hue": 1.8,
+      "frequency": 0.097,
+      "phase": 2.1
+    },
+    {
+      "id": "lava-seams",
+      "points": [
+        [
+          0,
+          439
+        ],
+        [
+          621,
+          449
+        ],
+        [
+          946,
+          474
+        ],
+        [
+          1054,
+          548
+        ],
+        [
+          777,
+          657
+        ],
+        [
+          644,
+          730
+        ],
+        [
+          554,
+          789
+        ],
+        [
+          0,
+          792
+        ]
+      ],
+      "type": "warm",
+      "hue": 0.65,
+      "frequency": 0.071,
+      "phase": 1.4
+    },
+    {
+      "id": "wet-reflections",
+      "points": [
+        [
+          0,
+          773
+        ],
+        [
+          549,
+          770
+        ],
+        [
+          815,
+          850
+        ],
+        [
+          1315,
+          941
+        ],
+        [
+          0,
+          941
+        ]
+      ],
+      "type": "warm",
+      "hue": 1.15,
+      "frequency": 0.127,
+      "phase": 3.4
+    }
+  ],
+  "storms": [
+    {
+      "x": 686,
+      "y": 110,
+      "rx": 145,
+      "ry": 88,
+      "f": 0.073,
+      "p": 3
+    },
+    {
+      "x": 1110,
+      "y": 82,
+      "rx": 148,
+      "ry": 74,
+      "f": 0.109,
+      "p": 4.6
+    },
+    {
+      "x": 1390,
+      "y": 132,
+      "rx": 110,
+      "ry": 73,
+      "f": 0.137,
+      "p": 2.7
+    }
+  ],
+  "heat": {
+    "pockets": [
+      {
+        "id": "waterfall-air",
+        "points": [
+          [
+            324,
+            492
+          ],
+          [
+            346,
+            478
+          ],
+          [
+            382,
+            480
+          ],
+          [
+            421,
+            491
+          ],
+          [
+            445,
+            507
+          ],
+          [
+            437,
+            524
+          ],
+          [
+            395,
+            534
+          ],
+          [
+            347,
+            529
+          ]
+        ]
+      },
+      {
+        "id": "valley-air",
+        "points": [
+          [
+            686,
+            566
+          ],
+          [
+            738,
+            550
+          ],
+          [
+            806,
+            548
+          ],
+          [
+            848,
+            559
+          ],
+          [
+            840,
+            588
+          ],
+          [
+            772,
+            602
+          ],
+          [
+            711,
+            595
+          ]
+        ]
+      },
+      {
+        "id": "far-fissure-air",
+        "points": [
+          [
+            805,
+            473
+          ],
+          [
+            840,
+            462
+          ],
+          [
+            882,
+            462
+          ],
+          [
+            912,
+            472
+          ],
+          [
+            909,
+            491
+          ],
+          [
+            864,
+            507
+          ],
+          [
+            829,
+            499
+          ]
+        ]
+      }
+    ],
+    "amplitude": 18,
+    "frequencyHz": 0.65,
+    "wavelength": 260,
+    "guardTexels": 3,
+    "maximumTravelTexels": 9.375
+  },
+  "vapor": {
+    "source": "vapor-source.png",
+    "registration": "Two alpha wisps registered inside left and valley windows; static alpha capped to .24; opacity envelopes 0..1 at .13/.17 Hz",
+    "neutralControl": "Disabling opacity freezes its modulation at neutral alpha 1, leaving the authored static vapor visible; it does not hide the artwork layer"
+  },
+  "volcanoSmoke": {
+    "placement": {
+      "x": 1122,
+      "y": 6,
+      "width": 220,
+      "height": 220,
+      "sourceTipX": 630,
+      "sourceTipY": 1200,
+      "sourceDomain": 1280
+    },
+    "pinY": 197,
+    "rim": [
+      [
+        1080,
+        278
+      ],
+      [
+        1138,
+        249
+      ],
+      [
+        1207,
+        224
+      ],
+      [
+        1229,
+        211
+      ],
+      [
+        1240,
+        215
+      ],
+      [
+        1260,
+        232
+      ],
+      [
+        1300,
+        244
+      ],
+      [
+        1330,
+        255
+      ],
+      [
+        1350,
+        264
+      ],
+      [
+        1370,
+        330
+      ],
+      [
+        1080,
+        330
+      ]
+    ],
+    "flowAmplitude": 36,
+    "flowHz": 0.075,
+    "bendAmount": 180,
+    "bendPivotY": 1100,
+    "bendHz": 0.09,
+    "opacityHz": 0.087,
+    "backing": "Only a softly masked local clean-source patch above the right crater is composed into the registered plate; original terrain excluded. All inherited visual overlays sample the same cleaned plate.",
+    "motion": "Periodic bounded curl/bend with zero spatial influence at y>=197 and softly varying upper opacity. No physical upward advection or new emitted smoke.",
+    "limits": "Source field R .35.. .65 and G .30.. .46 imply <=.5 vector norm; <=18-world-pixel flow plus <=47-world-pixel local bend fits the 50+ source-pixel lateral visibility margin. The virtual bend pivot is below the crater; the influence map independently pins the real base. Manual patch and rim contours require visual review."
+  },
+  "limitations": [
+    "Single generated multilayer-depth painting, not independently movable depth planes",
+    "Breathing deforms membrane interior texture; silhouettes, attachment ribs and architecture stay fixed",
+    "Distance guard keeps moving samples inside authored membrane and heat polygons; correctness of material tracing requires visual QA",
+    "Cloud glow uses three deterministic periodic envelopes, not stochastic lightning or moving cloud simulation",
+    "Vapor fades in place and volcanic smoke curls periodically, not physical advection; heat is local periodic refraction, not fluid simulation",
+    "Local regenerated sky patch, smoke silhouette and crater attachment require visual approval",
+    "Original source is 1672x941; runtime registration is 1600x900; no native 4K claim",
+    "No portal; standalone studio only; final artistic acceptance pending"
+  ]
+}

@@ -40,7 +40,9 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL("./helpers/infinite-zoom-layered-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/clockwork-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-clockwork-browser-fixture.mjs", import.meta.url));
-    } else if (/^\/infinite-zoom\/samples\/(forest-pilot|forest-layered|clockwork)\/[a-zA-Z0-9-]+\.(json|svg|png)$/.test(pathname)) {
+    } else if (pathname === "/insectoid-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-insectoid-browser-fixture.mjs", import.meta.url));
+    } else if (/^\/infinite-zoom\/samples\/(forest-pilot|forest-layered|clockwork|insectoid-planet)\/[a-zA-Z0-9-]+\.(json|svg|png)$/.test(pathname)) {
       response.setHeader("Content-Type",pathname.endsWith(".json")?"application/json":pathname.endsWith(".png")?"image/png":"image/svg+xml");
       response.end(await readFile(new URL(pathname.slice(1),publicRoot)));return;
     } else if (pathname === "/phase2-fixture.mjs") {
@@ -104,7 +106,38 @@ try {
     const names=await send("Runtime.evaluate",{expression:"Object.keys(window.clockworkCaptures)",returnByValue:true});
     for(const name of names.result.value){const frame=await send("Runtime.evaluate",{expression:`window.clockworkCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`clockwork-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
   }
-  if (process.argv.includes("--clockwork-only")) {
+  async function runInsectoid(){
+    await send("Runtime.evaluate",{expression:"import('/insectoid-fixture.mjs')",awaitPromise:true});
+    let result;
+    {
+      await send("Runtime.evaluate",{expression:`void window.runInsectoidArtwork(${process.argv.includes("--insectoid-motion")}).then(value=>window.insectoidRunResult=value).catch(error=>window.insectoidRunError=String(error.stack)).finally(()=>window.insectoidRunDone=true)`});
+      let done=false;
+      for(let i=0;i<360;i++){
+        done=(await send("Runtime.evaluate",{expression:"!!window.insectoidRunDone",returnByValue:true})).result.value;
+        if(done)break;await delay(250);
+      }
+      assert.ok(done,"Insectoid artwork verification completes");
+      const error=await send("Runtime.evaluate",{expression:"window.insectoidRunError",returnByValue:true});
+      assert.equal(error.result.value,undefined,error.result.value);
+      result=await send("Runtime.evaluate",{expression:"window.insectoidRunResult",returnByValue:true});
+    }
+    assert.equal(result.exceptionDetails,undefined,JSON.stringify(result.exceptionDetails));assert.deepEqual(errors,[]);
+    console.log("Infinite Zoom insectoid planet:",JSON.stringify(result.result.value));
+    await writeFile(new URL("insectoid-qa.json",reportDirectory),JSON.stringify(result.result.value,null,2));
+    const names=await send("Runtime.evaluate",{expression:"Object.keys(window.insectoidCaptures)",returnByValue:true});
+    for(const name of names.result.value){const frame=await send("Runtime.evaluate",{expression:`window.insectoidCaptures[${JSON.stringify(name)}]`,returnByValue:true});await writeFile(new URL(`insectoid-${name}.png`,reportDirectory),Buffer.from(frame.result.value.split(",")[1],"base64"));}
+    if(process.argv.includes("--insectoid-motion")){
+      for(const[property,filename]of [["insectoidMotionData","insectoid-motion.webm"],["insectoidSmokeMotionData","insectoid-smoke-motion.webm"]]){
+      const length=(await send("Runtime.evaluate",{expression:`window.${property}.length`,returnByValue:true})).result.value;
+      const parts=[];
+      for(let i=0;i<length;i+=262144)parts.push((await send("Runtime.evaluate",{expression:`window.${property}.slice(${i},${i+262144})`,returnByValue:true})).result.value);
+      await writeFile(new URL(filename,reportDirectory),Buffer.from(parts.join("").split(",")[1],"base64"));
+      }
+    }
+  }
+  if (process.argv.includes("--insectoid-only")) {
+    await runInsectoid();
+  } else if (process.argv.includes("--clockwork-only")) {
     await runClockwork();
   } else if (process.argv.includes("--layered-only")) {
     await runLayered();
@@ -178,6 +211,7 @@ try {
   await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ pilot:pilot.result.value, phase2:phase2.result.value, samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
   await runLayered();
   await runClockwork();
+  await runInsectoid();
   }
 } finally {
   await browser?.close();

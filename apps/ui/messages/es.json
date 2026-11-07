@@ -36,6 +36,10 @@
   "app": {
     "infiniteZoom": {
       "sceneLabel": "Escena",
+      "alienScene": "Planeta alienígena — ciudad insectoide",
+      "alienDescription": "Un páramo volcánico, nubes densas y arquitectura quitinosa. Reproduce música para animar luces, membranas, resplandores eléctricos, refracción térmica y vapores que se desvanecen.",
+      "alienNotes": "Usa Solo para observar cada efecto. Los remolinos y la inclinación animan el humo del volcán lejano derecho, manteniendo su base unida al cráter. Activa ambos junto al desvanecimiento para observar el movimiento combinado. La refracción afecta al aire sobre la lava. Al desactivar el desvanecimiento, los vapores y el humo siguen visibles. Escena experimental sin portal.",
+      "alienBehaviors": {"scale":"Respiración de membranas","wave":"Refracción del aire caliente","flow":"Remolinos de humo volcánico lejano","bend":"Inclinación de la columna por el viento","opacity":"Desvanecimiento de vapores y humo","colorShift":"Colores de luces, lava y reflejos","pulse":"Pulsación de detalles locales","glow":"Destellos y resplandores eléctricos"},
       "clockworkScene": "Mecanismo del tiempo — negro y oro",
       "clockworkDescription": "Un mecanismo oscuro con ruedas dentadas doradas. Reproduce música para iniciar el movimiento sincronizado. La pausa conserva la posición de cada rueda.",
       "clockworkNotes": "Las ruedas giran rígidamente sobre ejes fijos. La intensidad de rotación cambia la velocidad del accionamiento común; al desactivarlo se detiene sin desplazar los dientes. Hay un fondo completo bajo las piezas móviles.",

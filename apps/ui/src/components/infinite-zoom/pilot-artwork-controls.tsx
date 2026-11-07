@@ -7,8 +7,9 @@ import type {BehaviorKind,VisualScene} from "../../engines/infinite-zoom/artwork
 
 export function PilotArtworkControls() {
   const runtime=useInfiniteZoom(), snapshot=useVisualSnapshot(), t=useTranslations("app.infiniteZoom");
-  const scenePrefix=snapshot.scene === "clockwork" ? "clockwork" : snapshot.scene === "layered" ? "layered" : "pilot";
+  const scenePrefix=snapshot.scene === "alien" ? "alien" : snapshot.scene === "clockwork" ? "clockwork" : snapshot.scene === "layered" ? "layered" : "pilot";
   function behaviorLabel(kind:BehaviorKind){
+    if(scenePrefix === "alien" && (kind === "scale" || kind === "wave" || kind === "flow" || kind === "bend" || kind === "opacity" || kind === "colorShift" || kind === "pulse" || kind === "glow"))return t(`alienBehaviors.${kind}`);
     if(scenePrefix === "clockwork" && (kind === "rotate" || kind === "pulse" || kind === "glow"))return t(`clockworkBehaviors.${kind}`);
     return t(`${scenePrefix === "layered" ? "layeredBehaviors" : "pilotBehaviors"}.${kind}`);
   }
@@ -17,7 +18,7 @@ export function PilotArtworkControls() {
       {t("sceneLabel")}
       <select data-iz-scene className="rounded-md border bg-background px-3 py-2" value={snapshot.scene ?? "journey"}
         disabled={!snapshot.ready || snapshot.sceneLoading} onChange={event=>void runtime.selectScene(event.target.value as VisualScene).catch(()=>{})}>
-        <option value="journey">{t("journeyScene")}</option><option value="clockwork">{t("clockworkScene")}</option><option value="layered">{t("layeredScene")}</option><option value="pilot">{t("pilotScene")}</option>
+        <option value="journey">{t("journeyScene")}</option><option value="alien">{t("alienScene")}</option><option value="clockwork">{t("clockworkScene")}</option><option value="layered">{t("layeredScene")}</option><option value="pilot">{t("pilotScene")}</option>
       </select>
       {snapshot.sceneLoading && <span role="status" className="font-normal text-muted-foreground">{t("sceneLoading")}</span>}
     </label>

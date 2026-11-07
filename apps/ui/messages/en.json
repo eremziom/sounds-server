@@ -36,6 +36,10 @@
   "app": {
     "infiniteZoom": {
       "sceneLabel": "Scene",
+      "alienScene": "Alien planet — insectoid city",
+      "alienDescription": "Volcanic wasteland, dense storm clouds and chitinous architecture. Play music to animate lights, breathing membranes, electrical cloud glows, heat refraction and fading vapor.",
+      "alienNotes": "Use Solo to inspect each effect. Curling and wind sway animate the distant right volcano's smoke while its root stays attached to the crater. Enable both with fading to review the combined motion. Refraction affects air above lava. Disabling fading leaves static vapor and smoke visible. Experimental scene without a portal.",
+      "alienBehaviors": {"scale":"Breathing membranes","wave":"Hot-air refraction","flow":"Distant volcanic smoke curling","bend":"Wind bending the ash plume","opacity":"Vapor and smoke-edge fading","colorShift":"Light, lava and reflection colors","pulse":"Local detail pulses","glow":"Glints and electrical cloud glows"},
       "clockworkScene": "Time mechanism — black and gold",
       "clockworkDescription": "A dark machine interior with golden gear wheels. Play music to start the synchronized motion. Pause holds every wheel in its current position.",
       "clockworkNotes": "Wheels rotate rigidly around fixed axles. Rotation strength changes the common drive speed; disabling it stops the drive without shifting the teeth. Complete backing remains under moving parts.",

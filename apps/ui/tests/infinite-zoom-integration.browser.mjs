@@ -122,6 +122,17 @@ try {
       const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("forest-layered-app.png",report),Buffer.from(screenshot.data,"base64"));
       console.log("Layered artwork UI: three scenes, twelve controls, paused audio, immersive and one canvas/context OK");return;
     }
+    await selectScene("alien");
+    assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"insectoid-planet");
+    assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-iz-behavior]')].map(e=>e.dataset.izBehavior)"),["scale","bend","wave","flow","pulse","opacity","colorShift","glow"]);
+    assert.equal(await evaluate(`${audio}.paused && ${canvas}===izCanvas && izCanvas.getContext('webgl2')===izGl`),true,"Alien selection preserves paused audio, canvas and context");
+    for(const kind of ["wave","flow","bend","opacity"]){
+      await click(`document.querySelector('[data-iz-behavior=${kind}] [data-iz-solo]')`);
+      assert.equal(await evaluate(`document.querySelector('[data-iz-behavior=${kind}] [data-iz-behavior-enabled]').checked`),true);
+      assert.equal(await evaluate("document.querySelectorAll('[data-iz-behavior-enabled]:checked').length"),1,"New authored effects support Solo");
+    }
+    await click("document.querySelector('[data-iz-behavior=colorShift] [data-iz-solo]')");
+    assert.equal(await evaluate("document.querySelectorAll('[data-iz-behavior-enabled]:checked').length"),1);
     await selectScene("clockwork");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"clockwork");
     assert.equal(await evaluate("document.querySelectorAll('[data-iz-pilot] [data-iz-behavior]').length"),3,"Mechanical scene shows only applicable controls");

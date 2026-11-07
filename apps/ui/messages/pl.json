@@ -36,6 +36,10 @@
   "app": {
     "infiniteZoom": {
       "sceneLabel": "Scena",
+      "alienScene": "Obca planeta — miasto insektoidów",
+      "alienDescription": "Wulkaniczne pustkowie, gęste chmury i chitynowe budowle. Odtwórz muzykę, aby uruchomić światła, oddychanie membran, poświaty wyładowań, falowanie gorącego powietrza oraz zanikające opary.",
+      "alienNotes": "Solo pozwala obejrzeć każdy efekt osobno. Kłębienie i odchylanie ożywiają dym nad prawym odległym wulkanem; podstawa pozostaje przy kraterze. Włącz oba efekty razem z zanikaniem, aby obejrzeć całość. Falowanie dotyczy powietrza nad lawą. Wyłączenie zanikania pozostawia stałą widoczność oparów i dymu. Scena testowa, bez portalu.",
+      "alienBehaviors": {"scale":"Oddychanie membran","wave":"Falowanie gorącego powietrza","flow":"Kłębienie dymu nad dalekim wulkanem","bend":"Odchylanie pióropusza przez wiatr","opacity":"Zanikanie oparów i obrzeży dymu","colorShift":"Kolory świateł, lawy i odbić","pulse":"Pulsowanie lokalnych detali","glow":"Rozbłyski i wyładowania w chmurach"},
       "clockworkScene": "Mechanizm czasu — czerń i złoto",
       "clockworkDescription": "Ciemne wnętrze mechanizmu ze złotymi kołami zębatymi. Odtwórz muzykę, aby uruchomić zsynchronizowany ruch. Pauza zatrzymuje koła w ich aktualnym położeniu.",
       "clockworkNotes": "Koła obracają się sztywno wokół stałych osi. Regulacja obrotu zmienia tempo wspólnego napędu; wyłączenie zatrzymuje go bez przestawiania zębów. Pod ruchomymi częściami znajduje się pełne tło.",

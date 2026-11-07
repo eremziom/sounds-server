@@ -1,0 +1,735 @@
+{
+  "schemaVersion": 2,
+  "id": "insectoid-planet",
+  "version": "0.3.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "volcano-smoke",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-volcano-smoke",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-volcano-smoke",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "volcano-smoke-field",
+      "kind": "flow",
+      "uri": "/infinite-zoom/samples/insectoid-planet/volcano-smoke-field.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "light-volcano-smoke-base",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/light-volcano-smoke-base.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "plate",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/plate.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-heat",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-heat.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-heat",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-heat.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-city-amber",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-city-amber.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-foreground-cold",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-foreground-cold.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-lava-seams",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-lava-seams.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-wet-reflections",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-wet-reflections.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-near-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-near-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-near-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-near-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-upper-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-upper-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-upper-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-upper-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-lower-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-lower-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-lower-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-lower-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-1",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-1.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-2.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-3",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-3.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "vapor",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/vapor.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-vapor-left",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-vapor-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-vapor-valley",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-vapor-valley.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "fixed-world",
+      "zIndex": 0,
+      "imageAssetId": "plate"
+    },
+    {
+      "id": "heat-refraction",
+      "zIndex": 1,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-heat",
+      "behaviors": [
+        {
+          "id": "wave",
+          "kind": "wave",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.65,
+            "phase": 0,
+            "amplitude": 18,
+            "wavelength": 260,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence-heat"
+        }
+      ]
+    },
+    {
+      "id": "city-amber",
+      "zIndex": 2,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-city-amber",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.083,
+            "phase": 0.3,
+            "hue": 1.45,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.22,
+            "phase": 0,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.19,
+            "phase": 0,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "foreground-cold",
+      "zIndex": 3,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-foreground-cold",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.097,
+            "phase": 2.1,
+            "hue": 1.8,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.261,
+            "phase": 1.7,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.217,
+            "phase": 1.3,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "lava-seams",
+      "zIndex": 4,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-lava-seams",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.071,
+            "phase": 1.4,
+            "hue": 0.65,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.302,
+            "phase": 3.4,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.244,
+            "phase": 2.6,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "wet-reflections",
+      "zIndex": 5,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-wet-reflections",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.127,
+            "phase": 3.4,
+            "hue": 1.15,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.34299999999999997,
+            "phase": 5.1,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.271,
+            "phase": 3.9000000000000004,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "near-membrane",
+      "zIndex": 6,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-near-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.135,
+            "phase": 0,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 2778.9473684210525,
+            "pivotY": 1411.6896918172158
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.07,
+            "phase": 0,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.135,
+            "phase": 0,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        }
+      ]
+    },
+    {
+      "id": "upper-membrane",
+      "zIndex": 7,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-upper-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.173,
+            "phase": 2.2,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 3555.215311004785,
+            "pivotY": 1115.5791710945803
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.083,
+            "phase": 2.2,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.173,
+            "phase": 2.2,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        }
+      ]
+    },
+    {
+      "id": "lower-membrane",
+      "zIndex": 8,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-lower-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.112,
+            "phase": 4.1,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 3415.1196172248806,
+            "pivotY": 1558.5972369819342
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.096,
+            "phase": 4.1,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.112,
+            "phase": 4.1,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        }
+      ]
+    },
+    {
+      "id": "storm-1",
+      "zIndex": 9,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-1",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.073,
+            "phase": 3,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "storm-2",
+      "zIndex": 10,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-2",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.109,
+            "phase": 4.6,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "storm-3",
+      "zIndex": 11,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-3",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.137,
+            "phase": 2.7,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "vapor-left",
+      "zIndex": 12,
+      "imageAssetId": "vapor",
+      "maskAssetId": "visible-vapor-left",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.13,
+            "phase": 1.2,
+            "base": 0.5,
+            "amount": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "vapor-valley",
+      "zIndex": 13,
+      "imageAssetId": "vapor",
+      "maskAssetId": "visible-vapor-valley",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.17,
+            "phase": 3.8,
+            "base": 0.5,
+            "amount": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "distant-volcano-smoke",
+      "zIndex": 14,
+      "imageAssetId": "volcano-smoke",
+      "maskAssetId": "visible-volcano-smoke",
+      "behaviors": [
+        {
+          "id": "flow",
+          "kind": "flow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.075,
+            "phase": 0,
+            "amplitude": 36,
+            "fieldAssetId": "volcano-smoke-field"
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "bend",
+          "kind": "bend",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.09,
+            "phase": 1.1,
+            "amount": 180,
+            "pivotX": 2824.8803827751194,
+            "pivotY": 1100,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.087,
+            "phase": 0.3,
+            "base": 0.78,
+            "amount": 0.16
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.16,
+            "phase": 0.4,
+            "amount": 0.2,
+            "threshold": 0.02
+          },
+          "influenceMaskAssetId": "light-volcano-smoke-base"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "fixed-world"
+  },
+  "anchors": [
+    {
+      "id": "city",
+      "x": 740,
+      "y": 770
+    },
+    {
+      "id": "membranes",
+      "x": 3000,
+      "y": 1390
+    },
+    {
+      "id": "volcano",
+      "x": 2780,
+      "y": 560
+    }
+  ]
+}
