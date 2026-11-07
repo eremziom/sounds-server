@@ -1,8 +1,10 @@
+import { validateBehaviorControl, type BehaviorKind } from "./pilot-controls.ts";
 import type { ArtworkPackage } from "./artwork-package.ts";
 import type { StepContext } from "../core/contracts.ts";
 import { behaviorGroups, createBehaviorEvaluator } from "../behaviors/behavior-evaluator.ts";
 import { FULL_FRAME, viewportCorners, type CameraPose } from "../camera/camera-math.ts";
 import { NEUTRAL_MODULATION, type BehaviorModulation } from "../modulation/audio-modulation.ts";
+import {spinTransform} from "./rigid-spin.ts";
 
 export interface LayerTransform {
   readonly x: number;
@@ -18,8 +20,10 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
   if (!instanceId.trim()) throw new Error("Artwork instance requires an identity");
   const layers = new Map(manifest.layers.map(layer => [layer.id, { ...INITIAL }]));
   let audioGain = 1;
+  let spinStrength=1;
+  const spins=new Map(manifest.layers.filter(layer=>layer.spin).map(layer=>[layer.id,layer.spin!.phaseTurns*2*Math.PI]));
   const evaluators = new Map(manifest.layers.map(layer => [layer.id,
-    createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer))]));
+    createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer, manifest.constraints))]));
   return {
     id: instanceId,
     manifest,
@@ -34,21 +38,37 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
       if (id === manifest.coverage.baseLayerId && next.opacity !== 1) throw new Error("Coverage base must remain opaque");
       layers.set(id, next);
     },
+    setBehaviorStrength(kind: BehaviorKind, value: number) {
+      validateBehaviorControl(kind,value);
+      if(kind==="rotate")spinStrength=value;
+      for (const evaluator of evaluators.values()) evaluator.setBehaviorStrength(kind,value);
+    },
     stepBehaviors(context: StepContext, modulation: BehaviorModulation = NEUTRAL_MODULATION) {
       if (!Number.isFinite(modulation.strength) || modulation.strength < 0 || modulation.strength > 1 ||
           !Number.isFinite(modulation.intensity) || modulation.intensity < 1 || modulation.intensity > 1.25) throw new Error("Invalid behavior modulation");
-      for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength);
+      for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength, modulation.signals);
+      for(const layer of manifest.layers)if(layer.spin){
+        const angle=spins.get(layer.id)!+layer.spin.turnsPerSecond*2*Math.PI*context.dt*spinStrength;
+        spins.set(layer.id,angle%(2*Math.PI));
+      }
       audioGain = modulation.intensity;
     },
     getSnapshot() {
       return Object.freeze({ id: instanceId, packageId: manifest.id,
-        layers: Object.freeze(manifest.layers.map(layer => Object.freeze({ id: layer.id, ...layers.get(layer.id)!,
-          groups: evaluators.get(layer.id)!.getSnapshot(), audioGain }))) });
+        layers: Object.freeze(manifest.layers.map(layer => {
+          const base=layers.get(layer.id)!;
+          const rigid=layer.spin ? spinTransform(layer.spin,spins.get(layer.id)!) : {x:0,y:0,rotation:0};
+          const c=Math.cos(base.rotation),s=Math.sin(base.rotation);
+          return Object.freeze({ id: layer.id, ...base,
+            x:base.x+base.scale*(c*rigid.x-s*rigid.y),y:base.y+base.scale*(s*rigid.x+c*rigid.y),rotation:base.rotation+rigid.rotation,
+            groups: evaluators.get(layer.id)!.getSnapshot(), audioGain });
+        })) });
     },
     reset() {
       audioGain = 1;
       for (const layer of manifest.layers) layers.set(layer.id, { ...INITIAL });
       for (const evaluator of evaluators.values()) evaluator.reset();
+      for(const layer of manifest.layers)if(layer.spin)spins.set(layer.id,layer.spin.phaseTurns*2*Math.PI);
     },
   };
 }

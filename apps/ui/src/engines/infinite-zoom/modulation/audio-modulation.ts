@@ -1,4 +1,5 @@
-export interface BehaviorModulation { readonly strength: number; readonly intensity: number }
+import type { NormalizedSignals } from "./bindings.ts";
+export interface BehaviorModulation { readonly strength: number; readonly intensity: number; readonly signals?: NormalizedSignals }
 export const NEUTRAL_MODULATION: BehaviorModulation = Object.freeze({ strength: 1, intensity: 1 });
 
 /** Small first-slice mapping, independent of the application's audio schema.
@@ -15,7 +16,7 @@ export function createAudioModulation() {
       const strength = energy === null ? 1 : 0.65 + 0.35 * energy;
       const intensity = energy === null ? 1 : 1 + 0.25 * energy;
       const smooth = (current: number, target: number) => current + (target-current) * (1-Math.exp(-dt / (target > current ? 0.04 : 0.15)));
-      value = Object.freeze({ strength: smooth(value.strength, strength), intensity: smooth(value.intensity, intensity) });
+      value = Object.freeze({ ...(valid ? { signals: Object.freeze({ bass: clamp(levels.bass), mid: clamp(levels.mid), high: clamp(levels.high), energy: energy! }) } : {}), strength: smooth(value.strength, strength), intensity: smooth(value.intensity, intensity) });
       return value;
     },
     getSnapshot: () => value,

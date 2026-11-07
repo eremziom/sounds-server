@@ -1,0 +1,2407 @@
+{
+  "schemaVersion": 2,
+  "id": "insectoid-planet",
+  "version": "0.5.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "volcano-smoke",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-volcano-smoke",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-volcano-smoke",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-volcano-smoke.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "volcano-smoke-field",
+      "kind": "flow",
+      "uri": "/infinite-zoom/samples/insectoid-planet/volcano-smoke-field.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "light-volcano-smoke-base",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/light-volcano-smoke-base.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "plate",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/plate.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-heat",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-heat.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-heat",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-heat.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-city-amber",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-city-amber.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-foreground-cold",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-foreground-cold.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-lava-seams",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-lava-seams.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-wet-reflections",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-wet-reflections.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-near-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-near-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-near-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-near-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-upper-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-upper-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-upper-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-upper-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-lower-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-lower-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-lower-membrane",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-lower-membrane.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-1",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-1.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-2.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "select-storm-3",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/select-storm-3.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "vapor",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/insectoid-planet/vapor.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-vapor-left",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-vapor-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-vapor-valley",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-vapor-valley.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-0",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-0.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-1",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-1.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-2.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-3",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-3.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-4",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-4.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-5",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-5.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-6",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-6.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-7",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-7.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-8",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-8.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-9",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-9.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-10",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-10.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-11",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-11.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-12",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-12.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-13",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-13.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-14",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-14.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-15",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-15.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-16",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-16.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-17",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-17.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-18",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-18.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-19",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-19.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-20",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-20.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-21",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-21.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-22",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-22.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-23",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-23.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-24",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-24.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-25",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-25.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-26",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-26.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-27",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-27.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-28",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-28.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-29",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-29.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-30",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-30.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-31",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-31.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-32",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-32.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-33",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-33.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-34",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-34.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-35",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-35.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-36",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-36.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-37",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-37.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-38",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-38.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-39",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-39.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-40",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-40.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-41",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-41.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-42",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-42.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-43",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-43.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-44",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-44.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-45",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-45.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-46",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-46.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-phase-47",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-phase-47.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "rim-material-0",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-material-0.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "rim-material-1",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-material-1.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "rim-material-2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-material-2.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "rim-material-3",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/rim-material-3.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "fixed-world",
+      "zIndex": 0,
+      "imageAssetId": "plate"
+    },
+    {
+      "id": "heat-refraction",
+      "zIndex": 1,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-heat",
+      "behaviors": [
+        {
+          "id": "wave",
+          "kind": "wave",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.65,
+            "phase": 0,
+            "amplitude": 18,
+            "wavelength": 260,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence-heat"
+        }
+      ]
+    },
+    {
+      "id": "city-amber",
+      "zIndex": 2,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-city-amber",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.083,
+            "phase": 0.3,
+            "hue": 1.45,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.22,
+            "phase": 0,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.19,
+            "phase": 0,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "foreground-cold",
+      "zIndex": 3,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-foreground-cold",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.097,
+            "phase": 2.1,
+            "hue": 1.8,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.261,
+            "phase": 1.7,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.217,
+            "phase": 1.3,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "lava-seams",
+      "zIndex": 4,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-lava-seams",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.071,
+            "phase": 1.4,
+            "hue": 0.65,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.302,
+            "phase": 3.4,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.244,
+            "phase": 2.6,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "wet-reflections",
+      "zIndex": 5,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-wet-reflections",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.127,
+            "phase": 3.4,
+            "hue": 1.15,
+            "saturation": 0.4,
+            "lightness": 0.035
+          }
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.34299999999999997,
+            "phase": 5.1,
+            "amount": 0.55
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.271,
+            "phase": 3.9000000000000004,
+            "amount": 0.55,
+            "threshold": 0.025,
+            "intensity": 2,
+            "sharpness": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "near-membrane",
+      "zIndex": 6,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-near-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.135,
+            "phase": 0,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 2778.9473684210525,
+            "pivotY": 1411.6896918172158
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.07,
+            "phase": 0,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.135,
+            "phase": 0,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-near-membrane"
+        }
+      ]
+    },
+    {
+      "id": "upper-membrane",
+      "zIndex": 7,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-upper-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.173,
+            "phase": 2.2,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 3555.215311004785,
+            "pivotY": 1115.5791710945803
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.083,
+            "phase": 2.2,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.173,
+            "phase": 2.2,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-upper-membrane"
+        }
+      ]
+    },
+    {
+      "id": "lower-membrane",
+      "zIndex": 8,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-lower-membrane",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.112,
+            "phase": 4.1,
+            "x": 0.06,
+            "y": 0.045,
+            "pivotX": 3415.1196172248806,
+            "pivotY": 1558.5972369819342
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        },
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.096,
+            "phase": 4.1,
+            "hue": 1.1,
+            "saturation": 0.3,
+            "lightness": 0.025
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        },
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.112,
+            "phase": 4.1,
+            "amount": 0.35
+          },
+          "influenceMaskAssetId": "influence-lower-membrane"
+        }
+      ]
+    },
+    {
+      "id": "storm-1",
+      "zIndex": 9,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-1",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.073,
+            "phase": 3,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "storm-2",
+      "zIndex": 10,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-2",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.109,
+            "phase": 4.6,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "storm-3",
+      "zIndex": 11,
+      "imageAssetId": "plate",
+      "maskAssetId": "select-storm-3",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.137,
+            "phase": 2.7,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "sharpness": 16,
+            "color": [
+              0.6,
+              0.78,
+              1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "vapor-left",
+      "zIndex": 12,
+      "imageAssetId": "vapor",
+      "maskAssetId": "visible-vapor-left",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.13,
+            "phase": 1.2,
+            "base": 0.5,
+            "amount": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "vapor-valley",
+      "zIndex": 13,
+      "imageAssetId": "vapor",
+      "maskAssetId": "visible-vapor-valley",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.17,
+            "phase": 3.8,
+            "base": 0.5,
+            "amount": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "distant-volcano-smoke",
+      "zIndex": 14,
+      "imageAssetId": "volcano-smoke",
+      "maskAssetId": "visible-volcano-smoke",
+      "behaviors": [
+        {
+          "id": "flow",
+          "kind": "flow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.075,
+            "phase": 0,
+            "amplitude": 36,
+            "fieldAssetId": "volcano-smoke-field"
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "bend",
+          "kind": "bend",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.09,
+            "phase": 1.1,
+            "amount": 180,
+            "pivotX": 2824.8803827751194,
+            "pivotY": 1100,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 4,
+          "params": {
+            "frequencyHz": 0.087,
+            "phase": 0.3,
+            "base": 0.78,
+            "amount": 0.16
+          },
+          "influenceMaskAssetId": "influence-volcano-smoke"
+        },
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.16,
+            "phase": 0.4,
+            "amount": 0.2,
+            "threshold": 0.02
+          },
+          "influenceMaskAssetId": "light-volcano-smoke-base"
+        }
+      ]
+    },
+    {
+      "id": "chitin-light-0",
+      "zIndex": 20,
+      "imageAssetId": "plate",
+      "maskAssetId": "rim-material-0",
+      "behaviors": [
+        {
+          "id": "rim-emission",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
+            "amount": 0.12,
+            "threshold": 0.035,
+            "color": [
+              0.12,
+              0.8,
+              1
+            ]
+          }
+        }
+      ],
+      "regions": [
+        {
+          "id": "rim-packet-0",
+          "influenceMaskAssetId": "rim-phase-0",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 1.5707963267948966,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-1",
+          "influenceMaskAssetId": "rim-phase-1",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 1.4398966328953218,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-2",
+          "influenceMaskAssetId": "rim-phase-2",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 1.3089969389957472,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-3",
+          "influenceMaskAssetId": "rim-phase-3",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 1.1780972450961724,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-4",
+          "influenceMaskAssetId": "rim-phase-4",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 1.0471975511965979,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-5",
+          "influenceMaskAssetId": "rim-phase-5",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.916297857297023,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-6",
+          "influenceMaskAssetId": "rim-phase-6",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.7853981633974483,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-7",
+          "influenceMaskAssetId": "rim-phase-7",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.6544984694978736,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-8",
+          "influenceMaskAssetId": "rim-phase-8",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.5235987755982989,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-9",
+          "influenceMaskAssetId": "rim-phase-9",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.39269908169872414,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-10",
+          "influenceMaskAssetId": "rim-phase-10",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.26179938779914935,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-11",
+          "influenceMaskAssetId": "rim-phase-11",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0.1308996938995748,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chitin-light-1",
+      "zIndex": 21,
+      "imageAssetId": "plate",
+      "maskAssetId": "rim-material-1",
+      "behaviors": [
+        {
+          "id": "rim-emission",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
+            "amount": 0.12,
+            "threshold": 0.035,
+            "color": [
+              0.12,
+              0.8,
+              1
+            ]
+          }
+        }
+      ],
+      "regions": [
+        {
+          "id": "rim-packet-12",
+          "influenceMaskAssetId": "rim-phase-12",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": 0,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-13",
+          "influenceMaskAssetId": "rim-phase-13",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.1308996938995748,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-14",
+          "influenceMaskAssetId": "rim-phase-14",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.26179938779914935,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-15",
+          "influenceMaskAssetId": "rim-phase-15",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.3926990816987239,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-16",
+          "influenceMaskAssetId": "rim-phase-16",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.5235987755982987,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-17",
+          "influenceMaskAssetId": "rim-phase-17",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.6544984694978737,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-18",
+          "influenceMaskAssetId": "rim-phase-18",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.7853981633974483,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-19",
+          "influenceMaskAssetId": "rim-phase-19",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -0.9162978572970228,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-20",
+          "influenceMaskAssetId": "rim-phase-20",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.0471975511965979,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-21",
+          "influenceMaskAssetId": "rim-phase-21",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.1780972450961724,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-22",
+          "influenceMaskAssetId": "rim-phase-22",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.308996938995747,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-23",
+          "influenceMaskAssetId": "rim-phase-23",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.4398966328953215,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chitin-light-2",
+      "zIndex": 22,
+      "imageAssetId": "plate",
+      "maskAssetId": "rim-material-2",
+      "behaviors": [
+        {
+          "id": "rim-emission",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
+            "amount": 0.12,
+            "threshold": 0.035,
+            "color": [
+              0.12,
+              0.8,
+              1
+            ]
+          }
+        }
+      ],
+      "regions": [
+        {
+          "id": "rim-packet-24",
+          "influenceMaskAssetId": "rim-phase-24",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.5707963267948966,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-25",
+          "influenceMaskAssetId": "rim-phase-25",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.7016960206944716,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-26",
+          "influenceMaskAssetId": "rim-phase-26",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.8325957145940461,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-27",
+          "influenceMaskAssetId": "rim-phase-27",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -1.9634954084936207,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-28",
+          "influenceMaskAssetId": "rim-phase-28",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.0943951023931953,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-29",
+          "influenceMaskAssetId": "rim-phase-29",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.2252947962927703,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-30",
+          "influenceMaskAssetId": "rim-phase-30",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.3561944901923444,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-31",
+          "influenceMaskAssetId": "rim-phase-31",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.4870941840919194,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-32",
+          "influenceMaskAssetId": "rim-phase-32",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.617993877991494,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-33",
+          "influenceMaskAssetId": "rim-phase-33",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.7488935718910694,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-34",
+          "influenceMaskAssetId": "rim-phase-34",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -2.879793265790644,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-35",
+          "influenceMaskAssetId": "rim-phase-35",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.0106929596902186,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chitin-light-3",
+      "zIndex": 23,
+      "imageAssetId": "plate",
+      "maskAssetId": "rim-material-3",
+      "behaviors": [
+        {
+          "id": "rim-emission",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
+            "amount": 0.12,
+            "threshold": 0.035,
+            "color": [
+              0.12,
+              0.8,
+              1
+            ]
+          }
+        }
+      ],
+      "regions": [
+        {
+          "id": "rim-packet-36",
+          "influenceMaskAssetId": "rim-phase-36",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.141592653589793,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-37",
+          "influenceMaskAssetId": "rim-phase-37",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.2724923474893677,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-38",
+          "influenceMaskAssetId": "rim-phase-38",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.4033920413889422,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-39",
+          "influenceMaskAssetId": "rim-phase-39",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.534291735288517,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-40",
+          "influenceMaskAssetId": "rim-phase-40",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.6651914291880923,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-41",
+          "influenceMaskAssetId": "rim-phase-41",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.796091123087666,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-42",
+          "influenceMaskAssetId": "rim-phase-42",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -3.9269908169872414,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-43",
+          "influenceMaskAssetId": "rim-phase-43",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -4.057890510886816,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-44",
+          "influenceMaskAssetId": "rim-phase-44",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -4.1887902047863905,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-45",
+          "influenceMaskAssetId": "rim-phase-45",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -4.319689898685966,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-46",
+          "influenceMaskAssetId": "rim-phase-46",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -4.45058959258554,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        },
+        {
+          "id": "rim-packet-47",
+          "influenceMaskAssetId": "rim-phase-47",
+          "behaviors": [
+            {
+              "id": "rim-emission",
+              "kind": "glow",
+              "order": 0,
+              "params": {
+                "frequencyHz": 0.16666666666666666,
+                "phase": -4.581489286485115,
+                "amount": 1,
+                "threshold": 0.035,
+                "color": [
+                  0.12,
+                  0.8,
+                  1
+                ],
+                "intensity": 3,
+                "sharpness": 16
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "fixed-world"
+  },
+  "anchors": [
+    {
+      "id": "city",
+      "x": 740,
+      "y": 770
+    },
+    {
+      "id": "membranes",
+      "x": 3000,
+      "y": 1390
+    },
+    {
+      "id": "volcano",
+      "x": 2780,
+      "y": 560
+    }
+  ]
+}

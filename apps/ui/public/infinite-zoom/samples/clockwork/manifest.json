@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 2,
+  "id": "clockwork",
+  "version": "0.4.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "plate",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/plate.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "wheel-left",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/wheel-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "highlight-wheel-left",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/highlight-wheel-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "wheel-center",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/wheel-center.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "highlight-wheel-center",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/highlight-wheel-center.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "wheel-right",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/wheel-right.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "highlight-wheel-right",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/highlight-wheel-right.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "wheel-upper-left",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/wheel-upper-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "highlight-wheel-upper-left",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/highlight-wheel-upper-left.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "wheel-upper-right",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/clockwork/wheel-upper-right.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "highlight-wheel-upper-right",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/highlight-wheel-upper-right.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "mask-axles",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/mask-axles.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "pulse-upper-left-bearing",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/pulse-upper-left-bearing.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "pulse-upper-right-bearing",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/pulse-upper-right-bearing.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "pulse-lower-bearing",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/clockwork/pulse-lower-bearing.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "plate",
+      "zIndex": 0,
+      "imageAssetId": "plate"
+    },
+    {
+      "id": "wheel-left",
+      "zIndex": 1,
+      "imageAssetId": "wheel-left",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "highlight-wheel-left",
+          "params": {
+            "frequencyHz": 0.28,
+            "phase": 1.5707963267948966,
+            "amount": 1,
+            "threshold": 0.06,
+            "sharpness": 3,
+            "intensity": 3,
+            "color": [
+              1,
+              0.92,
+              0.72
+            ]
+          }
+        }
+      ],
+      "spin": {
+        "pivotX": 1077.1291866028707,
+        "pivotY": 1094.9202975557916,
+        "turnsPerSecond": 0.041666666666666664,
+        "phaseTurns": 0
+      }
+    },
+    {
+      "id": "wheel-center",
+      "zIndex": 2,
+      "imageAssetId": "wheel-center",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "highlight-wheel-center",
+          "params": {
+            "frequencyHz": 0.29700000000000004,
+            "phase": 2.640796326794897,
+            "amount": 1,
+            "threshold": 0.06,
+            "sharpness": 3,
+            "intensity": 3,
+            "color": [
+              1,
+              0.92,
+              0.72
+            ]
+          }
+        }
+      ],
+      "spin": {
+        "pivotX": 1940.66985645933,
+        "pivotY": 1094.9202975557916,
+        "turnsPerSecond": -0.041666666666666664,
+        "phaseTurns": 0
+      }
+    },
+    {
+      "id": "wheel-right",
+      "zIndex": 3,
+      "imageAssetId": "wheel-right",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "highlight-wheel-right",
+          "params": {
+            "frequencyHz": 0.31400000000000006,
+            "phase": 3.7107963267948967,
+            "amount": 1,
+            "threshold": 0.06,
+            "sharpness": 3,
+            "intensity": 3,
+            "color": [
+              1,
+              0.92,
+              0.72
+            ]
+          }
+        }
+      ],
+      "spin": {
+        "pivotX": 2808.803827751196,
+        "pivotY": 1094.9202975557916,
+        "turnsPerSecond": 0.041666666666666664,
+        "phaseTurns": 0
+      }
+    },
+    {
+      "id": "wheel-upper-left",
+      "zIndex": 4,
+      "imageAssetId": "wheel-upper-left",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "highlight-wheel-upper-left",
+          "params": {
+            "frequencyHz": 0.331,
+            "phase": 4.7807963267948965,
+            "amount": 1,
+            "threshold": 0.06,
+            "sharpness": 3,
+            "intensity": 3,
+            "color": [
+              1,
+              0.92,
+              0.72
+            ]
+          }
+        }
+      ],
+      "spin": {
+        "pivotX": 1607.6555023923445,
+        "pivotY": 544.0170031880978,
+        "turnsPerSecond": -0.08333333333333333,
+        "phaseTurns": 0
+      }
+    },
+    {
+      "id": "wheel-upper-right",
+      "zIndex": 5,
+      "imageAssetId": "wheel-upper-right",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "highlight-wheel-upper-right",
+          "params": {
+            "frequencyHz": 0.34800000000000003,
+            "phase": 5.850796326794897,
+            "amount": 1,
+            "threshold": 0.06,
+            "sharpness": 3,
+            "intensity": 3,
+            "color": [
+              1,
+              0.92,
+              0.72
+            ]
+          }
+        }
+      ],
+      "spin": {
+        "pivotX": 2308.133971291866,
+        "pivotY": 544.0170031880978,
+        "turnsPerSecond": 0.08333333333333333,
+        "phaseTurns": 0
+      }
+    },
+    {
+      "id": "fixed-axles",
+      "zIndex": 6,
+      "imageAssetId": "plate",
+      "maskAssetId": "mask-axles"
+    },
+    {
+      "id": "upper-left-bearing",
+      "zIndex": 7,
+      "imageAssetId": "plate",
+      "maskAssetId": "pulse-upper-left-bearing",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.38,
+            "phase": 0,
+            "amount": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "upper-right-bearing",
+      "zIndex": 8,
+      "imageAssetId": "plate",
+      "maskAssetId": "pulse-upper-right-bearing",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.38,
+            "phase": 2.1,
+            "amount": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "lower-bearing",
+      "zIndex": 9,
+      "imageAssetId": "plate",
+      "maskAssetId": "pulse-lower-bearing",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.38,
+            "phase": 4.2,
+            "amount": 0.8
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "plate"
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ]
+}

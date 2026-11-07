@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, mkdir } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
@@ -21,9 +21,11 @@ function browserPath() {
   return executable;
 }
 
-export async function startChromium() {
+export async function startChromium(options = {}) {
   const executable = browserPath();
-  const profile = await mkdtemp(path.join(tmpdir(), "sounds-i18n-"));
+  const profileRoot = path.resolve(options.profileRoot ?? tmpdir());
+  await mkdir(profileRoot,{recursive:true});
+  const profile = await mkdtemp(path.join(profileRoot, "sounds-i18n-"));
   const browser = spawn(executable, [
     "--headless=new", "--no-first-run", "--no-default-browser-check",
     "--disable-background-networking", "--disable-component-update", "--disable-sync",
@@ -46,7 +48,7 @@ export async function startChromium() {
     }
     // Delete only the new mkdtemp directory, after verifying its absolute parent/name.
     const resolved = path.resolve(profile);
-    assert.equal(path.dirname(resolved), path.resolve(tmpdir()));
+    assert.equal(path.dirname(resolved), profileRoot);
     assert.ok(path.basename(resolved).startsWith("sounds-i18n-"));
     await rm(resolved, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 });
   }

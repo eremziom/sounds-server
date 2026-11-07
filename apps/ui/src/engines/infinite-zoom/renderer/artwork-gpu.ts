@@ -2,6 +2,7 @@ import { Group, LinearFilter, Mesh, NoColorSpace, PlaneGeometry, ShaderMaterial,
 import type { ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
 import { buildBehaviorShader, behaviorUniform } from "../behaviors/behavior-shader.ts";
+import { assetTextureBytes } from "../resources/texture-budget.ts";
 import { placePoint, type ArtworkPlacement } from "../transition/placement.ts";
 import type { PortalRegion } from "../transition/portal.ts";
 
@@ -13,9 +14,10 @@ export const VERTEX_SHADER = `
   }`;
 
 /** Per-artwork GPU lease; never owns or disposes the WebGL renderer. */
-export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstance, maxSamplers: number) {
+export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstance, maxSamplers: number, requestOptional?: (id: string) => void) {
   const group = new Group(), geometry = new PlaneGeometry(3840, 2160);
   const textures = new Map<string, Texture>();
+  const selectedImages = loaded.manifest.layers.map(layer => layer.imageAssetId);
   const meshes: Mesh<PlaneGeometry, ShaderMaterial>[] = [];
   const shaders = instance.getSnapshot().layers.map(layer => buildBehaviorShader(layer.groups));
   function textureFor(id: string) {
@@ -23,7 +25,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
     const descriptor = loaded.manifest.assets.find(asset => asset.id === id)!;
     const asset = loaded.getAsset(id);
     let texture: Texture;
-    if (descriptor.kind === "mask") {
+    if ((descriptor.kind === "mask" || descriptor.kind === "depth")) {
       const canvas = new OffscreenCanvas(descriptor.width, descriptor.height);
       const context = canvas.getContext("2d", { willReadFrequently: true });
       if (!context) throw new Error("Cannot extract mask channel");
@@ -37,7 +39,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
       } finally { canvas.width = canvas.height = 1; }
     } else texture = new Texture(asset.image);
     textures.set(id, texture);
-    texture.colorSpace = descriptor.kind === "image" ? SRGBColorSpace : NoColorSpace;
+    texture.colorSpace = (descriptor.kind === "image" || descriptor.kind === "detail") ? SRGBColorSpace : NoColorSpace;
     texture.flipY = false; texture.premultiplyAlpha = false; texture.generateMipmaps = false;
     texture.minFilter = texture.magFilter = LinearFilter; texture.needsUpdate = true;
     return texture;
@@ -77,11 +79,13 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
             ${shader.body}
             vec4 color = texture2D(imageMap, sampleUv);
             float inside = step(0.0,sampleUv.x)*step(sampleUv.x,1.0)*step(0.0,sampleUv.y)*step(sampleUv.y,1.0);
+            ${shader.colorBody}
             color.rgb *= min(4.0, pulseGain * audioGain);
+            ${shader.glowBody}
             color.a *= inside * opacity * portalAlpha * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
             gl_FragColor = vec4(color.rgb*color.a,color.a);
           }`,
-        uniforms: { imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
+        uniforms: { behaviorCameraOffset: { value: new Vector2() }, imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
           hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, portalCount: { value: 0 },
           portalData: { value: Array.from({ length: 5 }, () => new Vector4()) }, portalStyle: { value: Array.from({ length: 5 }, () => new Vector2()) }, ...uniforms },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
@@ -91,7 +95,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
   } catch (failure) { dispose(); throw failure; }
   return {
     group,
-    update(placement: ArtworkPlacement, portals: readonly PortalRegion[], firstOrder: number) {
+    update(placement: ArtworkPlacement, portals: readonly PortalRegion[], firstOrder: number, pixelsPerArtworkPixel = 0, cameraOffset = { x: 0, y: 0 }, detailEnabled = true, detailLocked = false) {
       const center = placePoint({ x: 1920, y: 1080 }, placement);
       group.position.set(center.x - 1920, -(center.y - 1080), 0);
       group.rotation.z = -placement.rotation; group.scale.setScalar(placement.scale);
@@ -100,6 +104,15 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         mesh.position.set(layer.x, -layer.y, 0); mesh.rotation.z = -layer.rotation; mesh.scale.setScalar(layer.scale);
         mesh.renderOrder = firstOrder + index; uniforms.opacity.value = layer.opacity;
         uniforms.audioGain.value = layer.audioGain;
+        uniforms.behaviorCameraOffset.value.set(cameraOffset.x, cameraOffset.y);
+        const descriptor = loaded.manifest.layers[index], base = loaded.manifest.assets.find(a => a.id === descriptor.imageAssetId)!;
+        let imageId = detailLocked && detailEnabled ? selectedImages[index] : descriptor.imageAssetId;
+        if (detailEnabled && !detailLocked) for (const lod of descriptor.lods ?? []) {
+          if (pixelsPerArtworkPixel*3840/base.width < lod.minPixelsPerTexel) continue;
+          if (loaded.hasAsset(lod.assetId)) imageId = lod.assetId; else requestOptional?.(lod.assetId);
+        }
+        selectedImages[index] = imageId;
+        uniforms.imageMap.value = textureFor(imageId);
         uniforms.portalCount.value = portals.length;
         for (const [i, portal] of portals.entries()) {
           uniforms.portalData.value[i].set(portal.x - 1920, -(portal.y - 1080), portal.radiusX, portal.radiusY);
@@ -108,6 +121,11 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         for (const effect of shaders[index].effects) uniforms[effect.name].value = behaviorUniform(layer.groups[effect.group].effects[effect.effect]);
       }
       return firstOrder + meshes.length;
+    },
+    optionalBytes() { return [...textures.keys()].reduce((sum,id) => { const a = loaded.manifest.assets.find(a => a.id === id)!; return sum+(a.critical ? 0 : assetTextureBytes(a)); },0); },
+    evictOptional() {
+      for (const [id,texture] of textures) if (!loaded.manifest.assets.find(a => a.id === id)!.critical) { texture.dispose(); textures.delete(id); }
+      for (const [i,mesh] of meshes.entries()) { selectedImages[i]=loaded.manifest.layers[i].imageAssetId; mesh.material.uniforms.imageMap.value = textureFor(selectedImages[i]); }
     }, dispose,
   };
 }

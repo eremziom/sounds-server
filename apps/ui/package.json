@@ -22,6 +22,8 @@
     "test:runtime": "node tests/application-runtime.browser.mjs",
     "test:background": "node tests/background-controls.browser.mjs",
     "test:infinite-zoom": "node tests/infinite-zoom-integration.browser.mjs",
+    "preview:infinite-zoom:behaviors": "node scripts/preview-behavior-atlas.mjs",
+    "test:infinite-zoom:behaviors": "node --experimental-strip-types tests/infinite-zoom-behavior-atlas.browser.mjs",
     "test:infinite-zoom:stability": "node tests/infinite-zoom-stability.browser.mjs",
     "test:session-ending": "node tests/session-ending.browser.mjs",
     "test:session-resume": "node tests/session-resume.browser.mjs",

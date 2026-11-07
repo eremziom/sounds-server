@@ -1,5 +1,50 @@
 # Infinite Zoom engine — foundation and embedded zoomThrough
 
+## In-app production pilot (2026-11-07)
+
+**Time mechanism — black and gold** is another studio selection with five
+separated rigid rotors, cleaned raster alpha, fixed bearing caps and three
+applicable controls. See the [Clockwork package](../../../public/infinite-zoom/samples/clockwork/README.md)
+for authoring rules, source provenance and review evidence. Its optional schema 2
+layer `spin` runs on the existing instance step and retains angles across pause,
+studio switches and context recovery. It does not change the original Loop.
+
+The selector also offers **Forest stream — layered artwork**. Its actual painted
+water surface, transparent foliage and mist, shore/root influence masks and
+complete clean plate are documented in the
+[layered package](../../../public/infinite-zoom/samples/forest-layered/README.md).
+The studio packages retain separate cameras/phases and bounded CPU leases;
+only the selected one is GPU-resident. The generated source resolution is recorded
+truthfully; this pilot is not a native-4K master or a new portal in the Loop.
+
+The protected `/animations` page can select the Forest clearing pilot with twelve
+live strength/enable controls and immersive access. See the
+[pilot package](../../../public/infinite-zoom/samples/forest-pilot/README.md)
+for source provenance, clean-plate strategy, resource estimates and review gates.
+A scene selection saves/restores the existing journey in the same renderer and
+camera; it is not another portal. The pilot is a bounded test mode, with no paid
+image generation. Replay stops at a studio switch and resumes as a fresh recording
+only after journey Reset; preview controls are not silently omitted from a replay.
+
+
+## Phase 2 runtime (2026-11-07)
+
+The runtime now supports all twelve typed operators, scoped hard/soft constraints,
+gradient influence, depth/flow maps, budgeted optional full-frame detail LOD,
+preflighted camera paths, bounded audio bindings, diagnostic context, adaptive
+quality recovery and fixed-tick logical recording/replay. See
+[phase2-contract.md](phase2-contract.md) for the versioned package boundary,
+encoding, limits, tests and production responsibilities. Schema 1 sample artwork
+is backward compatible; schema 2 opts into the new facilities.
+
+The current sample journey is Forest -> Nebula -> Underwater Cavern -> Forest,
+with Loop and manual stop/resume. It retains one renderer, one clock and the
+existing music graph. Historical terminal-chain descriptions below are superseded.
+New operators are demonstrated by the Phase 2 WebGL fixture rather than silently
+changing the three visually accepted sample packages. Replay JSON can be exported
+from the existing session diagnostics panel.
+
+
 ## Current demo: Forest -> Nebula -> Underwater Cavern (2026-11-05)
 
 The user authorized integrating the third artwork. The demo now has two authored
@@ -39,7 +84,7 @@ The first authored connection is Forest→Nebula; further portals are not author
 - `artwork/index.ts`: manifest validation, CPU loading, independent instances.
 - `renderer/index.ts`: WebGL2 renderer and `prepareArtwork(options, signal)`.
 - `camera/index.ts`: fixed-step trajectories, bookmarks and camera matrices.
-- `behaviors/index.ts`: validated translate/wave/pulse definitions and evaluation.
+- `behaviors/index.ts`: all twelve validated operators, hierarchy, constraints and evaluation.
 
 Supply `prepareArtwork` as the controller's `prepare` dependency. The returned
 lease implements `step`, `render`, `reset` and `dispose`, and exposes its instance,

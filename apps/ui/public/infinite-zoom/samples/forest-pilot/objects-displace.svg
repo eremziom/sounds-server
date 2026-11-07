@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 3840 2160"><defs>
+    <radialGradient id="mist"><stop stop-color="#bceff5" stop-opacity=".8"/><stop offset=".45" stop-color="#8bd4e9" stop-opacity=".5"/><stop offset="1" stop-color="#78c9e4" stop-opacity="0"/></radialGradient>
+    <radialGradient id="spark"><stop stop-color="#fff9c9"/><stop offset=".18" stop-color="#91fff0" stop-opacity=".9"/><stop offset="1" stop-color="#5be7e4" stop-opacity="0"/></radialGradient>
+    <linearGradient id="leaf" x2="1" y2=".5"><stop stop-color="#173c62"/><stop offset=".5" stop-color="#62e7c8"/><stop offset="1" stop-color="#5896d7"/></linearGradient>
+    <linearGradient id="petal" x2=".6" y2="1"><stop stop-color="#f4c2fa"/><stop offset=".5" stop-color="#a658c7"/><stop offset="1" stop-color="#3c356b"/></linearGradient>
+    <linearGradient id="cap" x2="0" y2="1"><stop stop-color="#ffb1d9"/><stop offset=".45" stop-color="#ac4989"/><stop offset="1" stop-color="#472d64"/></linearGradient>
+  </defs><ellipse cx="2230" cy="870" rx="520" ry="200" fill="url(#mist)"/><ellipse cx="1900" cy="790" rx="135" ry="36" fill="url(#mist)"/><ellipse cx="2040" cy="880" rx="135" ry="36" fill="url(#mist)"/><ellipse cx="2180" cy="790" rx="135" ry="36" fill="url(#mist)"/><ellipse cx="2320" cy="880" rx="135" ry="36" fill="url(#mist)"/><ellipse cx="2460" cy="790" rx="135" ry="36" fill="url(#mist)"/></svg>

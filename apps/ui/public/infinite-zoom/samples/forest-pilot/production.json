@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "artworkId": "forest-pilot",
+  "version": "0.2.0",
+  "source": "Existing forest sample assets; unchanged raster files",
+  "generationApiCalls": 0,
+  "plateStrategy": "Intact opaque forest image behind separately authored organic SVG layers; no raster inpainting claimed",
+  "mapEncoding": "depth R [0,1], flow RG [0,1] -> [-1,1], masks red influence/visibility",
+  "behaviors": [
+    "translate",
+    "rotate",
+    "scale",
+    "parallax",
+    "bend",
+    "wave",
+    "displace",
+    "flow",
+    "pulse",
+    "opacity",
+    "colorShift",
+    "glow"
+  ],
+  "pendingVisualQA": [
+    "Painterly/vector style integration",
+    "Mask feathering and halo inspection",
+    "Neutral versus single-operator comparison",
+    "Portrait/wide camera coverage",
+    "Audio response and performance on target hardware"
+  ]
+}

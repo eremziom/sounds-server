@@ -21,10 +21,10 @@ export function composePlacement(parent: ArtworkPlacement, child: ArtworkPlaceme
 /** Flatten at most six placements of the three cached worlds into one renderer, retaining every ancestor
  * aperture. Independent camera responses are evaluated in each parent's space. */
 export function compositionDraws(composition: SceneComposition, pose: CameraPose) {
-  const draws: { id: string; placement: ArtworkPlacement; portals: readonly PortalRegion[] }[] = [];
+  const draws: { id: string; placement: ArtworkPlacement; portals: readonly PortalRegion[]; view: CameraPose }[] = [];
   function visit(node: SceneComposition, localPose: CameraPose, parent: ArtworkPlacement, portals: readonly PortalRegion[]) {
     if (draws.length >= 6) throw new Error("Invalid bounded artwork composition");
-    draws.push({ id: node.sourceId, placement: parent, portals });
+    draws.push({ id: node.sourceId, placement: parent, portals, view:localPose });
     if (!node.destinationId) return;
     if (!node.placement || !node.portal) throw new Error("Missing portal placement");
     // Deep embedded copies can be smaller than the journey camera's -8 limit.
