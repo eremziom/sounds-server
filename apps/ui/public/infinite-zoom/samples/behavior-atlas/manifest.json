@@ -1,0 +1,400 @@
+{
+  "schemaVersion": 2,
+  "id": "behavior-atlas",
+  "version": "0.1.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "background",
+      "uri": "/infinite-zoom/samples/behavior-atlas/background.svg",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "objects",
+      "uri": "/infinite-zoom/samples/behavior-atlas/objects.svg",
+      "kind": "image",
+      "width": 3840,
+      "height": 2160,
+      "critical": true
+    },
+    {
+      "id": "mask-translate",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-translate.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-rotate",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-rotate.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-scale",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-scale.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-parallax",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-parallax.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-bend",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-bend.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-wave",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-wave.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-displace",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-displace.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-flow",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-flow.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-pulse",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-pulse.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-opacity",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-opacity.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-colorShift",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-colorShift.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "mask-glow",
+      "uri": "/infinite-zoom/samples/behavior-atlas/mask-glow.svg",
+      "kind": "mask",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "depth",
+      "kind": "depth",
+      "uri": "/infinite-zoom/samples/behavior-atlas/depth.svg",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "field",
+      "kind": "flow",
+      "uri": "/infinite-zoom/samples/behavior-atlas/field.svg",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    },
+    {
+      "id": "influence",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/behavior-atlas/influence.svg",
+      "width": 480,
+      "height": 270,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "background",
+      "zIndex": 0,
+      "imageAssetId": "background"
+    },
+    {
+      "id": "translate",
+      "zIndex": 1,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-translate",
+      "behaviors": [
+        {
+          "id": "translate",
+          "kind": "translate",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "x": 100,
+            "y": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "rotate",
+      "zIndex": 2,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-rotate",
+      "behaviors": [
+        {
+          "id": "rotate",
+          "kind": "rotate",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "radians": 0.085,
+            "pivotX": 1464,
+            "pivotY": 618
+          }
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "zIndex": 3,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-scale",
+      "behaviors": [
+        {
+          "id": "scale",
+          "kind": "scale",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "x": 0.08,
+            "y": 0.06,
+            "pivotX": 2376,
+            "pivotY": 618
+          }
+        }
+      ]
+    },
+    {
+      "id": "parallax",
+      "zIndex": 4,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-parallax",
+      "behaviors": [
+        {
+          "id": "parallax",
+          "kind": "parallax",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amount": 240,
+            "depthAssetId": "depth",
+            "referenceDepth": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "bend",
+      "zIndex": 5,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-bend",
+      "behaviors": [
+        {
+          "id": "bend",
+          "kind": "bend",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amount": 180,
+            "pivotX": 552,
+            "pivotY": 0,
+            "axis": "x"
+          },
+          "influenceMaskAssetId": "influence"
+        }
+      ]
+    },
+    {
+      "id": "wave",
+      "zIndex": 6,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-wave",
+      "behaviors": [
+        {
+          "id": "wave",
+          "kind": "wave",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amplitude": 65,
+            "wavelength": 1000,
+            "axis": "x"
+          }
+        }
+      ]
+    },
+    {
+      "id": "displace",
+      "zIndex": 7,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-displace",
+      "behaviors": [
+        {
+          "id": "displace",
+          "kind": "displace",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amplitude": 100,
+            "fieldAssetId": "field"
+          }
+        }
+      ]
+    },
+    {
+      "id": "flow",
+      "zIndex": 8,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-flow",
+      "behaviors": [
+        {
+          "id": "flow",
+          "kind": "flow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amplitude": 125,
+            "fieldAssetId": "field"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pulse",
+      "zIndex": 9,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-pulse",
+      "behaviors": [
+        {
+          "id": "pulse",
+          "kind": "pulse",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amount": 0.75
+          }
+        }
+      ]
+    },
+    {
+      "id": "opacity",
+      "zIndex": 10,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-opacity",
+      "behaviors": [
+        {
+          "id": "opacity",
+          "kind": "opacity",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "base": 0.55,
+            "amount": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "colorShift",
+      "zIndex": 11,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-colorShift",
+      "behaviors": [
+        {
+          "id": "colorShift",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.09,
+            "phase": 0,
+            "hue": 2.6,
+            "saturation": 0.8,
+            "lightness": 0.12
+          }
+        }
+      ]
+    },
+    {
+      "id": "glow",
+      "zIndex": 12,
+      "imageAssetId": "objects",
+      "maskAssetId": "mask-glow",
+      "behaviors": [
+        {
+          "id": "glow",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.18,
+            "phase": 0,
+            "amount": 1,
+            "threshold": 0.05
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "background"
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ]
+}
