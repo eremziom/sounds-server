@@ -1,11 +1,13 @@
 import {prepareArtwork} from "/engine/artwork/prepare-artwork.ts";
 import {pixels,hash,opaque,check,waitFor} from "/fixture.mjs";
+import {setRimLightingVisibility} from "/adapter/rim-lighting.ts";
 
 window.runInsectoidArtwork=async(recordMotion=false)=>{
   const [forest,alien]=await Promise.all(["forest","insectoid-planet"].map(async id=>(await fetch(`/infinite-zoom/samples/${id}/manifest.json`)).json()));
   const canvas=document.createElement("canvas");document.body.append(canvas);window.insectoidCaptures={};
   let lease,tick=0;const errors=[],effects={};
   const step=()=>lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});
+  const reset=()=>{lease.reset();setRimLightingVisibility(lease.instance,false);};
   const capture=name=>{lease.render();window.insectoidCaptures[name]=canvas.toDataURL("image/png");};
   const smokeDetail=name=>{
     lease.render();const detail=document.createElement("canvas");detail.width=580;detail.height=520;
@@ -21,6 +23,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
     lease=await prepareArtwork({canvas,manifest:forest,instanceId:"insectoid-test",viewport:{width:960,height:540,dpr:1,renderScale:1},onAvailabilityChange(){},onError(e){errors.push(String(e));}},new AbortController().signal);
     const gl=canvas.getContext("webgl2"),journey=hash(pixels(canvas,lease.render));
     await lease.selectScene("alien",alien);
+    setRimLightingVisibility(lease.instance,false);
     const vaporImage=new Image();vaporImage.src=alien.assets.find(a=>a.id==="vapor").uri;await vaporImage.decode();
     const matte=document.createElement("canvas");matte.width=1600;matte.height=900;
     const pen=matte.getContext("2d",{willReadFrequently:true});pen.drawImage(vaporImage,0,0);
@@ -28,7 +31,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
     for(let i=3;i<alpha.length;i+=4){maxAlpha=Math.max(maxAlpha,alpha[i]);if(alpha[i])alphaPixels++;}
     check(maxAlpha>15&&maxAlpha<=62&&alphaPixels>2000&&alphaPixels<120000,"Vapor keeps real localized alpha with authored .24 cap");
     for(const[x,y]of [[0,0],[800,100],[1550,850],[1200,600],[400,800]])check(alpha[(y*1600+x)*4+3]===0,"Vapor source cannot introduce a matte outside its atmospheric wisps");
-    check(lease.getDiagnostics().estimatedTextureBytes<56*1024*1024,"Alien assets remain bounded");
+    check(lease.getDiagnostics().estimatedTextureBytes<64*1024*1024,"Alien assets remain bounded");
     check(lease.getPilotControls().map(c=>c.kind).join(",")==="scale,bend,wave,flow,pulse,opacity,colorShift,glow","Only eight authored controls appear");
     const decoded=async uri=>{const img=new Image();img.src=uri;await img.decode();return img;};
     const plate=await decoded(alien.assets.find(a=>a.id==="plate").uri),source=await decoded("/infinite-zoom/samples/insectoid-planet/source.png");
@@ -48,7 +51,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
     lease.setPilotPreset("none");const neutral=pixels(canvas,lease.render);opaque(neutral);capture("neutral");
     smokeDetail("smoke-neutral-detail");
     for(const kind of ["scale","wave","flow","bend","pulse","opacity","colorShift","glow"]){
-      lease.reset();lease.setPilotPreset(kind);let maxChanged=0,maxDelta=0,stationary=0,peakTick=0;
+      reset();lease.setPilotPreset(kind);let maxChanged=0,maxDelta=0,stationary=0,peakTick=0;
       for(let sample=0;sample<45;sample++){
         for(let i=0;i<20;i++)step();const frame=pixels(canvas,lease.render);opaque(frame);
         let changed=0;
@@ -75,7 +78,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
     const support=document.createElement("canvas");support.width=canvas.width;support.height=canvas.height;
     const supportPen=support.getContext("2d",{willReadFrequently:true});supportPen.drawImage(heatImage,0,0,support.width,support.height);
     const heatSupport=supportPen.getImageData(0,0,support.width,support.height).data;
-    lease.reset();lease.setPilotPreset("wave");
+    reset();lease.setPilotPreset("wave");
     for(let sample=0;sample<8;sample++){
       for(let i=0;i<12;i++)step();const frame=pixels(canvas,lease.render);
       for(let y=2;y<canvas.height-2;y++)for(let x=2;x<canvas.width-2;x++){
@@ -87,7 +90,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
       }
     }
     // Complete combined cycles at full authored strength, including cloud flashes.
-    lease.reset();lease.setPilotPreset("all");
+    reset();lease.setPilotPreset("all");
     const stream=recordMotion?canvas.captureStream(0):null,chunks=[];
     const recorder=stream?new MediaRecorder(stream,{mimeType:"video/webm;codecs=vp9"}):null;
     if(recorder){recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();}
@@ -107,11 +110,11 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
     await lease.selectScene("alien");check(hash(pixels(canvas,lease.render))===frame,"Alien phase and composition restored exactly");
     const ext=gl.getExtension("WEBGL_lose_context");ext.loseContext();await waitFor(()=>!lease.getDiagnostics().available);ext.restoreContext();await waitFor(()=>lease.getDiagnostics().available||errors.length);
     check(!errors.length&&hash(pixels(canvas,lease.render))===frame,"Context restore preserves authored phases");
-    lease.reset();lease.setPilotPreset("none");check(hash(pixels(canvas,lease.render))===hash(neutral),"Reset returns exact neutral frame");
+    reset();lease.setPilotPreset("none");check(hash(pixels(canvas,lease.render))===hash(neutral),"Reset returns exact neutral frame");
     lease.setPilotPreset("all");lease.setPilotCameraMotion(true);
     for(let i=0;i<600;i++)step();opaque(pixels(canvas,lease.render));capture("camera-zoom");
     for(const size of [{width:360,height:640},{width:1280,height:360}]){lease.resize({...size,dpr:1,renderScale:1});for(let i=0;i<60;i++)step();opaque(pixels(canvas,lease.render));capture(`coverage-${size.width}`);}
-    lease.resize({width:960,height:540,dpr:1,renderScale:1});lease.setPilotCameraMotion(false);lease.reset();lease.setPilotPreset("none");
+    lease.resize({width:960,height:540,dpr:1,renderScale:1});lease.setPilotCameraMotion(false);reset();lease.setPilotPreset("none");
     for(const kind of ["flow","bend","opacity","glow"])lease.setPilotControl(kind,true,1);
     lease.camera.retarget({x:1230*3840/1672,y:150*2160/941,rotation:0,logScale:1.2},3);
     for(let i=0;i<180;i++)step();opaque(pixels(canvas,lease.render));capture("smoke-camera-zoom");

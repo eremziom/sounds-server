@@ -8,8 +8,36 @@ import {STUDIO_ARTWORKS} from "../src/engines/infinite-zoom/artwork/pilot-contro
 import {createArtworkInstance} from "../src/engines/infinite-zoom/artwork/artwork-instance.ts";
 import {MEMBRANES,membraneMasks,heatMasks} from "../scripts/create-insectoid-planet.mjs";
 import {SMOKE_PIN_Y} from "../scripts/lib/insectoid-volcano-smoke.mjs";
+import {extractChitinRims,RIM_EXCLUSIONS,insideRimPolygon,RIM_PERIOD} from "../scripts/lib/insectoid-chitin-rims.mjs";
+import {setRimLightingVisibility} from "../src/components/infinite-zoom/rim-lighting.ts";
 const root=new URL("../public/infinite-zoom/samples/insectoid-planet/",import.meta.url);
 const manifest=parseArtworkPackage(JSON.parse(await readFile(new URL("manifest.json",root),"utf8")));
+test("rejected fiber overlay is absent from the active artwork package",()=>{
+  assert.equal(manifest.layers.some(l=>l.id.startsWith("fiber-")),false);
+  assert.equal(manifest.assets.some(a=>a.id.startsWith("fiber-")),false);
+});
+test("new rim lighting uses original plate pixels and protects glass with textured material masks",async()=>{
+  const layers=manifest.layers.filter(l=>l.id.startsWith("chitin-light-"));assert.equal(layers.length,4);
+  for(const layer of layers){assert.equal(layer.imageAssetId,"plate");assert.equal(layer.regions.length,12);}
+  const maps=await extractChitinRims(new URL("source.png",root));let support=0;
+  for(let y=0;y<maps.height;y++)for(let x=0;x<maps.width;x++){
+    const i=y*maps.width+x,sx=(x+.5)*1672/maps.width,sy=(y+.5)*941/maps.height;
+    if(RIM_EXCLUSIONS.some(p=>insideRimPolygon(sx,sy,p)))assert.equal(maps.material[i],0,"Protected glazing cannot be lit");
+    if(maps.material[i])support++;
+  }
+  assert.ok(support>10000&&support<30000);assert.ok(new Set(maps.material).size>150,"Facets/shadows must survive in the mask");
+  assert.ok(artworkTextureBytes(manifest)<64*1024*1024);
+});
+test("rim travel repeats in order on the fixed clock and visibility preserves its phase",()=>{
+  const instance=createArtworkInstance("rims",manifest),peaks=[];
+  for(let tick=0;tick<=RIM_PERIOD*60;tick++){
+    if(tick)instance.stepBehaviors({dt:1/60});
+    if(tick%45===0){const values=instance.getSnapshot().layers.filter(l=>l.id.startsWith("chitin-light-")).flatMap(l=>l.groups.slice(1).map(g=>g.effects[0].amount));peaks.push(values.indexOf(Math.max(...values)));}
+  }
+  assert.deepEqual(peaks,[0,6,12,18,24,30,36,42,0]);
+  const before=instance.getSnapshot();setRimLightingVisibility(instance,false);setRimLightingVisibility(instance,true);
+  assert.deepEqual(instance.getSnapshot(),before);assert.throws(()=>setRimLightingVisibility(instance,1));
+});
 test("insectoid artwork validates local lighting, pinned membranes and bounded resources",async()=>{
   assert.equal(manifest.id,STUDIO_ARTWORKS.alien);assert.equal(manifest.portal,undefined);
   assert.equal(manifest.layers[0].behaviors.length,0);

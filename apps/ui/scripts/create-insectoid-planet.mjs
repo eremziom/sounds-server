@@ -3,6 +3,7 @@ import {createHash} from "node:crypto";
 import {fileURLToPath} from "node:url";
 import {grayPng} from "./lib/forest-river-masks.mjs";
 import {createVolcanoSmoke} from "./lib/insectoid-volcano-smoke.mjs";
+import {createChitinRimLighting} from "./lib/insectoid-chitin-rims.mjs";
 
 export const root=new URL("../public/infinite-zoom/samples/insectoid-planet/",import.meta.url);
 const W=1600,H=900,SW=1672,SH=941;
@@ -68,9 +69,9 @@ export async function createInsectoidPlanet(){
   if(bytes.readUInt32BE(16)!==SW||bytes.readUInt32BE(20)!==SH)throw new Error("Reauthor masks for changed source dimensions");
   const image=`<image width="${SW}" height="${SH}" preserveAspectRatio="none" href="data:image/png;base64,${bytes.toString("base64")}"/>`;
   const assets=[],layers=[{id:"fixed-world",zIndex:0,imageAssetId:"plate"}];
-  async function asset(id,kind,body,extension="svg"){
+  async function asset(id,kind,body,extension="svg",size={width:W,height:H}){
     await writeFile(new URL(`${id}.${extension}`,root),body);
-    assets.push({id,kind,uri:`/infinite-zoom/samples/insectoid-planet/${id}.${extension}`,width:W,height:H,critical:true});
+    assets.push({id,kind,uri:`/infinite-zoom/samples/insectoid-planet/${id}.${extension}`,...size,critical:true});
   }
   const op=(kind,params,extra={})=>({id:kind,kind,order:({scale:0,wave:0,flow:0,bend:1,colorShift:1,pulse:2,glow:3,opacity:4})[kind],params:{frequencyHz:.15,phase:0,...params},...extra});
   const smoke=await createVolcanoSmoke({root,svg,asset,op,plateImage:image});
@@ -127,7 +128,8 @@ export async function createInsectoidPlanet(){
     layers.push({id:`vapor-${id}`,zIndex:12+i,imageAssetId:"vapor",maskAssetId:`visible-vapor-${id}`,behaviors:[op("opacity",{base:.5,amount:.5,frequencyHz:i===0?.13:.17,phase:i===0?1.2:3.8})]});
   }
   layers.push(smoke.layer);
-  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.3.0",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
+  const rimLighting=await createChitinRimLighting({root,asset,layers});
+  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.5.0",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
   await writeFile(new URL("manifest.json",root),JSON.stringify(manifest,null,2)+"\n");
   const production={
     schemaVersion:1,artworkId:manifest.id,version:manifest.version,tool:"built-in image_gen",externalApiCalls:0,
@@ -138,6 +140,7 @@ export async function createInsectoidPlanet(){
     heat:{pockets:HEAT_POCKETS,amplitude:HEAT_AMPLITUDE,frequencyHz:.65,wavelength:260,guardTexels:3,maximumTravelTexels:heat.maximumTravel},
     vapor:{source:"vapor-source.png",registration:"Two alpha wisps registered inside left and valley windows; static alpha capped to .24; opacity envelopes 0..1 at .13/.17 Hz",neutralControl:"Disabling opacity freezes its modulation at neutral alpha 1, leaving the authored static vapor visible; it does not hide the artwork layer"},
     volcanoSmoke:smoke.metadata,
+    rimLighting,
     limitations:["Single generated multilayer-depth painting, not independently movable depth planes",
       "Breathing deforms membrane interior texture; silhouettes, attachment ribs and architecture stay fixed",
       "Distance guard keeps moving samples inside authored membrane and heat polygons; correctness of material tracing requires visual QA",

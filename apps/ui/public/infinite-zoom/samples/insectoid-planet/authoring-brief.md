@@ -2,6 +2,12 @@
 
 Follows [shared artwork-authoring-guidelines v1.0](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
 
+Revision 0.5.0 retries optional architecture lighting with actual source-derived
+chitin masks, after rejection of the earlier drawn curves. See
+[the new scene-specific brief](rim-authoring-brief.md). The original plate is
+reused as the overlay image, with full-resolution material visibility, protected
+glazing and independent timing masks. No new visible outline geometry is authored.
+
 Revision 0.3.0 adds one distant volcanic plume under the same shared guidelines:
 see [its detailed brief](smoke-authoring-brief.md) and [prompt set](smoke-prompts.md).
 This includes a locally regenerated backing patch, independent alpha plume,
@@ -80,3 +86,52 @@ rib edges and highlights need visual review at zoom. Chroma masks can select
 warm reflected light as well as emitters; wet ground and foreground lighting
 must be assessed in motion. The delivered artwork remains an experimental test
 scene; final artistic approval and target-device performance are outstanding.
+
+## Optional darkness reveal experiment — 2026-11-07
+
+This revision follows [shared artwork guidelines v1.1](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+Original generation briefs above retain their historical provenance. No image
+generation or source repainting is used for this presentation variant.
+
+- Retain the accepted textured impulse-lighting support: 19,822 material texels,
+  three composition bands, four runtime groups and 48 ordered phases per 6-second
+  cycle. Existing glass exclusions, facets, thickness and shadows stay intact.
+- Insert a full-artwork black curtain above normal scene effects and below those
+  four lighting layers. Start at 99.5% opacity. A source-registered plate copy,
+  restricted to the existing `select-lava-seams` mask, keeps lava visible above it.
+  It inherits the complete original lava layer, including colorShift/pulse/glow,
+  so both copies evaluate the same phases and respond to the same live controls.
+  Visibility and impulse timing remain separate; no new drawn outlines are added.
+- Existing layer opacity follows a smoothstep reveal over exactly 3,600 existing
+  fixed engine steps (60 simulation seconds). Curtain and protected lava copy both
+  reach zero opacity. At completion the unmodified animated composition remains.
+- The application adapter prepares this optional manifest variant; the ordinary
+  `manifest.json` stays independently usable. Enabling the mode enables the rim
+  layer. Its glow still follows the existing effect controls. Disabling the mode
+  immediately restores normal exposure. Restart affects only the reveal; explicit
+  scene Reset also rewinds it. Pause/suspension and parking freeze progress.
+- The black texture is 16x9, normalized to the same artwork extent: 576 additional
+  critical GPU bytes, no extra renderer, scheduler or engine operator.
+- Review the full minute, representative intermediate views, combined effects,
+  source-aligned material boundaries, context restore and portrait/wide zoom.
+
+Uncertain boundaries: the existing chroma-based lava mask also admits some warm
+reflection and plume pixels near the flows; these are visible in the dark opening.
+Rim intensity depends on the current glow controls and the running 6-second phase.
+The intended mood and reveal timing still require the user's visual acceptance.
+
+### Renderer correction after user feedback
+
+The original reveal used an unanimated lava copy and revealed banding from the
+RGBA8 linear composition target. Artwork changes alone cannot recover detail
+discarded by that target. Separately from artwork authoring, the application now
+requests `highPrecisionColor`: the existing renderer uses RGBA16F when supported
+and within its unchanged memory budget. Static screen-position dithering, below
+one display-code level, is applied after linear-to-sRGB conversion. It has no time
+input and cannot advance while paused. Source textures retain original dimensions
+and 8-bit provenance; this change preserves intermediate composition precision.
+
+The composition target costs 8 rather than 4 bytes per rendered viewport pixel.
+Diagnostics report actual format/bytes. Unsupported hardware or insufficient
+budget falls back to RGBA8, preserving readiness and coverage but retaining some
+shadow banding. Precision is reconsidered on scene/viewport/context changes.

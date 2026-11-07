@@ -37,6 +37,11 @@
     "infiniteZoom": {
       "sceneLabel": "Scene",
       "alienScene": "Alien planet — insectoid city",
+      "rimLightingLabel": "Light in the chitin frames",
+      "rimLightingNote": "Enable Glints to see six-second packets on the existing ribs. Texture and shadows remain visible. This switch hides the lighting without restarting the scene.",
+      "sceneRevealLabel": "Reveal the scene from darkness — 60 s",
+      "sceneRevealNote": "Initially shows rim lights and lava. Enables rim lighting; pause freezes the reveal. Disabling immediately restores full brightness.",
+      "sceneRevealRestart": "Reveal again",
       "alienDescription": "Volcanic wasteland, dense storm clouds and chitinous architecture. Play music to animate lights, breathing membranes, electrical cloud glows, heat refraction and fading vapor.",
       "alienNotes": "Use Solo to inspect each effect. Curling and wind sway animate the distant right volcano's smoke while its root stays attached to the crater. Enable both with fading to review the combined motion. Refraction affects air above lava. Disabling fading leaves static vapor and smoke visible. Experimental scene without a portal.",
       "alienBehaviors": {"scale":"Breathing membranes","wave":"Hot-air refraction","flow":"Distant volcanic smoke curling","bend":"Wind bending the ash plume","opacity":"Vapor and smoke-edge fading","colorShift":"Light, lava and reflection colors","pulse":"Local detail pulses","glow":"Glints and electrical cloud glows"},

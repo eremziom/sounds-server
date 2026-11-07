@@ -14,6 +14,8 @@ export interface VisualView {
   readonly looping?: boolean;
   readonly scene?: VisualScene; readonly sceneLoading?: boolean;
   readonly pilotControls?: readonly PilotControl[]; readonly pilotCameraMotion?: boolean;
+  readonly rimLightingEnabled?: boolean;
+  readonly sceneRevealEnabled?: boolean; readonly sceneRevealProgress?: number;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;
@@ -26,6 +28,9 @@ export interface VisualConnection {
   setPilotControl?(kind: BehaviorKind, enabled: boolean, strength: number): void;
   setPilotPreset?(preset: "subtle" | "all" | "none" | BehaviorKind): void;
   setPilotCameraMotion?(enabled: boolean): void;
+  setRimLightingEnabled?(enabled: boolean): void;
+  setSceneRevealEnabled?(enabled: boolean): void;
+  restartSceneReveal?(): void;
   reset(): void;
   dispose(): void;
 }
@@ -63,6 +68,9 @@ export function createVisualBridge() {
     setPilotControl(kind: BehaviorKind, enabled: boolean, strength: number) { connection?.setPilotControl?.(kind,enabled,strength); },
     setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) { connection?.setPilotPreset?.(preset); },
     setPilotCameraMotion(enabled: boolean) { connection?.setPilotCameraMotion?.(enabled); },
+    setRimLightingEnabled(enabled: boolean) { connection?.setRimLightingEnabled?.(enabled); },
+    setSceneRevealEnabled(enabled: boolean) { connection?.setSceneRevealEnabled?.(enabled); },
+    restartSceneReveal() { connection?.restartSceneReveal?.(); },
     exportReplay() { return connection?.exportReplay?.() ?? null; },
     reset() { connection?.reset(); },
     dispose() { const current = connection; connection = null; current?.dispose(); mode = "background"; view = Object.freeze({ ...view, status: "disposed", ready: false, retryable: false }); notify(); },

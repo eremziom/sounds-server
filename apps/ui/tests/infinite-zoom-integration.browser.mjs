@@ -43,6 +43,13 @@ try {
     await send("Emulation.setFocusEmulationEnabled",{enabled:true});
     await send("Page.addScriptToEvaluateOnNewDocument",{source:`
       (() => {
+      // Retain the displayed frame for cross-task pixel assertions. Production
+      // uses the default disposable drawing buffer; toDataURL after a browser
+      // composite may otherwise read a cleared frame rather than the scene.
+      const getContext=HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext=function(kind,attributes){
+        return getContext.call(this,kind,kind==='webgl2' ? {...attributes,preserveDrawingBuffer:true} : attributes);
+      };
       // Reproduce a browser profile whose disk-backed response Blob storage
       // fails. Critical PNGs and pilot SVGs must still prepare and play music.
       const responseBlob=Response.prototype.blob;
@@ -126,6 +133,26 @@ try {
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"insectoid-planet");
     assert.deepEqual(await evaluate("[...document.querySelectorAll('[data-iz-behavior]')].map(e=>e.dataset.izBehavior)"),["scale","bend","wave","flow","pulse","opacity","colorShift","glow"]);
     assert.equal(await evaluate(`${audio}.paused && ${canvas}===izCanvas && izCanvas.getContext('webgl2')===izGl`),true,"Alien selection preserves paused audio, canvas and context");
+    assert.equal(await evaluate("document.querySelector('[data-iz-rim-lighting]').checked"),false,"Material lighting defaults off");
+    await click("document.querySelector('[data-iz-behavior=glow] [data-iz-solo]')");
+    await evaluate("void(window.izRimOff=izCanvas.toDataURL())");
+    await click("document.querySelector('[data-iz-rim-lighting]')");
+    assert.equal(await evaluate("izCanvas.toDataURL()!==izRimOff"),true,"Switch visibly lights source material");
+    await click("document.querySelector('[data-iz-rim-lighting]')");
+    assert.equal(await evaluate("izCanvas.toDataURL()===izRimOff"),true,"Turning off restores exact paused frame");
+    await click("document.querySelector('[data-iz-scene-reveal]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-rim-lighting]').checked"),true,"Reveal enables the protected rim layer");
+    await delay(350);
+    assert.equal(await evaluate("document.querySelector('[data-iz-reveal-progress]').textContent"),"0%","Paused reveal stays at its initial progress");
+    assert.equal(await tick(),sceneTick,"Paused reveal cannot advance simulation");
+    await click("document.querySelector('[data-iz-reveal-restart]')");
+    assert.equal(await tick(),sceneTick,"Restarting only the reveal does not reset or advance the journey");
+    await click("document.querySelector('[data-iz-scene-reveal]')");
+    await click("document.querySelector('[data-iz-rim-lighting]')");
+    assert.equal(await evaluate("izCanvas.toDataURL()===izRimOff"),true,"Disabling reveal and rims restores the exact normal paused frame");
+    await click("document.querySelector('[data-iz-rim-lighting]')");await selectScene("journey");await selectScene("alien");
+    assert.equal(await evaluate("document.querySelector('[data-iz-rim-lighting]').checked"),true,"Preference survives scene parking");
+    await click("document.querySelector('[data-iz-rim-lighting]')");assert.equal(await tick(),sceneTick);
     for(const kind of ["wave","flow","bend","opacity"]){
       await click(`document.querySelector('[data-iz-behavior=${kind}] [data-iz-solo]')`);
       assert.equal(await evaluate(`document.querySelector('[data-iz-behavior=${kind}] [data-iz-behavior-enabled]').checked`),true);
@@ -192,6 +219,9 @@ try {
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='committed'");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"nebula");
     const musicBeforePilot=await evaluate("izAudio.currentTime");
+    await selectScene("alien");await click("document.querySelector('[data-iz-rim-lighting]')");await delay(200);
+    assert.equal(await evaluate("!izAudio.paused && izCanvas.getContext('webgl2')===izGl"),true,"Lighting toggle preserves playing audio/context");
+    assert.ok(await evaluate("izAudio.currentTime")>musicBeforePilot);
     await selectScene("clockwork");await delay(200);
     assert.equal(await evaluate("izAudio.paused"),false);assert.ok(await evaluate("izAudio.currentTime")>musicBeforePilot,"Clockwork keeps already playing music progressing");
     await selectScene("layered");await delay(250);
@@ -240,6 +270,23 @@ try {
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest");
     await waitFor("document.querySelector('[data-iz-state]').dataset.transition==='prepared'");
     assert.equal(await evaluate("document.querySelector('[data-iz-transition]').disabled"),false,"Reset restores the embedded portal without another load");
+    await selectScene("alien");await click("document.querySelector('[data-iz-reset]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-rim-lighting]').checked && izAudio.paused"),true,"Studio Reset retains on preference and pause");
+    await click("document.querySelector('[data-iz-rim-lighting]')");await click("document.querySelector('[data-iz-reset]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-rim-lighting]').checked"),false,"Studio Reset retains off preference");
+    await click("document.querySelector('[data-iz-scene-reveal]')");
+    await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='running'`);
+    await waitFor("parseInt(document.querySelector('[data-iz-reveal-progress]').textContent)>0");
+    await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+    const revealProgress=await evaluate("document.querySelector('[data-iz-reveal-progress]').textContent");
+    await delay(350);
+    assert.equal(await evaluate("document.querySelector('[data-iz-reveal-progress]').textContent"),revealProgress,"Audio pause freezes reveal progress");
+    await click("document.querySelector('[data-iz-reveal-restart]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-reveal-progress]').textContent"),"0%","Reveal restart works independently while paused");
+    await click("document.querySelector('[data-iz-reset]')");
+    assert.equal(await evaluate("document.querySelector('[data-iz-scene-reveal]').checked && document.querySelector('[data-iz-reveal-progress]').textContent==='0%'"),true,"Explicit Reset retains reveal mode and rewinds it");
+    await click("document.querySelector('[data-iz-scene-reveal]')");
+    await selectScene("journey");
     assert.deepEqual(lateArtworkLoads.filter(url=>!url.includes("/forest-pilot/")), [], "Travel, track changes and explicit reset use the initially prepared chain without network loads");
     await click(toggle); await waitFor(`${canvas}.dataset.visualStatus==='running'`);
     // Throw inside the actual IZ context; failure must not touch music.

@@ -37,6 +37,11 @@
     "infiniteZoom": {
       "sceneLabel": "Scena",
       "alienScene": "Obca planeta — miasto insektoidów",
+      "rimLightingLabel": "Światło w chitynowych obramowaniach",
+      "rimLightingNote": "Włącz Rozbłyski, aby zobaczyć impulsy na istniejących żebrach co 6 sekund. Faktura i cienie pozostają widoczne. Przełącznik ukrywa całe podświetlenie bez restartowania sceny.",
+      "sceneRevealLabel": "Odsłanianie sceny z ciemności — 60 s",
+      "sceneRevealNote": "Początkowo widać światła obramowań i lawę. Włącza obramowania; pauza zatrzymuje rozjaśnianie. Wyłączenie od razu przywraca pełną jasność.",
+      "sceneRevealRestart": "Odsłoń ponownie",
       "alienDescription": "Wulkaniczne pustkowie, gęste chmury i chitynowe budowle. Odtwórz muzykę, aby uruchomić światła, oddychanie membran, poświaty wyładowań, falowanie gorącego powietrza oraz zanikające opary.",
       "alienNotes": "Solo pozwala obejrzeć każdy efekt osobno. Kłębienie i odchylanie ożywiają dym nad prawym odległym wulkanem; podstawa pozostaje przy kraterze. Włącz oba efekty razem z zanikaniem, aby obejrzeć całość. Falowanie dotyczy powietrza nad lawą. Wyłączenie zanikania pozostawia stałą widoczność oparów i dymu. Scena testowa, bez portalu.",
       "alienBehaviors": {"scale":"Oddychanie membran","wave":"Falowanie gorącego powietrza","flow":"Kłębienie dymu nad dalekim wulkanem","bend":"Odchylanie pióropusza przez wiatr","opacity":"Zanikanie oparów i obrzeży dymu","colorShift":"Kolory świateł, lawy i odbić","pulse":"Pulsowanie lokalnych detali","glow":"Rozbłyski i wyładowania w chmurach"},

@@ -7,6 +7,11 @@ and actual motion/zoom review, independently of the scene's subject. Each packag
 brief must reference the shared guideline version and record its scene-specific
 application and unresolved quality issues. Do not claim production readiness from
 a still preview or automated pixel differences alone.
+Every new or revised artwork must also contain a large number of integrated
+details for local impulse lighting, as required by the shared guidelines.
+Every new or revised artwork must also support complete environmental blackout
+with independently animated light/color regions remaining visible from the start,
+plus smooth reveal and motion/zoom QA as required by the shared guidelines.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

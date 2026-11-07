@@ -1,4 +1,4 @@
-import { LinearFilter, LinearSRGBColorSpace, Mesh, NoToneMapping, OrthographicCamera, PlaneGeometry,
+import { HalfFloatType, UnsignedByteType, LinearFilter, LinearSRGBColorSpace, Mesh, NoToneMapping, OrthographicCamera, PlaneGeometry,
   Scene, ShaderMaterial, SRGBColorSpace, WebGLRenderer, WebGLRenderTarget } from "three";
 import { coversViewport, getCoverView, type ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
@@ -18,6 +18,8 @@ export interface ArtworkRendererOptions {
   readonly viewport: ArtworkViewport;
   readonly camera?: CameraController;
   readonly gpuBudgetBytes?: number;
+  /** Preserve low-light detail during long fades; RGBA8 fallback on older GPUs. */
+  readonly highPrecisionColor?: boolean;
   readonly onAvailabilityChange: (available: boolean) => void;
   readonly onError: (error: unknown) => void;
 }
@@ -33,6 +35,8 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   const camera = new OrthographicCamera(-1920, 1920, 1080, -1080, 0.1, 10);
   const outputCamera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 10); outputCamera.position.z = 1;
   const entries = new Map<string, Entry>();
+  let targetPixelBytes=4;
+  let floatingColorSupported=false;
   let composition: SceneComposition = Object.freeze({ sourceId: instance.id });
   let viewport = Object.freeze({ ...options.viewport }), available = true, disposed = false;
   let detailEnabled = true, detailLocked = false, optionalGeneration = 0;
@@ -51,7 +55,7 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     const key = `${value.instance.id}/${id}`, asset = value.loaded.manifest.assets.find(a => a.id === id)!;
     if (!detailEnabled || detailLocked || !available || disposed || optionalPending.has(key) || optionalFailures.has(key) || value.loaded.hasAsset(id) || asset.width > maximumDimension || asset.height > maximumDimension) return;
     const bytes = assetTextureBytes(asset), reserved = [...optionalPending.values()].reduce((a,b) => a+b,0);
-    if (residentBytes()+reserved+bytes+canvas.width*canvas.height*4 > (options.gpuBudgetBytes ?? 256*1024*1024)) return;
+    if (residentBytes()+reserved+bytes+canvas.width*canvas.height*targetPixelBytes > (options.gpuBudgetBytes ?? 256*1024*1024)) return;
     optionalPending.set(key,bytes);
     const generation = optionalGeneration;
     void value.loaded.loadOptional(id, AbortSignal.any([optionalLifetime.signal,AbortSignal.timeout(15000)])).catch(() => {
@@ -79,7 +83,15 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
   function applyViewport(next: ArtworkViewport) {
     const { view, width, height } = dimensions(next);
     camera.left = -view.width / 2; camera.right = view.width / 2; camera.top = view.height / 2; camera.bottom = -view.height / 2;
-    camera.updateProjectionMatrix(); renderer.setSize(width, height, false); target!.setSize(width, height); viewport = Object.freeze({ ...next });
+    camera.updateProjectionMatrix(); renderer.setSize(width, height, false); configureColorTarget(width,height); target!.setSize(width, height); viewport = Object.freeze({ ...next });
+  }
+  function configureColorTarget(width:number,height:number) {
+    // Prefer precision, but never reject a previously admissible scene/viewport
+    // solely to upgrade its color buffer. Re-evaluate on scene/size/restore.
+    const useFloat=floatingColorSupported && residentBytes()+width*height*8 <= (options.gpuBudgetBytes ?? 256*1024*1024);
+    const type=useFloat ? HalfFloatType : UnsignedByteType;
+    targetPixelBytes=useFloat ? 8 : 4;
+    if(target && target.texture.type!==type){target.dispose();target.texture.type=type;}
   }
   function releaseGpu() {
     scene.clear(); output.clear();
@@ -90,17 +102,23 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     maximumDimension = Math.min(renderer.capabilities.maxTextureSize, renderer.getContext().getParameter(renderer.getContext().MAX_RENDERBUFFER_SIZE) as number);
     if (renderer.capabilities.maxTextureSize < 3840) throw new Error("GPU cannot hold critical artwork at authored resolution");
     for (const value of entries.values()) value.gpu = buildArtwork(value);
+    floatingColorSupported=!!options.highPrecisionColor && (renderer.extensions.has("EXT_color_buffer_float") || renderer.extensions.has("EXT_color_buffer_half_float"));
+    if(floatingColorSupported)renderer.extensions.get(renderer.extensions.has("EXT_color_buffer_float") ? "EXT_color_buffer_float" : "EXT_color_buffer_half_float");
     target = new WebGLRenderTarget(1, 1, { depthBuffer: false, stencilBuffer: false, minFilter: LinearFilter, magFilter: LinearFilter, colorSpace: LinearSRGBColorSpace });
     outputGeometry = new PlaneGeometry(2, 2);
     outputMaterial = new ShaderMaterial({ vertexShader: VERTEX_SHADER,
       fragmentShader: `uniform sampler2D composed; varying vec2 vUv;
+        #include <common>
+        #include <dithering_pars_fragment>
         void main() { gl_FragColor = texture2D(composed,vUv);
           #include <colorspace_fragment>
+          #include <dithering_fragment>
         }`,
-      uniforms: { composed: { value: target.texture } }, depthTest: false, depthWrite: false, toneMapped: false });
+      uniforms: { composed: { value: target.texture } }, dithering:!!options.highPrecisionColor, depthTest: false, depthWrite: false, toneMapped: false });
     output.add(new Mesh(outputGeometry, outputMaterial)); applyViewport(viewport);
   }
   function draw(current: SceneComposition, display: boolean) {
+    configureColorTarget(canvas.width,canvas.height);
     const pose = options.camera?.getSnapshot().pose ?? FULL_FRAME;
     camera.position.set(pose.x - 1920, -(pose.y - 1080), 1); camera.rotation.z = -pose.rotation; camera.zoom = Math.exp(pose.logScale); camera.updateProjectionMatrix();
     scene.clear();
@@ -237,7 +255,8 @@ export function createArtworkRenderer(canvas: HTMLCanvasElement, loaded: LoadedA
     getDiagnostics() { return Object.freeze({ available, disposed, width: canvas.width, height: canvas.height,
       estimatedTextureBytes: residentBytes()+[...optionalPending.values()].reduce((sum,bytes)=>sum+bytes,0),
       optionalPending: optionalPending.size, optionalFailures: optionalFailures.size, detailEnabled,
-      estimatedTargetBytes: target ? canvas.width * canvas.height * 4 : 0,
+      estimatedTargetBytes: target ? canvas.width * canvas.height * targetPixelBytes : 0,
+      colorBuffer:targetPixelBytes===8 ? "rgba16f" : "rgba8", outputDithering:!!options.highPrecisionColor,
       artworks: entries.size, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries,
       programs: renderer.info.programs?.length ?? 0 }); },
     dispose,

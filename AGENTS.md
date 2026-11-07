@@ -37,6 +37,14 @@
 - Include the guideline version/link and scene-specific application in the
   package's `authoring-brief.md`; carry relevant requirements into each generation
   or editing prompt. Do not assume image tools read repository instructions.
+- Every new or revised artwork, regardless of theme/style, must include a large
+  number of integrated material details for local impulse lighting. Follow the
+  shared guidelines for distribution, masks, timing and visual acceptance; generic
+  detached lines/dots do not satisfy this requirement.
+- Every new or revised artwork must also support optional complete environmental
+  blackout while separately lit regions retain their animated colors/impulses
+  from the first frame. Follow the shared guidelines for masks, smooth reveal,
+  shadow precision, pause behavior and actual motion/zoom acceptance.
 - Report motion/zoom QA evidence, uncertain boundaries and remaining corrections.
   A still preview or changed-pixel test alone does not establish production readiness.
 - Describe engine extensions separately from artwork production. A future creator

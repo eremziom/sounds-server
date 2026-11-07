@@ -25,6 +25,18 @@ export function PilotArtworkControls() {
     {snapshot.scene && snapshot.scene !== "journey" && <fieldset disabled={snapshot.sceneLoading} data-iz-pilot className="space-y-4 rounded-lg border p-4">
       <legend className="px-2 text-sm font-semibold">{t("pilotHeading")}</legend>
       <p className="text-sm text-muted-foreground">{t(`${scenePrefix}Description`)}</p>
+      {snapshot.scene === "alien" && <div className="space-y-1 rounded-md border p-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-iz-rim-lighting checked={!!snapshot.rimLightingEnabled}
+          onChange={event=>runtime.setRimLightingEnabled(event.target.checked)}/>{t("rimLightingLabel")}</label>
+        <p className="text-xs text-muted-foreground">{t("rimLightingNote")}</p>
+        <label className="flex items-center gap-2 pt-3 text-sm"><input type="checkbox" data-iz-scene-reveal checked={!!snapshot.sceneRevealEnabled}
+          onChange={event=>runtime.setSceneRevealEnabled(event.target.checked)}/>{t("sceneRevealLabel")}</label>
+        <p className="text-xs text-muted-foreground">{t("sceneRevealNote")}</p>
+        {snapshot.sceneRevealEnabled && <div className="flex items-center gap-3 pt-2">
+          <Button type="button" size="sm" variant="outline" data-iz-reveal-restart onClick={()=>runtime.restartSceneReveal()}>{t("sceneRevealRestart")}</Button>
+          <output data-iz-reveal-progress className="text-xs text-muted-foreground" aria-live="off">{Math.round((snapshot.sceneRevealProgress??0)*100)}%</output>
+        </div>}
+      </div>}
       <div className="flex flex-wrap gap-2">
         <Button type="button" variant="outline" data-iz-preset="subtle" onClick={()=>runtime.setPilotPreset("subtle")}>{t("subtlePreset")}</Button>
         <Button type="button" variant="outline" data-iz-preset="all" onClick={()=>runtime.setPilotPreset("all")}>{t("enableAll")}</Button>

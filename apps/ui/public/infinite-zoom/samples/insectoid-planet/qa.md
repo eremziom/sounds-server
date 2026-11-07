@@ -1,5 +1,103 @@
 # QA — insectoid planet, 2026-11-07
 
+## Revision 0.5.0 — source-material rim-lighting retry
+
+This is a new experiment after the user's rejection of approximate strokes.
+No source illustration is edited and no new visible vector/raster line is added.
+Four overlay groups reuse `plate`, with 1600×900 material masks derived from source
+RGB inside manually inspected chitin bands. Painted facets, small cyan reflections
+and dark crevices shape the light. Warm glass and explicit glazing polygons are
+excluded. Coarser 400×225 phase maps control emission timing only.
+
+### Static review performed before integration
+
+Inspected enlarged original foreground/city crops, coordinate grids, mask-on-source
+overlays and steady-light previews in `.tmp/chitin-rim-review/` at repository root.
+The first city-band support touched glazing/incorrect leg positions; those bands
+were corrected and warm glazing was more strongly excluded before animation was
+wired. Material support is 19,822 nonzero texels out of 1,440,000, with over 150
+distinct mask values. The visible shape is irregular source texture, not a line
+drawn along the timing route. This review does not establish final acceptance.
+
+### Technical and motion evidence
+
+The new optional checkbox defaults off and uses existing layer opacity through
+the application adapter. Global Glow strength controls emission. The new lighting
+uses existing `glow`, 48 delayed phases, a six-second period, four groups with
+twelve regions each and 14 samplers per material. No animation-engine algorithm,
+clock, audio owner, renderer or source raster is changed. Critical texture estimate:
+61,920,000 bytes. All masks are critical so toggling needs no later loading.
+
+Focused run: 28 unit tests pass, including exact preservation of protected glazing,
+nonbinary mask texture, original-plate references, ordered/repeating phases,
+visibility without phase reset, rejection of old fiber assets and earlier engine
+regressions. Production build passes. The original eight-effect WebGL scene
+regression passes with the new lighting disabled.
+
+Dedicated WebGL review passes two six-second cycles, actual per-pixel emission
+timing at eleven material anchors across all three bands, protected glazing/sky/
+rock pixels, exact disabled-frame restoration, pause-toggle identity, parked
+scene return, context recovery, reset, zoom and portrait/wide coverage. Rendered
+peaks land within two of the 48 phase samples of their authored anchor positions
+in the measured cycles. Stronger/weaker material reflectance intentionally gives
+unequal brightness; dark/occluded sections may have little or no visible emission.
+
+Full application integration passes default-off state, visible on/off behavior,
+exact paused off-frame restoration, retained scene preference, unchanged paused
+tick, toggling with advancing music and the same context, and both Reset preference
+states. Existing journey/Loop/readiness/failure-isolation checks also pass.
+
+Commands from `apps/ui`:
+
+```
+node --test tests/infinite-zoom-insectoid.test.mjs tests/infinite-zoom-pilot.test.mjs tests/infinite-zoom-phase2.test.mjs tests/infinite-zoom-playback.test.mjs
+node tests/infinite-zoom-renderer.browser.mjs --insectoid-only
+node tests/infinite-zoom-renderer.browser.mjs --rims-only --rims-motion
+node tests/infinite-zoom-integration.browser.mjs
+```
+
+Build: `pnpm --filter ui build` from repository root. Review artifacts are saved
+as `.tmp/infinite-zoom-artwork/chitin-rims-*`, including native camera captures,
+foreground/city detail frames, a same-phase off/on comparison and a 12-second
+motion recording. The material-mask script uses installed Next's Sharp dependency
+offline to read RGB and write grayscale data maps. It does not generate new art.
+One comparison-image export exceeded the browser protocol's safe message size;
+artifact export now reads image data in bounded chunks, like the existing video
+export. Rendering/motion checks had completed before that transfer failure.
+
+### Remaining artistic review
+
+Hand-authored band/occlusion boundaries still need the user's assessment. Some
+rib faces are deliberately dark, so packets soften/disappear there. Timing uses
+an internal route coordinate, but that coordinate never draws visible geometry.
+Check whether the result reads as integrated structural light at full-frame size,
+not merely isolated reflections; inspect phase joins and corner transitions in
+motion. Source resolution limits strong zoom. No production-readiness or artistic
+acceptance claim follows from the static preview or technical test passes.
+
+## Earlier rejected/accepted revisions
+
+## Revision 0.4.1 — rejected fiber draft withdrawn
+
+The user rejected revision 0.4.0: generic thin lines were stylistically foreign
+to the insectoid architecture and poorly aligned with the painted building edges.
+This is a failed artistic result. Ordered glow phases, pixel differences and
+toggle tests did not validate material integration or contour accuracy. Earlier
+claims that the inspected contour alignment was adequate were not justified.
+
+The active package restores the 0.3.0 artwork/effects, omits all fiber assets and
+layers, and removes the checkbox/application wiring. No further replacement is
+introduced. Historical draft sources and the reverse patch are preserved for
+review; the draft is not a production asset or an accepted sample. A future
+attempt must begin with close inspection and masks of actual architectural ribs,
+not another set of approximate curves over the painting.
+
+Withdrawal verification: 21 focused unit tests passed (insectoid package, pilot,
+Phase 2), including absence of fiber layers/assets. The existing scene WebGL
+suite passed; build passed on a standalone rerun after an initial concurrent
+build worker crashed. These checks verify safe restoration, not visual acceptance
+of any new overlay. No replacement overlay is delivered in this revision.
+
 Experimental artwork prepared under shared authoring guidelines v1.0. Technical
 passes and sampled visual inspection are separate from final artistic acceptance.
 
@@ -134,3 +232,81 @@ Not claimed: native 4K, independently moving depth planes, full silhouette
 inflation, random lightning, physically advected clouds, AI inpainting, target
 device performance certification, or production/artistic acceptance. No engine
 extension, extra renderer, clock, audio owner or change to the Loop is included.
+
+## Optional 60-second darkness reveal — 2026-11-07
+
+Application presentation variant of the accepted 0.5.0 artwork; authored source
+and ordinary manifest remain unchanged. Guidelines v1.1 apply to this revision;
+see the appended section in `authoring-brief.md` for masks, layers and uncertainty.
+
+Validation:
+
+- `node --test tests/infinite-zoom-scene-reveal.test.mjs tests/infinite-zoom-insectoid.test.mjs tests/infinite-zoom-playback.test.mjs`: 15 passing tests.
+- `node tests/infinite-zoom-renderer.browser.mjs --reveal-only`: passes actual
+  WebGL2 rendering through 3,600 fixed steps with every scene effect enabled.
+  Completed reveal and normal exposure have identical frame hashes at the same
+  animation phase. The initial unlit sky is below 5% of its normal RGB sum.
+- Repeated presentation leaves progress/frame frozen. Scene parking freezes
+  progress; returning and WebGL context restoration retain exposure and phases.
+  Portrait 360x640 and wide 1280x360 zoom retain full opaque coverage.
+- `pnpm --filter ui build`: passes translations, TypeScript and production build.
+- `node tests/infinite-zoom-integration.browser.mjs`: passes the real application
+  controls, paused activation, automatic rim enable, exact normal frame after
+  disabling, progress during audio playback, freezing on audio pause, independent
+  restart and explicit Reset. Existing readiness, journeys and audio error
+  isolation tests also pass.
+
+Review evidence at repository root `.tmp/infinite-zoom-artwork/`:
+`scene-reveal-{0s,15s,30s,45s,60s,normal}.png`, zoom captures,
+`scene-reveal-qa.json` and `scene-reveal-motion.webm`. The recording traverses the
+full 60 simulation seconds with six fixed steps per captured frame, targeting a
+3x preview at 30 fps; it is not a real-time performance measurement.
+
+Visual inspection of 0s and 30s full-frame captures confirms the dark opening
+and gradual appearance of the architecture, clouds and terrain. Source-based
+lava selection also shows nearby illuminated mist and warm reflections. The
+accepted textured chitin masks remain above the curtain, with original glass
+exclusions and independent impulse phases. Boundaries inherit the existing
+manual mask uncertainty. The minute-long technical test and review recording
+do not replace the user's artistic acceptance or target-device performance QA.
+
+### Corrections after feedback: lava phase and shadow banding
+
+The initial reveal passed timing and final-frame checks but had two visible
+defects reported by the user: its protected lava copy was static, and the RGBA8
+linear composition target quantized dark surfaces into visibly coarse steps.
+Earlier statements that the reveal needs no engine/shader change apply to that
+initial implementation; this correction includes a renderer precision extension.
+
+- `reveal-lava` now clones the original lava layer, including all behavior
+  descriptors. Unit tests compare its color/pulse/glow phases with the original
+  throughout a full minute. Actual initial-darkness rendering responds to the
+  colorShift control (summed protected-region channel difference: 65,140).
+- The application requests RGBA16F plus deterministic output dithering. A flat
+  #303030 field exercises the same first ten seconds of the reveal. The original
+  RGBA8 compositor produces only 2 distinct patch means with a maximum jump of
+  13 display-code levels. The corrected compositor produces 99 distinct means
+  and a maximum jump of 0.161, measured on a 32x32 patch at 5-tick intervals.
+  This measures the tested ramp, not every monitor or source texture.
+- Unsupported float-color extensions and a tight 60,000-byte fixture budget
+  both retain a working RGBA8 output. Smaller/larger viewport changes restore
+  RGBA16F/fall back to RGBA8 within budget, with opaque coverage throughout.
+  RGBA8 fallback still has coarse shadow steps; output dithering alone cannot
+  recover information lost in the composition buffer.
+- The full 60-second WebGL2 reveal still passes final normal-frame identity,
+  pause, scene parking, context restore and portrait/wide zoom checks. Updated
+  full-minute accelerated recording and screenshots replace the earlier captures.
+- `node --test tests/infinite-zoom-scene-reveal.test.mjs tests/infinite-zoom-insectoid.test.mjs tests/infinite-zoom-phase2.test.mjs tests/infinite-zoom-transition.test.mjs`: 43 passing tests.
+- `pnpm --filter ui build`: passes translations, TypeScript and production build.
+
+The dark and intermediate captures retain the textured material boundaries;
+the lava now visibly shifts color while the surroundings remain dark. Full
+artistic acceptance and target-device display/performance testing remain open.
+
+Final regression validation also passes `node tests/infinite-zoom-renderer.browser.mjs`
+(complete renderer suite, including authored transitions, loop, all operators,
+other studio scenes and chitin rims) and
+`node tests/infinite-zoom-integration.browser.mjs` (actual application with the
+high-precision option enabled, controls, pause/restart, journey and audio failure
+isolation). The integration harness retains its drawing buffer solely for stable
+cross-task pixel comparisons; production retains its original buffer lifecycle.
