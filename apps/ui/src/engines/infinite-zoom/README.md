@@ -1,5 +1,23 @@
 # Infinite Zoom engine — foundation and embedded zoomThrough
 
+## Phase 2 runtime (2026-11-07)
+
+The runtime now supports all twelve typed operators, scoped hard/soft constraints,
+gradient influence, depth/flow maps, budgeted optional full-frame detail LOD,
+preflighted camera paths, bounded audio bindings, diagnostic context, adaptive
+quality recovery and fixed-tick logical recording/replay. See
+[phase2-contract.md](phase2-contract.md) for the versioned package boundary,
+encoding, limits, tests and production responsibilities. Schema 1 sample artwork
+is backward compatible; schema 2 opts into the new facilities.
+
+The current sample journey is Forest -> Nebula -> Underwater Cavern -> Forest,
+with Loop and manual stop/resume. It retains one renderer, one clock and the
+existing music graph. Historical terminal-chain descriptions below are superseded.
+New operators are demonstrated by the Phase 2 WebGL fixture rather than silently
+changing the three visually accepted sample packages. Replay JSON can be exported
+from the existing session diagnostics panel.
+
+
 ## Current demo: Forest -> Nebula -> Underwater Cavern (2026-11-05)
 
 The user authorized integrating the third artwork. The demo now has two authored
@@ -39,7 +57,7 @@ The first authored connection is Forest→Nebula; further portals are not author
 - `artwork/index.ts`: manifest validation, CPU loading, independent instances.
 - `renderer/index.ts`: WebGL2 renderer and `prepareArtwork(options, signal)`.
 - `camera/index.ts`: fixed-step trajectories, bookmarks and camera matrices.
-- `behaviors/index.ts`: validated translate/wave/pulse definitions and evaluation.
+- `behaviors/index.ts`: all twelve validated operators, hierarchy, constraints and evaluation.
 
 Supply `prepareArtwork` as the controller's `prepare` dependency. The returned
 lease implements `step`, `render`, `reset` and `dispose`, and exposes its instance,

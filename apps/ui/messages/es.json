@@ -35,6 +35,7 @@
   },
   "app": {
     "infiniteZoom": {
+      "exportReplay": "Exportar repetici?n l?gica",
       "diagnostics": "Diagnóstico de sesión",
       "description": "Una demo técnica con imágenes de ejemplo. Reproduce música de tu biblioteca para animar la escena. La pausa conserva tu recorrido.",
       "immersive": "Vista inmersiva", "exitImmersive": "Salir de la vista inmersiva", "loop": "Loop", "stopLoop": "Detener Loop", "transition": "Escena siguiente", "cancel": "Cancelar transición", "reset": "Reiniciar recorrido",

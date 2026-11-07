@@ -20,7 +20,7 @@ test("manifest is a detached immutable package with stable layer ordering", () =
 
 test("manifest rejects invalid references, unsupported fields, unsafe URIs and invalid coverage", () => {
   const mutations = [
-    value => { value.schemaVersion = 2; },
+    value => { value.schemaVersion = 3; },
     value => { value.canvas.width = 1920; },
     value => { value.assets[0].height = 1080; },
     value => { value.assets[1].id = value.assets[0].id; },

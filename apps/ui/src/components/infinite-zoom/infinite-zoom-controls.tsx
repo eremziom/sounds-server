@@ -32,6 +32,13 @@ export function InfiniteZoomControls() {
     <label className="flex items-center gap-2 text-sm"><input data-iz-modulation type="checkbox" checked={modulation} onChange={event => runtime.setModulation(event.target.checked)} />{t("modulation")}</label>
     <details className="text-xs" data-iz-diagnostics>
       <summary>{t("diagnostics")}</summary>
+      <Button type="button" variant="outline" data-iz-export-replay disabled={!snapshot.ready} onClick={() => {
+        const recording = runtime.exportReplay();
+        if (!recording) return;
+        const url = URL.createObjectURL(new Blob([JSON.stringify(recording)], { type: "application/json" }));
+        const link = document.createElement("a"); link.href = url; link.download = "infinite-zoom-replay.json";
+        link.click(); setTimeout(() => URL.revokeObjectURL(url), 0);
+      }}>{t("exportReplay")}</Button>
       <pre className="max-h-72 overflow-auto whitespace-pre-wrap" data-iz-diagnostic-snapshot>{JSON.stringify(snapshot.diagnostics ?? {}, null, 2)}</pre>
     </details>
     {snapshot.error && <div role="alert" className="space-y-2 text-sm"><p>{t("failed")}</p>

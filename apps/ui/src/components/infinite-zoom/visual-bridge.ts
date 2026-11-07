@@ -1,3 +1,4 @@
+import type { LogicalRecording } from "../../engines/infinite-zoom/diagnostics/logical-replay.ts";
 import type { EngineStatus } from "../../engines/infinite-zoom/core/contracts.ts";
 
 export class VisualReadinessError extends Error {
@@ -17,6 +18,7 @@ export interface VisualConnection {
   command(command: "zoomIn" | "zoomOut" | "rotate" | "return" | "hold" | "cancel"): void;
   transition(): Promise<void>;
   setLoop?(enabled: boolean): void;
+  exportReplay?(): LogicalRecording | null;
   reset(): void;
   dispose(): void;
 }
@@ -50,6 +52,7 @@ export function createVisualBridge() {
     command(command: Parameters<VisualConnection["command"]>[0]) { connection?.command(command); },
     transition() { return connection?.transition() ?? Promise.reject(new Error("Visual host is not mounted")); },
     setLoop(enabled: boolean) { connection?.setLoop?.(enabled); },
+    exportReplay() { return connection?.exportReplay?.() ?? null; },
     reset() { connection?.reset(); },
     dispose() { const current = connection; connection = null; current?.dispose(); mode = "background"; view = Object.freeze({ ...view, status: "disposed", ready: false, retryable: false }); notify(); },
   };

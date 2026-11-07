@@ -11,10 +11,13 @@ export interface DecodedArtworkAsset {
 export type AssetDecoder = (asset: ArtworkAsset, signal: AbortSignal) => Promise<DecodedArtworkAsset>;
 
 /** CPU lease. Critical assets stay owned until terminal disposal. Optional assets
- * are deliberately not fetched in this stage; they cannot gate readiness. */
+ * load on demand, never gate readiness, and close on eviction or disposal. */
 export interface LoadedArtwork {
   readonly manifest: ArtworkPackage;
   getAsset(id: string): DecodedArtworkAsset;
+  hasAsset(id: string): boolean;
+  loadOptional(id: string, signal: AbortSignal): Promise<void>;
+  evictOptional(): void;
   dispose(): void;
 }
 
@@ -22,9 +25,16 @@ export async function loadArtwork(input: unknown, signal: AbortSignal, decode: A
   const manifest = parseArtworkPackage(input);
   const assets = new Map<string, DecodedArtworkAsset>();
   let disposed = false;
+  const pending = new Map<string, Promise<void>>();
+  const lifetime = new AbortController();
+  let optionalLifetime = new AbortController();
+  function evictOptional() {
+    optionalLifetime.abort(); optionalLifetime = new AbortController(); pending.clear();
+    for (const [id,asset] of assets) if (!manifest.assets.find(a => a.id === id)!.critical) { assets.delete(id); try { asset.close(); } catch {} }
+  }
   function dispose() {
     if (disposed) return;
-    disposed = true;
+    disposed = true; lifetime.abort(); optionalLifetime.abort(); pending.clear();
     // A broken close must not strand the rest of this package's CPU resources.
     for (const asset of assets.values()) { try { asset.close(); } catch { /* Continue cleanup. */ } }
     assets.clear();
@@ -44,6 +54,28 @@ export async function loadArtwork(input: unknown, signal: AbortSignal, decode: A
     if (!assets.get(base.imageAssetId)!.opaque) throw new Error("Coverage base image contains transparent pixels");
     return {
       manifest,
+      hasAsset(id) { return !disposed && assets.has(id); },
+      async loadOptional(id, requestSignal) {
+        if (disposed) throw new Error("Artwork is disposed");
+        const descriptor = manifest.assets.find(a => a.id === id);
+        if (!descriptor || descriptor.critical) throw new Error("Not an optional artwork asset");
+        requestSignal.throwIfAborted();
+        if (assets.has(id)) return;
+        const existing = pending.get(id); if (existing) return existing;
+        const combined = AbortSignal.any([requestSignal, lifetime.signal, optionalLifetime.signal]);
+        const operation = (async () => {
+          const asset = await decode(descriptor, combined);
+          try {
+            combined.throwIfAborted();
+            const coverageDetail = manifest.layers[0].lods?.some(lod => lod.assetId === id);
+            if (disposed || asset.width !== descriptor.width || asset.height !== descriptor.height || coverageDetail && !asset.opaque) throw new Error("Optional detail must match dimensions and preserve coverage");
+            assets.set(id,asset);
+          } catch (failure) { asset.close(); throw failure; }
+        })();
+        pending.set(id,operation);
+        try { await operation; } finally { if (pending.get(id) === operation) pending.delete(id); }
+      },
+      evictOptional,
       getAsset(id) {
         if (disposed) throw new Error("Artwork is disposed");
         const asset = assets.get(id);

@@ -19,7 +19,7 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
   const layers = new Map(manifest.layers.map(layer => [layer.id, { ...INITIAL }]));
   let audioGain = 1;
   const evaluators = new Map(manifest.layers.map(layer => [layer.id,
-    createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer))]));
+    createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer, manifest.constraints))]));
   return {
     id: instanceId,
     manifest,
@@ -37,7 +37,7 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
     stepBehaviors(context: StepContext, modulation: BehaviorModulation = NEUTRAL_MODULATION) {
       if (!Number.isFinite(modulation.strength) || modulation.strength < 0 || modulation.strength > 1 ||
           !Number.isFinite(modulation.intensity) || modulation.intensity < 1 || modulation.intensity > 1.25) throw new Error("Invalid behavior modulation");
-      for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength);
+      for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength, modulation.signals);
       audioGain = modulation.intensity;
     },
     getSnapshot() {

@@ -1,3 +1,5 @@
+import { createCameraTiming } from "../modulation/camera-timing.ts";
+import { createLogicalRecorder, type JourneyCommand } from "../diagnostics/logical-replay.ts";
 import type { PreparedEngine, StepContext } from "../core/contracts.ts";
 import { createArtworkRenderer, type ArtworkRendererOptions } from "../renderer/artwork-renderer.ts";
 import { createArtworkInstance, coversViewport, getCoverView, type ArtworkInstance } from "./artwork-instance.ts";
@@ -22,6 +24,8 @@ export interface ArtworkPreparationOptions extends Omit<ArtworkRendererOptions, 
   readonly modulation?: () => BehaviorModulation;
   /** Admission estimate, not a measured device limit. Default: 256 MiB. */
   readonly gpuBudgetBytes?: number;
+  readonly recordLogical?: boolean;
+  readonly seed?: number;
 }
 
 /** Persistent journey with a bounded three-world authored reset cache.
@@ -67,9 +71,13 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
         anchorId: portal.destination.anchorId, placement: { x: portal.region.x, y: portal.region.y, scale: portal.scale, rotation: portal.region.rotation },
         region: portal.region, durationSeconds: portal.durationSeconds, destinationCamera: portal.destinationCamera } });
     }
+    const packages = Object.freeze(cached.map(lease => Object.freeze({ id:lease.loaded.manifest.id, version:lease.loaded.manifest.version })));
+    const recording = options.recordLogical ? createLogicalRecorder(options.seed ?? 181, packages) : null;
+    const timing = createCameraTiming(), pendingCommands: JourneyCommand[] = [];
+    let commandError = false;
     let current = initial, viewport = options.viewport, disposed = false;
     const camera = createCameraController(pose => coversViewport(current.instance.getSnapshot().layers[0], getCoverView(viewport.width, viewport.height), pose));
-    const renderer = createArtworkRenderer(options.canvas, initial.loaded, initial.instance, { ...options, camera });
+    const renderer = createArtworkRenderer(options.canvas, initial.loaded, initial.instance, { ...options, camera, gpuBudgetBytes: budget });
     graphics = renderer; signal.throwIfAborted();
     // The three-world demo pins this bounded cache on GPU. Exact R8 masks let
     // all three fit the unchanged budget, preserving nested pixels and sync reset.
@@ -135,16 +143,45 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     if (!renderer.getDiagnostics().available) throw new Error("GPU unavailable during critical preparation");
     return {
       get instance() { return current.instance; }, camera, transition: journeyTransition,
+      command(command: JourneyCommand) {
+        if (disposed) throw new Error("Artwork is disposed");
+        if (pendingCommands.length >= 32) throw new Error("Journey command queue is full");
+        pendingCommands.push(command); recording?.command(command);
+      },
+      getPackages() { return packages; },
+      getLogicalSnapshot() { return Object.freeze({ artwork:current.instance.id, camera:camera.getSnapshot(),
+        artworks:Object.freeze(cached.map(lease=>lease.instance.getSnapshot())), transition:journeyTransition.getSnapshot(), looping, travelPaused, commandError }); },
+      exportReplay() { return recording?.export() ?? null; },
       setLoop(enabled: boolean) {
         if (disposed) return;
+        recording?.command(enabled ? "loopOn" : "loopOff");
         looping = enabled;
         travelPaused = !enabled && transition.getSnapshot().phase === "approaching";
       },
       getLoop() { return looping; },
       step(context: StepContext) {
         if (disposed) throw new Error("Artwork is disposed");
-        options.evaluate?.(current.instance, context);
         const modulation = options.modulation?.();
+        timing.step(modulation?.signals,context.dt);
+        options.evaluate?.(current.instance, context);
+        for (const command of pendingCommands.splice(0)) {
+          try {
+          switch (command) {
+            case "zoomIn": camera.zoomIn(1.25,timing.duration(1.5)); break;
+            case "zoomOut": camera.zoomOut(1.25,timing.duration(1.5)); break;
+            case "rotate": { const pose=camera.getSnapshot().pose; camera.retarget({ ...pose,logScale:Math.max(pose.logScale,Math.log(1.4)),rotation:pose.rotation+0.1 },timing.duration(2)); break; }
+            case "return": camera.returnTo("full-frame",timing.duration(2)); break;
+            case "hold": camera.hold(timing.duration(0.5)); break;
+            case "cancel": journeyTransition.cancel(); break;
+            case "transition": journeyTransition.start(); break;
+            case "loopOn": looping=true; travelPaused=false; break;
+            case "loopOff": looping=false; travelPaused=transition.getSnapshot().phase==="approaching"; break;
+            default: throw new Error("Invalid journey command");
+          }
+          commandError=false;
+          } catch { commandError=true; }
+        }
+        recording?.capture(context.tick,modulation?.signals ?? null);
         if (looping) {
           const state = journeyTransition.getSnapshot();
           if (state.error || state.phase === "rollingBack" || !state.canStart && state.phase === "committed") looping = false;
@@ -157,6 +194,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
         }
       },
       render() {
+        renderer.setDetailLocked(transition.getSnapshot().qualityLocked);
         try { renderer.render(); }
         catch (failure) {
           const phase = transition.getSnapshot().phase;
@@ -168,7 +206,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       },
       reset() {
         if (disposed) throw new Error("Artwork is disposed");
-        looping = false; travelPaused = false;
+        looping = false; travelPaused = false; commandError=false; timing.reset(); pendingCommands.length=0; recording?.reset();
         decorateEnabled = false;
         transition.reset();
         const previous = current;
@@ -181,14 +219,16 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
         if (initialLink) transition.restore(initialLink.request, initialLink.destination);
         renderer.render();
       },
+      setDetailEnabled(enabled: boolean) { renderer.setDetailEnabled(enabled); },
       resize(next: ArtworkRendererOptions["viewport"]) {
         if (transition.getSnapshot().qualityLocked) throw new Error("TRANSITION_VIEWPORT_LOCKED: retry resize after transaction");
         const frameBytes = Math.ceil(next.width * next.dpr * next.renderScale) * Math.ceil(next.height * next.dpr * next.renderScale) * 4;
+        if (renderer.getDiagnostics().estimatedTextureBytes + frameBytes > budget) renderer.evictOptional();
         if (renderer.getDiagnostics().estimatedTextureBytes + frameBytes > budget) throw new Error("GPU_BUDGET_EXCEEDED: resize");
         renderer.resize(next); viewport = Object.freeze({ ...next });
       },
       getDiagnostics() { return Object.freeze({ ...renderer.getDiagnostics(), gpuBudgetBytes: budget,
-        cachedInitialArtwork: current !== initial, transition: journeyTransition.getSnapshot() }); },
+        cachedInitialArtwork: current !== initial, commandError, recording: recording?.getSnapshot() ?? null, cameraTiming: timing.getSnapshot(), transition: journeyTransition.getSnapshot() }); },
       dispose() {
         if (disposed) return; disposed = true;
         decorateEnabled = false;

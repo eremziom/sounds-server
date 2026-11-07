@@ -16,7 +16,7 @@ const server = createServer(async (request, response) => {
     const pathname = new URL(request.url, "http://localhost").pathname;
     if (pathname === "/") {
       response.setHeader("Content-Type", "text/html");
-      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script><script type="module" src="/transition-fixture.mjs"></script><script type="module" src="/samples-fixture.mjs"></script><script type="module" src="/embedded-fixture.mjs"></script><script type="module" src="/chain-fixture.mjs"></script>`);
+      response.end(`<script type="importmap">{"imports":{"three":"/three/three.module.js"}}</script><script type="module" src="/fixture.mjs"></script><script type="module" src="/transition-fixture.mjs"></script><script type="module" src="/samples-fixture.mjs"></script><script type="module" src="/embedded-fixture.mjs"></script><script type="module" src="/chain-fixture.mjs"></script><script type="module" src="/phase2-fixture.mjs"></script>`);
       return;
     }
     let source;
@@ -33,6 +33,10 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL("./helpers/infinite-zoom-transition-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/samples-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-samples-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/phase2-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-phase2-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/phase2-data.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-phase2-data.mjs", import.meta.url));
     } else if (pathname === "/chain-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-chain-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/embedded-fixture.mjs") {
@@ -119,7 +123,12 @@ try {
   for (const [name, data] of Object.entries(loopFrames.result.value)) {
     await writeFile(new URL(`loop-${name}.png`, reportDirectory), Buffer.from(data.split(",")[1], "base64"));
   }
-  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
+  const phase2 = await send("Runtime.evaluate", { expression: "window.runPhase2Renderer()", awaitPromise: true, returnByValue: true });
+  assert.equal(phase2.exceptionDetails, undefined, JSON.stringify(phase2.exceptionDetails));
+  assert.deepEqual(errors, [], "No Phase 2 shader/browser errors");
+  assert.equal(phase2.result.value.operators.length,12);
+  console.log("Infinite Zoom Phase 2:",JSON.stringify(phase2.result.value));
+  await writeFile(new URL("verification.json", reportDirectory), JSON.stringify({ phase2:phase2.result.value, samples, loop: loop.result.value, chain: chain.result.value, embedded: embedded.result.value, browser: await send("Browser.getVersion") }, null, 2));
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

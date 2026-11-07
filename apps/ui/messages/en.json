@@ -35,6 +35,7 @@
   },
   "app": {
     "infiniteZoom": {
+      "exportReplay": "Export logical replay",
       "diagnostics": "Session diagnostics",
       "description": "A technical demo using sample artwork. Play music from your library to animate the scene. Pause preserves your journey.",
       "immersive": "Immersive view", "exitImmersive": "Exit immersive view", "loop": "Loop", "stopLoop": "Stop Loop", "transition": "Next scene", "cancel": "Cancel transition", "reset": "Reset journey",

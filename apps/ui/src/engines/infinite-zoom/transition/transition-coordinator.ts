@@ -79,8 +79,9 @@ export function createTransitionCoordinator(ports: TransitionPorts) {
     if (!pending || !placement || !region) return false;
     const pose = destinationView(sourcePose, placement, destinationCamera);
     const viewport = ports.viewport();
-    const magnification = Math.max(viewport.width * viewport.dpr * viewport.renderScale / 3840,
-      viewport.height * viewport.dpr * viewport.renderScale / 2160) * Math.exp(pose.logScale);
+    const baseImage = pending.instance.manifest.assets.find(asset => asset.id === pending!.instance.manifest.layers[0].imageAssetId)!;
+    const magnification = Math.max(viewport.width * viewport.dpr * viewport.renderScale / baseImage.width,
+      viewport.height * viewport.dpr * viewport.renderScale / baseImage.height) * Math.exp(pose.logScale);
     // First slice has no LOD: cap destination texel magnification at 2x.
     const view = getCoverView(viewport.width, viewport.height);
     return magnification <= 2 && portalCoversViewport(region, sourcePose, view) && coversViewport(pending.instance.getSnapshot().layers[0], view, pose);

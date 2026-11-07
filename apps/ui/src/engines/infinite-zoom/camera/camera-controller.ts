@@ -1,3 +1,4 @@
+import { planCameraPath, type CameraWaypoint, type CameraPathOptions } from "./path-planner.ts";
 import { FULL_FRAME, POSE_KEYS, ZERO_VELOCITY, validatePose, type CameraPose } from "./camera-math.ts";
 import { cameraInDestination, velocityInDestination, type ArtworkPlacement } from "../transition/placement.ts";
 
@@ -33,6 +34,7 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
   let pose: CameraPose = origin, velocity: CameraPose = ZERO_VELOCITY;
   let path: Trajectory | null = null;
   let constraintReached = false;
+  let queue: readonly CameraWaypoint[] = [];
   const bookmarks = new Map<string, CameraPose>([["full-frame", origin]]);
 
   function retarget(target: CameraPose, durationSeconds: number, framingSeconds = durationSeconds) {
@@ -48,12 +50,33 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
       validatePose(state);
       if (!isPoseValid(state)) throw new Error("CAMERA_CONSTRAINT_REACHED: unsafe trajectory");
     }
-    path = candidate;
+    path = candidate; queue = [];
     constraintReached = false;
   }
 
   return {
     retarget,
+    followPath(waypoints: readonly CameraWaypoint[], options?: CameraPathOptions) {
+      const planned = planCameraPath(pose,waypoints,options);
+      // Transactional preflight uses temporary state and preserves the live
+      // camera, trajectory and bookmarks if any segment is unsafe.
+      const previous = { pose, velocity, path, queue, constraintReached };
+      try {
+        for (const point of planned) {
+          retarget(point.pose,point.seconds);
+          let previousVelocity=velocity;
+          for(let tick=0;tick<=path!.ticks;tick++) {
+            const rate=sample(path!,tick).velocity;
+            const acceleration={x:(rate.x-previousVelocity.x)*60,y:(rate.y-previousVelocity.y)*60,rotation:(rate.rotation-previousVelocity.rotation)*60,logScale:(rate.logScale-previousVelocity.logScale)*60};
+            if(Math.hypot(rate.x,rate.y)>(options?.maxSpeed ?? 960)+1e-7 || Math.abs(rate.logScale)>(options?.maxZoomRate ?? 0.75)+1e-7 || Math.abs(rate.rotation)>(options?.maxAngularSpeed ?? 0.25)+1e-7 ||
+              Math.hypot(acceleration.x,acceleration.y)>(options?.maxAcceleration ?? 1920)+1e-7 || Math.abs(acceleration.logScale)>(options?.maxZoomAcceleration ?? 1.5)+1e-7 || Math.abs(acceleration.rotation)>(options?.maxAngularAcceleration ?? 0.5)+1e-7) throw new Error("CAMERA_RATE_LIMIT: unsafe path dynamics");
+            previousVelocity=rate;
+          }
+          pose = point.pose; velocity = ZERO_VELOCITY;
+        }
+      } finally { pose = previous.pose; velocity = previous.velocity; path = previous.path; queue = previous.queue; constraintReached = previous.constraintReached; }
+      retarget(planned[0].pose,planned[0].seconds); queue = planned.slice(1);
+    },
     zoomIn(factor: number, seconds: number) {
       if (!Number.isFinite(factor) || factor <= 1) throw new Error("Zoom factor must exceed one");
       retarget({ ...pose, logScale: pose.logScale + Math.log(factor) }, seconds);
@@ -73,6 +96,7 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
     },
     saveBookmark(name: string) {
       if (!name.trim() || name === "full-frame") throw new Error("Invalid/reserved camera bookmark");
+      if (!bookmarks.has(name) && bookmarks.size >= 64) throw new Error("Camera bookmark limit reached");
       bookmarks.set(name, Object.freeze({ ...pose }));
     },
     returnTo(name: string, seconds: number) {
@@ -91,26 +115,31 @@ export function createCameraController(isPoseValid: (pose: CameraPose) => boolea
       // Bookmarks are local to the active artwork. A can be unloaded after the
       // handoff, so its bookmarks must not become unsafe returns in B. Journey
       // reset separately restores its initial artwork and original camera.
-      bookmarks.clear(); bookmarks.set("full-frame", FULL_FRAME);
+      queue = []; bookmarks.clear(); bookmarks.set("full-frame", FULL_FRAME);
     },
-    halt() { path = null; velocity = ZERO_VELOCITY; },
+    halt() { queue = []; path = null; velocity = ZERO_VELOCITY; },
     step() {
+      if (!path && queue.length) {
+        const [next,...remaining] = queue;
+        try { retarget(next.pose,next.seconds); queue = remaining; }
+        catch { path=null; queue=[]; velocity=ZERO_VELOCITY; constraintReached=true; return; }
+      }
       if (!path) return;
       const next = sample(path, path.elapsed + 1);
       if (!isPoseValid(next.pose)) {
         // Geometry/viewport may have changed since preflight. Preserve the last
         // safe pose, stop here and expose the hard constraint to diagnostics.
-        path = null; velocity = ZERO_VELOCITY; constraintReached = true; return;
+        path = null; queue = []; velocity = ZERO_VELOCITY; constraintReached = true; return;
       }
       path.elapsed++;
       pose = Object.freeze({ ...next.pose }); velocity = Object.freeze({ ...next.velocity });
       if (path.elapsed === path.ticks) path = null;
     },
-    getSnapshot() { return Object.freeze({ pose, velocity, moving: path !== null, constraintReached }); },
+    getSnapshot() { return Object.freeze({ pose, velocity, moving: path !== null || queue.length > 0, constraintReached }); },
     reset(initialPose: CameraPose = origin) {
       validatePose(initialPose);
       origin = Object.freeze({ ...initialPose }); pose = origin; velocity = ZERO_VELOCITY; path = null;
-      constraintReached = false; bookmarks.clear(); bookmarks.set("full-frame", origin);
+      constraintReached = false; queue = []; bookmarks.clear(); bookmarks.set("full-frame", origin);
     },
   };
 }

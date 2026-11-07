@@ -32,17 +32,7 @@ export function createBrowserVisualSession(options: {
     if (!lease) return;
     for (const command of commands.splice(0)) {
       try {
-        switch (command) {
-          case "zoomIn": lease.camera.zoomIn(1.25, 1.5); break;
-          case "zoomOut": lease.camera.zoomOut(1.25, 1.5); break;
-          case "rotate": {
-            const pose = lease.camera.getSnapshot().pose;
-            lease.camera.retarget({ ...pose, logScale: Math.max(pose.logScale, Math.log(1.4)), rotation: pose.rotation + 0.1 }, 2); break;
-          }
-          case "return": lease.camera.returnTo("full-frame", 2); break;
-          case "hold": lease.camera.hold(0.5); break;
-          case "cancel": lease.transition.cancel(); break;
-        }
+        lease.command(command);
         fault = false;
       } catch { fault = true; }
     }
@@ -74,7 +64,7 @@ export function createBrowserVisualSession(options: {
         const manifest = await response.json();
         const artworkModule = await import("../../engines/infinite-zoom/artwork/prepare-artwork.ts");
         signal.throwIfAborted();
-        const prepared = await artworkModule.prepareArtwork({ canvas, manifest, instanceId: "initial", viewport: targetSize,
+        const prepared = await artworkModule.prepareArtwork({ canvas, manifest, instanceId: "initial", viewport: targetSize, seed:181, recordLogical:true,
           onAvailabilityChange(available) {
             const status = engine.getSnapshot().status;
             diagnostics.event(available ? "CONTEXT_RESTORED" : "CONTEXT_LOST", engine.getSnapshot().session.tick, available ? "info" : "warning");
@@ -113,6 +103,7 @@ export function createBrowserVisualSession(options: {
     if (disposed) return;
     applyResize();
     const snapshot = engine.getSnapshot();
+    if (lease && !lease.transition.getSnapshot().qualityLocked) lease.setDetailEnabled(["Ultra","High"].includes(quality.getSnapshot().profile));
     const transition = lease?.transition.getSnapshot().phase ?? "idle";
     if (snapshot.status !== lastState) {
       diagnostics.event(`ENGINE_${snapshot.status.toUpperCase()}`, snapshot.session.tick, snapshot.status === "error" ? "error" : "info");
@@ -120,7 +111,7 @@ export function createBrowserVisualSession(options: {
     }
     if (transition !== lastTransition) { diagnostics.event(`TRANSITION_${transition.toUpperCase()}`, snapshot.session.tick); lastTransition = transition; }
     bridge.publish({ status: snapshot.status, tick: snapshot.session.tick, artwork: lease?.instance.manifest.id ?? "",
-      transition, error: fault || lastResizeError || snapshot.status === "error" || !!lease?.transition.getSnapshot().error,
+      transition, error: fault || !!lease?.getDiagnostics().commandError || lastResizeError || snapshot.status === "error" || !!lease?.transition.getSnapshot().error,
       retryable: !hasPlayed && snapshot.status === "error",
       canTransition: lease?.transition.getSnapshot().canStart ?? false,
       looping: lease?.getLoop() ?? false,
@@ -154,13 +145,14 @@ export function createBrowserVisualSession(options: {
     command(command: Parameters<VisualBridge["command"]>[0]) { if (commands.length < 32) commands.push(command); },
     async transition() {
       if (!lease || disposed || !lease.transition.getSnapshot().canStart) return;
-      try { lease.transition.start(); fault = false; } catch { fault = true; }
+      try { lease.command("transition"); fault = false; } catch { fault = true; }
       publish();
     },
     setLoop(enabled: boolean) {
       if (!lease || disposed) return;
       lease.setLoop(enabled); publish();
     },
+    exportReplay() { return lease?.exportReplay() ?? null; },
     reset() {
       if (!lease || disposed) return;
       commands.length = 0; modulation.reset();

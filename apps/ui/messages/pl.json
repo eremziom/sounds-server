@@ -35,6 +35,7 @@
   },
   "app": {
     "infiniteZoom": {
+      "exportReplay": "Eksportuj zapis podr??y",
       "diagnostics": "Diagnostyka sesji",
       "description": "Techniczne demo z przykładową grafiką. Odtwórz muzykę z biblioteki, aby animować scenę. Pauza zachowuje Twoją podróż.",
       "immersive": "Widok immersyjny", "exitImmersive": "Wyjdź z widoku immersyjnego", "loop": "Loop", "stopLoop": "Zatrzymaj Loop", "transition": "Następna scena", "cancel": "Anuluj przejście", "reset": "Zresetuj podróż",
