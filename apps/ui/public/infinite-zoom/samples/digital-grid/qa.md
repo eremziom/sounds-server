@@ -2,6 +2,19 @@
 
 Created 2026-11-09 with shared creator guidelines v1.5. Status: **test pilot, artistic acceptance pending**.
 
+## Tower experiment withdrawn (2026-11-09)
+
+At the user's request the white/black tower experiment was completely removed:
+no extra tower masks/material, black backing, attack bindings or propagation
+adapter remain. Original 0.2.0 manifests, source-material masks, full multicolor
+tower flow and packaging script were restored byte-for-byte from the pre-test
+repository revision. Existing environment blackout remains unchanged. The shared
+KickMonitor, music-reaction checkbox and bass frequency configuration remain in
+the digital panel/immersive controls, explicitly labeled as unassigned. Bass
+attack configuration is not connected to any mask; assignment is deferred to
+the user's next step. Historical `.tmp/tower-attack-qa/` captures describe only
+the withdrawn experiment and are not evidence of current application behavior.
+
 ## Application blackout control (2026-11-09)
 
 The application panel now exposes **Wygaszenie otoczenia** for Digital Grid,

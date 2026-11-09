@@ -3,6 +3,11 @@
 Standalone cinematic light-cycle test artwork, inspired by TRON: Legacy.
 Select **Cyfrowy świat — motocykl świetlny** in `/animations`.
 
+The scene panel retains the shared bass-attack monitor and frequency-range
+configuration, also in immersive mode. **No bass attack is bound to any mask.**
+The tower uses the original multicolor artwork again; the white/black tower
+experiment, its additional masks and its propagation adapter were withdrawn.
+
 Use **Wygaszenie otoczenia** in this scene's panel (also available in immersive
 mode). Enabling it immediately hides the environment while preserving animated
 protected lights. Disabling it reveals the environment over three seconds of

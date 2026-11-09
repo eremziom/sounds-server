@@ -13,6 +13,8 @@ const raw=JSON.parse(await readFile(new URL('manifest.json',root),'utf8'));
 test('digital test package validates actual assets, six local lighting groups and fixed geometry',async()=>{
   const manifest=parseArtworkPackage(raw);assert.equal(STUDIO_ARTWORKS.digital,manifest.id);
   assert.equal(manifest.portal,undefined);assert.equal(manifest.layers.length,8);
+  assert.ok(manifest.layers.every(l=>!l.id.startsWith('tower-')),'No withdrawn tower layers remain');
+  assert.ok(manifest.layers.flatMap(l=>l.behaviors).every(b=>(b.modulation??[]).every(binding=>binding.signal!=='kick')),'Bass detector remains unassigned to this artwork');
   assert.ok(artworkTextureBytes(manifest)<48*1024*1024);
   for(const asset of manifest.assets){
     const bytes=await readFile(new URL(asset.uri.split('/').at(-1),root));

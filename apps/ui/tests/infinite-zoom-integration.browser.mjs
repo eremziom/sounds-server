@@ -133,6 +133,8 @@ try {
       await selectScene("digital");
       const blackout="document.querySelector('[data-iz-environment-blackout]')";
       await waitFor(blackout);assert.equal(await evaluate(`${blackout}.checked`),false);
+      assert.equal(await evaluate("document.querySelectorAll('[data-iz-kick]').length"),1,"Digital scene reuses one existing bass attack monitor");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-pilot] [data-iz-kick] [data-iz-band-range=bass]') && !!document.querySelector('[data-iz-pilot] [data-iz-modulation]')"),true,"Existing detector range and music reaction controls are in the digital panel");
       await evaluate("void(window.izDigitalNormal=izCanvas.toDataURL())");
       await click(blackout);await waitFor(`${blackout}.checked`);
       assert.equal(await tick(),sceneTick,"Blackout does not advance paused simulation");
@@ -154,6 +156,7 @@ try {
       await click("document.querySelector('[data-iz-immersive]')");await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
       await evaluate("document.querySelector('[data-iz-immersive-pilot]').open=true");
       assert.equal(await evaluate("!!document.querySelector('[data-iz-immersive-pilot] [data-iz-environment-blackout]')"),true,"Blackout is available in immersive controls");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-immersive-pilot] [data-iz-kick] [data-iz-band-range=bass]')"),true,"Same bass detector controls are available in immersive mode");
       const report=new URL("../../../.tmp/digital-grid-qa/",import.meta.url);await mkdir(report,{recursive:true});
       const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("application-blackout-control.png",report),Buffer.from(screenshot.data,"base64"));
       console.log("Digital Grid UI: blackout checkbox, paused frame, scene parking, reset preference, playback reveal, immersive and one audio/canvas/context OK");return;

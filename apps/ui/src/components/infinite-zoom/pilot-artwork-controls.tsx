@@ -1,12 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import {useSyncExternalStore} from "react";
+import {KickMonitor} from "./kick-monitor";
 import { Button } from "../ui/button";
 import { useInfiniteZoom, useVisualSnapshot } from "./infinite-zoom-provider";
 import type {BehaviorKind,VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls";
 
 export function PilotArtworkControls() {
   const runtime=useInfiniteZoom(), snapshot=useVisualSnapshot(), t=useTranslations("app.infiniteZoom");
+  const modulation=useSyncExternalStore(runtime.subscribe,runtime.getModulation,()=>true);
   const scenePrefix=snapshot.scene === "digital" ? "digital" : snapshot.scene === "alien" ? "alien" : snapshot.scene === "clockwork" ? "clockwork" : snapshot.scene === "layered" ? "layered" : "pilot";
   function behaviorLabel(kind:BehaviorKind){
     if(scenePrefix === "digital" && (kind === "colorShift" || kind === "glow"))return t(`digitalBehaviors.${kind}`);
@@ -27,6 +30,10 @@ export function PilotArtworkControls() {
       <legend className="px-2 text-sm font-semibold">{t("pilotHeading")}</legend>
       <p className="text-sm text-muted-foreground">{t(`${scenePrefix}Description`)}</p>
       {snapshot.scene === "digital" && <div className="space-y-1 rounded-md border p-3">
+        <p className="pb-2 text-xs text-muted-foreground">{t("bassAttackConfigurationNote")}</p>
+        <label className="flex items-center gap-2 pb-2 text-sm"><input data-iz-modulation type="checkbox" checked={modulation}
+          onChange={event=>runtime.setModulation(event.target.checked)}/>{t("modulation")}</label>
+        <KickMonitor active={snapshot.status==="running"&&modulation} />
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-iz-environment-blackout checked={!!snapshot.environmentBlackoutEnabled}
           onChange={event=>runtime.setEnvironmentBlackoutEnabled(event.target.checked)}/>{t("environmentBlackoutLabel")}</label>
         <p className="text-xs text-muted-foreground">{t("environmentBlackoutNote")}</p>

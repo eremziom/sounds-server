@@ -76,6 +76,7 @@
       "digitalScene": "Mundo digital — moto de luz",
       "digitalDescription": "Una moto blanca y negra, carreteras luminosas y cúpulas hexagonales. Ondas de luz recorren paneles, llantas y franjas de la ciudad.",
       "digitalNotes": "La geometría permanece fija. La luz cambia localmente el brillo de los paneles blancos y los colores de la ciudad. Gráfica de prueba; la fuente no es 4K nativo.",
+      "bassAttackConfigurationNote": "Configuración del ataque de graves: detector compartido, vista del impulso de 160 ms y controles de frecuencia. Los ataques de graves aún no están asignados a ninguna máscara de esta gráfica.",
       "environmentBlackoutLabel": "Apagar el entorno",
       "environmentBlackoutNote": "Mantiene los colores y las luces animados sobre negro. Al desactivarlo, el entorno reaparece durante 3 segundos de reproducción; la pausa detiene la transición.",
       "digitalBehaviors": {"colorShift":"Flujo de luz y color","glow":"Impulsos de luz locales"},
