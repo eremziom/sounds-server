@@ -47,6 +47,10 @@
   shadow precision, pause behavior and actual motion/zoom acceptance.
 - Report motion/zoom QA evidence, uncertain boundaries and remaining corrections.
   A still preview or changed-pixel test alone does not establish production readiness.
+- Every new or revised artwork must plan at least one element that travels
+  through the visible frame as an integral part of its composition. Follow the
+  shared guidelines for placement, trajectory, separated layers, background,
+  occlusion and motion/zoom acceptance; camera motion alone does not qualify.
 - Describe engine extensions separately from artwork production. A future creator
   must consume the shared guidelines rather than maintain a divergent copy.
 

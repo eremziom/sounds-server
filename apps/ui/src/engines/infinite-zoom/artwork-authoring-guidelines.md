@@ -1,6 +1,6 @@
 # Obowiązkowe wytyczne produkcji artworków Infinite Zoom
 
-Wersja instrukcji: **1.6** (2026-11-09). Obowiązuje przy tworzeniu i poprawianiu każdego
+Wersja instrukcji: **1.7** (2026-11-09). Obowiązuje przy tworzeniu i poprawianiu każdego
 artworku, niezależnie od tematu, stylu, użytych narzędzi i liczby warstw.
 To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowanie.
 
@@ -22,7 +22,49 @@ To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowan
 
 12. **Zapewnij mocne i wyraźne przejścia kolorów.** Zmiany barw oraz ich przepływ muszą być łatwo dostrzegalne w pełnym kadrze aplikacji, w animacji i podczas zoomu. Dobierz nasycenie, kontrast, zakres barw i materiał źródłowy tak, aby kolejne kolory były jednoznacznie rozróżnialne. Wzorem czytelności jest zaakceptowany test motocykla Digital Grid; szczegółowe wymagania poniżej.
 
+13. **Zaplanuj co najmniej jeden element przemieszczający się po ekranie.** Każda grafika musi od początku uwzględniać taki element w swojej kompozycji: jego położenie, skalę, plan głębi, trasę i miejsce potrzebne do ruchu. Dobierz go do tematu sceny i przygotuj jako niezależną warstwę z odpowiednim tłem oraz przesłanianiem. Obowiązują szczegółowe wymagania poniżej.
+
 **Nie uznawaj pakietu za gotowy wyłącznie na podstawie nieruchomego podglądu. Oznacz niepewne granice i miejsca wymagające ręcznej korekty.**
+
+## Obowiązkowy element przemieszczający się po ekranie
+
+**Każda nowa lub poprawiana grafika musi zawierać minimum jeden element, który
+rzeczywiście zmienia położenie względem sceny i przemieszcza się w widocznym
+kadrze. Kompozycja musi go z góry zakładać i odpowiednio ulokować.**
+
+- **Zaplanuj element przed generowaniem obrazu.** Wybierz obiekt naturalnie
+  pasujący do tematu, np. pojazd, stworzenie, liść albo dryfujący fragment materii.
+  Określ jego rolę, początkowe położenie, rozmiar i plan głębi oraz zostaw w
+  kompozycji czytelną przestrzeń dla trasy. Nie doklejaj przypadkowego obiektu
+  dopiero po ukończeniu sceny. Przekaż te wymagania do briefu i odpowiednich
+  promptów generowania/edycji.
+- **Nadaj mu rzeczywisty ruch przestrzenny.** Sam zoom lub ruch kamery,
+  miganie, zmiana kolorów, obrót w miejscu albo lokalna deformacja nieruchomego
+  elementu nie spełniają tego wymagania. Nie jest wymagany przelot przez cały
+  ekran, stała obecność ani jeden określony motyw, kierunek lub czas ruchu;
+  zaplanowane przemieszczenie musi być dostrzegalne w pełnym kadrze aplikacji.
+- **Przygotuj trasę i kolejność przesłaniania.** Opisz początek, przebieg i koniec
+  ruchu, pojawienie się i zniknięcie, prędkość oraz ewentualne zakręty, obrót
+  zgodny z kierunkiem ruchu i przyspieszanie/zwalnianie. Wskaż, przed którymi
+  elementami obiekt przechodzi, a za którymi się chowa. Wykorzystuj aktualny
+  [kontrakt tras warstw](layer-flight-paths.md); nie zakładaj nieistniejących
+  możliwości silnika. Powtarzanie ruchu wymaga osobnego sprawdzenia obsługi.
+- **Oddziel obiekt od tła.** Przygotuj niezależną warstwę obiektu, precyzyjną
+  widoczność oraz osobne przesłanianie przez nieruchomą scenę. Zachowaj kompletne
+  tło odsłaniane wzdłuż całej trasy, bez wypalonej kopii obiektu, pustych miejsc,
+  smug przeciągniętych pikseli i obwódek. Dla obracanych obiektów ustal punkt
+  obrotu w ich rzeczywistej sylwetce; części poruszające się razem muszą pozostać
+  zarejestrowane. Uwzględnij zapas obrazu przy maksymalnym ruchu i obrocie.
+- **Zachowaj kompozycję, czytelność i wspólny czas.** Dobierz kontrast i skalę
+  do roli obiektu, bez przypadkowego zanikania sylwetki podczas efektów światła
+  lub zmian kolorów. Opisz jego zachowanie przy zaciemnieniu i odsłanianiu sceny.
+  Korzystaj z istniejącego zegara: pauza/stop zamrażają położenie i obrót, a
+  Reset odtwarza stan początkowy. Ruch kamery nie zastępuje ruchu tego elementu.
+- **Oceń całą trasę w ruchu i przy zoomie.** Zapisz nagranie oraz próbki początku,
+  zakrętów, przejść za/przed innymi obiektami i końca trasy. Sprawdź widoczność
+  ruchu w rzeczywistym kadrze, sylwetkę, tło, granice masek, pauzę, Reset oraz
+  połączenie z pozostałymi efektami. Samo istnienie warstwy lub konfiguracji
+  ruchu nie spełnia wymagania bez wizualnego sprawdzenia animacji.
 
 ## Obowiązkowe punkty i pasma impulsowego światła
 
@@ -164,14 +206,18 @@ i lawą. Dobierz odpowiedniki do tematu; lawa ani konkretna stylistyka nie są w
   Włącz wymagania do briefu i przekazuj odpowiednie ograniczenia w promptach
   kolejnych etapów. Narzędzie generujące obraz nie odczytuje samo repozytorium.
 - W `authoring-brief.md` pakietu podaj odnośnik do tej instrukcji i używaną wersję
-  (obecnie 1.6),
+  (obecnie 1.7),
   a następnie opisz jej zastosowanie: grupy ruchu, obszary stałe, role masek,
   połączenia, osie, zapas obrazu, maksymalne parametry i przesłanianie.
 - W briefie opisz także dużą liczbę miejsc impulsowego światła: ich rodzaj,
   szacowaną liczbę/gęstość, rozmieszczenie i grupy, związek z materiałem, maski,
   fazy/okresy oraz plan oceny w pełnym kadrze i przy zoomie. Nowe i poprawiane
-  pakiety muszą spełniać wersję 1.6; historyczne wersje briefów i promptów
+  pakiety muszą spełniać wersję 1.7; historyczne wersje briefów i promptów
   zachowują rzeczywisty numer instrukcji użytej przy ich tworzeniu.
+- W briefie i odpowiednich promptach wskaż minimum jeden element przemieszczający
+  się po kadrze: jego miejsce w kompozycji, warstwę, skalę, plan głębi, trasę,
+  czas/prędkość, przesłanianie, odsłaniane tło i plan odbioru w ruchu oraz przy
+  zoomie. Nie pozostawiaj wyboru i umiejscowienia obiektu na koniec produkcji.
 - W briefie wskaż zaprojektowane drobne, podłużne elementy z przestrzenną propagacją światła/koloru, ich związek
   z materiałem, kierunek i przebieg gradientu, osobne maski oraz dane czasowe,
   cykl/powrót, zachowanie w zaciemnieniu i plan pełnej oceny w ruchu i przy zoomie.
@@ -200,6 +246,9 @@ Opis walidacji pakietu powinien zawierać:
 - pełne cykle poszczególnych efektów i ich połączeń, przy maksymalnych
   dopuszczalnych parametrach oraz podczas ruchu kamery i zoomu;
 - sprawdzenie nieruchomych obszarów, granic, odsłanianego tła i przesłaniania;
+- minimum jeden element przemieszczający się po kadrze: zgodność z zaplanowaną
+  kompozycją, pełną trasę, zakręty i przesłanianie, czytelną sylwetkę i kompletne
+  tło, nagranie rzeczywistej animacji oraz wynik prób pauzy, Resetu i zoomu;
 - widoczność zamierzonych efektów w rzeczywistym kadrze aplikacji — sama różnica
   kilku pikseli w teście nie potwierdza jakości wizualnej;
 - liczne, zintegrowane z materiałem punkty/pasma impulsowego światła: rozmieszczenie

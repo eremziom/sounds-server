@@ -1,5 +1,13 @@
 # Infinite Zoom engine — foundation and embedded zoomThrough
 
+## Creator and player implementation plan (2026-11-09)
+
+The staged plan for the local artwork creator and dynamic player library is in
+[planning/artwork-creator](../../../../../planning/artwork-creator/README.md).
+It includes the Windows/AMD model benchmark, project/version storage, tools,
+authoring UI, conversational edits, publication and acceptance gates. This is
+documentation for future work; the creator has not been implemented by this plan.
+
 ## In-app production pilot (2026-11-07)
 
 **Time mechanism — black and gold** is another studio selection with five
