@@ -4,6 +4,8 @@ import { behaviorGroups, type BehaviorRegion } from "../behaviors/behavior-evalu
 import { parseArtworkPortal, type ArtworkPortal } from "../transition/portal.ts";
 import {parseRigidSpin,type RigidSpin} from "./rigid-spin.ts";
 
+import {parseRigidTravel,type RigidTravel} from "./rigid-travel.ts";
+
 export interface ArtworkAsset {
   readonly id: string;
   readonly uri: string;
@@ -24,6 +26,8 @@ export interface ArtworkLayer {
   readonly constraints?: MotionConstraints;
   readonly lods?: readonly { readonly assetId: string; readonly minPixelsPerTexel: number }[];
   readonly spin?: RigidSpin;
+  readonly travel?: RigidTravel;
+  readonly occlusionMaskAssetId?: string;
 }
 
 /** Version 1 preserves the sample contract; version 2 adds typed operators,
@@ -110,10 +114,14 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   }
   const artworkBehaviors = behaviors(data.behaviors);
   const layers: ArtworkLayer[] = data.layers.map(input => {
-    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId", "behaviors", "regions", "constraints", "lods", "spin", "blendMode"]);
+    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId", "behaviors", "regions", "constraints", "lods", "spin", "blendMode", "travel", "occlusionMaskAssetId"]);
     if (layer.blendMode !== undefined && (!phase2 || layer.blendMode !== "additive-emission")) throw new Error("Invalid layer blend mode");
-    if (!phase2 && (layer.constraints !== undefined || layer.lods !== undefined || layer.spin !== undefined)) throw new Error("Extended layers require schema 2");
+    if (!phase2 && (layer.constraints !== undefined || layer.lods !== undefined || layer.spin !== undefined || layer.travel !== undefined || layer.occlusionMaskAssetId !== undefined)) throw new Error("Extended layers require schema 2");
     const spin=parseRigidSpin(layer.spin);
+    const travel=parseRigidTravel(layer.travel);
+    if (spin && travel) throw new Error("Layer cannot combine spin and travel");
+    const occlusionMaskAssetId=layer.occlusionMaskAssetId === undefined ? undefined : id(layer.occlusionMaskAssetId);
+    validateMask(occlusionMaskAssetId);
     const layerConstraints = parseMotionConstraints(layer.constraints);
     if (typeof layer.zIndex !== "number" || !Number.isSafeInteger(layer.zIndex)) throw new Error("Invalid layer zIndex");
     const imageAssetId = id(layer.imageAssetId);
@@ -146,6 +154,8 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
     return Object.freeze({ id: id(layer.id), zIndex: layer.zIndex, imageAssetId,
       ...(layer.blendMode === "additive-emission" ? {blendMode:"additive-emission" as const} : {}),
       ...(spin ? {spin} : {}),
+      ...(travel ? {travel} : {}),
+      ...(occlusionMaskAssetId ? {occlusionMaskAssetId} : {}),
       behaviors: behaviors(layer.behaviors), regions: Object.freeze(regions),
       ...(layerConstraints ? { constraints: layerConstraints } : {}), ...(lods.length ? { lods: Object.freeze(lods) } : {}),
       ...(maskAssetId === undefined ? {} : { maskAssetId }) });
@@ -156,6 +166,7 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   const coverage = record(data.coverage, ["baseLayerId"]);
   const baseLayerId = id(coverage.baseLayerId);
   if (layers.find(layer=>layer.id===baseLayerId)?.blendMode) throw new Error("Coverage base cannot be emission-only");
+  if(layers.find(layer=>layer.id===baseLayerId)?.travel || layers.find(layer=>layer.id===baseLayerId)?.occlusionMaskAssetId)throw new Error("Coverage base cannot travel or be occluded");
   if(layers.find(layer=>layer.id===baseLayerId)?.spin)throw new Error("Coverage base cannot spin");
   if (layers[0].id !== baseLayerId || layers[0].maskAssetId !== undefined) {
     throw new Error("Coverage requires an unmasked bottom layer");

@@ -6,6 +6,8 @@ import { FULL_FRAME, viewportCorners, type CameraPose } from "../camera/camera-m
 import { NEUTRAL_MODULATION, type BehaviorModulation } from "../modulation/audio-modulation.ts";
 import {spinTransform} from "./rigid-spin.ts";
 
+import {createTravelSampler} from "./rigid-travel.ts";
+
 export interface LayerTransform {
   readonly x: number;
   readonly y: number;
@@ -20,8 +22,10 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
   if (!instanceId.trim()) throw new Error("Artwork instance requires an identity");
   const layers = new Map(manifest.layers.map(layer => [layer.id, { ...INITIAL }]));
   let audioGain = 1;
+  let travelTicks = 0;
   let spinStrength=1;
   const spins=new Map(manifest.layers.filter(layer=>layer.spin).map(layer=>[layer.id,layer.spin!.phaseTurns*2*Math.PI]));
+  const travels=new Map(manifest.layers.filter(layer=>layer.travel).map(layer=>[layer.id,createTravelSampler(layer.travel!)]));
   const evaluators = new Map(manifest.layers.map(layer => [layer.id,
     createBehaviorEvaluator(behaviorGroups(manifest.behaviors, layer, manifest.constraints))]));
   return {
@@ -47,6 +51,7 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
       if (!Number.isFinite(modulation.strength) || modulation.strength < 0 || modulation.strength > 1 ||
           !Number.isFinite(modulation.intensity) || modulation.intensity < 1 || modulation.intensity > 1.25) throw new Error("Invalid behavior modulation");
       for (const evaluator of evaluators.values()) evaluator.step(context.dt, modulation.strength, modulation.signals);
+      travelTicks++;
       for(const layer of manifest.layers)if(layer.spin){
         const angle=spins.get(layer.id)!+layer.spin.turnsPerSecond*2*Math.PI*context.dt*spinStrength;
         spins.set(layer.id,angle%(2*Math.PI));
@@ -58,14 +63,16 @@ export function createArtworkInstance(instanceId: string, manifest: ArtworkPacka
         layers: Object.freeze(manifest.layers.map(layer => {
           const base=layers.get(layer.id)!;
           const rigid=layer.spin ? spinTransform(layer.spin,spins.get(layer.id)!) : {x:0,y:0,rotation:0};
+          const travel=travels.get(layer.id)?.(travelTicks/60) ?? {x:0,y:0,rotation:0,opacity:1};
           const c=Math.cos(base.rotation),s=Math.sin(base.rotation);
           return Object.freeze({ id: layer.id, ...base,
-            x:base.x+base.scale*(c*rigid.x-s*rigid.y),y:base.y+base.scale*(s*rigid.x+c*rigid.y),rotation:base.rotation+rigid.rotation,
+            x:base.x+base.scale*(c*(rigid.x+travel.x)-s*(rigid.y+travel.y)),y:base.y+base.scale*(s*(rigid.x+travel.x)+c*(rigid.y+travel.y)),rotation:base.rotation+rigid.rotation+travel.rotation,opacity:base.opacity*travel.opacity,
             groups: evaluators.get(layer.id)!.getSnapshot(), audioGain });
         })) });
     },
     reset() {
       audioGain = 1;
+      travelTicks = 0;
       for (const layer of manifest.layers) layers.set(layer.id, { ...INITIAL });
       for (const evaluator of evaluators.values()) evaluator.reset();
       for(const layer of manifest.layers)if(layer.spin)spins.set(layer.id,layer.spin.phaseTurns*2*Math.PI);

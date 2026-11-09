@@ -211,3 +211,78 @@ Evidence lives in repository-local `.tmp/digital-grid-qa/`: `motion.webm`, `repo
 - Full-screen inspection and sampled zoom frames do not establish every aspect ratio, all shadow ramps or a manual review of every recorded frame. RGBA8 fallback, context recovery and an authenticated `/animations` UI session were not re-tested for this new package.
 - Historical 0.1.0 limitation: blackout was only package/API-tested. The application control described above supersedes that limitation.
 - No engine extensions were made. The only engine-directory edit for this task is the declarative `digital: "digital-grid"` studio catalog entry; animation implementations, renderer, clocks and audio lifecycle remain unchanged. Existing uncommitted engine changes predate this task.
+
+
+## 0.3.0 aircraft test (2026-11-09)
+
+The native SVG aircraft is roughly 25?10 pixels at the 1600?900 registered full
+view, with dark angular hull, separate inset emissive material influence and
+a tapered 81-pixel wake. It uses the motorcycle's cyclic hue/white/impulse
+settings; the original six lighting selections and source image are unchanged.
+The path is uniform and horizontal at y=180 from 30 to 150 simulation seconds.
+The nose moves x=701?1640; the final wake is concealed by the right dome.
+
+Focused checks: 44 tests pass across digital-grid, artwork, spin, blackout,
+behaviors, composition and phase2. `node node_modules/typescript/bin/tsc --noEmit
+--incremental false` passes from apps/ui. The shared WebGL renderer regression
+(`node tests/infinite-zoom-renderer.browser.mjs`) passes, covering legacy local
+behaviors, transitions, context recovery, sample packages and coverage.
+
+`node tests/infinite-zoom-digital-grid.browser.mjs --aircraft` covers 160 scene
+seconds with a 10? review recording. Evidence is in repository-local
+`.tmp/digital-grid-aircraft-qa/`: `motion.webm`, `report.json`, reset and sampled
+full-frame PNGs. Samples before 30 seconds contain no aircraft; the first
+sampled emergence is at 30.167 seconds. The hull is fully concealed at 100.167
+seconds behind the main tower, visible again at 115.167, concealed by the right
+dome at 140.167, and the tail disappears before the gate closes at 150 seconds.
+The measured visible wake has over 100 changed material pixels in unobstructed
+samples. No changed pixels leak into the fully opaque skyline mask in measured
+unzoomed samples. Pause freezes the rendered aircraft and wake; reset hides it
+and restores its origin. Blackout and camera zoom are included in the sequence.
+Full-frame sample inspection confirms a small, subordinate silhouette, a thin
+wake, and partial occlusion at a smaller spire, as well as concealment at the
+main tower. This is motion-sequence evidence in addition to numerical checks.
+
+Limitations: this is the requested test pilot, not production/artistic approval.
+The skyline is threshold-derived, not a manually traced high-resolution matte;
+very dark source boundaries, antialiasing at domes and tiny tower tips remain
+uncertain. The recording is accelerated, not a real-time two-minute aesthetic
+review. No listening session or live /animations playback acceptance is claimed.
+Full-size/pixel-density variants and hardware fallback have not been reviewed.
+Earlier QA sections above document earlier package revisions; no new source
+image, unrelated lighting masks, audio graph or music controls were authored.
+
+
+## 0.3.1 fixed hull and short navigation flash (2026-11-09)
+
+User-reported defect: the shared color/white cycle extinguished or flattened the
+small hull. The revised hull is a separate native SVG with a constant graphite
+gradient and cyan inset rails, with no behavior descriptors. A separate wake
+retains the previous cyclic colors and a separate tiny emission-only dorsal
+beacon flashes for 100ms every 5 seconds. All three share the original rigid
+path, appearance gate and stationary occlusion. This supersedes earlier claims
+that the hull should share the motorcycle palette.
+
+Validation (from apps/ui):
+
+- `node --experimental-strip-types --test tests/infinite-zoom-digital-grid.test.mjs tests/infinite-zoom-behaviors.test.mjs tests/infinite-zoom-phase2.test.mjs tests/infinite-zoom-artwork.test.mjs tests/infinite-zoom-environment-blackout.test.mjs`: 39 passed.
+- `node node_modules/typescript/bin/tsc --noEmit --incremental false`: passed.
+- `node tests/infinite-zoom-digital-grid.browser.mjs --aircraft`: passed.
+  The full 160-second trajectory remains covered at 10x, with occlusion,
+  blackout, zoom and pause/reset. Its new 11-second normal-speed appearance
+  segment holds the craft in clear sky to inspect material independently of
+  subpixel movement. Front fuselage pixels stay identical through the complete
+  hue/white cycle; wake pixels change on 659 of 660 sampled frames. Three tiny
+  flashes occupy 15 rendered frames total (five per flash), with exact zero
+  emission outside each 100ms window in the fixed-step test. Full-frame on/off
+  samples (`appearance-2.png`, `appearance-8.png`) were inspected visually:
+  cyan rails and shaded hull preserve their silhouette while the tiny dorsal
+  glint alone appears/disappears. Subsequent flashes have sampled PNGs too.
+
+Evidence replaces `.tmp/digital-grid-aircraft-qa/report.json`, `motion.webm`
+and sampled PNGs. The last 11 seconds of the recording review the corrected
+material and beacon at normal speed; the earlier full route is accelerated.
+Skyline/antialiasing pilot uncertainties from 0.3.0 remain, and no live music
+session or hardware fallback acceptance is claimed. The engine extension is
+limited to compact glow pulses and allowing validated rigid travel on a
+glow-only emission layer; no extra renderer, audio graph or clock is added.

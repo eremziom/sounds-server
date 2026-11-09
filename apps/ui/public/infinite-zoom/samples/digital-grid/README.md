@@ -30,3 +30,9 @@ Reset retain the preference. No engine changes or new image assets are required.
 
 Repackage from `apps/ui`: `node scripts/create-digital-grid.mjs`.
 Original generated `source.png` is preserved; runtime `plate.png` is registered at 1600×900, not native 4K.
+
+
+0.3.0 adds the tiny background aircraft and attached luminous wake: one constant-speed left-to-right passage at simulation seconds 30?150, with stationary skyline occlusion, motorcycle color cycle, blackout, pause/resume and reset. Review: `node tests/infinite-zoom-digital-grid.browser.mjs --aircraft` (from apps/ui); evidence in `.tmp/digital-grid-aircraft-qa/`. The test uses the music-gated scene clock, not track seek position. See the latest authoring brief and qa.md for pilot limitations.
+
+
+0.3.1 fixes the aircraft palette: graphite hull/cyan rails stay constant; only the wake cycles colors. A tiny dorsal light flashes for 100ms every 5 seconds. The aircraft review now also includes 11 seconds of material/flash recording at normal speed after the accelerated path.

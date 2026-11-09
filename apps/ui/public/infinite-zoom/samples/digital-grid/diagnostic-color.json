@@ -1,5 +1,5 @@
 {
-  "version": "0.2.4",
+  "version": "0.3.1",
   "guidelinesVersion": "1.6",
   "requestedColors": [
     "cyan",
@@ -66,7 +66,7 @@
     "maxConcurrentWaves": 32
   },
   "masksUnchanged": true,
-  "engineChanges": "Existing approved attackWave engine mode; this revision changes package parameters and a native SVG material variant only. Renderer, masks and clock unchanged.",
+  "engineChanges": "Existing color operators unchanged. Aircraft uses existing rigid travel and stationary occlusion; glow gains optional compact pulseSeconds for the separate beacon, on the existing clock.",
   "originalSourceUnchanged": true,
   "controlLimitation": "Disabling colorShift leaves the authored base material; restoring original white panels is outside this temporary diagnostic"
 }

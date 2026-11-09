@@ -161,3 +161,12 @@ test("camera and behaviors produce the same complete state across render rates a
   assert.deepEqual(results[1], results[2]);
   assert.equal(results[0].session.tick, 120);
 });
+
+
+test('short glow pulse validates duration, frequency and mutually exclusive sharpness',()=>{
+  const pulse={id:'flash',kind:'glow',order:0,params:{frequencyHz:.2,phase:0,amount:1,threshold:0,pulseSeconds:.1}};
+  assert.equal(parseBehaviors([pulse])[0].params.pulseSeconds,.1);
+  for(const patch of [{pulseSeconds:0},{pulseSeconds:.3},{frequencyHz:0},{sharpness:4},{pulseSeconds:NaN},{frequencyHz:10,pulseSeconds:.2}]){
+    assert.throws(()=>parseBehaviors([{...pulse,params:{...pulse.params,...patch}}]));
+  }
+});

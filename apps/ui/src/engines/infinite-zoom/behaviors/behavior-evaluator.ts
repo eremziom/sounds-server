@@ -93,8 +93,15 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
             }
             return Object.freeze({ ...common, kind: "colorShift" as const, hue: behavior.params.hue*oscillation, saturation: 1+behavior.params.saturation*oscillation, lightness: behavior.params.lightness*oscillation });
           }
-          case "glow": return Object.freeze({ ...common, kind: "glow" as const, amount: behavior.params.amount*(behavior.params.intensity ?? 1)*Math.pow(0.5+0.5*Math.sin(phase),behavior.params.sharpness ?? 1)*amount, threshold: behavior.params.threshold,
+          case "glow": {
+            // An explicit short pulse has a compact support: exact darkness
+            // outside its authored window, independent of the period length.
+            const cycle=((phase % (2*Math.PI))+2*Math.PI)%(2*Math.PI);
+            const u=behavior.params.pulseSeconds === undefined ? 0 : cycle/(2*Math.PI*behavior.params.frequencyHz*behavior.params.pulseSeconds);
+            const envelope=behavior.params.pulseSeconds === undefined ? Math.pow(0.5+0.5*Math.sin(phase),behavior.params.sharpness ?? 1) : u<1 ? Math.sin(Math.PI*u)**2 : 0;
+            return Object.freeze({ ...common, kind: "glow" as const, amount: behavior.params.amount*(behavior.params.intensity ?? 1)*envelope*amount, threshold: behavior.params.threshold,
             ...(behavior.params.color ? {color:behavior.params.color} : {}) });
+          }
           case "pulse": return Object.freeze({ ...common, kind: "pulse" as const, gain: 1 + behavior.params.amount * oscillation });
         }
       })),

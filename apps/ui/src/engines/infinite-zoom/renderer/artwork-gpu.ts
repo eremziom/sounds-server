@@ -54,7 +54,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
   try {
     for (const [index, layer] of loaded.manifest.layers.entries()) {
       const shader = shaders[index], image = textureFor(layer.imageAssetId);
-      if (2 + shader.masks.length > maxSamplers) throw new Error("Behavior masks exceed GPU sampler limit");
+      if (2 + (layer.occlusionMaskAssetId ? 1 : 0) + shader.masks.length > maxSamplers) throw new Error("Behavior masks exceed GPU sampler limit");
       const uniforms: Record<string, { value: unknown }> = {};
       for (const mask of shader.masks) uniforms[mask.name] = { value: textureFor(mask.assetId) };
       for (const effect of shader.effects) uniforms[effect.name] = { value: [0, 0, 0, 0] };
@@ -62,6 +62,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         fragmentShader: `
           uniform sampler2D imageMap; uniform sampler2D maskMap;
           uniform float hasMask; uniform float opacity; uniform float audioGain;
+          ${layer.occlusionMaskAssetId ? "uniform sampler2D occlusionMap; uniform vec4 layerPose;" : ""}
           uniform int portalCount; uniform vec4 portalData[5]; uniform vec2 portalStyle[5];
           varying vec2 vUv; varying vec2 artworkWorld;
           ${shader.declarations}
@@ -84,9 +85,15 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
             ${shader.glowBody}
             ${layer.blendMode === "additive-emission" ? "if(max(max(emission.r,emission.g),emission.b)<=0.0000001)discard; color.rgb=emission;" : ""}
             color.a *= inside * opacity * portalAlpha * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
+            ${layer.occlusionMaskAssetId ? `// Occlusion stays registered to the artwork while the separated layer moves.
+            vec2 local=(vUv-0.5)*vec2(3840.0,-2160.0)*layerPose.z;
+            float lc=cos(layerPose.w),ls=sin(layerPose.w);
+            vec2 fixedUv=(vec2(lc*local.x-ls*local.y,ls*local.x+lc*local.y)+layerPose.xy)/vec2(3840.0,-2160.0)+0.5;
+            color.a *= 1.0-texture2D(occlusionMap,fixedUv).r;` : ""}
             gl_FragColor = vec4(color.rgb*color.a,${layer.blendMode === "additive-emission" ? "0.0" : "color.a"});
           }`,
         uniforms: { behaviorCameraOffset: { value: new Vector2() }, imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
+          ...(layer.occlusionMaskAssetId ? {occlusionMap: {value: textureFor(layer.occlusionMaskAssetId)}, layerPose: {value: new Vector4(0,0,1,0)}} : {}),
           hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, portalCount: { value: 0 },
           portalData: { value: Array.from({ length: 5 }, () => new Vector4()) }, portalStyle: { value: Array.from({ length: 5 }, () => new Vector2()) }, ...uniforms },
         transparent: true, premultipliedAlpha: true, blending:layer.blendMode === "additive-emission" ? AdditiveBlending : NormalBlending, depthTest: false, depthWrite: false, toneMapped: false,
@@ -105,6 +112,7 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
         mesh.position.set(layer.x, -layer.y, 0); mesh.rotation.z = -layer.rotation; mesh.scale.setScalar(layer.scale);
         mesh.renderOrder = firstOrder + index; uniforms.opacity.value = layer.opacity;
         uniforms.audioGain.value = layer.audioGain;
+        if (uniforms.layerPose) uniforms.layerPose.value.set(layer.x,layer.y,layer.scale,layer.rotation);
         uniforms.behaviorCameraOffset.value.set(cameraOffset.x, cameraOffset.y);
         const descriptor = loaded.manifest.layers[index], base = loaded.manifest.assets.find(a => a.id === descriptor.imageAssetId)!;
         let imageId = detailLocked && detailEnabled ? selectedImages[index] : descriptor.imageAssetId;

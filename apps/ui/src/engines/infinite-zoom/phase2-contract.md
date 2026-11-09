@@ -357,3 +357,64 @@ authoring UI, AI generation, arbitrary scene streaming/planning, sparse detail
 tiles, accumulated fluid simulation and artistic approval are not claimed by
 these technical tests. The current three samples do not automatically acquire
 the nine new authored effects merely because the engine supports them.
+
+
+## One-shot rigid travel and stationary occlusion (2026-11-09)
+
+Schema 2 layers may specify `travel: {startSeconds, durationSeconds, x, y}`.
+Start is 0..3600 seconds, duration 1/60..3600 seconds, and final displacement
+is bounded to ?3840/?2160 artwork pixels. A separated layer remains hidden
+before its start, moves at constant speed without easing or repetition, and
+is hidden at/after its endpoint. Position and visibility come from existing
+instance fixed steps; pause/parking preserve them and Reset rewinds them.
+This is scene journey time, independent of track seeking, source replacement
+and audio amplitude. It is rigid layer motion, separate from the local
+sinusoidal `translate` behavior and its deformation budget. It cannot be
+combined with spin or used on coverage layers. Glow-only emission layers may
+use rigid travel; they still reject spatial behavior operators and spin. Base layer
+transforms compose with the travel displacement.
+
+Optional `occlusionMaskAssetId` references a critical R8 mask, with white
+meaning opaque foreground and black meaning exposed background. Visibility
+alpha/mattes move with the layer; this additional mask stays registered to
+the artwork. The existing GPU lease inverse-maps each layer fragment's rigid
+pose into artwork UV and clips its final alpha/emission against that mask.
+Camera/parent placement changes keep the same registration. Unconfigured
+layers compile their existing shader without another sampler. Occlusion
+cannot be assigned to the coverage base; the critical asset participates in
+normal readiness, budget admission, context reconstruction and disposal.
+
+Digital Grid 0.3.0 exercises this contract with a tiny SVG aircraft/wake on a
+30?150 second one-shot path and a separate skyline mask, while preserving
+music ownership and the scene's existing color operators and lighting groups.
+
+
+## Compact periodic glow pulses (2026-11-09)
+
+Optional `glow.params.pulseSeconds` selects a compact, sin-squared light pulse
+at the beginning of each authored period instead of the legacy sinusoidal
+glow envelope. Duration is 1/60..min(0.25, 1/frequencyHz) seconds; frequency
+must be positive and sharpness must be absent. Phase retains its existing
+radian meaning. The effect is exactly zero outside its pulse window. Legacy
+glow, intensity budgets and controls retain their existing behavior.
+Digital Grid's separated glow-only navigation beacon uses frequency 0.2 Hz,
+phase 0 and duration 0.1 seconds, so each flash peaks 50ms after a five-second
+boundary and does not alter the fixed hull or cyclic wake material.
+
+
+## Smooth flight paths (2026-11-09)
+
+The optional schema-2 `layer.travel` now accepts either legacy straight `x`/`y`
+or a `path`: explicit cubic Bezier segments or a smooth waypoint spline.
+Optional distance-based easing supports constant speed, acceleration and
+braking. Optional tangent orientation requires an absolute source pivot and
+supports an authored heading offset; it rotates separated parts together
+without orbital drift or pi-wrap jumps. No spin/coverage restrictions are
+relaxed. The existing GPU pose and stationary occlusion mapping already handle
+the resulting rotations; this extension changes no shader or renderer logic.
+
+See [the flight contract and authoring examples](layer-flight-paths.md)
+for schema, bounds, continuity requirements, numerical integration, lifecycle,
+QA commands/evidence and limits (including attached rather than accumulated wake).
+Existing straight Digital Grid manifests and approved palette/beacon behavior
+are unchanged. The curved examples exist only in the runtime test fixture.
