@@ -30,6 +30,7 @@ export function createBrowserVisualSession(options: {
   let rimLightingEnabled=false;
   const reveal=createSceneReveal();
   const blackout=createEnvironmentBlackout();
+  let lastKickAt:number|null=null,kickEvent=0;
   const studioManifests=new Map<VisualScene,unknown>();
   let scenePreparation: Promise<void> | null = null;
   const selectionLifetime=new AbortController();
@@ -90,9 +91,12 @@ export function createBrowserVisualSession(options: {
         return { ...prepared,
           step(context) {
             const levels = options.signals.current;
-            modulation.step(bridge.getModulation() && options.analysisEnabled() ? {
+            const enabled=bridge.getModulation()&&options.analysisEnabled(),now=performance.now();
+            const kick=sampleKickAttack(levels?.bass??null,now);
+            if(enabled&&kick>0&&levels.bass.attackAt!==lastKickAt){lastKickAt=levels.bass.attackAt;kickEvent=1-kickEvent;}
+            modulation.step(enabled ? {
               bass: levels?.bass?.level ?? NaN, mid: levels?.mid?.level ?? NaN, high: levels?.high?.level ?? NaN,
-              kick: sampleKickAttack(levels?.bass ?? null, performance.now()),
+              kick,kickEvent,
               highAttack: sampleHighAttack(levels?.high ?? null, performance.now()),
               midAttack: sampleMidAttack(levels?.mid ?? null, performance.now()),
             } : null, context.dt);
@@ -221,6 +225,7 @@ export function createBrowserVisualSession(options: {
     reset() {
       if (!lease || disposed) return;
       commands.length = 0; modulation.reset();
+      kickEvent=0;lastKickAt=options.signals.current?.bass?.attackAt??null;
       try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);blackout.apply(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
       publish();
     },

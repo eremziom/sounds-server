@@ -1,5 +1,6 @@
 export type ModulationSignal = "bass" | "mid" | "high" | "energy" | "kick" | "highAttack" | "midAttack";
-export type NormalizedSignals = Readonly<Partial<Record<ModulationSignal, number>>>;
+// kickEvent is an alternating 0/1 event token, not an amplitude/binding input.
+export type NormalizedSignals = Readonly<Partial<Record<ModulationSignal | "kickEvent", number>>>;
 export interface ModulationBinding {
   readonly id: string; readonly signal: ModulationSignal; readonly operation: "multiply" | "add" | "replace";
   readonly priority: number; readonly min: number; readonly max: number;

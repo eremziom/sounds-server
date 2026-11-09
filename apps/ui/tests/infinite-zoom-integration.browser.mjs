@@ -12,7 +12,10 @@ wav.write("RIFF"); wav.writeUInt32LE(wav.length-8,4); wav.write("WAVEfmt ",8);
 wav.writeUInt32LE(16,16); wav.writeUInt16LE(1,20); wav.writeUInt16LE(1,22);
 wav.writeUInt32LE(rate,24); wav.writeUInt32LE(rate*2,28); wav.writeUInt16LE(2,32); wav.writeUInt16LE(16,34);
 wav.write("data",36); wav.writeUInt32LE(samples*2,40);
-for (let i=0;i<samples;i++) wav.writeInt16LE(Math.round(Math.sin(i*2*Math.PI*100/rate)*8000),44+i*2);
+for (let i=0;i<samples;i++) {
+  const amplitude=process.argv.includes('--digital-ui')&&i%(rate*.4)>rate*.08?0:8000;
+  wav.writeInt16LE(Math.round(Math.sin(i*2*Math.PI*100/rate)*amplitude),44+i*2);
+}
 const tracks = [1,2].map(id => ({ id, ownerId:1, author:"IZ", title:`IZ recording ${id}`, genre:null, subgenre:null, description:null, publicationDate:"2026-01-01", bpm:null, hasAudio:true }));
 const api = createServer((req,res) => {
   res.setHeader("Content-Type","application/json");
@@ -65,6 +68,15 @@ try {
       const names=new WeakMap(), proto=WebGL2RenderingContext.prototype, location=proto.getUniformLocation, scalar=proto.uniform1f;
       proto.getUniformLocation=function(program,name) { const value=location.call(this,program,name); if(value) names.set(value,name); return value; };
       proto.uniform1f=function(location,value) { if(names.get(location)==='audioGain') izGain=value; return scalar.call(this,location,value); };
+      window.izWaveFrames=0;window.izMaxConcurrentWaves=0;
+      const vectorArray=proto.uniform4fv;
+      proto.uniform4fv=function(location,value,...args){
+        if(value?.length===132&&Math.abs(value[1]-.8)<.001){
+          let active=0;for(let i=4;i<value.length;i+=4)if(value[i]>=0)active++;
+          if(active){izWaveFrames++;izMaxConcurrentWaves=Math.max(izMaxConcurrentWaves,active);}
+        }
+        return vectorArray.call(this,location,value,...args);
+      };
       })();
     `});
     await send("Network.setCookies",{cookies:[{name:"accessToken",value:session.accessToken,url:origin,path:"/",httpOnly:true},{name:"refreshToken",value:session.refreshToken,url:origin,path:"/",httpOnly:true},{name:"locale",value:"en",url:origin,path:"/"}]});
@@ -152,6 +164,7 @@ try {
       const frozen=await tick();await delay(250);assert.equal(await tick(),frozen);
       await click(toggle);await waitFor(`!${audio}.paused`);await delay(3600);
       await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+      await waitFor("window.izWaveFrames>0 && window.izMaxConcurrentWaves>=2");
       assert.equal(await evaluate(`${audio}===izAudio && ${canvas}===izCanvas && izCanvas.getContext('webgl2')===izGl`),true,"One audio element, canvas and context");
       await click("document.querySelector('[data-iz-immersive]')");await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
       await evaluate("document.querySelector('[data-iz-immersive-pilot]').open=true");

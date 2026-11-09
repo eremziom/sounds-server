@@ -1,6 +1,6 @@
 {
-  "version": "0.2.0",
-  "guidelinesVersion": "1.5",
+  "version": "0.2.2",
+  "guidelinesVersion": "1.6",
   "requestedColors": [
     "cyan",
     "white",
@@ -9,13 +9,58 @@
     "blue",
     "violet"
   ],
-  "method": "SVG luminance-preserving cyan material; two delayed pi hue rotations, separate periodic white pass, reduced untinted glow",
+  "method": "Original cyclic palette on five masks; each detected bass event launches the next palette color as an independent upward ribbon on existing dome-ribs material.",
   "material": "diagnostic-material.svg",
   "hueExcursionRadians": 6.283185307179586,
   "periodSeconds": 12,
   "travelSeconds": 4,
+  "bassColor": {
+    "layerId": "dome-ribs",
+    "maskAssetId": "visible-dome-ribs",
+    "signal": "kickEvent",
+    "inputDecayMs": 160,
+    "travelSeconds": 0.8,
+    "pulseSeconds": 0.24,
+    "startY": 0.39444444444444443,
+    "endY": 0,
+    "baseIntensity": 0.45,
+    "palette": [
+      [
+        0.02,
+        0.65,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        0.25,
+        0.01
+      ],
+      [
+        0.02,
+        1,
+        0.06
+      ],
+      [
+        0.04,
+        0.08,
+        1
+      ],
+      [
+        0.65,
+        0.01,
+        1
+      ]
+    ],
+    "returnsToBase": true,
+    "maxConcurrentWaves": 32
+  },
   "masksUnchanged": true,
-  "engineChanges": false,
+  "engineChanges": "User-approved opt-in attackWave mode in existing colorShift, plus replayable bass event token. Renderer, masks and clock unchanged.",
   "originalSourceUnchanged": true,
-  "controlLimitation": "Disabling colorShift leaves the cyan diagnostic material; restoring original white panels is outside this temporary diagnostic"
+  "controlLimitation": "Disabling colorShift leaves the original cyan diagnostic material; restoring original white panels is outside this temporary diagnostic"
 }

@@ -76,7 +76,7 @@
       "digitalScene": "Digital world — light cycle",
       "digitalDescription": "A white and black light cycle, luminous roads and hexagonal domes. Light waves travel across panels, wheel rims and city bands.",
       "digitalNotes": "Geometry stays fixed. Traveling light changes white panel brightness and city colors locally. Test artwork; the source is not native 4K.",
-      "bassAttackConfigurationNote": "Bass attack configuration: shared detector, 160 ms impulse preview and frequency range controls. Bass attacks are not yet assigned to any mask in this artwork.",
+      "bassAttackConfigurationNote": "Each detected bass attack selects the next color and launches an upward wave on the existing dome-rib and tower mask. Successive waves travel independently. Other masks keep their cycles. Enable React to music; Traveling light and color adjusts strength.",
       "environmentBlackoutLabel": "Black out the environment",
       "environmentBlackoutNote": "Keeps animated colors and lights against black. When disabled, the environment fades back over 3 seconds of playback; pause freezes the reveal.",
       "digitalBehaviors": {"colorShift":"Traveling light and color","glow":"Local light impulses"},

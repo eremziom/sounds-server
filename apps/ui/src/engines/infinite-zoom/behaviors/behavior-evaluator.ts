@@ -2,6 +2,7 @@ import { validateBehaviorControl, type BehaviorKind } from "../artwork/pilot-con
 import { composeConstraints, type MotionConstraints } from "./motion-constraints.ts";
 import { createBindingEvaluator, type NormalizedSignals } from "../modulation/bindings.ts";
 import { resolveBehaviors, type BehaviorDescriptor } from "./behavior-contract.ts";
+import {createAttackColorWave,type AttackColorWave,type ColorWaveEvent} from "./attack-color-wave.ts";
 
 export interface BehaviorRegion {
   readonly id: string;
@@ -27,7 +28,7 @@ export type BehaviorOutput = Readonly<{ id: string; influenceMaskAssetId?: strin
   { kind: "bend"; amount: number; pivotX: number; pivotY: number; axis: "x" | "y" } |
   { kind: "displace" | "flow"; amplitude: number; fieldAssetId: string } |
   { kind: "opacity"; opacity: number } |
-  { kind: "colorShift"; hue: number; saturation: number; lightness: number; delayMapAssetId?: string; travelPhase?: number; travelRadians?: number } |
+  { kind: "colorShift"; hue: number; saturation: number; lightness: number; delayMapAssetId?: string; travelPhase?: number; travelRadians?: number; attackWave?:AttackColorWave; waveStrength?:number; waves?:readonly ColorWaveEvent[] } |
   { kind: "glow"; amount: number; threshold: number; color?: readonly [number,number,number] }
 )>;
 
@@ -58,6 +59,7 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
   let strength = 1;
   const controls = new Map<BehaviorKind,number>();
   const bindings = groups.map(group => group.behaviors.map(b => createBindingEvaluator(b.modulation ?? [])));
+  const waves=groups.map(group=>group.behaviors.map(b=>b.kind==="colorShift"&&b.params.attackWave?createAttackColorWave(b.params.attackWave):null));
   const bindingGains = () => bindings.map(group => group.map(binding => binding.getSnapshot()));
   let gains = bindingGains();
   function evaluate(): readonly BehaviorGroupOutput[] {
@@ -79,6 +81,7 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
           case "displace": case "flow": return Object.freeze({ ...common, kind: behavior.kind, amplitude: behavior.params.amplitude*oscillation, fieldAssetId: behavior.params.fieldAssetId });
           case "opacity": return Object.freeze({ ...common, kind: "opacity" as const, opacity: 1+(behavior.params.base-1)*amount+behavior.params.amount*oscillation });
           case "colorShift": {
+            if(behavior.params.attackWave)return Object.freeze({...common,kind:"colorShift" as const,hue:0,saturation:1,lightness:0,attackWave:behavior.params.attackWave,waveStrength:amount,waves:waves[g][e]!.getSnapshot()});
             if (behavior.params.delayMapAssetId) {
               const delay=behavior.params.travelSeconds!,time=tick/60,period=1/behavior.params.frequencyHz;
               // Preserve the initial source color at every spatial delay, then
@@ -104,10 +107,11 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
       if (!Number.isFinite(nextStrength) || nextStrength < 0 || nextStrength > 1) throw new Error("Invalid behavior strength");
       if (tick === Number.MAX_SAFE_INTEGER) throw new Error("Behavior tick exhausted");
       gains = groups.map((group,g) => group.behaviors.map((_,e) => bindings[g][e].step(signals,dt)));
+      for(const group of waves)for(const wave of group)wave?.step(signals);
       tick++; strength = nextStrength; outputs = evaluate();
     },
     setBehaviorStrength(kind: BehaviorKind, value: number) { validateBehaviorControl(kind,value); controls.set(kind,value); outputs=evaluate(); },
     getSnapshot: () => outputs,
-    reset() { tick = 0; strength = 1; for (const group of bindings) for (const b of group) b.reset(); gains = bindingGains(); outputs = evaluate(); },
+    reset() { tick = 0; strength = 1; for (const group of bindings) for (const b of group) b.reset();for(const group of waves)for(const wave of group)wave?.reset(); gains = bindingGains(); outputs = evaluate(); },
   };
 }

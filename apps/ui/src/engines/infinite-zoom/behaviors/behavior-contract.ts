@@ -1,5 +1,6 @@
 import { composeConstraints, type MotionConstraints } from "./motion-constraints.ts";
 import { parseBindings, type ModulationBinding } from "../modulation/bindings.ts";
+import type {AttackColorWave} from "./attack-color-wave.ts";
 
 interface CommonBehavior {
   readonly id: string;
@@ -22,7 +23,7 @@ export type BehaviorDescriptor = CommonBehavior & (
   { readonly kind: "displace"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "flow"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "opacity"; readonly params: Periodic & { readonly base: number; readonly amount: number } } |
-  { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number; readonly delayMapAssetId?: string; readonly travelSeconds?: number } } |
+  { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number; readonly delayMapAssetId?: string; readonly travelSeconds?: number; readonly attackWave?:AttackColorWave } } |
   { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number; readonly sharpness?: number; readonly intensity?: number; readonly color?: readonly [number,number,number] } }
 );
 
@@ -93,11 +94,22 @@ export function parseBehaviors(input: unknown): readonly BehaviorDescriptor[] {
         if (behavior.params.base-behavior.params.amount < 0 || behavior.params.base+behavior.params.amount > 1) throw new Error("Opacity envelope exceeds 0..1");
         break;
       case "colorShift":
-        keys = ["frequencyHz", "phase", "hue", "saturation", "lightness", "delayMapAssetId", "travelSeconds"];
+        keys = ["frequencyHz", "phase", "hue", "saturation", "lightness", "delayMapAssetId", "travelSeconds", "attackWave"];
+        let attackWave:AttackColorWave|undefined;
+        if(params.attackWave!==undefined){
+          const wave=params.attackWave as Record<string,unknown>;
+          if(!wave||typeof wave!=="object"||Array.isArray(wave)||Object.keys(wave).some(k=>!["travelSeconds","pulseSeconds","startY","endY","palette","baseIntensity"].includes(k)))throw new Error("Invalid attack color wave");
+          if(periodic.frequencyHz!==0||periodic.phase!==0||params.delayMapAssetId!==undefined||params.travelSeconds!==undefined||data.modulation!==undefined)throw new Error("Attack waves require independent event timing, not periodic/binding timing");
+          if(params.hue!==0||params.saturation!==0||params.lightness!==0)throw new Error("Attack waves use their palette instead of hue/saturation/lightness offsets");
+          const startY=finite(wave.startY,0,1),endY=finite(wave.endY,0,1);
+          if(startY===endY||!Array.isArray(wave.palette)||wave.palette.length<2||wave.palette.length>12)throw new Error("Invalid wave range or palette");
+          const palette=Object.freeze(wave.palette.map(c=>{if(!Array.isArray(c)||c.length!==3)throw new Error("Invalid wave color");return Object.freeze(c.map(v=>finite(v,0,1))) as readonly [number,number,number];}));
+          attackWave=Object.freeze({travelSeconds:finite(wave.travelSeconds,1/60,1),pulseSeconds:finite(wave.pulseSeconds,1/60,.24),startY,endY,baseIntensity:wave.baseIntensity===undefined?1:finite(wave.baseIntensity,0,1),palette});
+        }
         if ((params.delayMapAssetId === undefined) !== (params.travelSeconds === undefined)) throw new Error("Color travel requires both a delay map and travelSeconds");
         if (params.delayMapAssetId !== undefined && periodic.frequencyHz === 0) throw new Error("Color travel requires a positive frequency");
         behavior = { ...common, kind: "colorShift", params: { ...periodic, hue: finite(params.hue, -Math.PI, Math.PI), saturation: finite(params.saturation, -1, 1), lightness: finite(params.lightness, -0.5, 0.5),
-          ...(params.delayMapAssetId === undefined ? {} : {delayMapAssetId:reference(params.delayMapAssetId),travelSeconds:finite(params.travelSeconds,1/60,60)}) } }; break;
+          ...(attackWave?{attackWave}:{}),...(params.delayMapAssetId === undefined ? {} : {delayMapAssetId:reference(params.delayMapAssetId),travelSeconds:finite(params.travelSeconds,1/60,60)}) } }; break;
       case "glow":
         keys = ["frequencyHz", "phase", "amount", "threshold", "sharpness", "intensity", "color"];
         if(params.color!==undefined&&(!Array.isArray(params.color)||params.color.length!==3))throw new Error("Invalid glow color");

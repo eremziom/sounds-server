@@ -1,6 +1,101 @@
-# Digital Grid 0.2.0 — test-artwork QA
+# Digital Grid 0.2.2 — test-artwork QA
 
 Created 2026-11-09 with shared creator guidelines v1.5. Status: **test pilot, artistic acceptance pending**.
+
+## 0.2.2 — independent color wave on every bass beat
+
+The user explicitly approved the required bounded engine extension. Existing
+`colorShift` now has an opt-in attackWave mode; the selected original
+`visible-dome-ribs` mask is unchanged. All PNG/SVG files remain byte-identical.
+No new image, mask, mesh renderer, audio graph or clock was added. Only the
+selected layer changes; the other five retain their original cyclic descriptors.
+Each new bass detector timestamp starts the next palette color as an independent
+upward ribbon, even while previous colors continue traveling. This supersedes
+0.2.1's simultaneous whole-mask hue modulation described below.
+
+Actual timings: 0.8 s bottom-to-top travel, 0.24 s smooth ribbon per material
+point, cyan/white/orange/green/blue/violet palette, 45% cyan background material
+to make the cyan wave visible. Bass still has its original 160 ms input envelope;
+that input launches rather than truncates the longer spatial wave. The vertical
+delay field is computed in source coordinates without changing the original
+diagonal delay-map file. This is an upward front across real ribs, not routed
+hexagon-branch transport. Known material boundary/zoom resolution limitations
+remain, and artistic acceptance is pending.
+
+Validation passed:
+
+- 153 Infinite Zoom unit tests, including palette wrap, weaker overlapping
+  attacks, bounded memory at supported detector cadence, no events in silence,
+  pause/reset, isolation of the other masks, legacy mapped lava flow and logical
+  record/replay of event tokens.
+- Real WebGL2 wave recording with six successive attacks: all six palette colors
+  launch on their own hit and older waves retain independent ages. Against a
+  quiet reference, the first wave's changed-material centroid moves upward from
+  y=341 to y=246 between 0.10 s and 0.37 s; this establishes spatial movement,
+  not only pixel differences. Initial, lower/upper front, overlapping-color and
+  blackout/zoom frames were visually inspected.
+- Active-wave pause and context loss/recovery preserve the exact rendered frame;
+  reset clears waves/palette. Tests include complete travel after the final beat.
+- The full existing WebGL2 renderer suite passed, including journey transitions,
+  legacy behaviors, insectoid artwork and context recovery. Production build and
+  translation validation passed.
+- The authenticated application UI test uses pulsed 100 Hz audio and observes
+  actual wave uniforms from live detection: at least two waves coexist. It also
+  checks shared detector controls, playback pause/resume, blackout, reset, scene
+  parking, immersive mode and the same audio/canvas/context.
+
+Evidence is in `.tmp/digital-grid-bass-color-qa/`: `motion.webm`, `report.json`,
+`idle.png`, `frame-36.png`, `frame-52.png`, `frame-90.png`, `frame-160.png` and
+other phase samples. The recording uses a quiet second renderer as an offline
+reference only; the product still uses one renderer. Timing follows the existing
+60 Hz simulation. Wave geometry is intentionally broad and vertical, rather than
+per-branch tracing; RGBA8 fallback was not separately evaluated for this new mode.
+
+Commands:
+
+```powershell
+node --experimental-strip-types --test tests/infinite-zoom-*.test.mjs
+node tests/infinite-zoom-digital-grid.browser.mjs --bass-color
+node tests/infinite-zoom-renderer.browser.mjs
+pnpm --filter ui build
+node tests/infinite-zoom-integration.browser.mjs --digital-ui
+```
+
+## 0.2.1 — bass color on one unchanged mask (guidelines v1.6)
+
+The latest user instruction supersedes the temporary unassigned state below.
+`dome-ribs` alone binds its two static hue rotations to the existing `kick`
+signal. The free-running white pass is removed only from this layer. Its original
+visibility/influence masks are preserved, including both dome and upper-tower
+material; the selection is not restricted to the tower. The other five masks
+keep byte-identical descriptors and cycles. No white/black material or extra
+mask/layer/controller was reintroduced. `git diff --name-only` reports no PNG/SVG
+changes and no engine changes; package layer/asset counts remain unchanged.
+
+Six focused unit checks passed, verifying repeated attack response, idle base
+hue, independence of all five other mask cycles, pause/reset and blackout.
+`node tests/infinite-zoom-digital-grid.browser.mjs --bass-color` passed with seven
+synthetic detected attacks through the existing kick sampler and binding path,
+including blackout, zoom, pause and reset. Initial and first/second attack-frame
+captures were inspected: the existing material changes visibly from cyan to
+warm/green hues, while motorcycle colors continue their cycle. The response is
+an envelope-driven hue excursion returning to cyan, not a persistent palette
+advance on every beat. The existing 160 ms input and 1/60 s binding smoothing
+remain; no exact 160 ms visual cutoff or beat-relative travel is claimed.
+
+Evidence: `.tmp/digital-grid-bass-color-qa/report.json`, `motion.webm`, `idle.png`
+and `frame-*.png`. Production build/translation validation passed. The targeted
+authenticated application UI check covers the reused detector controls and
+existing blackout. Existing mask-boundary/zoom-resolution limitations remain.
+
+Commands:
+
+```powershell
+node --experimental-strip-types --test tests/infinite-zoom-digital-grid.test.mjs tests/infinite-zoom-environment-blackout.test.mjs
+node tests/infinite-zoom-digital-grid.browser.mjs --bass-color
+pnpm --filter ui build
+node tests/infinite-zoom-integration.browser.mjs --digital-ui
+```
 
 ## Tower experiment withdrawn (2026-11-09)
 

@@ -14,20 +14,41 @@ test('digital test package validates actual assets, six local lighting groups an
   const manifest=parseArtworkPackage(raw);assert.equal(STUDIO_ARTWORKS.digital,manifest.id);
   assert.equal(manifest.portal,undefined);assert.equal(manifest.layers.length,8);
   assert.ok(manifest.layers.every(l=>!l.id.startsWith('tower-')),'No withdrawn tower layers remain');
-  assert.ok(manifest.layers.flatMap(l=>l.behaviors).every(b=>(b.modulation??[]).every(binding=>binding.signal!=='kick')),'Bass detector remains unassigned to this artwork');
+  assert.deepEqual(manifest.layers.filter(l=>l.behaviors.some(b=>b.params.attackWave)).map(l=>l.id),['dome-ribs'],'Only the existing dome/tower mask reacts to bass');
   assert.ok(artworkTextureBytes(manifest)<48*1024*1024);
   for(const asset of manifest.assets){
     const bytes=await readFile(new URL(asset.uri.split('/').at(-1),root));
     const m=await sharp(bytes).metadata();assert.equal(m.width,asset.width);assert.equal(m.height,asset.height);
   }
   for(const layer of manifest.layers.slice(2)){
-    assert.deepEqual(layer.behaviors.map(b=>b.kind),['colorShift','colorShift','colorShift','glow']);
+    assert.deepEqual(layer.behaviors.map(b=>b.kind),layer.id==='dome-ribs'?['colorShift','glow']:['colorShift','colorShift','colorShift','glow']);
     assert.equal(layer.imageAssetId,'diagnostic-material');
-    assert.equal(layer.behaviors[0].params.hue+layer.behaviors[1].params.hue,2*Math.PI);
-    assert.notEqual(layer.maskAssetId,layer.behaviors[3].influenceMaskAssetId);
+    if(layer.id!=='dome-ribs')assert.equal(layer.behaviors[0].params.hue+layer.behaviors[1].params.hue,2*Math.PI);
+    assert.notEqual(layer.maskAssetId,layer.behaviors.at(-1).influenceMaskAssetId);
     const mask=await sharp(fileURLToPath(new URL(`${layer.maskAssetId}.png`,root))).extractChannel(0).raw().toBuffer();
     assert.ok(mask.filter(v=>v>25).length>20000,'Many source-material light pixels in every group');
   }
+});
+
+test('one unchanged mask launches independent color waves on each bass event and other colors remain cyclic',()=>{
+  const manifest=parseArtworkPackage(raw),idle=createArtworkInstance('idle',manifest),hit=createArtworkInstance('hit',manifest);
+  const layer=(instance,id)=>instance.getSnapshot().layers.find(l=>l.id===id);
+  const waves=instance=>layer(instance,'dome-ribs').groups[0].effects[0].waves;
+  assert.equal(waves(idle).length,0);
+  const hits=[];let token=0;
+  for(let tick=0;tick<180;tick++){
+    const kick=tick===20||tick===100?1:0;
+    if(kick)token=1-token;
+    idle.stepBehaviors({dt:1/60},{strength:1,intensity:1,signals:{kick:0,kickEvent:0}});
+    hit.stepBehaviors({dt:1/60},{strength:1,intensity:1,signals:{kick,kickEvent:token}});
+    assert.equal(waves(idle).length,0,'No waves before an event');
+    if(kick)hits.push(waves(hit).at(-1).color);
+    for(const id of ['rear-wheel','front-wheel','body-panels','road-cyan','city-amber'])assert.deepEqual(layer(hit,id),layer(idle,id),'Other masks preserve existing cycles');
+  }
+  assert.notDeepEqual(hits[0],hits[1],'Each bass hit chooses the next color');assert.equal(waves(hit).length,0,'Waves finish after crossing the mask');
+  const paused=hit.getSnapshot();assert.deepEqual(hit.getSnapshot(),paused);hit.reset();assert.equal(waves(hit).length,0);
+  const selected=manifest.layers.find(l=>l.id==='dome-ribs');assert.equal(selected.maskAssetId,'visible-dome-ribs');
+  for(const b of selected.behaviors.filter(b=>b.kind==='colorShift'))assert.equal(b.params.frequencyHz,0);
 });
 test('blackout variant preserves identical animated lights and supports smooth reveal by existing opacity strength',async()=>{
   const dark=parseArtworkPackage(JSON.parse(await readFile(new URL('blackout-manifest.json',root),'utf8')));

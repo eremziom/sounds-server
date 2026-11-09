@@ -6,7 +6,8 @@ import {fileURLToPath} from 'node:url';
 import {setTimeout as delay} from 'node:timers/promises';
 import ts from 'typescript';
 import {startChromium} from './helpers/chromium.mjs';
-const report=new URL('../../../.tmp/digital-grid-qa/',import.meta.url);
+const bassColor=process.argv.includes('--bass-color');
+const report=new URL(bassColor?'../../../.tmp/digital-grid-bass-color-qa/':'../../../.tmp/digital-grid-qa/',import.meta.url);
 const server=createServer(async(req,res)=>{
   try{
     const path=new URL(req.url,'http://localhost').pathname;let bytes,type='text/javascript';
@@ -28,7 +29,7 @@ try{
   await send('Page.enable');await send('Runtime.enable');await send('Page.navigate',{url:`http://127.0.0.1:${server.address().port}`});
   let ready=false;for(let i=0;i<200;i++){ready=(await send('Runtime.evaluate',{expression:'typeof window.runDigitalGrid === "function"',returnByValue:true})).result.value;if(ready)break;await delay(50);}
   assert.ok(ready,JSON.stringify(errors));
-  await send('Runtime.evaluate',{expression:'void window.runDigitalGrid().then(r=>window.qaResult=r).catch(e=>window.qaError=e.stack).finally(()=>window.qaDone=true)'});
+  await send('Runtime.evaluate',{expression:`void window.${bassColor?'runBassColor':'runDigitalGrid'}().then(r=>window.qaResult=r).catch(e=>window.qaError=e.stack).finally(()=>window.qaDone=true)`});
   let done=false;for(let i=0;i<600;i++){done=(await send('Runtime.evaluate',{expression:'!!window.qaDone',returnByValue:true})).result.value;if(done)break;await delay(200);}
   assert.ok(done,'Motion review completes');
   const result=(await send('Runtime.evaluate',{expression:'({result:window.qaResult,error:window.qaError})',returnByValue:true})).result.value;
