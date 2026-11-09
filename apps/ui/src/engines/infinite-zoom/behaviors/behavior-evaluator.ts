@@ -58,7 +58,8 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
   let strength = 1;
   const controls = new Map<BehaviorKind,number>();
   const bindings = groups.map(group => group.behaviors.map(b => createBindingEvaluator(b.modulation ?? [])));
-  let gains = groups.map(group => group.behaviors.map(() => 1));
+  const bindingGains = () => bindings.map(group => group.map(binding => binding.getSnapshot()));
+  let gains = bindingGains();
   function evaluate(): readonly BehaviorGroupOutput[] {
     return Object.freeze(groups.map((group,g) => Object.freeze({ id: group.id, influenceMaskAssetId: group.influenceMaskAssetId, maxDisplacement:group.constraints?.maxDisplacement ?? 512,
       effects: Object.freeze(group.behaviors.map((behavior,e) => {
@@ -96,6 +97,6 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
     },
     setBehaviorStrength(kind: BehaviorKind, value: number) { validateBehaviorControl(kind,value); controls.set(kind,value); outputs=evaluate(); },
     getSnapshot: () => outputs,
-    reset() { tick = 0; strength = 1; for (const group of bindings) for (const b of group) b.reset(); gains = groups.map(group => group.behaviors.map(() => 1)); outputs = evaluate(); },
+    reset() { tick = 0; strength = 1; for (const group of bindings) for (const b of group) b.reset(); gains = bindingGains(); outputs = evaluate(); },
   };
 }

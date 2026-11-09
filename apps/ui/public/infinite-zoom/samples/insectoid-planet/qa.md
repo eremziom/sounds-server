@@ -1,5 +1,92 @@
 # QA — insectoid planet, 2026-11-07
 
+## Revision 0.5.2 — high-attack sky lighting
+
+Uses shared guidelines v1.2; see `sky-authoring-brief.md`. Two 1600x900 grayscale
+data masks preserve separate safe-sky visibility and source-derived bright-cloud
+influence. Final support includes 159,484 texels above 3% combined weight, spread
+across all eight sky sectors (17,981 / 21,641 / 22,339 / 21,034 / 32,400 / 9,541 /
+17,498 / 17,050). A 55-source-pixel expansion of the independent volcanic-smoke
+alpha excludes its full motion envelope, conservatively withholding some nearby
+sky light. Existing textures/source provenance, membrane breathing, local lamps,
+lava, cloud-periodic glows and chitin groups are retained. Full blackout now uses
+curtain opacity 1, with sky emission above it and opaque environmental coverage.
+
+Static review inspected the source painting, red support overlay
+`.tmp/infinite-zoom-artwork/sky-mask-review.png`, and actual renderer peak/full-frame
+and zoom captures (`sky-peak.png`, `sky-zoom-peak.png`). The initial hard exclusion
+edges were feathered before final packaging. Light follows existing cloud texture
+and bright openings; no drawn light blobs or new painting. Thin spire and mountain
+contours remain conservative manually authored boundaries requiring artistic
+review. The expanded smoke exclusion intentionally reduces highlights around the
+plume; no claim of exact per-frame semantic segmentation is made.
+
+Validation performed from `apps/ui`:
+
+- `node --test tests/infinite-zoom-*.test.mjs`: 140 passing, including mask
+  distribution, protected landmarks, emission-only schema/base restrictions,
+  silent initialization, release, glow control and blackout placement.
+- `node tests/infinite-zoom-renderer.browser.mjs`: full existing renderer,
+  transition, three-world Loop, Phase 2, studio, smoke and rim regression passes.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only`: RGBA8 proof of
+  zero-emission identity, exact unchanged outside support, release, paused flash,
+  black environment with active lights, six-second motion sequence, zoom and
+  context recovery. A six-second WebM is exported to
+  `.tmp/infinite-zoom-artwork/sky-motion.webm`.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only --sky-high-precision`:
+  final masks also pass with RGBA16F and output dithering; all eight sectors light.
+  Maximum outside-support and no-emission display differences are 1/255, versus
+  exact zero in RGBA8. This is the measured conversion/dithering precision limit,
+  not evidence of brightening buildings. Final high-precision review artifacts
+  overwrite the corresponding review PNG/WebM filenames.
+- `node --test tests/infinite-zoom-kick.browser.mjs`: actual high-frequency WAV
+  playback drives five GPU sky-emission peaks, median 200.4 ms apart for 200 ms
+  input spacing. Bass breathing and mid/high indicators still pass; one graph,
+  source and canvas are retained.
+- `pnpm --filter ui build` (from repo root) and focused ESLint pass.
+
+Motion/zoom tests establish bounded operation, masking and synchronization;
+final visual acceptance of brightness and fast repetition remains separate.
+No remaining automated failures. High-precision display quantization and the
+manual conservative silhouette/smoke margins above are known limits.
+
+## Revision 0.5.1 — bass-attack breathing
+
+Only the three membrane scale bindings/carriers change; their painted textures,
+mask boundaries, pivots and x=.06/y=.045 envelopes stay unchanged. Source-material
+rim lighting, protected lava and reveal controls are retained. The historical
+near-black curtain (.995 opacity) still does not establish exact environmental
+blackout required by shared authoring guidelines v1.2. No new image generation.
+
+Focused unit command: `node --test tests/infinite-zoom-kick.test.mjs
+tests/infinite-zoom-modulation.test.mjs tests/infinite-zoom-behaviors.test.mjs
+tests/infinite-zoom-phase2.test.mjs tests/infinite-zoom-insectoid.test.mjs` —
+38 passing. Covers one real-manifest membrane expansion per 100/150 BPM kick,
+synchronized membranes, initialization/reset at rest, missing-signal relaxation,
+strength controls, existing sampling guards and unchanged continuous fallbacks.
+
+`node --test tests/infinite-zoom-kick.browser.mjs` also passes with actual
+100/150 BPM WAV playback. It selects the alien scene and observes the real
+membrane scale uniforms submitted to WebGL: six expansion peaks at each tempo,
+median peak spacing 600.4 ms / 399 ms respectively. Preview attack spacing was
+602 ms / 395 ms. Pause freezes deformation; disabling modulation preserves
+music playback; seek clears stale attacks; only one audio graph/source/canvas
+is used. The journey recording retains normalized kick samples. Focused ESLint
+passes for changed runtime, authoring script and test files.
+
+`node tests/infinite-zoom-renderer.browser.mjs --insectoid-only` passes with
+150 BPM fixed-clock impulses supplied through the real modulation port. It runs
+15-second individual and combined cycles, renders camera motion/zoom and
+portrait/wide coverage, verifies fixed material sites (maximum difference 0),
+pause, scene parking and context restoration. At scale peak, 7,250 of 518,400
+pixels differ by more than 8, maximum difference 127, while fixed sites stay
+unchanged. Review captures: `.tmp/infinite-zoom-artwork/insectoid-scale-peak.png`
+and `insectoid-scale-cycle-*.png`; reviewed the peak full-frame composition.
+These motion-sequence assertions and captures do not replace artistic acceptance
+of fast membrane motion or prove every hand-traced boundary at every zoom level.
+Existing membrane-edge uncertainty remains; no mask correction was needed by
+the bounded tests. Build (TypeScript and translation checks included) passes.
+
 ## Revision 0.5.0 — source-material rim-lighting retry
 
 This is a new experiment after the user's rejection of approximate strokes.

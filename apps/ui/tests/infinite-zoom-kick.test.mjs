@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { readFile } from "node:fs/promises";
+import { parseArtworkPackage, createArtworkInstance } from "../src/engines/infinite-zoom/artwork/index.ts";
 import { createBandDetector, DEFAULT_BAND_OPTIONS } from "../src/lib/audio-band-detection.ts";
 import { sampleKickAttack, KICK_DECAY_MS } from "../src/engines/infinite-zoom/modulation/kick-signal.ts";
 import { createAudioModulation } from "../src/engines/infinite-zoom/modulation/audio-modulation.ts";
@@ -77,4 +79,44 @@ test("kick bindings are opt-in and normalized samples survive record/replay", ()
   assert.deepEqual(actual, expected);
   recording.frames[0].signals.kick = 2;
   assert.throws(() => validateRecording(recording), /signal/);
+});
+
+test("absent kick initializes, releases and resets to silence without changing continuous fallbacks", () => {
+  const make = signal => createBindingEvaluator(parseBindings([{ id: "test", signal, operation: "replace", priority: 0,
+    min: 0, max: 1, attackSeconds: 1 / 60, releaseSeconds: 0.05 }]));
+  const kick = make("kick"), bass = make("bass");
+  assert.equal(kick.getSnapshot(), 0); assert.equal(bass.getSnapshot(), 1);
+  assert.equal(kick.step(undefined, 1 / 60), 0);
+  assert.ok(kick.step({ kick: 1 }, 1 / 60) > 0.6);
+  for (let i = 0; i < 120; i++) kick.step({ kick: NaN }, 1 / 60);
+  assert.ok(kick.getSnapshot() < 1e-12);
+  kick.step({ kick: 1 }, 1 / 60); kick.reset(); assert.equal(kick.getSnapshot(), 0);
+  assert.equal(bass.step(undefined, 1 / 60), 1);
+});
+
+for (const bpm of [100, 150]) test(`three real building membranes breathe once per ${bpm} BPM kick and retain safe bounds`, async () => {
+  const manifest = parseArtworkPackage(JSON.parse(await readFile(new URL("../public/infinite-zoom/samples/insectoid-planet/manifest.json", import.meta.url), "utf8")));
+  const instance = createArtworkInstance("kick-membranes", manifest);
+  const scales = () => instance.getSnapshot().layers.filter(layer => layer.id.endsWith("-membrane")).map(layer => layer.groups[0].effects.find(effect => effect.kind === "scale"));
+  assert.equal(scales().length, 3);
+  assert.ok(scales().every(scale => scale.x === 1 && scale.y === 1), "No startup inflation");
+  const frames = [], period = 3600 / bpm;
+  for (let tick = 0; tick < 600; tick++) {
+    const age = (tick % period) / 60 * 1000;
+    const kick = sampleKickAttack({ attackAt: 0, strength: 1 }, age);
+    instance.stepBehaviors({ dt: 1 / 60 }, { strength: 1, intensity: 1, signals: { kick } });
+    const values = scales();
+    assert.ok(values.every(scale => scale.x >= 1 && scale.x <= 1.06 && scale.y >= 1 && scale.y <= 1.045));
+    assert.ok(values.every(scale => scale.x === values[0].x), "All membranes breathe together");
+    frames.push(values[0].x);
+  }
+  const peaks = frames.filter((value, i) => i > 0 && i < frames.length - 1 && value > frames[i - 1] && value > frames[i + 1] && value > 1.02);
+  assert.equal(peaks.length, Math.ceil(600 / period), "Each kick produces an actual expansion peak");
+  const frozen = instance.getSnapshot(); assert.deepEqual(instance.getSnapshot(), frozen);
+  for (let i = 0; i < 120; i++) instance.stepBehaviors({ dt: 1 / 60 });
+  assert.ok(scales().every(scale => Math.abs(scale.x - 1) < 1e-12), "Missing analysis relaxes to rest");
+  instance.setBehaviorStrength("scale", 0);
+  instance.stepBehaviors({ dt: 1 / 60 }, { strength: 1, intensity: 1, signals: { kick: 1 } });
+  assert.ok(scales().every(scale => scale.x === 1 && scale.y === 1), "Existing scale control disables the breath");
+  instance.reset(); assert.ok(scales().every(scale => scale.x === 1 && scale.y === 1), "Reset has no phantom breath");
 });

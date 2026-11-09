@@ -23,7 +23,7 @@ export function createSceneReveal() {
   function apply(instance:ArtworkInstance) {
     if (!instance.manifest.layers.some(layer=>layer.id==="reveal-curtain")) return;
     const t=ticks/SCENE_REVEAL_TICKS, remaining=enabled ? 1-t*t*(3-2*t) : 0;
-    instance.setLayerTransform("reveal-curtain",{opacity:.995*remaining});
+    instance.setLayerTransform("reveal-curtain",{opacity:remaining});
     instance.setLayerTransform("reveal-lava",{opacity:remaining});
   }
   return {

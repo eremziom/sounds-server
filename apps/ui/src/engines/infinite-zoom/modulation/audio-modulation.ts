@@ -8,7 +8,7 @@ export const NEUTRAL_MODULATION: BehaviorModulation = Object.freeze({ strength: 
 export function createAudioModulation() {
   let value = NEUTRAL_MODULATION;
   return {
-    step(levels: Readonly<{ bass: number; mid: number; high: number; kick?: number }> | null, dt: number): BehaviorModulation {
+    step(levels: Readonly<{ bass: number; mid: number; high: number; kick?: number; highAttack?: number; midAttack?: number }> | null, dt: number): BehaviorModulation {
       if (dt !== 1 / 60) throw new Error("Modulation requires a fixed step");
       const valid = levels && [levels.bass, levels.mid, levels.high].every(Number.isFinite);
       const clamp = (n: number) => Math.max(0, Math.min(1, n));
@@ -16,10 +16,12 @@ export function createAudioModulation() {
       const strength = energy === null ? 1 : 0.65 + 0.35 * energy;
       const intensity = energy === null ? 1 : 1 + 0.25 * energy;
       const smooth = (current: number, target: number) => current + (target-current) * (1-Math.exp(-dt / (target > current ? 0.04 : 0.15)));
-      // Preserve the sharp attack: kick bypasses continuous-band smoothing and
+      // Preserve sharp attacks: impulses bypass continuous-band smoothing and
       // does not contribute to overall strength, intensity or camera timing.
       const kick = levels && Number.isFinite(levels.kick) ? clamp(levels.kick!) : 0;
-      value = Object.freeze({ ...(valid ? { signals: Object.freeze({ bass: clamp(levels.bass), mid: clamp(levels.mid), high: clamp(levels.high), energy: energy!, kick }) } : {}), strength: smooth(value.strength, strength), intensity: smooth(value.intensity, intensity) });
+      const highAttack = levels && Number.isFinite(levels.highAttack) ? clamp(levels.highAttack!) : 0;
+      const midAttack = levels && Number.isFinite(levels.midAttack) ? clamp(levels.midAttack!) : 0;
+      value = Object.freeze({ ...(valid ? { signals: Object.freeze({ bass: clamp(levels.bass), mid: clamp(levels.mid), high: clamp(levels.high), energy: energy!, kick, highAttack, midAttack }) } : {}), strength: smooth(value.strength, strength), intensity: smooth(value.intensity, intensity) });
       return value;
     },
     getSnapshot: () => value,

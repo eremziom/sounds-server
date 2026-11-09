@@ -1,4 +1,4 @@
-export type ModulationSignal = "bass" | "mid" | "high" | "energy" | "kick";
+export type ModulationSignal = "bass" | "mid" | "high" | "energy" | "kick" | "highAttack" | "midAttack";
 export type NormalizedSignals = Readonly<Partial<Record<ModulationSignal, number>>>;
 export interface ModulationBinding {
   readonly id: string; readonly signal: ModulationSignal; readonly operation: "multiply" | "add" | "replace";
@@ -16,7 +16,7 @@ export function parseBindings(input: unknown): readonly ModulationBinding[] {
     if (Object.keys(b).some(key => !["id", "signal", "operation", "priority", "min", "max", "attackSeconds", "releaseSeconds"].includes(key))) throw new Error("Unsupported modulation field");
     if (typeof b.id !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(b.id) || ids.has(b.id)) throw new Error("Invalid modulation id");
     ids.add(b.id);
-    if (!["bass", "mid", "high", "energy", "kick"].includes(String(b.signal)) || !["multiply", "add", "replace"].includes(String(b.operation))) throw new Error("Invalid modulation operation/signal");
+    if (!["bass", "mid", "high", "energy", "kick", "highAttack", "midAttack"].includes(String(b.signal)) || !["multiply", "add", "replace"].includes(String(b.operation))) throw new Error("Invalid modulation operation/signal");
     for (const key of ["priority", "min", "max", "attackSeconds", "releaseSeconds"]) if (typeof b[key] !== "number" || !Number.isFinite(b[key])) throw new Error("Invalid modulation parameter");
     if (!Number.isSafeInteger(b.priority) || (b.min as number) < -1 || (b.max as number) > 1 || (b.min as number) > (b.max as number) || (b.attackSeconds as number) < 1/60 || (b.releaseSeconds as number) < 1/60 || (b.attackSeconds as number) > 10 || (b.releaseSeconds as number) > 10) throw new Error("Invalid modulation range");
     return Object.freeze({ ...b }) as unknown as ModulationBinding;
@@ -24,25 +24,33 @@ export function parseBindings(input: unknown): readonly ModulationBinding[] {
   return Object.freeze(bindings.sort((a,b) => a.priority-b.priority || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)));
 }
 
-/** Each evaluator owns its smoothing state. Missing input tends to neutral. */
+/** Continuous inputs return to neutral. An absent attack is silence, including
+ * initialization/reset: it must never manufacture a full-strength breath. */
 export function createBindingEvaluator(bindings: readonly ModulationBinding[]) {
-  const values = bindings.map(b => b.operation === "add" ? 0 : 1);
+  const initial = (b: ModulationBinding) => b.signal === "kick" || b.signal === "highAttack" || b.signal === "midAttack" ? b.min : b.operation === "add" ? 0 : 1;
+  const values = bindings.map(initial);
+  function compose() {
+    let result = 1;
+    for (const [i,b] of bindings.entries()) {
+      if (b.operation === "multiply") result *= values[i];
+      else if (b.operation === "add") result += values[i];
+      else result = values[i];
+    }
+    return Math.max(0, Math.min(1, result));
+  }
   return {
+    getSnapshot: compose,
     step(signals: NormalizedSignals | undefined, dt: number) {
       if (dt !== 1/60) throw new Error("Modulation bindings require a fixed step");
-      let result = 1;
       for (const [i,b] of bindings.entries()) {
         const input = signals?.[b.signal];
-        const neutral = b.operation === "add" ? 0 : 1;
+        const neutral = initial(b);
         const target = input === undefined || !Number.isFinite(input) ? neutral : b.min + (b.max-b.min)*Math.max(0,Math.min(1,input));
         const current = values[i];
         values[i] += (target-current)*(1-Math.exp(-dt/(target > current ? b.attackSeconds : b.releaseSeconds)));
-        if (b.operation === "multiply") result *= values[i];
-        else if (b.operation === "add") result += values[i];
-        else result = values[i];
       }
-      return Math.max(0, Math.min(1, result));
+      return compose();
     },
-    reset() { for (const [i,b] of bindings.entries()) values[i] = b.operation === "add" ? 0 : 1; },
+    reset() { for (const [i,b] of bindings.entries()) values[i] = initial(b); },
   };
 }

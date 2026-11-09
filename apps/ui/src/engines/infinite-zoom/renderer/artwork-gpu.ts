@@ -1,4 +1,4 @@
-import { Group, LinearFilter, Mesh, NoColorSpace, PlaneGeometry, ShaderMaterial, SRGBColorSpace, Texture, DataTexture, RedFormat, UnsignedByteType, Vector2, Vector4 } from "three";
+import { AdditiveBlending, NormalBlending, Group, LinearFilter, Mesh, NoColorSpace, PlaneGeometry, ShaderMaterial, SRGBColorSpace, Texture, DataTexture, RedFormat, UnsignedByteType, Vector2, Vector4 } from "three";
 import type { ArtworkInstance } from "../artwork/artwork-instance.ts";
 import type { LoadedArtwork } from "../artwork/artwork-loader.ts";
 import { buildBehaviorShader, behaviorUniform } from "../behaviors/behavior-shader.ts";
@@ -82,13 +82,14 @@ export function createArtworkGpu(loaded: LoadedArtwork, instance: ArtworkInstanc
             ${shader.colorBody}
             color.rgb *= min(4.0, pulseGain * audioGain);
             ${shader.glowBody}
+            ${layer.blendMode === "additive-emission" ? "if(max(max(emission.r,emission.g),emission.b)<=0.0000001)discard; color.rgb=emission;" : ""}
             color.a *= inside * opacity * portalAlpha * mix(1.0, texture2D(maskMap,sampleUv).r,hasMask);
-            gl_FragColor = vec4(color.rgb*color.a,color.a);
+            gl_FragColor = vec4(color.rgb*color.a,${layer.blendMode === "additive-emission" ? "0.0" : "color.a"});
           }`,
         uniforms: { behaviorCameraOffset: { value: new Vector2() }, imageMap: { value: image }, maskMap: { value: layer.maskAssetId ? textureFor(layer.maskAssetId) : image },
           hasMask: { value: layer.maskAssetId ? 1 : 0 }, opacity: { value: 1 }, audioGain: { value: 1 }, portalCount: { value: 0 },
           portalData: { value: Array.from({ length: 5 }, () => new Vector4()) }, portalStyle: { value: Array.from({ length: 5 }, () => new Vector2()) }, ...uniforms },
-        transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false, toneMapped: false,
+        transparent: true, premultipliedAlpha: true, blending:layer.blendMode === "additive-emission" ? AdditiveBlending : NormalBlending, depthTest: false, depthWrite: false, toneMapped: false,
       });
       const mesh = new Mesh(geometry, material); meshes.push(mesh); mesh.frustumCulled = false; group.add(mesh);
     }

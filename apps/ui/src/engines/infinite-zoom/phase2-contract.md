@@ -135,10 +135,12 @@ operators until an extended-coverage contract is separately implemented. This
 preserves coverage under all foreground deformations.
 
 Bindings target an operator's strength, not arbitrary JSON parameters. Each has
-`id`, signal (`bass`,`mid`,`high`,`energy`,`kick`), operation (`multiply`,`add`,`replace`),
+`id`, signal (`bass`,`mid`,`high`,`energy`,`kick`,`highAttack`,`midAttack`), operation (`multiply`,`add`,`replace`),
 integer `priority`, `min`,`max` within -1..1, attack/release seconds 1/60..10.
 Lower priority executes first, ties use ASCII ID. Each binding owns smoothing
-state. Missing/nonfinite input approaches neutral (0 for add, 1 otherwise).
+state. Missing/nonfinite continuous input approaches neutral (0 for add, 1
+otherwise). Kick, highAttack and midAttack are impulses: initialization, reset and missing/nonfinite input
+use its mapped zero-input `min`, so a missing attack cannot activate an effect.
 The combined strength is clamped to 0..1, so audio cannot exceed authored limits.
 The existing overall intensity adapter remains bounded to 1..1.25.
 
@@ -152,10 +154,95 @@ playback interruptions clear the upstream attack timestamps. Sampling uses
 performance milliseconds only at the application boundary; normalized fixed-tick
 values, including kick, are preserved by logical recording/replay. Existing
 recordings without kick remain valid. It does not affect overall energy, gain,
-camera timing or any existing artwork until explicitly bound. The Animations
+camera timing. In insectoid-planet 0.5.1 it is explicitly bound to the three
+membrane scale operators: constant carrier (0 Hz, pi/2), existing x=.06/y=.045
+limits and pivots, 1/60 s attack and .05 s release. This replaces independent
+slow scale oscillators with one outward breath per attack. Other effects retain
+their original cycles. The Animations
 panel previews the same envelope and observed inter-attack spacing; 600/400 ms
 correspond to 100/150 BPM only for one detected kick per beat. This is bass
 transient detection, not instrument classification or semantic tempo tracking.
+
+`highAttack` (2026-11-07) reuses the existing independent high-band attack detector
+(default 2..16 kHz, 20 ms polling, 60 ms minimum spacing). It samples normalized
+strength with an immediate attack and quadratic release to zero in 100 ms,
+independently of the continuous `high` level and of `kick`. The `/animations`
+panel shows its strength, count and observed inter-attack interval beside kick,
+using the same shared preview component/envelope sampler as the application
+adapter. It is available for bindings and normalized logical replay;
+insectoid-planet 0.5.2 binds it to authored bright cloud openings across the sky.
+It does not contribute to overall strength,
+intensity, energy or camera timing. Missing/future/expired attacks yield zero;
+disabled modulation/analysis provides no signals. Existing upstream resets and
+preview gating clear stale attacks on pause, seeking, source change or hiding.
+High-band transients are not instrument identification. Existing recordings
+without this optional signal remain valid.
+
+Schema 2 layers can opt into `blendMode: "additive-emission"`. Only glow
+operators (including inherited/region operators) are permitted; such a layer
+cannot be the coverage base or use rigid spin. The GPU adds only masked emission
+RGB, with zero source alpha contribution to retain opaque destination coverage.
+The source plate's base RGB is never copied by this pass. Zero/negligible
+emission (maximum linear channel <=1e-7) is discarded. Ordinary layers retain
+normal premultiplied composition. Layer opacity and existing glow-strength
+controls still apply; context recovery rebuilds the same blend configuration.
+Insectoid sky emission stays above the reveal curtain; the curtain now reaches
+opacity 1 rather than the historical .995 near-black endpoint. Glow/input phases
+still use the one fixed simulation clock and freeze on pause.
+
+`midAttack` (2026-11-07) similarly reuses the independent mid-band detector
+(default 250..2000 Hz, 20 ms polling, 120 ms minimum spacing), with an immediate
+normalized attack and quadratic release to zero in 120 ms. It has its own
+strength/count/spacing monitor between kick and highAttack on `/animations`.
+The existing graph, reset/gating behavior, shared envelope sampler and preview
+component are reused. It is supported in bindings and normalized logical replay
+but no current artwork binds it. It does not alter energy, overall animation
+strength/intensity, camera timing or other attack signals. Missing, stale, future
+or invalid attacks yield zero; absent input initializes/resets to mapped silence.
+This is mid-band transient detection, not recognition of a specific instrument.
+
+The `/animations` attack monitors now expose independent `From (Hz)` / `To (Hz)`
+controls for bass/kick, midAttack and highAttack, using the same `bandOptions`
+and `updateBand` context as the live-analysis panel. Changes immediately retune
+the existing graph's filter taps and clear analysis attack history; they do not
+operate audio playback or reset the visual journey. Overlapping bands are
+allowed. Each range stays within 20..20000 Hz with at least 10 Hz width; invalid
+numeric drafts revert on blur. A per-band button restores only its default Hz
+edges, preserving its sensitivity/level/spacing and other bands' configuration.
+Settings remain in the existing session provider across page/scene switches.
+Range-control validation: `node --test tests/audio-band-detection.test.mjs
+tests/live-audio-analysis.test.mjs` passes 16 tests. The application regression
+`node --test tests/infinite-zoom-kick.browser.mjs` verifies all six default fields,
+editing all three bands, rejecting a playing 6 kHz fixture after moving high to
+17..19 kHz, detection resuming after reset, per-band reset isolation and invalid
+draft rollback. Music and the single graph/source/canvas continue throughout.
+Range labels use the Animations message namespace, available on that page;
+the browser run completes without missing-message/console errors. Production
+build (including TypeScript/translations), focused ESLint and diff checks pass.
+
+Mid-attack validation: `node --test tests/infinite-zoom-mid-attack.test.mjs
+tests/infinite-zoom-high-attack.test.mjs tests/infinite-zoom-kick.test.mjs
+tests/infinite-zoom-modulation.test.mjs tests/infinite-zoom-phase2.test.mjs
+tests/audio-band-detection.test.mjs tests/live-audio-analysis.test.mjs` passes
+45 tests. `node --test tests/infinite-zoom-kick.browser.mjs` adds actual playback
+of Hann-windowed 700 Hz bursts spaced 300 ms apart: preview spacing 299 ms,
+no spurious kick/high events for this fixture, midAttack present in engine
+recording, correct modulation off/on, pause/seek clearing and one graph/source/
+canvas. Build and focused ESLint pass. Real finite filter skirts overlap:
+abrupt 1 kHz bursts can also produce high-band attacks, so independent detector
+state does not promise exclusive classification of every transient to one band.
+
+High-attack validation: `node --test tests/infinite-zoom-high-attack.test.mjs
+tests/infinite-zoom-kick.test.mjs tests/infinite-zoom-modulation.test.mjs
+tests/infinite-zoom-phase2.test.mjs tests/audio-band-detection.test.mjs
+tests/live-audio-analysis.test.mjs` passes 41 tests. The shared browser regression
+`node --test tests/infinite-zoom-kick.browser.mjs` now also plays a 6 kHz-only
+transient track at 200 ms intervals: observed high-preview spacing 204 ms,
+no fabricated kick events, highAttack samples in actual engine replay, correct
+pause/seek/off/on behavior and one graph/source/canvas. The existing kick-driven
+breathing checks still pass at 100/150 BPM. `pnpm --filter ui build` and focused
+ESLint pass. These synthetic fixtures establish wiring and timing, not detection
+accuracy for every mastered music mix or specific percussion instrument.
 
 Kick QA: `node --test tests/infinite-zoom-kick.test.mjs
 tests/infinite-zoom-modulation.test.mjs tests/infinite-zoom-phase2.test.mjs

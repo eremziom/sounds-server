@@ -26,6 +26,7 @@ export function PilotArtworkControls() {
       <legend className="px-2 text-sm font-semibold">{t("pilotHeading")}</legend>
       <p className="text-sm text-muted-foreground">{t(`${scenePrefix}Description`)}</p>
       {snapshot.scene === "alien" && <div className="space-y-1 rounded-md border p-3">
+        <p className="pb-2 text-xs text-muted-foreground">{t("skyLightingNote")}</p>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-iz-rim-lighting checked={!!snapshot.rimLightingEnabled}
           onChange={event=>runtime.setRimLightingEnabled(event.target.checked)}/>{t("rimLightingLabel")}</label>
         <p className="text-xs text-muted-foreground">{t("rimLightingNote")}</p>

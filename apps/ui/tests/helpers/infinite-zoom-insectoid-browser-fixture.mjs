@@ -5,8 +5,8 @@ import {setRimLightingVisibility} from "/adapter/rim-lighting.ts";
 window.runInsectoidArtwork=async(recordMotion=false)=>{
   const [forest,alien]=await Promise.all(["forest","insectoid-planet"].map(async id=>(await fetch(`/infinite-zoom/samples/${id}/manifest.json`)).json()));
   const canvas=document.createElement("canvas");document.body.append(canvas);window.insectoidCaptures={};
-  let lease,tick=0;const errors=[],effects={};
-  const step=()=>lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});
+  let lease,tick=0,kick=0;const errors=[],effects={};
+  const step=()=>{tick++;const age=(tick%24)/60*1000;kick=age<160?(1-age/160)**2:0;lease.step({tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});};
   const reset=()=>{lease.reset();setRimLightingVisibility(lease.instance,false);};
   const capture=name=>{lease.render();window.insectoidCaptures[name]=canvas.toDataURL("image/png");};
   const smokeDetail=name=>{
@@ -20,7 +20,7 @@ window.runInsectoidArtwork=async(recordMotion=false)=>{
       for(let c=0;c<3;c++)max=Math.max(max,Math.abs(a[i+c]-b[i+c]));}return max;
   };
   try{
-    lease=await prepareArtwork({canvas,manifest:forest,instanceId:"insectoid-test",viewport:{width:960,height:540,dpr:1,renderScale:1},onAvailabilityChange(){},onError(e){errors.push(String(e));}},new AbortController().signal);
+    lease=await prepareArtwork({canvas,manifest:forest,instanceId:"insectoid-test",viewport:{width:960,height:540,dpr:1,renderScale:1},modulation:()=>({strength:1,intensity:1,signals:{kick}}),onAvailabilityChange(){},onError(e){errors.push(String(e));}},new AbortController().signal);
     const gl=canvas.getContext("webgl2"),journey=hash(pixels(canvas,lease.render));
     await lease.selectScene("alien",alien);
     setRimLightingVisibility(lease.instance,false);

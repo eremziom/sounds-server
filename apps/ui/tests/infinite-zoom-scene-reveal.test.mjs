@@ -18,12 +18,12 @@ test("optional reveal preserves the authored package, lighting and opaque covera
   const before=instance.getSnapshot();reveal.setEnabled(true,instance);
   const transform=id=>instance.getSnapshot().layers.find(l=>l.id===id);
   assert.equal(transform("fixed-world").opacity,1);
-  assert.equal(transform("reveal-curtain").opacity,.995);
+  assert.equal(transform("reveal-curtain").opacity,1);
   for(let i=0;i<3599;i++)reveal.step(instance);
   assert.ok(transform("reveal-curtain").opacity>0);
   reveal.step(instance);assert.equal(transform("reveal-curtain").opacity,0);
   assert.deepEqual(instance.getSnapshot(),before,"At exactly 60 seconds the normal layer state is restored");
-  reveal.restart(instance);assert.equal(transform("reveal-curtain").opacity,.995);
+  reveal.restart(instance);assert.equal(transform("reveal-curtain").opacity,1);
   reveal.setEnabled(false,instance);assert.deepEqual(instance.getSnapshot(),before);
 });
 test("pause, presentation calls and parked scenes cannot advance the reveal",async()=>{
@@ -36,7 +36,7 @@ test("pause, presentation calls and parked scenes cannot advance the reveal",asy
   assert.deepEqual(reveal.getSnapshot(),state);
   instance.reset();reveal.restart(instance);
   assert.equal(reveal.getSnapshot().progress,0);
-  assert.equal(instance.getSnapshot().layers.find(l=>l.id==="reveal-curtain").opacity,.995);
+  assert.equal(instance.getSnapshot().layers.find(l=>l.id==="reveal-curtain").opacity,1);
 });
 test("lava visible in darkness retains the original color, pulse and glow phases",()=>{
   const manifest=parseArtworkPackage(withSceneReveal(raw)),instance=createArtworkInstance("lava",manifest);

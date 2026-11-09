@@ -96,6 +96,33 @@ try {
     await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]')");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest","Forest is the initial scene");
     assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`),true);
+    for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+      await send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: 1, mobile: false });
+      await evaluate("window.scrollTo(0, 0)");
+      await delay(100);
+      const measure = () => evaluate(`(() => {
+        const background = document.querySelector('[data-application-background]').getBoundingClientRect();
+        const canvasBounds = ${canvas}.getBoundingClientRect();
+        const controls = document.querySelector('[data-infinite-zoom-controls]').getBoundingClientRect();
+        return { background: [background.x, background.y, background.width, background.height],
+          canvas: [canvasBounds.x, canvasBounds.y, canvasBounds.width, canvasBounds.height],
+          controlsTop: controls.top, scroll: window.scrollY,
+          viewport: [document.documentElement.clientWidth, document.documentElement.clientHeight] };
+      })()`);
+      const before = await measure();
+      assert.deepEqual(before.background, [0, 0, ...before.viewport], "Background fills the viewport");
+      assert.deepEqual(before.canvas, before.background, "Canvas fills the fixed background");
+      await evaluate("window.scrollTo(0, 400)");
+      await delay(100);
+      const after = await measure();
+      assert.ok(after.scroll > 0, "Animation configuration page can scroll");
+      assert.equal(after.controlsTop, before.controlsTop - after.scroll, "Configuration scrolls with the page");
+      assert.deepEqual(after.background, before.background, "Background stays fixed during scrolling");
+      assert.deepEqual(after.canvas, before.canvas, "Canvas stays fixed during scrolling");
+      assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`), true, "Scrolling and resizing preserve canvas and audio");
+    }
+    await send("Emulation.clearDeviceMetricsOverride");
+    await evaluate("window.scrollTo(0, 0)");
     const selectScene=async name=>{
       await evaluate(`(()=>{const select=document.querySelector('[data-iz-scene]');select.value=${JSON.stringify(name)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
       await waitFor(`document.querySelector('[data-iz-scene]').value===${JSON.stringify(name)} && !document.querySelector('[data-iz-scene]').disabled`);

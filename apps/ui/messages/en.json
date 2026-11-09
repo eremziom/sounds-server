@@ -35,11 +35,32 @@
   },
   "app": {
     "infiniteZoom": {
+      "frequencyRange": {
+        "fromHz": "From (Hz)", "toHz": "To (Hz)",
+        "title": "Detected frequency range",
+        "reset": "Restore default range",
+        "note": "Changes apply immediately and clear attack history. Bands may overlap. Range: 20–20,000 Hz, with a minimum width of 10 Hz."
+      },
+      "skyLightingNote": "Sky lighting: high-frequency attacks illuminate bright cloud openings across the sky. Enable React to music; the Glints effect controls intensity.",
+      "midAttack": {
+        "title": "Mid-frequency attack · midAttack",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short mid-frequency impulse from 0 to 1 (default 250–2000 Hz), decaying over 120 ms. No artwork effect assigned yet. Detects attacks in this band, not a specific instrument.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
+      "highAttack": {
+        "title": "High-frequency attack · highAttack",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short high-frequency impulse from 0 to 1 (default 2–16 kHz), decaying over 100 ms. On the alien planet it lights bright cloud openings. Detects attacks in this band, not a specific instrument.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
       "kick": {
         "title": "Bass attack · kick",
         "interval": "Time between attacks",
         "count": "Detected attacks",
-        "note": "A short low-frequency impulse from 0 to 1, with no artwork effect assigned yet. With one kick per beat: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. These are detected bass attacks, not BPM measurement or instrument recognition.",
+        "note": "A short low-frequency impulse from 0 to 1. On the alien planet, each hit drives the building membranes' breathing. With one kick per beat: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. These are detected bass attacks, not BPM measurement or instrument recognition.",
         "inactive": "Play music and enable music response and live analysis."
       },
       "sceneLabel": "Scene",

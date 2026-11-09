@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "insectoid-planet",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "canvas": {
     "width": 3840,
     "height": 2160
@@ -614,6 +614,22 @@
       "width": 1600,
       "height": 900,
       "critical": true
+    },
+    {
+      "id": "visible-sky",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-sky.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-sky-light",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/influence-sky-light.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
     }
   ],
   "layers": [
@@ -826,14 +842,26 @@
           "kind": "scale",
           "order": 0,
           "params": {
-            "frequencyHz": 0.135,
-            "phase": 0,
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
             "x": 0.06,
             "y": 0.045,
             "pivotX": 2778.9473684210525,
             "pivotY": 1411.6896918172158
           },
-          "influenceMaskAssetId": "influence-near-membrane"
+          "influenceMaskAssetId": "influence-near-membrane",
+          "modulation": [
+            {
+              "id": "kick-breath",
+              "signal": "kick",
+              "operation": "replace",
+              "priority": 0,
+              "min": 0,
+              "max": 1,
+              "attackSeconds": 0.016666666666666666,
+              "releaseSeconds": 0.05
+            }
+          ]
         },
         {
           "id": "colorShift",
@@ -872,14 +900,26 @@
           "kind": "scale",
           "order": 0,
           "params": {
-            "frequencyHz": 0.173,
-            "phase": 2.2,
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
             "x": 0.06,
             "y": 0.045,
             "pivotX": 3555.215311004785,
             "pivotY": 1115.5791710945803
           },
-          "influenceMaskAssetId": "influence-upper-membrane"
+          "influenceMaskAssetId": "influence-upper-membrane",
+          "modulation": [
+            {
+              "id": "kick-breath",
+              "signal": "kick",
+              "operation": "replace",
+              "priority": 0,
+              "min": 0,
+              "max": 1,
+              "attackSeconds": 0.016666666666666666,
+              "releaseSeconds": 0.05
+            }
+          ]
         },
         {
           "id": "colorShift",
@@ -918,14 +958,26 @@
           "kind": "scale",
           "order": 0,
           "params": {
-            "frequencyHz": 0.112,
-            "phase": 4.1,
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
             "x": 0.06,
             "y": 0.045,
             "pivotX": 3415.1196172248806,
             "pivotY": 1558.5972369819342
           },
-          "influenceMaskAssetId": "influence-lower-membrane"
+          "influenceMaskAssetId": "influence-lower-membrane",
+          "modulation": [
+            {
+              "id": "kick-breath",
+              "signal": "kick",
+              "operation": "replace",
+              "priority": 0,
+              "min": 0,
+              "max": 1,
+              "attackSeconds": 0.016666666666666666,
+              "releaseSeconds": 0.05
+            }
+          ]
         },
         {
           "id": "colorShift",
@@ -2378,6 +2430,45 @@
                 "intensity": 3,
                 "sharpness": 16
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sky-high-attack",
+      "zIndex": 24,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-sky",
+      "blendMode": "additive-emission",
+      "behaviors": [
+        {
+          "id": "sky-emission",
+          "kind": "glow",
+          "order": 0,
+          "influenceMaskAssetId": "influence-sky-light",
+          "params": {
+            "frequencyHz": 0,
+            "phase": 1.5707963267948966,
+            "amount": 1,
+            "intensity": 3,
+            "threshold": 0,
+            "color": [
+              0.72,
+              0.88,
+              1
+            ]
+          },
+          "modulation": [
+            {
+              "id": "high-sky",
+              "signal": "highAttack",
+              "operation": "replace",
+              "priority": 0,
+              "min": 0,
+              "max": 1,
+              "attackSeconds": 0.016666666666666666,
+              "releaseSeconds": 0.045
             }
           ]
         }

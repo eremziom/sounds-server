@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { PilotArtworkControls } from "./pilot-artwork-controls";
 import { KickMonitor } from "./kick-monitor";
+import { AttackMonitor } from "./attack-monitor";
 import { Button } from "../ui/button";
 import { useInfiniteZoom, useVisualSnapshot } from "./infinite-zoom-provider";
 
@@ -35,6 +36,8 @@ export function InfiniteZoomControls() {
     </div>
     <label className="flex items-center gap-2 text-sm"><input data-iz-modulation type="checkbox" checked={modulation} onChange={event => runtime.setModulation(event.target.checked)} />{t("modulation")}</label>
     <KickMonitor active={running && modulation} />
+    <AttackMonitor active={running && modulation} source="midAttack" />
+    <AttackMonitor active={running && modulation} source="highAttack" />
     <details className="text-xs" data-iz-diagnostics>
       <summary>{t("diagnostics")}</summary>
       {studio && <p className="my-2 text-muted-foreground">{t("pilotReplayNote")}</p>}

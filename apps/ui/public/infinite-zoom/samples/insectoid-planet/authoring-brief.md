@@ -1,5 +1,40 @@
 # Insectoid planet — animation test
 
+## Revision 0.5.2 — high-attack sky lighting
+
+Follows [shared artwork-authoring-guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the sky-specific brief](sky-authoring-brief.md): two separate masks derived
+from guarded sky support and source cloud luminance/local texture, spanning all
+eight horizontal sky sectors. HighAttack drives additive emission on existing
+cloud openings; zero signal emits no light and never overlays a static plate.
+Sky light is protected above the reveal curtain, whose full opacity now reaches
+1 (correcting the historical .995 near-black limitation). Existing source-material
+rim detail and lava remain independently animated. No new generated painting.
+
+## Revision 0.5.1 — kick-driven membrane breathing
+
+This parameter-only revision follows
+[shared artwork-authoring-guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+The three existing organic membrane interiors expand on each detected bass attack
+and relax over the short kick envelope, with 1/60 s attack and .05 s release
+smoothing. Their `scale` carrier is constant (0 Hz, pi/2 phase), so an attack is
+never suppressed or inverted by an unrelated oscillator phase. Silence, missing
+analysis and disabled music response relax to rest. The existing scale control
+still attenuates the motion. No other effect is bound to kick.
+
+Existing x=.06/y=.045 bounds, pivots, separate visibility/influence masks and
+sampling guard are retained. Rigid ribs, silhouettes, glazing and surrounding
+architecture remain fixed; the full plate backs the moving interior texture.
+The numerous source-material rim-light groups, emission timing, protected lava
+and reveal controls are retained. No images, masks or generation prompts change.
+The existing reveal's .995 near-black curtain remains a known v1.2 full-blackout
+limitation; this bounded audio-binding revision does not claim to correct it.
+
+Engine change (separate from artwork authoring): kick bindings initialize/reset
+at their mapped zero-input minimum and decay toward it when missing. Continuous
+signal bindings keep their neutral fallback. No new operator, clock or renderer.
+Motion/zoom evidence and outstanding visual review belong in `qa.md`.
+
 Follows [shared artwork-authoring-guidelines v1.0](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
 
 Revision 0.5.0 retries optional architecture lighting with actual source-derived
