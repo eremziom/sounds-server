@@ -36,8 +36,9 @@ export function createLogicalRecorder(seed: number, packages: LogicalRecording["
       }
       if (frames.length === capacity) { complete = false; pending = []; return; }
       const normalized: Partial<Record<keyof NormalizedSignals,number>> = {};
-      for (const key of ["bass","mid","high","energy"] as const) {
+      for (const key of ["bass","mid","high","energy","kick","highAttack","midAttack","kickEvent"] as const) {
         const value = signals?.[key];
+        if(key==="kickEvent"&&value!==undefined&&value!==0&&value!==1)throw new Error("Invalid replay attack event token");
         if (value !== undefined && Number.isFinite(value)) normalized[key] = Math.max(0,Math.min(1,value));
       }
       frames.push(Object.freeze({ tick, signals: signals === null ? null : Object.freeze(normalized), commands:Object.freeze(pending) })); pending = [];
@@ -55,7 +56,7 @@ export function validateRecording(input: unknown): LogicalRecording {
   const recorder = createLogicalRecorder(data.seed,data.packages,Math.max(1,data.frames.length));
   for (const frame of data.frames) {
     if (!frame || !Array.isArray(frame.commands) || frame.commands.length > 32 || (frame.signals !== null && (!frame.signals || typeof frame.signals !== "object" || Array.isArray(frame.signals)))) throw new Error("Invalid replay frame");
-    if (frame.signals !== null) for (const [key,value] of Object.entries(frame.signals)) if (!["bass","mid","high","energy"].includes(key) || typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1) throw new Error("Invalid normalized replay signal");
+    if (frame.signals !== null) for (const [key,value] of Object.entries(frame.signals)) if (!["bass","mid","high","energy","kick","highAttack","midAttack","kickEvent"].includes(key) || typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1 || key==="kickEvent"&&value!==0&&value!==1) throw new Error("Invalid normalized replay signal");
     for (const command of frame.commands) recorder.command(command);
     recorder.capture(frame.tick,frame.signals);
   }

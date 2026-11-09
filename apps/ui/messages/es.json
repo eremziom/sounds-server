@@ -35,6 +35,34 @@
   },
   "app": {
     "infiniteZoom": {
+      "frequencyRange": {
+        "fromHz": "Desde (Hz)", "toHz": "Hasta (Hz)",
+        "title": "Rango de frecuencias detectado",
+        "reset": "Restaurar rango predeterminado",
+        "note": "Los cambios se aplican de inmediato y borran el historial de ataques. Las bandas pueden solaparse. Rango: 20–20 000 Hz, con un ancho mínimo de 10 Hz."
+      },
+      "skyLightingNote": "Iluminación del cielo: los ataques de agudos iluminan las aberturas brillantes de las nubes en todo el cielo. Activa Reaccionar a la música; el efecto Destellos controla la intensidad.",
+      "midAttack": {
+        "title": "Ataque de medios · midAttack",
+        "interval": "Intervalo entre ataques",
+        "count": "Ataques detectados",
+        "note": "Un impulso breve de frecuencias medias de 0 a 1 (por defecto 250–2000 Hz), que se desvanece en 120 ms. Todavía sin efecto gráfico asignado. Detecta ataques en esta banda, no un instrumento específico.",
+        "inactive": "Reproduce música y activa la reacción a la música y el análisis en vivo."
+      },
+      "highAttack": {
+        "title": "Ataque de agudos · highAttack",
+        "interval": "Intervalo entre ataques",
+        "count": "Ataques detectados",
+        "note": "Un impulso breve de altas frecuencias de 0 a 1 (por defecto 2–16 kHz), que se desvanece en 100 ms. En el planeta alienígena ilumina las aberturas brillantes de las nubes. Detecta ataques en esta banda, no un instrumento específico.",
+        "inactive": "Reproduce música y activa la reacción a la música y el análisis en vivo."
+      },
+      "kick": {
+        "title": "Ataque de graves · kick",
+        "interval": "Intervalo entre ataques",
+        "count": "Ataques detectados",
+        "note": "Un impulso breve de bajas frecuencias de 0 a 1. En el planeta alienígena, cada golpe controla la respiración de las membranas del edificio. Con un bombo por pulso: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. Son ataques de graves detectados, no una medición de BPM ni reconocimiento de instrumentos.",
+        "inactive": "Reproduce música y activa la reacción a la música y el análisis en vivo."
+      },
       "sceneLabel": "Escena",
       "alienScene": "Planeta alienígena — ciudad insectoide",
       "rimLightingLabel": "Luz en los marcos quitinosos",
@@ -45,6 +73,13 @@
       "alienDescription": "Un páramo volcánico, nubes densas y arquitectura quitinosa. Reproduce música para animar luces, membranas, resplandores eléctricos, refracción térmica y vapores que se desvanecen.",
       "alienNotes": "Usa Solo para observar cada efecto. Los remolinos y la inclinación animan el humo del volcán lejano derecho, manteniendo su base unida al cráter. Activa ambos junto al desvanecimiento para observar el movimiento combinado. La refracción afecta al aire sobre la lava. Al desactivar el desvanecimiento, los vapores y el humo siguen visibles. Escena experimental sin portal.",
       "alienBehaviors": {"scale":"Respiración de membranas","wave":"Refracción del aire caliente","flow":"Remolinos de humo volcánico lejano","bend":"Inclinación de la columna por el viento","opacity":"Desvanecimiento de vapores y humo","colorShift":"Colores de luces, lava y reflejos","pulse":"Pulsación de detalles locales","glow":"Destellos y resplandores eléctricos"},
+      "digitalScene": "Mundo digital — moto de luz",
+      "digitalDescription": "Una moto blanca y negra, carreteras luminosas y cúpulas hexagonales. Ondas de luz recorren paneles, llantas y franjas de la ciudad.",
+      "digitalNotes": "La geometría permanece fija. La luz cambia localmente el brillo de los paneles blancos y los colores de la ciudad. Gráfica de prueba; la fuente no es 4K nativo.",
+      "bassAttackConfigurationNote": "Cada ataque de graves detectado elige el siguiente color y lanza una onda ascendente en la máscara existente de las cúpulas y la torre. Las ondas sucesivas viajan de forma independiente. Las demás máscaras mantienen sus ciclos. Activa la reacción a la música; Flujo de luz y color ajusta la intensidad.",
+      "environmentBlackoutLabel": "Apagar el entorno",
+      "environmentBlackoutNote": "Mantiene los colores y las luces animados sobre negro. Al desactivarlo, el entorno reaparece durante 3 segundos de reproducción; la pausa detiene la transición.",
+      "digitalBehaviors": {"colorShift":"Flujo de luz y color","glow":"Impulsos de luz locales"},
       "clockworkScene": "Mecanismo del tiempo — negro y oro",
       "clockworkDescription": "Un mecanismo oscuro con ruedas dentadas doradas. Reproduce música para iniciar el movimiento sincronizado. La pausa conserva la posición de cada rueda.",
       "clockworkNotes": "Las ruedas giran rígidamente sobre ejes fijos. La intensidad de rotación cambia la velocidad del accionamiento común; al desactivarlo se detiene sin desplazar los dientes. Hay un fondo completo bajo las piezas móviles.",

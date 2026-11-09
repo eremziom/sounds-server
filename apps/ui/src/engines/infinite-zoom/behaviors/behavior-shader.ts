@@ -1,4 +1,5 @@
 import type { BehaviorGroupOutput, BehaviorOutput } from "./behavior-evaluator.ts";
+import {MAX_ATTACK_COLOR_WAVES} from "./attack-color-wave.ts";
 
 export function behaviorUniform(effect: BehaviorOutput): number[] {
   switch (effect.kind) {
@@ -11,7 +12,14 @@ export function behaviorUniform(effect: BehaviorOutput): number[] {
     case "bend": return [effect.amount, effect.pivotX, effect.pivotY, effect.axis === "x" ? 0 : 1];
     case "displace": case "flow": return [effect.amplitude, 0, 0, 0];
     case "opacity": return [effect.opacity, 0, 0, 0];
-    case "colorShift": return [effect.hue, effect.saturation, effect.lightness, 0];
+    case "colorShift": {
+      if(effect.attackWave){
+        const result=[effect.waveStrength??0,effect.attackWave.travelSeconds,effect.attackWave.pulseSeconds,0];
+        for(let i=0;i<MAX_ATTACK_COLOR_WAVES;i++){const wave=effect.waves?.[i];result.push(wave?.ageSeconds??-1,...(wave?.color??[0,0,0]));}
+        return result;
+      }
+      return [effect.hue, effect.saturation, effect.lightness, effect.travelPhase ?? 0];
+    }
     case "glow": return [effect.amount, effect.threshold, 0, 0];
   }
 }
@@ -34,7 +42,7 @@ export function buildBehaviorShader(groups: readonly BehaviorGroupOutput[]) {
     for (let e = group.effects.length - 1; e >= 0; e--) {
       const effect = group.effects[e], name = `effect_${g}_${e}`;
       effects.push({ name, group: g, effect: e });
-      declarations.push(`uniform vec4 ${name};`);
+      declarations.push(`uniform vec4 ${name}${effect.kind==="colorShift"&&effect.attackWave?`[${MAX_ATTACK_COLOR_WAVES+1}]`:""};`);
       const w = weight(effect.influenceMaskAssetId, `influence_${g}_${e}`);
       if (effect.kind === "rotate" || effect.kind === "scale") {
         const pivot = effect.kind === "rotate" ? `${name}.yz` : `${name}.zw`;
@@ -73,9 +81,31 @@ export function buildBehaviorShader(groups: readonly BehaviorGroupOutput[]) {
     // Visual operations have a fixed stage order independent of spatial order.
     for (const [e,effect] of group.effects.entries()) if (effect.kind === "colorShift") {
       const name=`effect_${g}_${e}`, w=effect.influenceMaskAssetId?`texture2D(influence_${g}_${e},vUv).r`:"1.0";
-      colors.push(`{ vec3 axis=normalize(vec3(1.0)); float a=${name}.x*${w};
+      if(effect.attackWave){
+        const wave=effect.attackWave;
+        colors.push(`{ float delay=clamp((1.0-vUv.y-${wave.startY.toFixed(12)})/${(wave.endY-wave.startY).toFixed(12)},0.0,1.0);
+          float materialValue=max(color.r,max(color.g,color.b));
+          shifted${g}=mix(color.rgb,color.rgb*${wave.baseIntensity.toFixed(12)},${name}[0].x*${w});
+          for(int n=1;n<=${MAX_ATTACK_COLOR_WAVES};n++){
+            vec4 pulse=${name}[n];
+            if(pulse.x>=0.0){
+              float u=(pulse.x-delay*${name}[0].y)/${name}[0].z;
+              float band=step(0.0,u)*step(u,1.0)*pow(sin(clamp(u,0.0,1.0)*3.14159265359),2.0);
+              shifted${g}=mix(shifted${g},pulse.yzw*materialValue,clamp(band*${name}[0].x*${w},0.0,1.0));
+            }
+          }
+        }`);
+        continue;
+      }
+      let travel="1.0";
+      if(effect.delayMapAssetId){
+        const sampler=`delay_${g}_${e}`;
+        declarations.push(`uniform sampler2D ${sampler};`);masks.push({name:sampler,assetId:effect.delayMapAssetId});
+        travel=`(0.5-0.5*cos(max(0.0,${name}.w-texture2D(${sampler},vUv).r*${effect.travelRadians!.toFixed(12)})))`;
+      }
+      colors.push(`{ vec3 axis=normalize(vec3(1.0)); float colorWeight=${w}*${travel}; float a=${name}.x*colorWeight;
         shifted${g}=shifted${g}*cos(a)+cross(axis,shifted${g})*sin(a)+axis*dot(axis,shifted${g})*(1.0-cos(a));
-        shifted${g}=mix(vec3(dot(shifted${g},vec3(0.2126,0.7152,0.0722))),shifted${g},mix(1.0,${name}.y,${w}))+${name}.z*${w}; }`);
+        shifted${g}=mix(vec3(dot(shifted${g},vec3(0.2126,0.7152,0.0722))),shifted${g},mix(1.0,${name}.y,colorWeight))+${name}.z*colorWeight; }`);
     }
     for (const [e,effect] of group.effects.entries()) if (effect.kind === "opacity") {
       colors.push(`alpha${g} *= mix(1.0,effect_${g}_${e}.x,${effect.influenceMaskAssetId?`texture2D(influence_${g}_${e},vUv).r`:"1.0"});`);

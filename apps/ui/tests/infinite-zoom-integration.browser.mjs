@@ -12,7 +12,10 @@ wav.write("RIFF"); wav.writeUInt32LE(wav.length-8,4); wav.write("WAVEfmt ",8);
 wav.writeUInt32LE(16,16); wav.writeUInt16LE(1,20); wav.writeUInt16LE(1,22);
 wav.writeUInt32LE(rate,24); wav.writeUInt32LE(rate*2,28); wav.writeUInt16LE(2,32); wav.writeUInt16LE(16,34);
 wav.write("data",36); wav.writeUInt32LE(samples*2,40);
-for (let i=0;i<samples;i++) wav.writeInt16LE(Math.round(Math.sin(i*2*Math.PI*100/rate)*8000),44+i*2);
+for (let i=0;i<samples;i++) {
+  const amplitude=process.argv.includes('--digital-ui')&&i%(rate*.4)>rate*.08?0:8000;
+  wav.writeInt16LE(Math.round(Math.sin(i*2*Math.PI*100/rate)*amplitude),44+i*2);
+}
 const tracks = [1,2].map(id => ({ id, ownerId:1, author:"IZ", title:`IZ recording ${id}`, genre:null, subgenre:null, description:null, publicationDate:"2026-01-01", bpm:null, hasAudio:true }));
 const api = createServer((req,res) => {
   res.setHeader("Content-Type","application/json");
@@ -65,6 +68,15 @@ try {
       const names=new WeakMap(), proto=WebGL2RenderingContext.prototype, location=proto.getUniformLocation, scalar=proto.uniform1f;
       proto.getUniformLocation=function(program,name) { const value=location.call(this,program,name); if(value) names.set(value,name); return value; };
       proto.uniform1f=function(location,value) { if(names.get(location)==='audioGain') izGain=value; return scalar.call(this,location,value); };
+      window.izWaveFrames=0;window.izMaxConcurrentWaves=0;
+      const vectorArray=proto.uniform4fv;
+      proto.uniform4fv=function(location,value,...args){
+        if(value?.length===132&&Math.abs(value[1]-.8)<.001){
+          let active=0;for(let i=4;i<value.length;i+=4)if(value[i]>=0)active++;
+          if(active){izWaveFrames++;izMaxConcurrentWaves=Math.max(izMaxConcurrentWaves,active);}
+        }
+        return vectorArray.call(this,location,value,...args);
+      };
       })();
     `});
     await send("Network.setCookies",{cookies:[{name:"accessToken",value:session.accessToken,url:origin,path:"/",httpOnly:true},{name:"refreshToken",value:session.refreshToken,url:origin,path:"/",httpOnly:true},{name:"locale",value:"en",url:origin,path:"/"}]});
@@ -96,12 +108,72 @@ try {
     await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]')");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest","Forest is the initial scene");
     assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`),true);
+    for (const viewport of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+      await send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: 1, mobile: false });
+      await evaluate("window.scrollTo(0, 0)");
+      await delay(100);
+      const measure = () => evaluate(`(() => {
+        const background = document.querySelector('[data-application-background]').getBoundingClientRect();
+        const canvasBounds = ${canvas}.getBoundingClientRect();
+        const controls = document.querySelector('[data-infinite-zoom-controls]').getBoundingClientRect();
+        return { background: [background.x, background.y, background.width, background.height],
+          canvas: [canvasBounds.x, canvasBounds.y, canvasBounds.width, canvasBounds.height],
+          controlsTop: controls.top, scroll: window.scrollY,
+          viewport: [document.documentElement.clientWidth, document.documentElement.clientHeight] };
+      })()`);
+      const before = await measure();
+      assert.deepEqual(before.background, [0, 0, ...before.viewport], "Background fills the viewport");
+      assert.deepEqual(before.canvas, before.background, "Canvas fills the fixed background");
+      await evaluate("window.scrollTo(0, 400)");
+      await delay(100);
+      const after = await measure();
+      assert.ok(after.scroll > 0, "Animation configuration page can scroll");
+      assert.equal(after.controlsTop, before.controlsTop - after.scroll, "Configuration scrolls with the page");
+      assert.deepEqual(after.background, before.background, "Background stays fixed during scrolling");
+      assert.deepEqual(after.canvas, before.canvas, "Canvas stays fixed during scrolling");
+      assert.equal(await evaluate(`${canvas}===izCanvas && ${audio}===izAudio`), true, "Scrolling and resizing preserve canvas and audio");
+    }
+    await send("Emulation.clearDeviceMetricsOverride");
+    await evaluate("window.scrollTo(0, 0)");
     const selectScene=async name=>{
       await evaluate(`(()=>{const select=document.querySelector('[data-iz-scene]');select.value=${JSON.stringify(name)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
       await waitFor(`document.querySelector('[data-iz-scene]').value===${JSON.stringify(name)} && !document.querySelector('[data-iz-scene]').disabled`);
     };
     const sceneTick=await tick();
     await evaluate("void(window.izGl=izCanvas.getContext('webgl2'))");
+    if(process.argv.includes("--digital-ui")) {
+      await selectScene("digital");
+      const blackout="document.querySelector('[data-iz-environment-blackout]')";
+      await waitFor(blackout);assert.equal(await evaluate(`${blackout}.checked`),false);
+      assert.equal(await evaluate("document.querySelectorAll('[data-iz-kick]').length"),1,"Digital scene reuses one existing bass attack monitor");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-pilot] [data-iz-kick] [data-iz-band-range=bass]') && !!document.querySelector('[data-iz-pilot] [data-iz-modulation]')"),true,"Existing detector range and music reaction controls are in the digital panel");
+      await evaluate("void(window.izDigitalNormal=izCanvas.toDataURL())");
+      await click(blackout);await waitFor(`${blackout}.checked`);
+      assert.equal(await tick(),sceneTick,"Blackout does not advance paused simulation");
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalNormal"),false,"Visible checkbox blacks out environment immediately while paused");
+      await evaluate("void(window.izDigitalBlack=izCanvas.toDataURL())");
+      await selectScene("journey");await selectScene("digital");
+      assert.equal(await evaluate(`${blackout}.checked && izCanvas.toDataURL()===izDigitalBlack`),true,"Preference and black frame survive scene parking");
+      await click("document.querySelector('[data-iz-reset]')");await waitFor(`${blackout}.checked`);
+      await click(blackout);await waitFor(`!${blackout}.checked`);
+      await evaluate("void(window.izDigitalPaused=izCanvas.toDataURL())");await delay(250);
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalPaused"),true,"Pause freezes reveal");
+      await click(toggle);await waitFor(`!${audio}.paused && ${canvas}.dataset.visualStatus==='running'`);
+      await delay(600);await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalPaused"),false,"Playback advances reveal and protected colors");
+      const frozen=await tick();await delay(250);assert.equal(await tick(),frozen);
+      await click(toggle);await waitFor(`!${audio}.paused`);await delay(3600);
+      await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+      await waitFor("window.izWaveFrames>0 && window.izMaxConcurrentWaves>=2");
+      assert.equal(await evaluate(`${audio}===izAudio && ${canvas}===izCanvas && izCanvas.getContext('webgl2')===izGl`),true,"One audio element, canvas and context");
+      await click("document.querySelector('[data-iz-immersive]')");await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
+      await evaluate("document.querySelector('[data-iz-immersive-pilot]').open=true");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-immersive-pilot] [data-iz-environment-blackout]')"),true,"Blackout is available in immersive controls");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-immersive-pilot] [data-iz-kick] [data-iz-band-range=bass]')"),true,"Same bass detector controls are available in immersive mode");
+      const report=new URL("../../../.tmp/digital-grid-qa/",import.meta.url);await mkdir(report,{recursive:true});
+      const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("application-blackout-control.png",report),Buffer.from(screenshot.data,"base64"));
+      console.log("Digital Grid UI: blackout checkbox, paused frame, scene parking, reset preference, playback reveal, immersive and one audio/canvas/context OK");return;
+    }
     await selectScene("pilot");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest-pilot");
     assert.equal(await tick(),sceneTick,"Selecting a pilot cannot advance paused simulation");

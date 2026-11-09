@@ -18,6 +18,7 @@ export interface ArtworkLayer {
   readonly zIndex: number;
   readonly imageAssetId: string;
   readonly maskAssetId?: string;
+  readonly blendMode?: "additive-emission";
   readonly behaviors: readonly BehaviorDescriptor[];
   readonly regions: readonly BehaviorRegion[];
   readonly constraints?: MotionConstraints;
@@ -99,6 +100,7 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
     for (const behavior of parsed) {
       if (!phase2 && (!["translate", "wave", "pulse"].includes(behavior.kind) || behavior.enabled !== undefined || behavior.weight !== undefined || behavior.modulation !== undefined)) throw new Error("Extended behaviors require schema 2");
       validateMask(behavior.influenceMaskAssetId);
+      if (behavior.kind === "colorShift") validateMask(behavior.params.delayMapAssetId);
       if (behavior.kind === "parallax" || behavior.kind === "flow" || behavior.kind === "displace") {
         const field = references.get(behavior.kind === "parallax" ? behavior.params.depthAssetId : behavior.params.fieldAssetId);
         if (!field || !field.critical || field.kind !== (behavior.kind === "parallax" ? "depth" : "flow")) throw new Error("Behavior field must reference a critical depth/flow asset");
@@ -108,7 +110,8 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   }
   const artworkBehaviors = behaviors(data.behaviors);
   const layers: ArtworkLayer[] = data.layers.map(input => {
-    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId", "behaviors", "regions", "constraints", "lods", "spin"]);
+    const layer = record(input, ["id", "zIndex", "imageAssetId", "maskAssetId", "behaviors", "regions", "constraints", "lods", "spin", "blendMode"]);
+    if (layer.blendMode !== undefined && (!phase2 || layer.blendMode !== "additive-emission")) throw new Error("Invalid layer blend mode");
     if (!phase2 && (layer.constraints !== undefined || layer.lods !== undefined || layer.spin !== undefined)) throw new Error("Extended layers require schema 2");
     const spin=parseRigidSpin(layer.spin);
     const layerConstraints = parseMotionConstraints(layer.constraints);
@@ -141,6 +144,7 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
     });
     lods.sort((a,b) => references.get(a.assetId)!.width - references.get(b.assetId)!.width);
     return Object.freeze({ id: id(layer.id), zIndex: layer.zIndex, imageAssetId,
+      ...(layer.blendMode === "additive-emission" ? {blendMode:"additive-emission" as const} : {}),
       ...(spin ? {spin} : {}),
       behaviors: behaviors(layer.behaviors), regions: Object.freeze(regions),
       ...(layerConstraints ? { constraints: layerConstraints } : {}), ...(lods.length ? { lods: Object.freeze(lods) } : {}),
@@ -151,11 +155,13 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
   layers.sort((a, b) => a.zIndex - b.zIndex);
   const coverage = record(data.coverage, ["baseLayerId"]);
   const baseLayerId = id(coverage.baseLayerId);
+  if (layers.find(layer=>layer.id===baseLayerId)?.blendMode) throw new Error("Coverage base cannot be emission-only");
   if(layers.find(layer=>layer.id===baseLayerId)?.spin)throw new Error("Coverage base cannot spin");
   if (layers[0].id !== baseLayerId || layers[0].maskAssetId !== undefined) {
     throw new Error("Coverage requires an unmasked bottom layer");
   }
   for (const layer of layers) for (const group of behaviorGroups(artworkBehaviors, layer, constraints)) {
+    if (layer.blendMode && (layer.spin || group.behaviors.some(behavior=>behavior.kind!=="glow"))) throw new Error("Emission-only layers require glow operators");
     validateComposition(group.behaviors, group.constraints);
     if (layer.id === baseLayerId && group.behaviors.some(behavior =>
       behaviorEnvelope(behavior).displacement !== 0 ||

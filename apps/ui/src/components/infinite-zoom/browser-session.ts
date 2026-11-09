@@ -1,6 +1,8 @@
 import {STUDIO_ARTWORKS,type BehaviorKind,type VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
 import { createInfiniteZoomController } from "../../engines/infinite-zoom/index.ts";
 import { createAudioModulation } from "../../engines/infinite-zoom/modulation/audio-modulation.ts";
+import { sampleKickAttack } from "../../engines/infinite-zoom/modulation/kick-signal.ts";
+import { sampleHighAttack, sampleMidAttack } from "../../engines/infinite-zoom/modulation/attack-signal.ts";
 import { createAdaptiveQuality } from "../../engines/infinite-zoom/quality/adaptive-quality.ts";
 import { createSessionDiagnostics } from "../../engines/infinite-zoom/diagnostics/session-diagnostics.ts";
 import type { prepareArtwork } from "../../engines/infinite-zoom/artwork/prepare-artwork.ts";
@@ -9,6 +11,7 @@ import { bindPlaybackToVisuals } from "./playback-adapter.ts";
 import type { VisualBridge } from "./visual-bridge.ts";
 import {setRimLightingVisibility} from "./rim-lighting.ts";
 import {createSceneReveal,withSceneReveal} from "./scene-reveal.ts";
+import {createEnvironmentBlackout} from "./environment-blackout.ts";
 
 export function createBrowserVisualSession(options: {
   canvas: HTMLCanvasElement; audio: HTMLAudioElement; bridge: VisualBridge;
@@ -26,6 +29,8 @@ export function createBrowserVisualSession(options: {
   let pendingResize = false, sceneLoading=false;
   let rimLightingEnabled=false;
   const reveal=createSceneReveal();
+  const blackout=createEnvironmentBlackout();
+  let lastKickAt:number|null=null,kickEvent=0;
   const studioManifests=new Map<VisualScene,unknown>();
   let scenePreparation: Promise<void> | null = null;
   const selectionLifetime=new AbortController();
@@ -79,15 +84,21 @@ export function createBrowserVisualSession(options: {
             if (!["disposed", "error"].includes(status)) engine.setSuspended("context-lost", !available);
           },
           onError() { diagnostics.event("CONTEXT_RESTORE_FAILED", engine.getSnapshot().session.tick, "error"); fault = true; publish(); },
-          evaluate(instance) { runCommands(); reveal.step(instance); },
+          evaluate(instance) { runCommands(); reveal.step(instance); blackout.step(instance); },
           modulation: () => modulation.getSnapshot(),
         }, signal);
         lease = prepared; pendingResize = false;
         return { ...prepared,
           step(context) {
             const levels = options.signals.current;
-            modulation.step(bridge.getModulation() && options.analysisEnabled() ? {
+            const enabled=bridge.getModulation()&&options.analysisEnabled(),now=performance.now();
+            const kick=sampleKickAttack(levels?.bass??null,now);
+            if(enabled&&kick>0&&levels.bass.attackAt!==lastKickAt){lastKickAt=levels.bass.attackAt;kickEvent=1-kickEvent;}
+            modulation.step(enabled ? {
               bass: levels?.bass?.level ?? NaN, mid: levels?.mid?.level ?? NaN, high: levels?.high?.level ?? NaN,
+              kick,kickEvent,
+              highAttack: sampleHighAttack(levels?.high ?? null, performance.now()),
+              midAttack: sampleMidAttack(levels?.mid ?? null, performance.now()),
             } : null, context.dt);
             prepared.step(context);
           },
@@ -127,6 +138,7 @@ export function createBrowserVisualSession(options: {
       pilotControls:lease?.getPilotControls(), pilotCameraMotion:lease?.getPilotCameraMotion() ?? false,
       rimLightingEnabled,
       sceneRevealEnabled:reveal.getSnapshot().enabled, sceneRevealProgress:reveal.getSnapshot().progress,
+      environmentBlackoutEnabled:blackout.getSnapshot().enabled,
       diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
         tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
         resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
@@ -179,7 +191,7 @@ export function createBrowserVisualSession(options: {
             studioManifests.set(next,next==="alien" ? withSceneReveal(manifest) : manifest);
           }
           await lease!.selectScene(next,studioManifests.get(next),signal);
-          setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);lease!.render();fault=false;
+          setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);blackout.apply(lease!.instance);lease!.render();fault=false;
         } catch (failure) { if (!disposed) fault=true; throw failure; }
         finally {
           sceneLoading=false;
@@ -205,11 +217,16 @@ export function createBrowserVisualSession(options: {
       if(!lease||disposed||sceneLoading||lease.getScene()!=="alien")return;
       reveal.restart(lease.instance);lease.render();publish();
     },
+    setEnvironmentBlackoutEnabled(enabled:boolean){
+      if(!lease||disposed||sceneLoading||lease.getScene()!=="digital")return;
+      blackout.setEnabled(enabled,lease.instance);lease.render();publish();
+    },
     exportReplay() { return lease?.exportReplay() ?? null; },
     reset() {
       if (!lease || disposed) return;
       commands.length = 0; modulation.reset();
-      try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
+      kickEvent=0;lastKickAt=options.signals.current?.bass?.attackAt??null;
+      try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);blackout.apply(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
       publish();
     },
     dispose() {

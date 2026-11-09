@@ -1,5 +1,193 @@
 # QA — insectoid planet, 2026-11-07
 
+## Revision 0.5.4 — downhill volcanic color, 2026-11-09
+
+Follows shared artwork guidelines v1.3 and `lava-authoring-brief.md`. The existing
+source plate supplies all visible lava texture. A 1600x900 source-chroma material
+mask selects branching seams on the two distant volcanoes and middle slope;
+253 / 594 / 588 texels exceed 10% visibility. The separate 400x225 delay field
+gradually delays the color envelope from each summit toward its lower slope by
+up to five seconds. Orange-to-purple-to-orange cycles repeat every twelve
+seconds after the initial source-orange frame. Existing near-plan colors,
+precise sky silhouettes, smoke and membrane motion are retained.
+
+The two critical R8 data maps add 1,530,000 estimated texture bytes. Total package
+texture estimate is 66,330,000 bytes; reveal adds its existing 576-byte curtain,
+remaining below the existing 64 MiB artwork regression bound. New layers reuse
+the plate and delay mask, including the fully animated protected lava copy above
+the reveal curtain. No additional image texture, renderer, clock or audio owner.
+
+Engine work is separate: `colorShift` gains optional paired delay-map/travel-time
+parameters, documented in `phase2-contract.md`; legacy colors retain their sine
+envelope. Fixed-tick startup and periodic wrapping preserve orange initialization,
+downhill direction, pause, Reset, control strength and context restoration.
+
+Validation from `apps/ui`:
+
+- `node --experimental-strip-types --test tests/infinite-zoom-*.test.mjs`:
+  all 143 pass, including three new mask/timing/blackout tests. The existing
+  emission-validation test now finds its sky layer by ID rather than assuming
+  it is the final raw layer in the package.
+- `node tests/infinite-zoom-renderer.browser.mjs --lava-only --sky-high-precision`:
+  actual WebGL2/RGBA16F passes initial orange, color control, pause, Reset,
+  full-blackout animation and context restoration. At 2/4/6/8/10/12/16 seconds,
+  242 / 885 / 1,186 / 1,236 / 1,222 / 791 / 885 pixels differ by more than five
+  display-code levels. Outside-mask difference is zero. Eighteen logical seconds
+  of combined movement and zoom cover a full cycle plus initial downhill delay.
+- `node tests/infinite-zoom-renderer.browser.mjs`: complete renderer regression
+  passes, including ordinary RGBA8 studio effects, local boundaries, transitions,
+  Loop, camera continuity, context recovery and existing reveal checks.
+- `pnpm --filter ui build` from repository root: passes translations, TypeScript
+  and the production build.
+- `node tests/infinite-zoom-integration.browser.mjs`: passes actual application
+  readiness/cancel, shared audio graph, scene selection, pause/end/next-track,
+  immersive controls, Reset, transitions and audio/visual failure isolation.
+
+Evidence in repository-root `.tmp/infinite-zoom-artwork/`: source overlay
+`volcano-lava-mask-review.png`, `lava-initial.png`, `lava-{2,4,6,8,10,12,16}s.png`,
+`lava-blackout-6s.png`, `lava-motion-{0,60,...,480}.png`, `lava-motion.webm` and
+`lava-qa.json`. Source overlay, full-frame transition and zoomed animated cycle
+samples were visually inspected: the upper streams turn purple while lower
+branches retain orange, followed by the delayed return. Color remains attached
+to the original source seams as the camera moves.
+
+Remaining uncertainty: source resolution and warm antialias/glow around the
+craters limit exact separation of the faintest lava from reflected light. The
+mask intentionally retains warm textured stream edges; it does not recolor
+whole mountains. The propagated parameter follows vertical height, not a
+fluid simulation or per-branch path length. These samples and technical tests
+do not replace user artistic acceptance or target-device performance review.
+
+## Revision 0.5.3 — static sky contours, 2026-11-09
+
+Shared authoring guidelines v1.2 apply; see `authoring-brief.md` and
+`sky-authoring-brief.md`. Source-traced curved chitin silhouettes, separate narrow
+antennae, connected city roofs, mountain skyline and open sky through upper
+arches replace the coarse polygons. Static clearance is now a 0–1.2-source-pixel
+sky-side antialias ramp, rather than the previous 8–16 pixel horizon and 2–7 pixel
+architectural guards. The moving smoke's 55-source-pixel exclusion is unchanged.
+The source plate, all motion masks, audio timing and engine code are unchanged.
+
+Combined source-derived light support above 3% now covers 207,580 texels, with
+eight-sector distribution 27,400 / 32,504 / 29,683 / 25,082 / 37,607 / 11,865 /
+19,708 / 23,731. This retains cloud texture and fills the formerly withheld sky
+around buildings, including real gaps between architecture and antennae.
+
+Validation from `apps/ui`:
+
+- `node --experimental-strip-types --test tests/infinite-zoom-sky.test.mjs tests/infinite-zoom-high-attack.test.mjs tests/infinite-zoom-insectoid.test.mjs`:
+  15 passing. Includes source-inspected protected material/clear-sky landmarks,
+  packaged-mask reproducibility, silence/release, blackout and existing local
+  membrane, heat, vapor, smoke and chitin behavior checks.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only --sky-high-precision`:
+  RGBA16F passes pause, release, blackout, controls, context recovery, 15 logical
+  seconds with all authored moving layers, full-frame flashes and left/right
+  camera zooms. Outside-support pixel difference is at most 1 display code
+  value, matching deterministic output dithering tolerance.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only`: RGBA8 passes the
+  same checks, with zero outside-support difference and zero silent difference.
+
+Review evidence: repository-root `.tmp/infinite-zoom-artwork/sky-mask-review.png`,
+`sky-peak.png`, `sky-blackout-peak.png`, `sky-motion-{0,30,...,420}.png`,
+`sky-zoom-peak.png`, `sky-motion.webm` and `sky-qa.json`. Source, enlarged left
+silhouettes, full-frame peak, blackout and left/right zoom-cycle samples were
+visually inspected. The clip includes combined moving smoke, membranes and
+lights instead of isolating the sky overlay. This is fixed-tick QA evidence,
+not a real-time performance certification or final artistic approval.
+
+Remaining uncertainty: source antialiasing and the one-runtime-texel limits of
+very fine antennae/barbs can leave small edge differences under extreme zoom.
+The conspicuous, deliberately conservative dark boundary around the moving
+plume is retained under the user's instruction. No per-frame plume occlusion
+or engine extension was introduced. Prior QA below describes earlier masks.
+
+## Revision 0.5.2 — high-attack sky lighting
+
+Uses shared guidelines v1.2; see `sky-authoring-brief.md`. Two 1600x900 grayscale
+data masks preserve separate safe-sky visibility and source-derived bright-cloud
+influence. Final support includes 159,484 texels above 3% combined weight, spread
+across all eight sky sectors (17,981 / 21,641 / 22,339 / 21,034 / 32,400 / 9,541 /
+17,498 / 17,050). A 55-source-pixel expansion of the independent volcanic-smoke
+alpha excludes its full motion envelope, conservatively withholding some nearby
+sky light. Existing textures/source provenance, membrane breathing, local lamps,
+lava, cloud-periodic glows and chitin groups are retained. Full blackout now uses
+curtain opacity 1, with sky emission above it and opaque environmental coverage.
+
+Static review inspected the source painting, red support overlay
+`.tmp/infinite-zoom-artwork/sky-mask-review.png`, and actual renderer peak/full-frame
+and zoom captures (`sky-peak.png`, `sky-zoom-peak.png`). The initial hard exclusion
+edges were feathered before final packaging. Light follows existing cloud texture
+and bright openings; no drawn light blobs or new painting. Thin spire and mountain
+contours remain conservative manually authored boundaries requiring artistic
+review. The expanded smoke exclusion intentionally reduces highlights around the
+plume; no claim of exact per-frame semantic segmentation is made.
+
+Validation performed from `apps/ui`:
+
+- `node --test tests/infinite-zoom-*.test.mjs`: 140 passing, including mask
+  distribution, protected landmarks, emission-only schema/base restrictions,
+  silent initialization, release, glow control and blackout placement.
+- `node tests/infinite-zoom-renderer.browser.mjs`: full existing renderer,
+  transition, three-world Loop, Phase 2, studio, smoke and rim regression passes.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only`: RGBA8 proof of
+  zero-emission identity, exact unchanged outside support, release, paused flash,
+  black environment with active lights, six-second motion sequence, zoom and
+  context recovery. A six-second WebM is exported to
+  `.tmp/infinite-zoom-artwork/sky-motion.webm`.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only --sky-high-precision`:
+  final masks also pass with RGBA16F and output dithering; all eight sectors light.
+  Maximum outside-support and no-emission display differences are 1/255, versus
+  exact zero in RGBA8. This is the measured conversion/dithering precision limit,
+  not evidence of brightening buildings. Final high-precision review artifacts
+  overwrite the corresponding review PNG/WebM filenames.
+- `node --test tests/infinite-zoom-kick.browser.mjs`: actual high-frequency WAV
+  playback drives five GPU sky-emission peaks, median 200.4 ms apart for 200 ms
+  input spacing. Bass breathing and mid/high indicators still pass; one graph,
+  source and canvas are retained.
+- `pnpm --filter ui build` (from repo root) and focused ESLint pass.
+
+Motion/zoom tests establish bounded operation, masking and synchronization;
+final visual acceptance of brightness and fast repetition remains separate.
+No remaining automated failures. High-precision display quantization and the
+manual conservative silhouette/smoke margins above are known limits.
+
+## Revision 0.5.1 — bass-attack breathing
+
+Only the three membrane scale bindings/carriers change; their painted textures,
+mask boundaries, pivots and x=.06/y=.045 envelopes stay unchanged. Source-material
+rim lighting, protected lava and reveal controls are retained. The historical
+near-black curtain (.995 opacity) still does not establish exact environmental
+blackout required by shared authoring guidelines v1.2. No new image generation.
+
+Focused unit command: `node --test tests/infinite-zoom-kick.test.mjs
+tests/infinite-zoom-modulation.test.mjs tests/infinite-zoom-behaviors.test.mjs
+tests/infinite-zoom-phase2.test.mjs tests/infinite-zoom-insectoid.test.mjs` —
+38 passing. Covers one real-manifest membrane expansion per 100/150 BPM kick,
+synchronized membranes, initialization/reset at rest, missing-signal relaxation,
+strength controls, existing sampling guards and unchanged continuous fallbacks.
+
+`node --test tests/infinite-zoom-kick.browser.mjs` also passes with actual
+100/150 BPM WAV playback. It selects the alien scene and observes the real
+membrane scale uniforms submitted to WebGL: six expansion peaks at each tempo,
+median peak spacing 600.4 ms / 399 ms respectively. Preview attack spacing was
+602 ms / 395 ms. Pause freezes deformation; disabling modulation preserves
+music playback; seek clears stale attacks; only one audio graph/source/canvas
+is used. The journey recording retains normalized kick samples. Focused ESLint
+passes for changed runtime, authoring script and test files.
+
+`node tests/infinite-zoom-renderer.browser.mjs --insectoid-only` passes with
+150 BPM fixed-clock impulses supplied through the real modulation port. It runs
+15-second individual and combined cycles, renders camera motion/zoom and
+portrait/wide coverage, verifies fixed material sites (maximum difference 0),
+pause, scene parking and context restoration. At scale peak, 7,250 of 518,400
+pixels differ by more than 8, maximum difference 127, while fixed sites stay
+unchanged. Review captures: `.tmp/infinite-zoom-artwork/insectoid-scale-peak.png`
+and `insectoid-scale-cycle-*.png`; reviewed the peak full-frame composition.
+These motion-sequence assertions and captures do not replace artistic acceptance
+of fast membrane motion or prove every hand-traced boundary at every zoom level.
+Existing membrane-edge uncertainty remains; no mask correction was needed by
+the bounded tests. Build (TypeScript and translation checks included) passes.
+
 ## Revision 0.5.0 — source-material rim-lighting retry
 
 This is a new experiment after the user's rejection of approximate strokes.

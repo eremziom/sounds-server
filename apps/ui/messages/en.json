@@ -35,6 +35,34 @@
   },
   "app": {
     "infiniteZoom": {
+      "frequencyRange": {
+        "fromHz": "From (Hz)", "toHz": "To (Hz)",
+        "title": "Detected frequency range",
+        "reset": "Restore default range",
+        "note": "Changes apply immediately and clear attack history. Bands may overlap. Range: 20–20,000 Hz, with a minimum width of 10 Hz."
+      },
+      "skyLightingNote": "Sky lighting: high-frequency attacks illuminate bright cloud openings across the sky. Enable React to music; the Glints effect controls intensity.",
+      "midAttack": {
+        "title": "Mid-frequency attack · midAttack",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short mid-frequency impulse from 0 to 1 (default 250–2000 Hz), decaying over 120 ms. No artwork effect assigned yet. Detects attacks in this band, not a specific instrument.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
+      "highAttack": {
+        "title": "High-frequency attack · highAttack",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short high-frequency impulse from 0 to 1 (default 2–16 kHz), decaying over 100 ms. On the alien planet it lights bright cloud openings. Detects attacks in this band, not a specific instrument.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
+      "kick": {
+        "title": "Bass attack · kick",
+        "interval": "Time between attacks",
+        "count": "Detected attacks",
+        "note": "A short low-frequency impulse from 0 to 1. On the alien planet, each hit drives the building membranes' breathing. With one kick per beat: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. These are detected bass attacks, not BPM measurement or instrument recognition.",
+        "inactive": "Play music and enable music response and live analysis."
+      },
       "sceneLabel": "Scene",
       "alienScene": "Alien planet — insectoid city",
       "rimLightingLabel": "Light in the chitin frames",
@@ -45,6 +73,13 @@
       "alienDescription": "Volcanic wasteland, dense storm clouds and chitinous architecture. Play music to animate lights, breathing membranes, electrical cloud glows, heat refraction and fading vapor.",
       "alienNotes": "Use Solo to inspect each effect. Curling and wind sway animate the distant right volcano's smoke while its root stays attached to the crater. Enable both with fading to review the combined motion. Refraction affects air above lava. Disabling fading leaves static vapor and smoke visible. Experimental scene without a portal.",
       "alienBehaviors": {"scale":"Breathing membranes","wave":"Hot-air refraction","flow":"Distant volcanic smoke curling","bend":"Wind bending the ash plume","opacity":"Vapor and smoke-edge fading","colorShift":"Light, lava and reflection colors","pulse":"Local detail pulses","glow":"Glints and electrical cloud glows"},
+      "digitalScene": "Digital world — light cycle",
+      "digitalDescription": "A white and black light cycle, luminous roads and hexagonal domes. Light waves travel across panels, wheel rims and city bands.",
+      "digitalNotes": "Geometry stays fixed. Traveling light changes white panel brightness and city colors locally. Test artwork; the source is not native 4K.",
+      "bassAttackConfigurationNote": "Each detected bass attack selects the next color and launches an upward wave on the existing dome-rib and tower mask. Successive waves travel independently. Other masks keep their cycles. Enable React to music; Traveling light and color adjusts strength.",
+      "environmentBlackoutLabel": "Black out the environment",
+      "environmentBlackoutNote": "Keeps animated colors and lights against black. When disabled, the environment fades back over 3 seconds of playback; pause freezes the reveal.",
+      "digitalBehaviors": {"colorShift":"Traveling light and color","glow":"Local light impulses"},
       "clockworkScene": "Time mechanism — black and gold",
       "clockworkDescription": "A dark machine interior with golden gear wheels. Play music to start the synchronized motion. Pause holds every wheel in its current position.",
       "clockworkNotes": "Wheels rotate rigidly around fixed axles. Rotation strength changes the common drive speed; disabling it stops the drive without shifting the teeth. Complete backing remains under moving parts.",

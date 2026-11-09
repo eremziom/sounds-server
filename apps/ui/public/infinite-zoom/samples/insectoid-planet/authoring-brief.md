@@ -1,5 +1,40 @@
 # Insectoid planet — animation test
 
+## Revision 0.5.2 — high-attack sky lighting
+
+Follows [shared artwork-authoring-guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the sky-specific brief](sky-authoring-brief.md): two separate masks derived
+from guarded sky support and source cloud luminance/local texture, spanning all
+eight horizontal sky sectors. HighAttack drives additive emission on existing
+cloud openings; zero signal emits no light and never overlays a static plate.
+Sky light is protected above the reveal curtain, whose full opacity now reaches
+1 (correcting the historical .995 near-black limitation). Existing source-material
+rim detail and lava remain independently animated. No new generated painting.
+
+## Revision 0.5.1 — kick-driven membrane breathing
+
+This parameter-only revision follows
+[shared artwork-authoring-guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+The three existing organic membrane interiors expand on each detected bass attack
+and relax over the short kick envelope, with 1/60 s attack and .05 s release
+smoothing. Their `scale` carrier is constant (0 Hz, pi/2 phase), so an attack is
+never suppressed or inverted by an unrelated oscillator phase. Silence, missing
+analysis and disabled music response relax to rest. The existing scale control
+still attenuates the motion. No other effect is bound to kick.
+
+Existing x=.06/y=.045 bounds, pivots, separate visibility/influence masks and
+sampling guard are retained. Rigid ribs, silhouettes, glazing and surrounding
+architecture remain fixed; the full plate backs the moving interior texture.
+The numerous source-material rim-light groups, emission timing, protected lava
+and reveal controls are retained. No images, masks or generation prompts change.
+The existing reveal's .995 near-black curtain remains a known v1.2 full-blackout
+limitation; this bounded audio-binding revision does not claim to correct it.
+
+Engine change (separate from artwork authoring): kick bindings initialize/reset
+at their mapped zero-input minimum and decay toward it when missing. Continuous
+signal bindings keep their neutral fallback. No new operator, clock or renderer.
+Motion/zoom evidence and outstanding visual review belong in `qa.md`.
+
 Follows [shared artwork-authoring-guidelines v1.0](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
 
 Revision 0.5.0 retries optional architecture lighting with actual source-derived
@@ -86,6 +121,35 @@ rib edges and highlights need visual review at zoom. Chroma masks can select
 warm reflected light as well as emitters; wet ground and foreground lighting
 must be assessed in motion. The delivered artwork remains an experimental test
 scene; final artistic approval and target-device performance are outstanding.
+
+## Downhill volcanic color travel — revision 0.5.4, 2026-11-09
+
+Follows [shared artwork guidelines v1.3](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the lava authoring brief](lava-authoring-brief.md) for material boundaries,
+separate visibility/timing masks, orange-to-purple downhill propagation, retained
+impulse-light groups, blackout protection and full motion/zoom QA requirements.
+The source painting and existing motion/sky masks are preserved. Only the
+three distant lava domains receive the new traveling color effect. The optional
+colorShift delay-map extension is documented separately from artwork production
+in that brief and the engine's phase2-contract.md.
+
+## Static sky-occlusion correction — revision 0.5.3, 2026-11-09
+
+Follows [shared artwork guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the revised sky brief](sky-authoring-brief.md) for scene-specific application.
+Trace the static mountain skyline, hooked chitin silhouettes, roofline and thin
+antennae at the original 1672x941 source extent; keep visible sky openings through
+the upper arches. Replace broad static safety hulls with a narrow sky-side edge
+antialias ramp. Retain the independent moving plume's 55-source-pixel envelope.
+The lower membranes still deform only inside their guarded interiors; their
+fixed attachment silhouettes and protected glazing must not emit sky light.
+Existing distributed textured cloud/rim impulse sites, signal timing, animated
+protected colors and complete-blackout/reveal behavior remain in place. No new
+engine extension or illustration generation is part of this mask revision.
+Inspect full-frame lighting, static contours, blackout, 15 seconds of combined
+movement and left/right architecture zooms; report sub-texel tracing uncertainty
+separately from technical test results in qa.md. Original source and runtime
+dimensions/provenance remain unchanged.
 
 ## Optional darkness reveal experiment — 2026-11-07
 

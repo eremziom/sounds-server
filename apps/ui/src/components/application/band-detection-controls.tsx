@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { AUDIO_BANDS } from "@/lib/audio-band-detection";
+import { AUDIO_BANDS, DEFAULT_BAND_OPTIONS, type AudioBand } from "@/lib/audio-band-detection";
 import { useLiveAnalysis } from "./live-analysis-runtime";
 import { Button } from "../ui/button";
 
@@ -62,4 +62,24 @@ export function BandDetectionControls() {
     </div>
     <p className="text-xs text-muted-foreground">{t("notes")}</p>
   </section>;
+}
+
+/** The animation previews and analysis panel edit the same live filter taps. */
+export function AudioBandRangeControls({ band }: { band: AudioBand }) {
+  const { bandOptions, updateBand } = useLiveAnalysis();
+  const range = useTranslations("app.infiniteZoom.frequencyRange");
+  const options = bandOptions[band];
+  return <fieldset data-iz-band-range={band} className="space-y-2 rounded-md border p-3">
+    <legend className="px-1 text-xs font-medium">{range("title")}</legend>
+    <div className="grid grid-cols-2 gap-3">
+      <BandNumberInput label={range("fromHz")} name={`iz-band-${band}-fromHz`} value={options.fromHz} min={20} max={options.toHz - 10}
+        onChange={fromHz => updateBand(band, { fromHz })} />
+      <BandNumberInput label={range("toHz")} name={`iz-band-${band}-toHz`} value={options.toHz} min={options.fromHz + 10} max={20000}
+        onChange={toHz => updateBand(band, { toHz })} />
+    </div>
+    <Button type="button" variant="outline" size="sm" data-iz-band-reset onClick={() => updateBand(band, {
+      fromHz: DEFAULT_BAND_OPTIONS[band].fromHz, toHz: DEFAULT_BAND_OPTIONS[band].toHz,
+    })}>{range("reset")}</Button>
+    <p className="text-xs text-muted-foreground">{range("note")}</p>
+  </fieldset>;
 }

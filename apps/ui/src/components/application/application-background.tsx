@@ -7,7 +7,7 @@ export function ApplicationBackground() {
   const { animationHost } = useMediaRuntime();
 
   return (
-    <div ref={animationHost} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0" data-application-background data-animation-host>
+    <div ref={animationHost} aria-hidden="true" className="pointer-events-none fixed inset-0 z-0" data-application-background data-animation-host>
       <InfiniteZoomCanvas />
       <div
         data-application-background-dimmer

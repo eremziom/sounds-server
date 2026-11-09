@@ -35,6 +35,34 @@
   },
   "app": {
     "infiniteZoom": {
+      "frequencyRange": {
+        "fromHz": "Od (Hz)", "toHz": "Do (Hz)",
+        "title": "Wykrywany zakres częstotliwości",
+        "reset": "Przywróć domyślny zakres",
+        "note": "Zmiany działają od razu i zerują historię impulsów. Pasma mogą się nakładać. Zakres: 20–20 000 Hz, minimum 10 Hz szerokości."
+      },
+      "skyLightingNote": "Podświetlenie nieba: ataki wysokich tonów rozświetlają jasne przebicia w chmurach na całej szerokości nieba. Włącz Reaguj na muzykę; siłę reguluje efekt Rozbłyski.",
+      "midAttack": {
+        "title": "Atak średnich tonów · midAttack",
+        "interval": "Odstęp między atakami",
+        "count": "Wykryte ataki",
+        "note": "Krótki impuls siły 0–1 ze średnich częstotliwości (domyślnie 250–2000 Hz), wygaszany w 120 ms. Jeszcze bez przypisanego efektu grafiki. Wykrywa ataki w tym paśmie, nie konkretny instrument.",
+        "inactive": "Odtwórz muzykę i włącz reakcję na muzykę oraz analizę na żywo."
+      },
+      "highAttack": {
+        "title": "Atak wysokich tonów · highAttack",
+        "interval": "Odstęp między atakami",
+        "count": "Wykryte ataki",
+        "note": "Krótki impuls siły 0–1 z wysokich częstotliwości (domyślnie 2–16 kHz), wygaszany w 100 ms. Na obcej planecie steruje podświetleniem jasnych przebić w chmurach. Wykrywa ataki w tym paśmie, nie konkretny instrument.",
+        "inactive": "Odtwórz muzykę i włącz reakcję na muzykę oraz analizę na żywo."
+      },
+      "kick": {
+        "title": "Atak basu · kick",
+        "interval": "Odstęp między atakami",
+        "count": "Wykryte ataki",
+        "note": "Krótki impuls siły 0–1 z niskich częstotliwości. Na obcej planecie każde uderzenie steruje oddychaniem membran budynku. Przy jednej stopie na beat: 100 BPM ≈ 600 ms, 150 BPM ≈ 400 ms. To wykryte ataki basu, nie pomiar BPM ani rozpoznanie instrumentu.",
+        "inactive": "Odtwórz muzykę i włącz reakcję na muzykę oraz analizę na żywo."
+      },
       "sceneLabel": "Scena",
       "alienScene": "Obca planeta — miasto insektoidów",
       "rimLightingLabel": "Światło w chitynowych obramowaniach",
@@ -45,6 +73,13 @@
       "alienDescription": "Wulkaniczne pustkowie, gęste chmury i chitynowe budowle. Odtwórz muzykę, aby uruchomić światła, oddychanie membran, poświaty wyładowań, falowanie gorącego powietrza oraz zanikające opary.",
       "alienNotes": "Solo pozwala obejrzeć każdy efekt osobno. Kłębienie i odchylanie ożywiają dym nad prawym odległym wulkanem; podstawa pozostaje przy kraterze. Włącz oba efekty razem z zanikaniem, aby obejrzeć całość. Falowanie dotyczy powietrza nad lawą. Wyłączenie zanikania pozostawia stałą widoczność oparów i dymu. Scena testowa, bez portalu.",
       "alienBehaviors": {"scale":"Oddychanie membran","wave":"Falowanie gorącego powietrza","flow":"Kłębienie dymu nad dalekim wulkanem","bend":"Odchylanie pióropusza przez wiatr","opacity":"Zanikanie oparów i obrzeży dymu","colorShift":"Kolory świateł, lawy i odbić","pulse":"Pulsowanie lokalnych detali","glow":"Rozbłyski i wyładowania w chmurach"},
+      "digitalScene": "Cyfrowy świat — motocykl świetlny",
+      "digitalDescription": "Biało-czarny motocykl, świetlne drogi i heksagonalne kopuły. Fale światła płyną po panelach, obręczach i pasmach miasta.",
+      "digitalNotes": "Geometria pozostaje nieruchoma. Przepływ światła zmienia lokalnie jasność białych paneli i kolory miasta. Pakiet testowy; źródło nie jest natywnym 4K.",
+      "bassAttackConfigurationNote": "Każdy wykryty atak basu wybiera następny kolor i uruchamia falę ku górze na istniejącej masce żeber kopuł i wieży. Kolejne fale płyną niezależnie. Pozostałe maski zachowują swoje cykle. Włącz Reaguj na muzykę; siłę reguluje Przepływ światła i koloru.",
+      "environmentBlackoutLabel": "Wygaszenie otoczenia",
+      "environmentBlackoutNote": "Pozostawia animowane kolory i światła na czarnym tle. Po wyłączeniu otoczenie wraca płynnie przez 3 sekundy odtwarzania; pauza zatrzymuje odsłanianie.",
+      "digitalBehaviors": {"colorShift":"Przepływ światła i koloru","glow":"Lokalne impulsy świetlne"},
       "clockworkScene": "Mechanizm czasu — czerń i złoto",
       "clockworkDescription": "Ciemne wnętrze mechanizmu ze złotymi kołami zębatymi. Odtwórz muzykę, aby uruchomić zsynchronizowany ruch. Pauza zatrzymuje koła w ich aktualnym położeniu.",
       "clockworkNotes": "Koła obracają się sztywno wokół stałych osi. Regulacja obrotu zmienia tempo wspólnego napędu; wyłączenie zatrzymuje go bez przestawiania zębów. Pod ruchomymi częściami znajduje się pełne tło.",

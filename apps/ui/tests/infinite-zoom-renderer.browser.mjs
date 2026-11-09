@@ -47,6 +47,10 @@ const server = createServer(async (request, response) => {
       source = await readFile(new URL("./helpers/infinite-zoom-clockwork-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/insectoid-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-insectoid-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/sky-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-sky-browser-fixture.mjs", import.meta.url));
+    } else if (pathname === "/lava-fixture.mjs") {
+      source = await readFile(new URL("./helpers/infinite-zoom-lava-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/rims-fixture.mjs") {
       source = await readFile(new URL("./helpers/infinite-zoom-rims-browser-fixture.mjs", import.meta.url));
     } else if (pathname === "/reveal-fixture.mjs") {
@@ -180,7 +184,21 @@ try {
       await writeFile(new URL(filename,reportDirectory),Buffer.from(parts.join("").split(",")[1],"base64"));
     }
   }
-  if (process.argv.includes("--reveal-only")) {
+  if (process.argv.includes("--sky-only") || process.argv.includes("--lava-only")) {
+    const review=process.argv.includes("--lava-only")?"lava":"sky";
+    await send("Runtime.evaluate",{expression:`import('/${review}-fixture.mjs')`,awaitPromise:true});
+    await send("Runtime.evaluate",{expression:`void window.${review==="lava"?"runLavaLighting":"runSkyLighting"}(${process.argv.includes("--sky-high-precision")}).then(value=>window.skyResult=value).catch(error=>window.skyError=String(error.stack)).finally(()=>window.skyDone=true)`});
+    let done=false;for(let i=0;i<240;i++){done=(await send("Runtime.evaluate",{expression:"!!window.skyDone",returnByValue:true})).result.value;if(done)break;await delay(250);}
+    assert.ok(done,`${review} motion review completes`);assert.equal((await send("Runtime.evaluate",{expression:"window.skyError",returnByValue:true})).result.value,undefined);
+    assert.deepEqual(errors,[]);const result=(await send("Runtime.evaluate",{expression:"window.skyResult",returnByValue:true})).result.value;console.log(`${review} lighting:`,JSON.stringify(result));
+    await writeFile(new URL(`${review}-qa.json`,reportDirectory),JSON.stringify(result,null,2));
+    const names=(await send("Runtime.evaluate",{expression:"Object.keys(window.skyCaptures)",returnByValue:true})).result.value;
+    for(const [expression,file]of [...names.map(name=>[`window.skyCaptures[${JSON.stringify(name)}]`,`${review}-${name}.png`]),["window.skyMotionData",`${review}-motion.webm`]]){
+      const length=(await send("Runtime.evaluate",{expression:`${expression}.length`,returnByValue:true})).result.value,parts=[];
+      for(let i=0;i<length;i+=262144)parts.push((await send("Runtime.evaluate",{expression:`${expression}.slice(${i},${i+262144})`,returnByValue:true})).result.value);
+      await writeFile(new URL(file,reportDirectory),Buffer.from(parts.join("").split(",")[1],"base64"));
+    }
+  } else if (process.argv.includes("--reveal-only")) {
     await runReveal();
   } else if (process.argv.includes("--rims-only")) {
     await runRims();
