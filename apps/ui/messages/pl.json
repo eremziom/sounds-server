@@ -76,7 +76,7 @@
       "digitalScene": "Cyfrowy świat — motocykl świetlny",
       "digitalDescription": "Biało-czarny motocykl, świetlne drogi i heksagonalne kopuły. Fale światła płyną po panelach, obręczach i pasmach miasta.",
       "digitalNotes": "Geometria pozostaje nieruchoma. Przepływ światła zmienia lokalnie jasność białych paneli i kolory miasta. Pakiet testowy; źródło nie jest natywnym 4K.",
-      "bassAttackConfigurationNote": "Każdy wykryty atak basu wybiera następny kolor i uruchamia falę ku górze na istniejącej masce żeber kopuł i wieży. Kolejne fale płyną niezależnie. Pozostałe maski zachowują swoje cykle. Włącz Reaguj na muzykę; siłę reguluje Przepływ światła i koloru.",
+      "bassAttackConfigurationNote": "Każdy wykryty atak basu uruchamia kolejny kontrastowy kolor na jasno turkusowej bazie: biały, pomarańczowy, zielony, czerwony, różowy, żółty. Fala płynie z dołu ku górze przez 0,3 s; w danym miejscu kolor trwa 0,1 s. Pozostałe maski zachowują swoje cykle. Włącz Reaguj na muzykę; siłę reguluje Przepływ światła i koloru.",
       "environmentBlackoutLabel": "Wygaszenie otoczenia",
       "environmentBlackoutNote": "Pozostawia animowane kolory i światła na czarnym tle. Po wyłączeniu otoczenie wraca płynnie przez 3 sekundy odtwarzania; pauza zatrzymuje odsłanianie.",
       "digitalBehaviors": {"colorShift":"Przepływ światła i koloru","glow":"Lokalne impulsy świetlne"},

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "digital-grid",
-  "version": "0.2.2",
+  "version": "0.3.1",
   "canvas": {
     "width": 3840,
     "height": 2160
@@ -19,6 +19,14 @@
       "id": "diagnostic-material",
       "kind": "image",
       "uri": "/infinite-zoom/samples/digital-grid/diagnostic-material.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "turquoise-material",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/turquoise-material.svg",
       "width": 1600,
       "height": 900,
       "critical": true
@@ -171,6 +179,46 @@
       "id": "delay-city-amber",
       "kind": "mask",
       "uri": "/infinite-zoom/samples/digital-grid/delay-city-amber.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "aircraft",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/aircraft.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "aircraft-wake",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/aircraft-wake.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "aircraft-beacon",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/aircraft-beacon.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "occlusion-skyline",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/occlusion-skyline.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-aircraft",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-aircraft.png",
       "width": 400,
       "height": 225,
       "critical": true
@@ -389,7 +437,7 @@
     {
       "id": "dome-ribs",
       "zIndex": 5,
-      "imageAssetId": "diagnostic-material",
+      "imageAssetId": "turquoise-material",
       "maskAssetId": "visible-dome-ribs",
       "behaviors": [
         {
@@ -403,17 +451,12 @@
             "saturation": 0,
             "lightness": 0,
             "attackWave": {
-              "travelSeconds": 0.8,
-              "pulseSeconds": 0.24,
+              "travelSeconds": 0.3,
+              "pulseSeconds": 0.1,
               "startY": 0.39444444444444443,
               "endY": 0,
-              "baseIntensity": 0.45,
+              "baseIntensity": 0.85,
               "palette": [
-                [
-                  0.02,
-                  0.65,
-                  1
-                ],
                 [
                   1,
                   1,
@@ -430,14 +473,19 @@
                   0.06
                 ],
                 [
-                  0.04,
-                  0.08,
-                  1
+                  1,
+                  0.015,
+                  0.01
                 ],
                 [
-                  0.65,
-                  0.01,
-                  1
+                  1,
+                  0.015,
+                  0.25
+                ],
+                [
+                  1,
+                  0.8,
+                  0.01
                 ]
               ]
             }
@@ -579,6 +627,113 @@
             "threshold": 0.2,
             "sharpness": 4,
             "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "sky-aircraft-wake",
+      "zIndex": 8,
+      "imageAssetId": "aircraft-wake",
+      "travel": {
+        "startSeconds": 30,
+        "durationSeconds": 120,
+        "x": 2253.6,
+        "y": 0
+      },
+      "occlusionMaskAssetId": "occlusion-skyline",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-aircraft",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-aircraft",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 2.2,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "sky-aircraft",
+      "zIndex": 9,
+      "imageAssetId": "aircraft",
+      "travel": {
+        "startSeconds": 30,
+        "durationSeconds": 120,
+        "x": 2253.6,
+        "y": 0
+      },
+      "occlusionMaskAssetId": "occlusion-skyline",
+      "behaviors": []
+    },
+    {
+      "id": "sky-aircraft-beacon",
+      "zIndex": 10,
+      "imageAssetId": "aircraft-beacon",
+      "travel": {
+        "startSeconds": 30,
+        "durationSeconds": 120,
+        "x": 2253.6,
+        "y": 0
+      },
+      "occlusionMaskAssetId": "occlusion-skyline",
+      "blendMode": "additive-emission",
+      "behaviors": [
+        {
+          "id": "navigation-flash",
+          "kind": "glow",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0,
+            "amount": 1,
+            "threshold": 0,
+            "pulseSeconds": 0.1
           }
         }
       ]

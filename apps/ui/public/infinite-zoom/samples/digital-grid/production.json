@@ -1,7 +1,9 @@
 {
   "artworkId": "digital-grid",
-  "version": "0.2.2",
-  "guidelinesVersion": "1.5",
+  "version": "0.3.1",
+  "guidelinesVersion": "1.6",
+  "originalSourceGuidelinesVersion": "1.5",
+  "aircraftTool": "native SVG authored in packaging script",
   "tool": "built-in image_gen",
   "source": {
     "file": "source.png",
@@ -65,10 +67,32 @@
   "periodSeconds": 12,
   "travelSeconds": 4,
   "impulsePeriodSeconds": 6,
-  "geometryMotion": false,
-  "maskMethod": "Source luminance/chroma inside classification domains; no synthetic luminous outlines. Separate visibility, influence and continuous delay data.",
-  "blackout": "Opaque black base, independent source light layers, environment opacity variant. No engine changes.",
+  "geometryMotion": true,
+  "aircraft": {
+    "startSeconds": 30,
+    "durationSeconds": 120,
+    "sourceNose": [
+      701,
+      180
+    ],
+    "destinationNose": [
+      1640,
+      180
+    ],
+    "widthPixels": 25,
+    "hullPalette": "fixed graphite/cyan",
+    "beacon": {
+      "periodSeconds": 5,
+      "pulseSeconds": 0.1
+    },
+    "wakeColors": "original cyclic motorcycle palette",
+    "occlusion": "Source-derived opaque skyline; includes dome interiors and towers",
+    "repeat": false
+  },
+  "maskMethod": "Original six lighting groups retain source luminance/chroma masks. Aircraft has separate native SVG hull/wake/beacon alpha, independent wake delay data and a source-derived stationary skyline occlusion matte. Hull palette is fixed; only wake colors and beacon emission animate.",
+  "blackout": "Opaque black base and independent protected light layers; aircraft retains colors and stationary occlusion at environment opacity zero. Its explicit 30-second appearance gate still applies.",
   "uncertainBoundaries": [
+    "Threshold-derived skyline: very dark edges, antialiasing and fine spire tips require artistic review.",
     "Wheel/body classification cuts may cross a white panel; both are lit but timing direction changes there.",
     "Very fine cyan reflected highlights are intentionally included in road light.",
     "Angular wheel phase wraps at the rear-facing ray; inspect loop seam during zoom."

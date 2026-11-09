@@ -35,6 +35,10 @@ export async function createDigitalGrid(){
   const coefficients=[.2126,.7152,.0722],tint=[.015,.60,1];
   const matrix=tint.map(t=>[...coefficients.map(v=>v*t),0,0].join(' ')).join(' ')+' 0 0 0 1 0';
   await asset('diagnostic-material','image',Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><defs><filter id="material" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${matrix}"/></filter></defs><image width="1600" height="900" preserveAspectRatio="none" filter="url(#material)" href="data:image/png;base64,${(await sharp(rgb,{raw:{width:WIDTH,height:HEIGHT,channels:3}}).png().toBuffer()).toString('base64')}"/></svg>`),'svg');
+  // A registered material variant changes only the existing bass selection's
+  // base color. Its visibility, influence and delay masks stay untouched.
+  const turquoiseMatrix=[.45,1,.88].map(t=>[...coefficients.map(v=>v*t),0,0].join(' ')).join(' ')+' 0 0 0 1 0';
+  await asset('turquoise-material','image',Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><defs><filter id="material" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${turquoiseMatrix}"/></filter></defs><image width="1600" height="900" preserveAspectRatio="none" filter="url(#material)" href="data:image/png;base64,${(await sharp(rgb,{raw:{width:WIDTH,height:HEIGHT,channels:3}}).png().toBuffer()).toString('base64')}"/></svg>`),'svg');
   await asset('black','image',Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="9"><path fill="black" d="M0 0h16v9H0z"/></svg>'),'svg',16,9);
   const counts={},union=new Uint8Array(WIDTH*HEIGHT);
   for(const [g,group]of GROUPS.entries()){
@@ -80,17 +84,54 @@ export async function createDigitalGrid(){
   // Reuse exactly one existing material/visibility selection. No tower crop,
   // replacement texture, new mask or FE animation is required.
   const bassLayer=layers.find(layer=>layer.id==='dome-ribs');
+  bassLayer.imageAssetId='turquoise-material';
   bassLayer.behaviors=[{id:'bass-color-wave',kind:'colorShift',order:0,params:{frequencyHz:0,phase:0,hue:0,saturation:0,lightness:0,
-    attackWave:{travelSeconds:.8,pulseSeconds:.24,startY:355/900,endY:0,baseIntensity:.45,palette:[[.02,.65,1],[1,1,1],[1,.25,.01],[.02,1,.06],[.04,.08,1],[.65,.01,1]]},
+    attackWave:{travelSeconds:.3,pulseSeconds:.1,startY:355/900,endY:0,baseIntensity:.85,palette:[[1,1,1],[1,.25,.01],[.02,1,.06],[1,.015,.01],[1,.015,.25],[1,.8,.01]]},
   }},...bassLayer.behaviors.filter(b=>b.kind==='glow')];
-  const manifest={schemaVersion:2,id:'digital-grid',version:'0.2.2',canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:'black-coverage'},anchors:[{id:'center',x:1920,y:1080}]};
+  // Tiny native vector silhouette: angular black fuselage with inset emissive
+  // rails, engine slots and a tapered wake. Full-canvas registration is retained.
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><defs>
+    <linearGradient id="wake"><stop stop-color="#008dbb" stop-opacity="0"/><stop offset="1" stop-color="#08bcff" stop-opacity=".65"/></linearGradient>
+    <linearGradient id="hull" x2="0" y2="1"><stop stop-color="#384c5c"/><stop offset=".5" stop-color="#0c161f"/><stop offset="1" stop-color="#1c303c"/></linearGradient>
+    </defs>
+    <path d="M679 180L676 174L684 176L690 177L701 180L690 183L678 184L681 181Z" fill="url(#hull)"/>
+    <g fill="none" stroke="#36b4cd" stroke-width=".65"><path d="M678 175L685 178L696 180L687 182L680 182"/><path d="M681 178L688 179M682 180L690 180M683 181L686 181"/></g>
+    <g fill="#0bb7f0">${Array.from({length:8},(_,i)=>`<path d="M${680+i*1.7} ${178.4+i*.16}h.7v.45h-.7Z"/>`).join('')}<path d="M679 179h2v2h-2Z"/></g></svg>`;
+  await asset('aircraft','image',Buffer.from(svg),'svg');
+  const wakeSvg=`<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><defs><linearGradient id="wake"><stop stop-color="#008dbb" stop-opacity="0"/><stop offset="1" stop-color="#08bcff" stop-opacity=".65"/></linearGradient></defs><path d="M600 179.6L681 179.6L681 180.4L600 180.4Z" fill="url(#wake)"/></svg>`;
+  await asset('aircraft-wake','image',Buffer.from(wakeSvg),'svg');
+  await asset('aircraft-beacon','image',Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><ellipse cx="686" cy="177.6" rx="2" ry="1.3" fill="#b7eaff" opacity=".15"/><ellipse cx="686" cy="177.6" rx=".95" ry=".7" fill="#e5faff"/></svg>'),'svg');
+  // Opaque architecture silhouette from the first registered illuminated skyline
+  // sample in each column. It includes dome interiors, rather than only ribs.
+  const occlusion=new Uint8Array(WIDTH*HEIGHT),flightDelay=new Uint8Array(WIDTH*HEIGHT);
+  for(let x=0;x<WIDTH;x++){
+    let skyline=HEIGHT;
+    for(let y=0;y<HEIGHT;y++){const i=(y*WIDTH+x)*3;if(Math.max(rgb[i],rgb[i+1],rgb[i+2])>24){skyline=y;break;}}
+    for(let y=0;y<HEIGHT;y++){
+      occlusion[y*WIDTH+x]=y>=skyline?255:0;
+      flightDelay[y*WIDTH+x]=Math.round(255*Math.max(0,Math.min(1,(x-600)/101)));
+    }
+  }
+  await asset('occlusion-skyline','mask',await gray(occlusion),'png');
+  await asset('delay-aircraft','mask',await sharp(await gray(flightDelay)).resize(400,225,{kernel:'linear'}).png().toBuffer(),'png',400,225);
+  const flight={travel:{startSeconds:30,durationSeconds:120,x:2253.6,y:0},occlusionMaskAssetId:'occlusion-skyline'};
+  layers.push({id:'sky-aircraft-wake',zIndex:8,imageAssetId:'aircraft-wake',...flight,
+    behaviors:layers.find(l=>l.id==='body-panels').behaviors.map(b=>{
+      const {influenceMaskAssetId,...behavior}=b;
+      return {...behavior,params:{...b.params,...(b.params.delayMapAssetId?{delayMapAssetId:'delay-aircraft'}:{})}};
+    })});
+  layers.push({id:'sky-aircraft',zIndex:9,imageAssetId:'aircraft',...flight,behaviors:[]});
+  layers.push({id:'sky-aircraft-beacon',zIndex:10,imageAssetId:'aircraft-beacon',...flight,blendMode:'additive-emission',behaviors:[
+    {id:'navigation-flash',kind:'glow',order:0,params:{frequencyHz:1/5,phase:0,amount:1,threshold:0,pulseSeconds:.1}},
+  ]});
+  const manifest={schemaVersion:2,id:'digital-grid',version:'0.3.1',canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:'black-coverage'},anchors:[{id:'center',x:1920,y:1080}]};
   await writeFile(new URL('manifest.json',root),JSON.stringify(manifest,null,2)+'\n');
   // Existing opacity behavior defines the variant's initial state; opacity
   // strength 1 -> 0 reveals it. The normal variant uses layer opacity directly.
   const blackout={...manifest,layers:layers.map(l=>l.id==='environment'?{...l,behaviors:[{id:'environment-blackout',kind:'opacity',order:0,params:{frequencyHz:0,phase:0,base:0,amount:0}}]}:l)};
   await writeFile(new URL('blackout-manifest.json',root),JSON.stringify(blackout,null,2)+'\n');
-  await writeFile(new URL('diagnostic-color.json',root),JSON.stringify({version:manifest.version,guidelinesVersion:'1.6',requestedColors:['cyan','white','orange','green','blue','violet'],method:'Original cyclic palette on five masks; each detected bass event launches the next palette color as an independent upward ribbon on existing dome-ribs material.',material:'diagnostic-material.svg',hueExcursionRadians:2*Math.PI,periodSeconds:12,travelSeconds:4,bassColor:{layerId:'dome-ribs',maskAssetId:'visible-dome-ribs',signal:'kickEvent',inputDecayMs:160,...bassLayer.behaviors[0].params.attackWave,returnsToBase:true,maxConcurrentWaves:32},masksUnchanged:true,engineChanges:'User-approved opt-in attackWave mode in existing colorShift, plus replayable bass event token. Renderer, masks and clock unchanged.',originalSourceUnchanged:true,controlLimitation:'Disabling colorShift leaves the original cyan diagnostic material; restoring original white panels is outside this temporary diagnostic'},null,2)+'\n');
-  await writeFile(new URL('production.json',root),JSON.stringify({artworkId:manifest.id,version:manifest.version,guidelinesVersion:'1.5',tool:'built-in image_gen',source:{file:'source.png',width:metadata.width,height:metadata.height,sha256:createHash('sha256').update(source).digest('hex')},runtimeTexture:{width:WIDTH,height:HEIGHT,native4K:false},groups:GROUPS,materialTexels:counts,periodSeconds:12,travelSeconds:4,impulsePeriodSeconds:6,geometryMotion:false,maskMethod:'Source luminance/chroma inside classification domains; no synthetic luminous outlines. Separate visibility, influence and continuous delay data.',blackout:'Opaque black base, independent source light layers, environment opacity variant. No engine changes.',uncertainBoundaries:['Wheel/body classification cuts may cross a white panel; both are lit but timing direction changes there.','Very fine cyan reflected highlights are intentionally included in road light.','Angular wheel phase wraps at the rear-facing ray; inspect loop seam during zoom.'],status:'test pilot; see qa.md'},null,2)+'\n');
+  await writeFile(new URL('diagnostic-color.json',root),JSON.stringify({version:manifest.version,guidelinesVersion:'1.6',requestedColors:['cyan','white','orange','green','blue','violet'],method:'Original cyclic palette on five masks; each detected bass event launches a contrasting white/orange/green/red/pink/yellow upward ribbon over the existing dome-ribs selection with a light turquoise base.',material:'diagnostic-material.svg',hueExcursionRadians:2*Math.PI,periodSeconds:12,travelSeconds:4,bassColor:{layerId:'dome-ribs',maskAssetId:'visible-dome-ribs',baseMaterial:'turquoise-material.svg',baseTint:[.45,1,.88],signal:'kickEvent',inputDecayMs:160,...bassLayer.behaviors[0].params.attackWave,returnsToBase:true,maxConcurrentWaves:32},masksUnchanged:true,engineChanges:'Existing color operators unchanged. Aircraft uses existing rigid travel and stationary occlusion; glow gains optional compact pulseSeconds for the separate beacon, on the existing clock.',originalSourceUnchanged:true,controlLimitation:'Disabling colorShift leaves the authored base material; restoring original white panels is outside this temporary diagnostic'},null,2)+'\n');
+  await writeFile(new URL('production.json',root),JSON.stringify({artworkId:manifest.id,version:manifest.version,guidelinesVersion:'1.6',originalSourceGuidelinesVersion:'1.5',aircraftTool:'native SVG authored in packaging script',tool:'built-in image_gen',source:{file:'source.png',width:metadata.width,height:metadata.height,sha256:createHash('sha256').update(source).digest('hex')},runtimeTexture:{width:WIDTH,height:HEIGHT,native4K:false},groups:GROUPS,materialTexels:counts,periodSeconds:12,travelSeconds:4,impulsePeriodSeconds:6,geometryMotion:true,aircraft:{startSeconds:30,durationSeconds:120,sourceNose:[701,180],destinationNose:[1640,180],widthPixels:25,hullPalette:'fixed graphite/cyan',beacon:{periodSeconds:5,pulseSeconds:.1},wakeColors:'original cyclic motorcycle palette',occlusion:"Source-derived opaque skyline; includes dome interiors and towers",repeat:false},maskMethod:'Original six lighting groups retain source luminance/chroma masks. Aircraft has separate native SVG hull/wake/beacon alpha, independent wake delay data and a source-derived stationary skyline occlusion matte. Hull palette is fixed; only wake colors and beacon emission animate.',blackout:'Opaque black base and independent protected light layers; aircraft retains colors and stationary occlusion at environment opacity zero. Its explicit 30-second appearance gate still applies.',uncertainBoundaries:['Threshold-derived skyline: very dark edges, antialiasing and fine spire tips require artistic review.','Wheel/body classification cuts may cross a white panel; both are lit but timing direction changes there.','Very fine cyan reflected highlights are intentionally included in road light.','Angular wheel phase wraps at the rear-facing ray; inspect loop seam during zoom.'],status:'test pilot; see qa.md'},null,2)+'\n');
   const overlay=Buffer.from(rgb);for(let i=0;i<union.length;i++){const a=union[i]/255*.65;overlay[i*3]=overlay[i*3]*(1-a)+255*a;overlay[i*3+1]*=1-a;overlay[i*3+2]=overlay[i*3+2]*(1-a)+255*a;}
   await sharp(overlay,{raw:{width:WIDTH,height:HEIGHT,channels:3}}).png().toFile(fileURLToPath(new URL('mask-review.png',root)));
   return {counts,source:{width:metadata.width,height:metadata.height}};

@@ -21,13 +21,13 @@ window.runBassColor=async()=>{
     check(waves().length===0,'No waves before a detected event');capture('idle');
     const stream=canvas.captureStream(0),chunks=[],recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
     for(let f=0;f<300;f++){
-      const now=f*1000/60;if([30,54,78,102,126,150].includes(f)){attackAt=now;kickEvent=1-kickEvent;}
+      const now=f*1000/60;if([30,54,66,78,90,102].includes(f)){attackAt=now;kickEvent=1-kickEvent;}
       kick=sampleKickAttack({attackAt,strength:1},now);
       if(f===110){lease.instance.setLayerTransform('environment',{opacity:0});reference.instance.setLayerTransform('environment',{opacity:0});}
-      if(f===150){lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);reference.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);}
+      if(f===70){lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);reference.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);}
       const context={tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5};lease.step(context);reference.step(context);lease.render();stream.getVideoTracks()[0].requestFrame();
-      if([20,30,36,44,52,54,60,78,90,102,110,126,140,150,160,180,230,299].includes(f)){samples.push({frame:f,kick,waves:waves(),...(f<150?measure():{})});capture(`frame-${f}`);}
-      if(f===160){
+      if([20,30,36,44,52,54,60,66,72,78,90,102,110,126,140,150,160,180,230,299].includes(f)){samples.push({frame:f,kick,waves:waves(),...(f<70?measure():{})});capture(`frame-${f}`);}
+      if(f===110){
         lease.render();const frozen=canvas.toDataURL();for(let n=0;n<8;n++)lease.render();check(canvas.toDataURL()===frozen,'Pause freezes active moving waves');
         const ext=canvas.getContext('webgl2').getExtension('WEBGL_lose_context');check(ext,'Context-loss test extension');ext.loseContext();
         for(let n=0;n<100&&lease.getDiagnostics().available;n++)await new Promise(r=>setTimeout(r,10));check(!lease.getDiagnostics().available,'Context loss suspends renderer');
@@ -38,15 +38,15 @@ window.runBassColor=async()=>{
     }
     await new Promise(r=>{recorder.onstop=r;recorder.stop();});stream.getTracks().forEach(t=>t.stop());
     window.qaMotion=await new Promise(r=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));});
-    const starts=samples.filter(s=>[30,54,78,102,126,150].includes(s.frame));
+    const starts=samples.filter(s=>[30,54,66,78,90,102].includes(s.frame));
     check(starts.length===6&&new Set(starts.map(s=>JSON.stringify(s.waves.at(-1).color))).size===6,'Each beat launches the next of six colors');
-    check(samples.find(s=>s.frame===60).waves.length===2,'A second beat does not restart the previous wave');
-    check(samples.find(s=>s.frame===36).changed>200&&samples.find(s=>s.frame===52).changed>200,'Travel is visible on actual masked material');
-    check(samples.find(s=>s.frame===52).centroid<samples.find(s=>s.frame===36).centroid-50,'Measured color front moves upward, not whole-mask blinking');
+    check(samples.find(s=>s.frame===72).waves.length===2,'A new beat does not restart the previous wave');
+    check(samples.find(s=>s.frame===36).changed>200&&samples.find(s=>s.frame===44).changed>200,'Travel is visible on actual masked material');
+    check(samples.find(s=>s.frame===44).centroid<samples.find(s=>s.frame===36).centroid-50,'Measured color front moves upward, not whole-mask blinking');
     check(samples.find(s=>s.frame===20).waves.length===0&&samples.find(s=>s.frame===299).waves.length===0,'No free-running waves before/after attacks');
     lease.render();const before=canvas.toDataURL();for(let i=0;i<8;i++)lease.render();check(canvas.toDataURL()===before,'Pause freezes colors');
     lease.reset();check(waves().length===0,'Reset clears waves and palette sequence');check(errors.length===0,errors.join('\n'));
-    return{mask:'visible-dome-ribs',newMasks:0,attacks:6,travelSeconds:.8,pulseSeconds:.24,samples,pause:true,reset:true,blackout:true,zoom:true,contextRecovery:true,errors};
+    return{mask:'visible-dome-ribs',newMasks:0,baseMaterial:'light turquoise',attacks:6,travelSeconds:.3,pulseSeconds:.1,direction:'up',samples,pause:true,reset:true,blackout:true,zoom:true,contextRecovery:true,errors};
   }finally{lease?.dispose();reference?.dispose();canvas.remove();refCanvas.remove();}
 };
 window.runDigitalGrid=async()=>{
@@ -108,4 +108,162 @@ window.runDigitalGrid=async()=>{
     check(errors.length===0,errors.join('\n'));
     return{simulationSeconds:28,cycles:2,travelDelaySeconds:4,zoom:true,pan:true,pause:true,reset:true,opaque:true,blackout:true,animatedLightsFromStart:true,smoothRevealSeconds:8,palettePeaks,phases,errors,colorBuffer:lease.getDiagnostics().colorBuffer};
   }finally{lease?.dispose();canvas.remove();}
+};
+
+window.runAircraft=async()=>{
+  const manifest=await(await fetch('/infinite-zoom/samples/digital-grid/manifest.json')).json();
+  const canvas=document.createElement('canvas');document.body.append(canvas);window.qaCaptures={};let lease,tick=0;const errors=[];
+  const check=(v,m)=>{if(!v)throw Error(m);};
+  const capture=n=>{lease.render();window.qaCaptures[n]=canvas.toDataURL('image/png');};
+  const aircraftIds=['sky-aircraft','sky-aircraft-wake','sky-aircraft-beacon'];
+  const setAircraftOpacity=opacity=>aircraftIds.forEach(id=>lease.instance.setLayerTransform(id,{opacity}));
+  const flight=()=>lease.instance.getSnapshot().layers.find(l=>l.id==='sky-aircraft');
+  try{
+    lease=await prepareArtwork({canvas,manifest,instanceId:'flight-qa',viewport:{width:1600,height:900,dpr:1,renderScale:1},highPrecisionColor:true,onAvailabilityChange(){},onError:e=>errors.push(String(e))},new AbortController().signal);
+    lease.render();
+    const gl=canvas.getContext('webgl2');
+    const pixels=()=>{const p=new Uint8Array(1600*900*4);gl.readPixels(0,0,1600,900,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;};
+    const image=new Image();image.src='/infinite-zoom/samples/digital-grid/occlusion-skyline.png';await image.decode();
+    const maskCanvas=document.createElement('canvas');maskCanvas.width=1600;maskCanvas.height=900;const pen=maskCanvas.getContext('2d');pen.drawImage(image,0,0);const mask=pen.getImageData(0,0,1600,900).data;
+    const stream=canvas.captureStream(0),chunks=[],recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+    const samples=[];
+    // Full path sampled at 6 simulation fps, recorded at 60 fps (10x review).
+    for(let f=0;f<=960;f++){
+      for(let n=0;n<10;n++)lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});
+      if(f===390)lease.instance.setLayerTransform('environment',{opacity:0});
+      if(f===420)lease.camera.retarget({x:1920,y:980,rotation:0,logScale:.3},2);
+      if(f===570){lease.instance.setLayerTransform('environment',{opacity:1});lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:0},2);}
+      lease.render();stream.getVideoTracks()[0].requestFrame();
+      if(f%30===0||[179,180,390,420,570,899,900].includes(f)){
+        const before=canvas.toDataURL(),shown=pixels();setAircraftOpacity(0);lease.render();const hidden=canvas.toDataURL(),absent=pixels();setAircraftOpacity(1);lease.render();
+        let hullPixels=0,trailPixels=0,occludedLeaks=0;
+        if(f<420||f>585){
+          const dx=flight().x/2.4;
+          for(let y=170;y<190;y++)for(let x=0;x<1600;x++){
+            const i=((899-y)*1600+x)*4,d=Math.max(Math.abs(shown[i]-absent[i]),Math.abs(shown[i+1]-absent[i+1]),Math.abs(shown[i+2]-absent[i+2]));
+            if(d<3)continue;
+            if(mask[(y*1600+x)*4]===255)occludedLeaks++;
+            if(x>=676+dx&&x<=702+dx)hullPixels++;else trailPixels++;
+          }
+          check(occludedLeaks===0,'No aircraft/wake pixels over opaque architecture');
+        }
+        samples.push({seconds:tick/60,x:flight().x,opacity:flight().opacity,visible:before!==hidden,hullPixels,trailPixels,occludedLeaks});capture(`flight-${f}`);
+      }
+      if(f===330){const before=canvas.toDataURL();for(let n=0;n<8;n++)lease.render();check(canvas.toDataURL()===before,'Pause freezes flight and wake');}
+      await new Promise(r=>setTimeout(r,16));
+    }
+    lease.reset();tick=0;
+    for(let i=0;i<2400;i++)lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});
+    const crop=(x,y,w,h)=>{const p=new Uint8Array(w*h*4);gl.readPixels(x,900-y-h,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);return p.join(',');};
+    let hullReference,wakeReference,wakeChanges=0,flashFrames=0;
+    const flashCrops=[];
+    // Hold the separated objects at a fixed clear-sky location only for material QA.
+    for(let f=0;f<660;f++){
+      lease.step({tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5});
+      const authoredX=2253.6*(tick/60-30)/120;
+      for(const id of aircraftIds)lease.instance.setLayerTransform(id,{x:477.6-authoredX});
+      lease.render();
+      // Front fuselage is separate from the rear wake and tiny dorsal beacon.
+      const hull=crop(889,173,13,13);
+      if(hullReference===undefined)hullReference=hull;
+      check(hull===hullReference,'Hull pixels stay identical through every hue/white pass');
+      const wake=crop(805,179,65,3);
+      if(wakeReference===undefined)wakeReference=wake;
+      if(wake!==wakeReference)wakeChanges++;
+      flashCrops.push(crop(882,175,7,6));
+      stream.getVideoTracks()[0].requestFrame();
+      if([2,8,302,308,602,608].includes(f))capture(`appearance-${f}`);
+      await new Promise(r=>setTimeout(r,16));
+    }
+    flashFrames=flashCrops.filter(value=>value!==flashCrops[8]).length;
+    check(wakeChanges>500,'Wake retains visible color changes');
+    check(flashFrames>=9&&flashFrames<=18,'Only a few rendered frames flash every five seconds');
+    await new Promise(r=>{recorder.onstop=r;recorder.stop();});stream.getTracks().forEach(t=>t.stop());
+    window.qaMotion=await new Promise(r=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));});
+    check(samples.filter(s=>s.seconds<30).every(s=>!s.visible),'Invisible before 30 seconds');
+    check(samples.some(s=>s.seconds>40&&s.seconds<60&&s.visible),'Flight visible in first sky gap');
+    check(samples.some(s=>s.seconds>108&&s.seconds<125&&s.visible),'Flight reappears to the right of main tower');
+    check(samples.find(s=>s.seconds>100&&s.seconds<101).hullPixels===0,'Hull hides fully behind main tower');
+    check(samples.find(s=>s.seconds>115&&s.seconds<116).hullPixels>0,'Hull emerges right of main tower');
+    check(samples.find(s=>s.seconds>140&&s.seconds<141).hullPixels===0,'Hull hides behind right dome');
+    check(samples.some(s=>s.trailPixels>15),'Luminous wake is actually visible');
+    check(samples.filter(s=>s.seconds>150).every(s=>!s.visible),'No repeated flight');
+    lease.reset();capture('reset');check(flight().opacity===0,'Reset hides aircraft');check(errors.length===0,errors.join('\n'));
+    return{simulationSeconds:160,recordingSpeed:10,pause:true,reset:true,blackout:true,zoom:true,hullPixelsStable:true,wakeChanges,flashFrames,appearanceReviewSeconds:11,samples,errors};
+  }finally{lease?.dispose();canvas.remove();}
+};
+
+
+// Engine-only fixture: cloned package configuration, no authored asset changes.
+window.runTrajectories=async()=>{
+  const source=await(await fetch('/infinite-zoom/samples/digital-grid/manifest.json')).json();
+  const pivot={x:686*2.4,y:180*2.4};
+  const r=200,k=.5522847498307936*r;
+  const cases=[
+    {name:'arc',path:{kind:'bezier',segments:[{control1:{x:400,y:-220},control2:{x:1200,y:160},to:{x:1700,y:0}}]},easing:'linear'},
+    {name:'wave',path:{kind:'spline',points:[{x:0,y:0},{x:350,y:-100},{x:750,y:100},{x:1200,y:-100},{x:1700,y:0}]},easing:'ease-in-out'},
+    {name:'turns',path:{kind:'bezier',segments:[
+      {control1:{x:0,y:-k},control2:{x:r-k,y:-r},to:{x:r,y:-r}},
+      {control1:{x:r+k,y:-r},control2:{x:2*r,y:-k},to:{x:2*r,y:0}},
+      {control1:{x:2*r,y:k},control2:{x:r+k,y:r},to:{x:r,y:r}},
+      {control1:{x:r-k,y:r},control2:{x:0,y:k},to:{x:0,y:0}},
+    ]},easing:'ease-in-out'},
+  ];
+  const check=(v,m)=>{if(!v)throw Error(m);};
+  let canvas=document.createElement('canvas');document.body.append(canvas);window.qaCaptures={};
+  const image=new Image();image.src='/infinite-zoom/samples/digital-grid/occlusion-skyline.png';await image.decode();
+  const mc=document.createElement('canvas');mc.width=1600;mc.height=900;const ctx=mc.getContext('2d');ctx.drawImage(image,0,0);const mask=ctx.getImageData(0,0,1600,900).data;
+  const video=document.createElement('canvas');video.width=1600;video.height=900;const videoContext=video.getContext('2d');
+  let lease,recorder,stream;const chunks=[],results=[],errors=[];
+  try{
+    stream=video.captureStream(0);recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+    for(const scenario of cases){
+      const manifest=structuredClone(source);
+      const ids=manifest.layers.filter(l=>l.id.startsWith('sky-aircraft')).map(l=>l.id);
+      for(const l of manifest.layers)if(ids.includes(l.id))l.travel={startSeconds:0,durationSeconds:6,path:scenario.path,easing:scenario.easing,orientToPath:true,pivot};
+      lease=await prepareArtwork({canvas,manifest,instanceId:'trajectory-'+scenario.name,viewport:{width:1600,height:900,dpr:1,renderScale:1},highPrecisionColor:true,onAvailabilityChange(){},onError:e=>errors.push(String(e))},new AbortController().signal);
+      const gl=canvas.getContext('webgl2'),pixels=()=>{const p=new Uint8Array(1600*900*4);gl.readPixels(0,0,1600,900,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;};
+      const capture=name=>{lease.render();window.qaCaptures[name]=canvas.toDataURL('image/png');};
+      const initial=lease.instance.getSnapshot(),samples=[];let previousAngle;
+      for(let f=0;f<360;f++){
+        lease.step({tick:f+1,timeSeconds:(f+1)/60,dt:1/60,random:()=>.5});
+        if(f===90)lease.instance.setLayerTransform('environment',{opacity:0});
+        if(f===180)lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:.2},.5);
+        if(f===270)lease.instance.setLayerTransform('environment',{opacity:1});
+        const layer=lease.instance.getSnapshot().layers.find(l=>l.id==='sky-aircraft');
+        if(previousAngle!==undefined)check(Math.abs(layer.rotation-previousAngle)<.2,'No heading discontinuity at a turn or pi wrap');previousAngle=layer.rotation;
+        for(const id of ids){const other=lease.instance.getSnapshot().layers.find(l=>l.id===id);check(other.x===layer.x&&other.y===layer.y&&other.rotation===layer.rotation,'Hull, wake and beacon keep shared pivot/path');}
+        lease.render();videoContext.drawImage(canvas,0,0);stream.getVideoTracks()[0].requestFrame();
+        if([30,90,150,210,270,359].includes(f)){
+          const shown=pixels();for(const id of ids)lease.instance.setLayerTransform(id,{opacity:0});lease.render();const hidden=pixels();for(const id of ids)lease.instance.setLayerTransform(id,{opacity:1});lease.render();
+          const camera=lease.camera.getSnapshot().pose,zoom=Math.exp(-camera.logScale);let changed=0,leaks=0;
+          for(let y=0;y<900;y++)for(let x=0;x<1600;x++){
+            const i=((899-y)*1600+x)*4;
+            if(Math.max(Math.abs(shown[i]-hidden[i]),Math.abs(shown[i+1]-hidden[i+1]),Math.abs(shown[i+2]-hidden[i+2]))<4)continue;
+            changed++;
+            const mx=(camera.x+((x+.5)/1600-.5)*3840*zoom)/2.4-.5,my=(camera.y+((y+.5)/900-.5)*2160*zoom)/2.4-.5;
+            const sx=Math.floor(mx),sy=Math.floor(my);
+            if(sx>=0&&sx<1599&&sy>=0&&sy<899&&[0,1].every(dy=>[0,1].every(dx=>mask[((sy+dy)*1600+sx+dx)*4]===255)))leaks++;
+          }
+          check(leaks===0,'Rotated objects remain behind stationary architecture during zoom');
+          samples.push({seconds:(f+1)/60,rotation:layer.rotation,changed,leaks});capture(scenario.name+'-'+f);
+        }
+        if(f===150){const before=canvas.toDataURL();for(let n=0;n<5;n++)lease.render();check(canvas.toDataURL()===before,'Pause freezes curved motion and rotation');}
+        if(f===210&&scenario.name==='arc'){
+          const before=canvas.toDataURL(),snapshot=lease.instance.getSnapshot(),ext=gl.getExtension('WEBGL_lose_context');check(ext,'Context-loss extension');ext.loseContext();
+          for(let i=0;i<100&&lease.getDiagnostics().available;i++)await new Promise(r=>setTimeout(r,10));ext.restoreContext();
+          for(let i=0;i<200&&!lease.getDiagnostics().available;i++)await new Promise(r=>setTimeout(r,10));
+          check(lease.getDiagnostics().available,'Renderer recovers');lease.render();check(canvas.toDataURL()===before,'Context recovery preserves curved pose and occlusion');check(JSON.stringify(lease.instance.getSnapshot())===JSON.stringify(snapshot),'Context recovery preserves logical state');
+        }
+        await new Promise(r=>setTimeout(r,16));
+      }
+      check(samples.some(s=>s.changed>20),'Trajectory visibly renders in clear sky');
+      lease.reset();check(JSON.stringify(lease.instance.getSnapshot())===JSON.stringify(initial),'Reset restores curved travel exactly');
+      results.push({name:scenario.name,samples});lease.dispose();lease=null;canvas.remove();canvas=document.createElement('canvas');document.body.append(canvas);
+    }
+    await new Promise(r=>{recorder.onstop=r;recorder.stop();});stream.getTracks().forEach(t=>t.stop());
+    window.qaMotion=await new Promise(r=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));});
+    check(errors.length===0,errors.join('\n'));
+    return{cases:results,simulationSeconds:18,rotation:true,easing:true,occlusion:true,blackout:true,zoom:true,pause:true,reset:true,contextRecovery:true,errors};
+  }finally{lease?.dispose();if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());canvas.remove();video.remove();}
 };

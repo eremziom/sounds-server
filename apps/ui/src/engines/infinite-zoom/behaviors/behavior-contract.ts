@@ -24,7 +24,7 @@ export type BehaviorDescriptor = CommonBehavior & (
   { readonly kind: "flow"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "opacity"; readonly params: Periodic & { readonly base: number; readonly amount: number } } |
   { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number; readonly delayMapAssetId?: string; readonly travelSeconds?: number; readonly attackWave?:AttackColorWave } } |
-  { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number; readonly sharpness?: number; readonly intensity?: number; readonly color?: readonly [number,number,number] } }
+  { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number; readonly sharpness?: number; readonly pulseSeconds?: number; readonly intensity?: number; readonly color?: readonly [number,number,number] } }
 );
 
 function finite(value: unknown, min: number, max: number): number {
@@ -111,9 +111,11 @@ export function parseBehaviors(input: unknown): readonly BehaviorDescriptor[] {
         behavior = { ...common, kind: "colorShift", params: { ...periodic, hue: finite(params.hue, -Math.PI, Math.PI), saturation: finite(params.saturation, -1, 1), lightness: finite(params.lightness, -0.5, 0.5),
           ...(attackWave?{attackWave}:{}),...(params.delayMapAssetId === undefined ? {} : {delayMapAssetId:reference(params.delayMapAssetId),travelSeconds:finite(params.travelSeconds,1/60,60)}) } }; break;
       case "glow":
-        keys = ["frequencyHz", "phase", "amount", "threshold", "sharpness", "intensity", "color"];
+        keys = ["frequencyHz", "phase", "amount", "threshold", "sharpness", "intensity", "color", "pulseSeconds"];
+        if(params.pulseSeconds!==undefined && (periodic.frequencyHz===0 || params.sharpness!==undefined))throw new Error("Short glow pulses require positive frequency and no sharpness");
         if(params.color!==undefined&&(!Array.isArray(params.color)||params.color.length!==3))throw new Error("Invalid glow color");
         behavior = { ...common, kind: "glow", params: { ...periodic, amount: finite(params.amount, 0, 1), threshold: finite(params.threshold, 0, 1),
+          ...(params.pulseSeconds === undefined ? {} : {pulseSeconds:finite(params.pulseSeconds,1/60,Math.min(.25,1/periodic.frequencyHz))}),
           ...(params.sharpness === undefined ? {} : {sharpness:finite(params.sharpness,1,16)}),
           ...(params.intensity === undefined ? {} : {intensity:finite(params.intensity,1,3)}),
           ...(params.color === undefined ? {} : {color:Object.freeze((params.color as unknown[]).map(c=>finite(c,0,1))) as readonly [number,number,number]}),
