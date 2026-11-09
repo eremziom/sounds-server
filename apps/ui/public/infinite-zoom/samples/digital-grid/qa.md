@@ -1,6 +1,44 @@
-# Digital Grid 0.2.2 — test-artwork QA
+# Digital Grid 0.2.4 — test-artwork QA
 
 Created 2026-11-09 with shared creator guidelines v1.5. Status: **test pilot, artistic acceptance pending**.
+
+## 0.2.4 — upward wave and light turquoise base
+
+User requested bottom-to-top travel and a light turquoise base. Selected source
+range is now y=355/900 to y=0; travel/pulse remain 0.3/0.1 s. Existing source
+luminance is tinted through a registered native SVG material variant with RGB
+[0.45,1,0.88] and base intensity 0.85. Only `dome-ribs` uses this material. Masks,
+delay maps, original rasters, all other layer descriptors and the engine remain
+unchanged. The impulse palette still excludes cyan/blue/nearby violet.
+
+Eight focused package/wave tests passed. Real WebGL2 motion QA passed for all
+six colors, repeated/overlapping beats, upward movement, pause/reset, blackout,
+zoom and recovery of active waves after context loss. The first front moves
+upward from y=296 at 0.10 s to y=142 at 0.23 s, with its tail near y=20 at 0.37 s.
+The idle material and moving fronts were inspected visually. Current evidence
+is in `.tmp/digital-grid-bass-color-qa/`, superseding earlier captures in that
+directory. Existing mask-resolution/branch-routing limitations remain; this
+parameter/material update does not imply final artistic acceptance.
+
+## 0.2.3 — contrasting palette and faster downward travel
+
+User correction: omit impulse colors that blend into the fixed blue/cyan mask.
+The bass palette is white/orange/green/red/pink/yellow. Only that palette changes;
+all other mask cycles remain intact. Configuration now sets 0.3 s top-to-bottom
+travel and 0.1 s local ribbon duration. This is 0.4 s including the last tail.
+No new/revised masks, image assets, engine changes or detector settings.
+
+Eight focused package/wave unit checks passed, including hue separation from
+blue/cyan/nearby violet and exact timing/direction settings. The real WebGL2
+recording passed for six distinct colors, shorter travel, repeated/overlapping
+attacks, pause, reset, blackout, zoom and recovery of active waves after context
+loss. Against a quiet reference, the first front moves downward from y=63 at
+0.10 s to y=215 at 0.23 s, and y=340 at 0.37 s in its trailing band. Source-mask
+boundaries remain unchanged. Current evidence is in
+`.tmp/digital-grid-bass-color-qa/`; this supersedes earlier recordings in the same
+directory. The application integration fixture uses 250 ms detected bass spacing
+to verify overlapping waves with the shorter lifetime. Artistic acceptance and
+the previously recorded mask/zoom limitations remain separate from these checks.
 
 ## 0.2.2 — independent color wave on every bass beat
 

@@ -21,13 +21,13 @@ window.runBassColor=async()=>{
     check(waves().length===0,'No waves before a detected event');capture('idle');
     const stream=canvas.captureStream(0),chunks=[],recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
     for(let f=0;f<300;f++){
-      const now=f*1000/60;if([30,54,78,102,126,150].includes(f)){attackAt=now;kickEvent=1-kickEvent;}
+      const now=f*1000/60;if([30,54,66,78,90,102].includes(f)){attackAt=now;kickEvent=1-kickEvent;}
       kick=sampleKickAttack({attackAt,strength:1},now);
       if(f===110){lease.instance.setLayerTransform('environment',{opacity:0});reference.instance.setLayerTransform('environment',{opacity:0});}
-      if(f===150){lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);reference.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);}
+      if(f===70){lease.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);reference.camera.retarget({x:1920,y:1080,rotation:0,logScale:.6},.5);}
       const context={tick:++tick,timeSeconds:tick/60,dt:1/60,random:()=>.5};lease.step(context);reference.step(context);lease.render();stream.getVideoTracks()[0].requestFrame();
-      if([20,30,36,44,52,54,60,78,90,102,110,126,140,150,160,180,230,299].includes(f)){samples.push({frame:f,kick,waves:waves(),...(f<150?measure():{})});capture(`frame-${f}`);}
-      if(f===160){
+      if([20,30,36,44,52,54,60,66,72,78,90,102,110,126,140,150,160,180,230,299].includes(f)){samples.push({frame:f,kick,waves:waves(),...(f<70?measure():{})});capture(`frame-${f}`);}
+      if(f===110){
         lease.render();const frozen=canvas.toDataURL();for(let n=0;n<8;n++)lease.render();check(canvas.toDataURL()===frozen,'Pause freezes active moving waves');
         const ext=canvas.getContext('webgl2').getExtension('WEBGL_lose_context');check(ext,'Context-loss test extension');ext.loseContext();
         for(let n=0;n<100&&lease.getDiagnostics().available;n++)await new Promise(r=>setTimeout(r,10));check(!lease.getDiagnostics().available,'Context loss suspends renderer');
@@ -38,15 +38,15 @@ window.runBassColor=async()=>{
     }
     await new Promise(r=>{recorder.onstop=r;recorder.stop();});stream.getTracks().forEach(t=>t.stop());
     window.qaMotion=await new Promise(r=>{const reader=new FileReader();reader.onload=()=>r(reader.result);reader.readAsDataURL(new Blob(chunks,{type:'video/webm'}));});
-    const starts=samples.filter(s=>[30,54,78,102,126,150].includes(s.frame));
+    const starts=samples.filter(s=>[30,54,66,78,90,102].includes(s.frame));
     check(starts.length===6&&new Set(starts.map(s=>JSON.stringify(s.waves.at(-1).color))).size===6,'Each beat launches the next of six colors');
-    check(samples.find(s=>s.frame===60).waves.length===2,'A second beat does not restart the previous wave');
-    check(samples.find(s=>s.frame===36).changed>200&&samples.find(s=>s.frame===52).changed>200,'Travel is visible on actual masked material');
-    check(samples.find(s=>s.frame===52).centroid<samples.find(s=>s.frame===36).centroid-50,'Measured color front moves upward, not whole-mask blinking');
+    check(samples.find(s=>s.frame===72).waves.length===2,'A new beat does not restart the previous wave');
+    check(samples.find(s=>s.frame===36).changed>200&&samples.find(s=>s.frame===44).changed>200,'Travel is visible on actual masked material');
+    check(samples.find(s=>s.frame===44).centroid<samples.find(s=>s.frame===36).centroid-50,'Measured color front moves upward, not whole-mask blinking');
     check(samples.find(s=>s.frame===20).waves.length===0&&samples.find(s=>s.frame===299).waves.length===0,'No free-running waves before/after attacks');
     lease.render();const before=canvas.toDataURL();for(let i=0;i<8;i++)lease.render();check(canvas.toDataURL()===before,'Pause freezes colors');
     lease.reset();check(waves().length===0,'Reset clears waves and palette sequence');check(errors.length===0,errors.join('\n'));
-    return{mask:'visible-dome-ribs',newMasks:0,attacks:6,travelSeconds:.8,pulseSeconds:.24,samples,pause:true,reset:true,blackout:true,zoom:true,contextRecovery:true,errors};
+    return{mask:'visible-dome-ribs',newMasks:0,baseMaterial:'light turquoise',attacks:6,travelSeconds:.3,pulseSeconds:.1,direction:'up',samples,pause:true,reset:true,blackout:true,zoom:true,contextRecovery:true,errors};
   }finally{lease?.dispose();reference?.dispose();canvas.remove();refCanvas.remove();}
 };
 window.runDigitalGrid=async()=>{

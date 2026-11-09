@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.4",
   "guidelinesVersion": "1.6",
   "requestedColors": [
     "cyan",
@@ -9,7 +9,7 @@
     "blue",
     "violet"
   ],
-  "method": "Original cyclic palette on five masks; each detected bass event launches the next palette color as an independent upward ribbon on existing dome-ribs material.",
+  "method": "Original cyclic palette on five masks; each detected bass event launches a contrasting white/orange/green/red/pink/yellow upward ribbon over the existing dome-ribs selection with a light turquoise base.",
   "material": "diagnostic-material.svg",
   "hueExcursionRadians": 6.283185307179586,
   "periodSeconds": 12,
@@ -17,19 +17,20 @@
   "bassColor": {
     "layerId": "dome-ribs",
     "maskAssetId": "visible-dome-ribs",
+    "baseMaterial": "turquoise-material.svg",
+    "baseTint": [
+      0.45,
+      1,
+      0.88
+    ],
     "signal": "kickEvent",
     "inputDecayMs": 160,
-    "travelSeconds": 0.8,
-    "pulseSeconds": 0.24,
+    "travelSeconds": 0.3,
+    "pulseSeconds": 0.1,
     "startY": 0.39444444444444443,
     "endY": 0,
-    "baseIntensity": 0.45,
+    "baseIntensity": 0.85,
     "palette": [
-      [
-        0.02,
-        0.65,
-        1
-      ],
       [
         1,
         1,
@@ -46,21 +47,26 @@
         0.06
       ],
       [
-        0.04,
-        0.08,
-        1
+        1,
+        0.015,
+        0.01
       ],
       [
-        0.65,
-        0.01,
-        1
+        1,
+        0.015,
+        0.25
+      ],
+      [
+        1,
+        0.8,
+        0.01
       ]
     ],
     "returnsToBase": true,
     "maxConcurrentWaves": 32
   },
   "masksUnchanged": true,
-  "engineChanges": "User-approved opt-in attackWave mode in existing colorShift, plus replayable bass event token. Renderer, masks and clock unchanged.",
+  "engineChanges": "Existing approved attackWave engine mode; this revision changes package parameters and a native SVG material variant only. Renderer, masks and clock unchanged.",
   "originalSourceUnchanged": true,
-  "controlLimitation": "Disabling colorShift leaves the original cyan diagnostic material; restoring original white panels is outside this temporary diagnostic"
+  "controlLimitation": "Disabling colorShift leaves the authored base material; restoring original white panels is outside this temporary diagnostic"
 }

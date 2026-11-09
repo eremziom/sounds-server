@@ -1,10 +1,31 @@
-# Digital Grid — light cycle / test artwork 0.2.2
+# Digital Grid — light cycle / test artwork 0.2.4
 
 Authoritative creator instructions: [shared guidelines v1.5](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md), read 2026-11-09.
 
 User direction: a cinematic TRON: Legacy digital world, white/black futuristic motorcycle in the foreground, luminous roads, hexagonal domes, contrasting colors and completely black background. This is a standalone test scene, without a portal or changes to engine animation implementation.
 
 ## Scene-specific application
+
+Revision 0.2.4 reverses the bass wave to **bottom-to-top** and changes only the
+selected layer's base to **light turquoise**. Travel remains 0.3 s, local ribbon
+duration 0.1 s, and the contrasting impulse palette remains unchanged. The
+source-coordinate range is y=355/900 to y=0. An authored native SVG material
+variant, `turquoise-material.svg`, embeds the same registered original plate and
+uses the existing luminance color-matrix method with RGB tint [0.45,1,0.88].
+Base intensity is 0.85. This retains texture and source registration, while the
+other five layers keep their existing material/palette. No image generation,
+mask/map revision, original raster modification or engine change is involved.
+Previous revision notes below are historical for direction and base color.
+
+Revision 0.2.3 follows the user's contrast/timing correction: an impulse must not
+be blue or close to the fixed blue/cyan material. The attack palette is now
+white, orange, green, red, pink and yellow; cyan/blue/nearby violet are removed
+from this palette only. Other masks retain their existing palette and cycles.
+Travel is shortened to 0.3 seconds and reversed to **top-to-bottom**, with a
+0.1-second ribbon at each point (the last tail clears after 0.4 seconds).
+Source-coordinate endpoints are y=0 to y=355/900. No mask, map, material image,
+engine code or detector settings change. The previous 0.2.2 settings below are
+historical, superseded for direction, timing and the bass-wave palette.
 
 Revision 0.2.2 replaces the simultaneous whole-mask bass hue change with actual
 traveling palette waves. The user explicitly approved a bounded extension of the

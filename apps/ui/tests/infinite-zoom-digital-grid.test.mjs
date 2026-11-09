@@ -22,7 +22,7 @@ test('digital test package validates actual assets, six local lighting groups an
   }
   for(const layer of manifest.layers.slice(2)){
     assert.deepEqual(layer.behaviors.map(b=>b.kind),layer.id==='dome-ribs'?['colorShift','glow']:['colorShift','colorShift','colorShift','glow']);
-    assert.equal(layer.imageAssetId,'diagnostic-material');
+    assert.equal(layer.imageAssetId,layer.id==='dome-ribs'?'turquoise-material':'diagnostic-material');
     if(layer.id!=='dome-ribs')assert.equal(layer.behaviors[0].params.hue+layer.behaviors[1].params.hue,2*Math.PI);
     assert.notEqual(layer.maskAssetId,layer.behaviors.at(-1).influenceMaskAssetId);
     const mask=await sharp(fileURLToPath(new URL(`${layer.maskAssetId}.png`,root))).extractChannel(0).raw().toBuffer();
@@ -49,6 +49,17 @@ test('one unchanged mask launches independent color waves on each bass event and
   const paused=hit.getSnapshot();assert.deepEqual(hit.getSnapshot(),paused);hit.reset();assert.equal(waves(hit).length,0);
   const selected=manifest.layers.find(l=>l.id==='dome-ribs');assert.equal(selected.maskAssetId,'visible-dome-ribs');
   for(const b of selected.behaviors.filter(b=>b.kind==='colorShift'))assert.equal(b.params.frequencyHz,0);
+});
+
+test('bass waves use contrasting colors, travel upward in 0.3 seconds and remain only 0.1 seconds at each point',()=>{
+  const wave=raw.layers.find(l=>l.id==='dome-ribs').behaviors[0].params.attackWave;
+  assert.equal(wave.travelSeconds,.3);assert.equal(wave.pulseSeconds,.1);assert.ok(wave.startY>wave.endY);assert.equal(wave.baseIntensity,.85);
+  for(const [r,g,b]of wave.palette){
+    const max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min;
+    if(delta<.1){assert.ok(min>.8,'Neutral impulses must contrast through bright white');continue;}
+    let hue=(max===r?(g-b)/delta:max===g?(b-r)/delta+2:(r-g)/delta+4)*60;hue=(hue+360)%360;
+    assert.ok(hue<150||hue>285,`Avoid cyan, blue and nearby violet against the blue base: ${hue}`);
+  }
 });
 test('blackout variant preserves identical animated lights and supports smooth reveal by existing opacity strength',async()=>{
   const dark=parseArtworkPackage(JSON.parse(await readFile(new URL('blackout-manifest.json',root),'utf8')));

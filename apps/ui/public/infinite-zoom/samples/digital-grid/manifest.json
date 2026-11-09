@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "digital-grid",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "canvas": {
     "width": 3840,
     "height": 2160
@@ -19,6 +19,14 @@
       "id": "diagnostic-material",
       "kind": "image",
       "uri": "/infinite-zoom/samples/digital-grid/diagnostic-material.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "turquoise-material",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/turquoise-material.svg",
       "width": 1600,
       "height": 900,
       "critical": true
@@ -376,7 +384,7 @@
     {
       "id": "dome-ribs",
       "zIndex": 5,
-      "imageAssetId": "diagnostic-material",
+      "imageAssetId": "turquoise-material",
       "maskAssetId": "visible-dome-ribs",
       "behaviors": [
         {
@@ -390,17 +398,12 @@
             "saturation": 0,
             "lightness": 0,
             "attackWave": {
-              "travelSeconds": 0.8,
-              "pulseSeconds": 0.24,
+              "travelSeconds": 0.3,
+              "pulseSeconds": 0.1,
               "startY": 0.39444444444444443,
               "endY": 0,
-              "baseIntensity": 0.45,
+              "baseIntensity": 0.85,
               "palette": [
-                [
-                  0.02,
-                  0.65,
-                  1
-                ],
                 [
                   1,
                   1,
@@ -417,14 +420,19 @@
                   0.06
                 ],
                 [
-                  0.04,
-                  0.08,
-                  1
+                  1,
+                  0.015,
+                  0.01
                 ],
                 [
-                  0.65,
-                  0.01,
-                  1
+                  1,
+                  0.015,
+                  0.25
+                ],
+                [
+                  1,
+                  0.8,
+                  0.01
                 ]
               ]
             }
