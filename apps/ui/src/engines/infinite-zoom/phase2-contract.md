@@ -296,6 +296,22 @@ ports, with no audio playback, RAF, or promise of cross-device identical pixels.
 The caller prepares/disposes its one engine and supplies the same modulation
 adapter. Recordings start from Reset, not arbitrary mid-journey snapshots.
 
+## Optional spatial color travel (2026-11-09)
+
+Schema-2 `colorShift` optionally accepts paired `delayMapAssetId` (critical mask)
+and `travelSeconds` (1/60..60, with positive `frequencyHz`). Omitting either field
+of the pair is invalid. Existing descriptors retain their original signed sine
+envelope and uniforms. The extended mode uses the existing fixed tick and applies
+`(1-cos(max(0,phase-delayMap.r*2*pi*frequencyHz*travelSeconds)))/2` to hue,
+saturation and lightness amplitudes. At authored phase zero the entire layer
+starts in source color. Per-pixel delay is independent of visibility/influence
+and layer occlusion. The phase wraps only after the maximum delay has elapsed,
+with a complete-cycle subtraction that preserves continuity for all pixels and
+bounds long-running shader phase precision. Existing strength/modulation scales
+amplitude without changing travel time; pause/parking freeze it and Reset rewinds.
+One additional R8 sampler is budgeted through the existing mask/GPU path.
+This is color propagation, not texture movement or physical fluid simulation.
+
 ## Verification and remaining product work
 
 `tests/infinite-zoom-phase2.test.mjs` covers schema compatibility, all operators,

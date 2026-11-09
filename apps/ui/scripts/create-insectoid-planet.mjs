@@ -5,6 +5,7 @@ import {grayPng} from "./lib/forest-river-masks.mjs";
 import {createVolcanoSmoke} from "./lib/insectoid-volcano-smoke.mjs";
 import {createChitinRimLighting} from "./lib/insectoid-chitin-rims.mjs";
 import {createSkyLighting} from "./lib/insectoid-sky-lighting.mjs";
+import {createVolcanoLava} from "./lib/insectoid-volcano-lava.mjs";
 
 export const root=new URL("../public/infinite-zoom/samples/insectoid-planet/",import.meta.url);
 const W=1600,H=900,SW=1672,SH=941;
@@ -132,14 +133,15 @@ export async function createInsectoidPlanet(){
   layers.push(smoke.layer);
   const rimLighting=await createChitinRimLighting({root,asset,layers});
   const skyLighting=await createSkyLighting({root,asset,layers});
-  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.5.3",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
+  const volcanoLava=await createVolcanoLava({root,asset,layers});
+  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.5.4",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
   await writeFile(new URL("manifest.json",root),JSON.stringify(manifest,null,2)+"\n");
   const production={
     schemaVersion:1,artworkId:manifest.id,version:manifest.version,tool:"built-in image_gen",externalApiCalls:0,
     sources:[{file:"source.png",width:SW,height:SH,sha256:createHash("sha256").update(bytes).digest("hex")},
       {file:"vapor-source.png",width:vapor.readUInt32BE(16),height:vapor.readUInt32BE(20),sha256:createHash("sha256").update(vapor).digest("hex")},...smoke.sources],
     runtimeTexture:{width:W,height:H,native4K:false},guidelines:{version:"1.0",file:"../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md"},
-    membranes:MEMBRANES,materialSelections:selections,storms,skyLighting,
+    membranes:MEMBRANES,materialSelections:selections,storms,skyLighting,volcanoLava,
     heat:{pockets:HEAT_POCKETS,amplitude:HEAT_AMPLITUDE,frequencyHz:.65,wavelength:260,guardTexels:3,maximumTravelTexels:heat.maximumTravel},
     vapor:{source:"vapor-source.png",registration:"Two alpha wisps registered inside left and valley windows; static alpha capped to .24; opacity envelopes 0..1 at .13/.17 Hz",neutralControl:"Disabling opacity freezes its modulation at neutral alpha 1, leaving the authored static vapor visible; it does not hide the artwork layer"},
     volcanoSmoke:smoke.metadata,

@@ -16,6 +16,7 @@ export interface VisualView {
   readonly pilotControls?: readonly PilotControl[]; readonly pilotCameraMotion?: boolean;
   readonly rimLightingEnabled?: boolean;
   readonly sceneRevealEnabled?: boolean; readonly sceneRevealProgress?: number;
+  readonly environmentBlackoutEnabled?: boolean;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;
@@ -31,6 +32,7 @@ export interface VisualConnection {
   setRimLightingEnabled?(enabled: boolean): void;
   setSceneRevealEnabled?(enabled: boolean): void;
   restartSceneReveal?(): void;
+  setEnvironmentBlackoutEnabled?(enabled: boolean): void;
   reset(): void;
   dispose(): void;
 }
@@ -71,6 +73,7 @@ export function createVisualBridge() {
     setRimLightingEnabled(enabled: boolean) { connection?.setRimLightingEnabled?.(enabled); },
     setSceneRevealEnabled(enabled: boolean) { connection?.setSceneRevealEnabled?.(enabled); },
     restartSceneReveal() { connection?.restartSceneReveal?.(); },
+    setEnvironmentBlackoutEnabled(enabled: boolean) { connection?.setEnvironmentBlackoutEnabled?.(enabled); },
     exportReplay() { return connection?.exportReplay?.() ?? null; },
     reset() { connection?.reset(); },
     dispose() { const current = connection; connection = null; current?.dispose(); mode = "background"; view = Object.freeze({ ...view, status: "disposed", ready: false, retryable: false }); notify(); },

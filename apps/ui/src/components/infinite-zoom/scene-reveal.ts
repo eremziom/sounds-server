@@ -14,6 +14,7 @@ export function withSceneReveal(input: unknown): unknown {
   }], layers:[...manifest.layers,
     {id:"reveal-curtain",zIndex:18,imageAssetId:"reveal-black"},
     {...lava,id:"reveal-lava",zIndex:19},
+    ...manifest.layers.filter(layer=>layer.id==="volcano-lava").map(layer=>({...layer,id:"reveal-volcano-lava",zIndex:19})),
   ]};
 }
 
@@ -25,6 +26,7 @@ export function createSceneReveal() {
     const t=ticks/SCENE_REVEAL_TICKS, remaining=enabled ? 1-t*t*(3-2*t) : 0;
     instance.setLayerTransform("reveal-curtain",{opacity:remaining});
     instance.setLayerTransform("reveal-lava",{opacity:remaining});
+    if(instance.manifest.layers.some(layer=>layer.id==="reveal-volcano-lava"))instance.setLayerTransform("reveal-volcano-lava",{opacity:remaining});
   }
   return {
     getSnapshot:()=>({enabled,progress:ticks/SCENE_REVEAL_TICKS}),

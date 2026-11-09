@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "guidelinesVersion": "1.5",
+  "requestedColors": [
+    "cyan",
+    "white",
+    "orange",
+    "green",
+    "blue",
+    "violet"
+  ],
+  "method": "SVG luminance-preserving cyan material; two delayed pi hue rotations, separate periodic white pass, reduced untinted glow",
+  "material": "diagnostic-material.svg",
+  "hueExcursionRadians": 6.283185307179586,
+  "periodSeconds": 12,
+  "travelSeconds": 4,
+  "masksUnchanged": true,
+  "engineChanges": false,
+  "originalSourceUnchanged": true,
+  "controlLimitation": "Disabling colorShift leaves the cyan diagnostic material; restoring original white panels is outside this temporary diagnostic"
+}

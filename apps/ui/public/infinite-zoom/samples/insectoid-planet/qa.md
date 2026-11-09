@@ -1,5 +1,63 @@
 # QA — insectoid planet, 2026-11-07
 
+## Revision 0.5.4 — downhill volcanic color, 2026-11-09
+
+Follows shared artwork guidelines v1.3 and `lava-authoring-brief.md`. The existing
+source plate supplies all visible lava texture. A 1600x900 source-chroma material
+mask selects branching seams on the two distant volcanoes and middle slope;
+253 / 594 / 588 texels exceed 10% visibility. The separate 400x225 delay field
+gradually delays the color envelope from each summit toward its lower slope by
+up to five seconds. Orange-to-purple-to-orange cycles repeat every twelve
+seconds after the initial source-orange frame. Existing near-plan colors,
+precise sky silhouettes, smoke and membrane motion are retained.
+
+The two critical R8 data maps add 1,530,000 estimated texture bytes. Total package
+texture estimate is 66,330,000 bytes; reveal adds its existing 576-byte curtain,
+remaining below the existing 64 MiB artwork regression bound. New layers reuse
+the plate and delay mask, including the fully animated protected lava copy above
+the reveal curtain. No additional image texture, renderer, clock or audio owner.
+
+Engine work is separate: `colorShift` gains optional paired delay-map/travel-time
+parameters, documented in `phase2-contract.md`; legacy colors retain their sine
+envelope. Fixed-tick startup and periodic wrapping preserve orange initialization,
+downhill direction, pause, Reset, control strength and context restoration.
+
+Validation from `apps/ui`:
+
+- `node --experimental-strip-types --test tests/infinite-zoom-*.test.mjs`:
+  all 143 pass, including three new mask/timing/blackout tests. The existing
+  emission-validation test now finds its sky layer by ID rather than assuming
+  it is the final raw layer in the package.
+- `node tests/infinite-zoom-renderer.browser.mjs --lava-only --sky-high-precision`:
+  actual WebGL2/RGBA16F passes initial orange, color control, pause, Reset,
+  full-blackout animation and context restoration. At 2/4/6/8/10/12/16 seconds,
+  242 / 885 / 1,186 / 1,236 / 1,222 / 791 / 885 pixels differ by more than five
+  display-code levels. Outside-mask difference is zero. Eighteen logical seconds
+  of combined movement and zoom cover a full cycle plus initial downhill delay.
+- `node tests/infinite-zoom-renderer.browser.mjs`: complete renderer regression
+  passes, including ordinary RGBA8 studio effects, local boundaries, transitions,
+  Loop, camera continuity, context recovery and existing reveal checks.
+- `pnpm --filter ui build` from repository root: passes translations, TypeScript
+  and the production build.
+- `node tests/infinite-zoom-integration.browser.mjs`: passes actual application
+  readiness/cancel, shared audio graph, scene selection, pause/end/next-track,
+  immersive controls, Reset, transitions and audio/visual failure isolation.
+
+Evidence in repository-root `.tmp/infinite-zoom-artwork/`: source overlay
+`volcano-lava-mask-review.png`, `lava-initial.png`, `lava-{2,4,6,8,10,12,16}s.png`,
+`lava-blackout-6s.png`, `lava-motion-{0,60,...,480}.png`, `lava-motion.webm` and
+`lava-qa.json`. Source overlay, full-frame transition and zoomed animated cycle
+samples were visually inspected: the upper streams turn purple while lower
+branches retain orange, followed by the delayed return. Color remains attached
+to the original source seams as the camera moves.
+
+Remaining uncertainty: source resolution and warm antialias/glow around the
+craters limit exact separation of the faintest lava from reflected light. The
+mask intentionally retains warm textured stream edges; it does not recolor
+whole mountains. The propagated parameter follows vertical height, not a
+fluid simulation or per-branch path length. These samples and technical tests
+do not replace user artistic acceptance or target-device performance review.
+
 ## Revision 0.5.3 — static sky contours, 2026-11-09
 
 Shared authoring guidelines v1.2 apply; see `authoring-brief.md` and

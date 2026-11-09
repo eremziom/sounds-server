@@ -37,8 +37,8 @@ test("emission-only layers validate conservatively and cannot replace opaque cov
   assert.equal(sky.blendMode,"additive-emission");assert.equal(sky.behaviors[0].modulation[0].signal,"highAttack");
   const clone=()=>JSON.parse(JSON.stringify(raw));
   const base=clone();base.layers[0].blendMode="additive-emission";assert.throws(()=>parseArtworkPackage(base),/Coverage/);
-  const invalid=clone();invalid.layers.at(-1).blendMode="screen";assert.throws(()=>parseArtworkPackage(invalid),/blend/);
-  const spatial=clone();spatial.layers.at(-1).behaviors=[raw.layers.find(l=>l.id==="near-membrane").behaviors[0]];assert.throws(()=>parseArtworkPackage(spatial),/glow/);
+  const invalid=clone();invalid.layers.find(l=>l.id==="sky-high-attack").blendMode="screen";assert.throws(()=>parseArtworkPackage(invalid),/blend/);
+  const spatial=clone();spatial.layers.find(l=>l.id==="sky-high-attack").behaviors=[raw.layers.find(l=>l.id==="near-membrane").behaviors[0]];assert.throws(()=>parseArtworkPackage(spatial),/glow/);
   const legacy=clone();legacy.schemaVersion=1;assert.throws(()=>parseArtworkPackage(legacy));
 });
 

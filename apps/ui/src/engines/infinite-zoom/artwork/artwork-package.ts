@@ -100,6 +100,7 @@ export function parseArtworkPackage(input: unknown): ArtworkPackage {
     for (const behavior of parsed) {
       if (!phase2 && (!["translate", "wave", "pulse"].includes(behavior.kind) || behavior.enabled !== undefined || behavior.weight !== undefined || behavior.modulation !== undefined)) throw new Error("Extended behaviors require schema 2");
       validateMask(behavior.influenceMaskAssetId);
+      if (behavior.kind === "colorShift") validateMask(behavior.params.delayMapAssetId);
       if (behavior.kind === "parallax" || behavior.kind === "flow" || behavior.kind === "displace") {
         const field = references.get(behavior.kind === "parallax" ? behavior.params.depthAssetId : behavior.params.fieldAssetId);
         if (!field || !field.critical || field.kind !== (behavior.kind === "parallax" ? "depth" : "flow")) throw new Error("Behavior field must reference a critical depth/flow asset");

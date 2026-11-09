@@ -7,8 +7,9 @@ import type {BehaviorKind,VisualScene} from "../../engines/infinite-zoom/artwork
 
 export function PilotArtworkControls() {
   const runtime=useInfiniteZoom(), snapshot=useVisualSnapshot(), t=useTranslations("app.infiniteZoom");
-  const scenePrefix=snapshot.scene === "alien" ? "alien" : snapshot.scene === "clockwork" ? "clockwork" : snapshot.scene === "layered" ? "layered" : "pilot";
+  const scenePrefix=snapshot.scene === "digital" ? "digital" : snapshot.scene === "alien" ? "alien" : snapshot.scene === "clockwork" ? "clockwork" : snapshot.scene === "layered" ? "layered" : "pilot";
   function behaviorLabel(kind:BehaviorKind){
+    if(scenePrefix === "digital" && (kind === "colorShift" || kind === "glow"))return t(`digitalBehaviors.${kind}`);
     if(scenePrefix === "alien" && (kind === "scale" || kind === "wave" || kind === "flow" || kind === "bend" || kind === "opacity" || kind === "colorShift" || kind === "pulse" || kind === "glow"))return t(`alienBehaviors.${kind}`);
     if(scenePrefix === "clockwork" && (kind === "rotate" || kind === "pulse" || kind === "glow"))return t(`clockworkBehaviors.${kind}`);
     return t(`${scenePrefix === "layered" ? "layeredBehaviors" : "pilotBehaviors"}.${kind}`);
@@ -18,13 +19,18 @@ export function PilotArtworkControls() {
       {t("sceneLabel")}
       <select data-iz-scene className="rounded-md border bg-background px-3 py-2" value={snapshot.scene ?? "journey"}
         disabled={!snapshot.ready || snapshot.sceneLoading} onChange={event=>void runtime.selectScene(event.target.value as VisualScene).catch(()=>{})}>
-        <option value="journey">{t("journeyScene")}</option><option value="alien">{t("alienScene")}</option><option value="clockwork">{t("clockworkScene")}</option><option value="layered">{t("layeredScene")}</option><option value="pilot">{t("pilotScene")}</option>
+        <option value="journey">{t("journeyScene")}</option><option value="digital">{t("digitalScene")}</option><option value="alien">{t("alienScene")}</option><option value="clockwork">{t("clockworkScene")}</option><option value="layered">{t("layeredScene")}</option><option value="pilot">{t("pilotScene")}</option>
       </select>
       {snapshot.sceneLoading && <span role="status" className="font-normal text-muted-foreground">{t("sceneLoading")}</span>}
     </label>
     {snapshot.scene && snapshot.scene !== "journey" && <fieldset disabled={snapshot.sceneLoading} data-iz-pilot className="space-y-4 rounded-lg border p-4">
       <legend className="px-2 text-sm font-semibold">{t("pilotHeading")}</legend>
       <p className="text-sm text-muted-foreground">{t(`${scenePrefix}Description`)}</p>
+      {snapshot.scene === "digital" && <div className="space-y-1 rounded-md border p-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-iz-environment-blackout checked={!!snapshot.environmentBlackoutEnabled}
+          onChange={event=>runtime.setEnvironmentBlackoutEnabled(event.target.checked)}/>{t("environmentBlackoutLabel")}</label>
+        <p className="text-xs text-muted-foreground">{t("environmentBlackoutNote")}</p>
+      </div>}
       {snapshot.scene === "alien" && <div className="space-y-1 rounded-md border p-3">
         <p className="pb-2 text-xs text-muted-foreground">{t("skyLightingNote")}</p>
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" data-iz-rim-lighting checked={!!snapshot.rimLightingEnabled}

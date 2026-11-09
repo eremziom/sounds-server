@@ -1,0 +1,77 @@
+{
+  "artworkId": "digital-grid",
+  "version": "0.2.0",
+  "guidelinesVersion": "1.5",
+  "tool": "built-in image_gen",
+  "source": {
+    "file": "source.png",
+    "width": 1672,
+    "height": 941,
+    "sha256": "434037c6db5995880845d60af95ee64c40729eb004bec071358bc073eb4bc18e"
+  },
+  "runtimeTexture": {
+    "width": 1600,
+    "height": 900,
+    "native4K": false
+  },
+  "groups": [
+    {
+      "id": "rear-wheel",
+      "type": "white",
+      "cx": 278,
+      "cy": 574,
+      "rx": 158,
+      "ry": 183,
+      "phase": 0
+    },
+    {
+      "id": "front-wheel",
+      "type": "white",
+      "cx": 1257,
+      "cy": 623,
+      "rx": 225,
+      "ry": 213,
+      "phase": 1.1
+    },
+    {
+      "id": "body-panels",
+      "type": "white",
+      "phase": 2.2
+    },
+    {
+      "id": "dome-ribs",
+      "type": "cyan",
+      "phase": 0.7
+    },
+    {
+      "id": "road-cyan",
+      "type": "cyan",
+      "phase": 2.7
+    },
+    {
+      "id": "city-amber",
+      "type": "amber",
+      "phase": 4.1
+    }
+  ],
+  "materialTexels": {
+    "rear-wheel": 27804,
+    "front-wheel": 36099,
+    "body-panels": 74523,
+    "dome-ribs": 69811,
+    "road-cyan": 23931,
+    "city-amber": 41790
+  },
+  "periodSeconds": 12,
+  "travelSeconds": 4,
+  "impulsePeriodSeconds": 6,
+  "geometryMotion": false,
+  "maskMethod": "Source luminance/chroma inside classification domains; no synthetic luminous outlines. Separate visibility, influence and continuous delay data.",
+  "blackout": "Opaque black base, independent source light layers, environment opacity variant. No engine changes.",
+  "uncertainBoundaries": [
+    "Wheel/body classification cuts may cross a white panel; both are lit but timing direction changes there.",
+    "Very fine cyan reflected highlights are intentionally included in road light.",
+    "Angular wheel phase wraps at the rear-facing ray; inspect loop seam during zoom."
+  ],
+  "status": "test pilot; see qa.md"
+}

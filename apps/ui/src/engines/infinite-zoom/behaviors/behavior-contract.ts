@@ -22,7 +22,7 @@ export type BehaviorDescriptor = CommonBehavior & (
   { readonly kind: "displace"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "flow"; readonly params: Periodic & { readonly amplitude: number; readonly fieldAssetId: string } } |
   { readonly kind: "opacity"; readonly params: Periodic & { readonly base: number; readonly amount: number } } |
-  { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number } } |
+  { readonly kind: "colorShift"; readonly params: Periodic & { readonly hue: number; readonly saturation: number; readonly lightness: number; readonly delayMapAssetId?: string; readonly travelSeconds?: number } } |
   { readonly kind: "glow"; readonly params: Periodic & { readonly amount: number; readonly threshold: number; readonly sharpness?: number; readonly intensity?: number; readonly color?: readonly [number,number,number] } }
 );
 
@@ -93,8 +93,11 @@ export function parseBehaviors(input: unknown): readonly BehaviorDescriptor[] {
         if (behavior.params.base-behavior.params.amount < 0 || behavior.params.base+behavior.params.amount > 1) throw new Error("Opacity envelope exceeds 0..1");
         break;
       case "colorShift":
-        keys = ["frequencyHz", "phase", "hue", "saturation", "lightness"];
-        behavior = { ...common, kind: "colorShift", params: { ...periodic, hue: finite(params.hue, -Math.PI, Math.PI), saturation: finite(params.saturation, -1, 1), lightness: finite(params.lightness, -0.5, 0.5) } }; break;
+        keys = ["frequencyHz", "phase", "hue", "saturation", "lightness", "delayMapAssetId", "travelSeconds"];
+        if ((params.delayMapAssetId === undefined) !== (params.travelSeconds === undefined)) throw new Error("Color travel requires both a delay map and travelSeconds");
+        if (params.delayMapAssetId !== undefined && periodic.frequencyHz === 0) throw new Error("Color travel requires a positive frequency");
+        behavior = { ...common, kind: "colorShift", params: { ...periodic, hue: finite(params.hue, -Math.PI, Math.PI), saturation: finite(params.saturation, -1, 1), lightness: finite(params.lightness, -0.5, 0.5),
+          ...(params.delayMapAssetId === undefined ? {} : {delayMapAssetId:reference(params.delayMapAssetId),travelSeconds:finite(params.travelSeconds,1/60,60)}) } }; break;
       case "glow":
         keys = ["frequencyHz", "phase", "amount", "threshold", "sharpness", "intensity", "color"];
         if(params.color!==undefined&&(!Array.isArray(params.color)||params.color.length!==3))throw new Error("Invalid glow color");

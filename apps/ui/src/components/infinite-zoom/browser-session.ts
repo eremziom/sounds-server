@@ -11,6 +11,7 @@ import { bindPlaybackToVisuals } from "./playback-adapter.ts";
 import type { VisualBridge } from "./visual-bridge.ts";
 import {setRimLightingVisibility} from "./rim-lighting.ts";
 import {createSceneReveal,withSceneReveal} from "./scene-reveal.ts";
+import {createEnvironmentBlackout} from "./environment-blackout.ts";
 
 export function createBrowserVisualSession(options: {
   canvas: HTMLCanvasElement; audio: HTMLAudioElement; bridge: VisualBridge;
@@ -28,6 +29,7 @@ export function createBrowserVisualSession(options: {
   let pendingResize = false, sceneLoading=false;
   let rimLightingEnabled=false;
   const reveal=createSceneReveal();
+  const blackout=createEnvironmentBlackout();
   const studioManifests=new Map<VisualScene,unknown>();
   let scenePreparation: Promise<void> | null = null;
   const selectionLifetime=new AbortController();
@@ -81,7 +83,7 @@ export function createBrowserVisualSession(options: {
             if (!["disposed", "error"].includes(status)) engine.setSuspended("context-lost", !available);
           },
           onError() { diagnostics.event("CONTEXT_RESTORE_FAILED", engine.getSnapshot().session.tick, "error"); fault = true; publish(); },
-          evaluate(instance) { runCommands(); reveal.step(instance); },
+          evaluate(instance) { runCommands(); reveal.step(instance); blackout.step(instance); },
           modulation: () => modulation.getSnapshot(),
         }, signal);
         lease = prepared; pendingResize = false;
@@ -132,6 +134,7 @@ export function createBrowserVisualSession(options: {
       pilotControls:lease?.getPilotControls(), pilotCameraMotion:lease?.getPilotCameraMotion() ?? false,
       rimLightingEnabled,
       sceneRevealEnabled:reveal.getSnapshot().enabled, sceneRevealProgress:reveal.getSnapshot().progress,
+      environmentBlackoutEnabled:blackout.getSnapshot().enabled,
       diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
         tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
         resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
@@ -184,7 +187,7 @@ export function createBrowserVisualSession(options: {
             studioManifests.set(next,next==="alien" ? withSceneReveal(manifest) : manifest);
           }
           await lease!.selectScene(next,studioManifests.get(next),signal);
-          setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);lease!.render();fault=false;
+          setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);blackout.apply(lease!.instance);lease!.render();fault=false;
         } catch (failure) { if (!disposed) fault=true; throw failure; }
         finally {
           sceneLoading=false;
@@ -210,11 +213,15 @@ export function createBrowserVisualSession(options: {
       if(!lease||disposed||sceneLoading||lease.getScene()!=="alien")return;
       reveal.restart(lease.instance);lease.render();publish();
     },
+    setEnvironmentBlackoutEnabled(enabled:boolean){
+      if(!lease||disposed||sceneLoading||lease.getScene()!=="digital")return;
+      blackout.setEnabled(enabled,lease.instance);lease.render();publish();
+    },
     exportReplay() { return lease?.exportReplay() ?? null; },
     reset() {
       if (!lease || disposed) return;
       commands.length = 0; modulation.reset();
-      try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
+      try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);blackout.apply(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
       publish();
     },
     dispose() {

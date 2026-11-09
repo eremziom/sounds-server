@@ -1,6 +1,6 @@
 # Obowiązkowe wytyczne produkcji artworków Infinite Zoom
 
-Wersja instrukcji: **1.3** (2026-11-09). Obowiązuje przy tworzeniu i poprawianiu każdego
+Wersja instrukcji: **1.6** (2026-11-09). Obowiązuje przy tworzeniu i poprawianiu każdego
 artworku, niezależnie od tematu, stylu, użytych narzędzi i liczby warstw.
 To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowanie.
 
@@ -18,6 +18,9 @@ To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowan
 8. **Zweryfikuj wynik w animacji i podczas zoomu.** Sprawdź pełne cykle, skrajne położenia i nakładające się efekty. Kontroluj ciągłość połączeń, kolejność przesłaniania, stabilność nieruchomych obszarów oraz brak szwów, obwódek i migotania.
 9. **Zaprojektuj dużą liczbę miejsc do impulsowego podświetlania.** Każda grafika, niezależnie od motywu i stylu, musi zawierać liczne drobne punkty, skupiska detali lub pasma materiału przygotowane do lokalnych impulsów światła. Muszą być integralnymi elementami sceny i zachowywać jej fakturę, formę oraz przesłanianie. Obowiązują szczegółowe wymagania poniżej.
 10. **Przygotuj opcję całkowitego zaciemnienia z zachowaniem niezależnego światła.** Każda grafika musi pozwalać wyzerować widoczność otoczenia, pozostawiając wybrane, oddzielnie podświetlane obszary z działającymi od początku impulsami i zmianami kolorów. Zapewnij płynny powrót do normalnego widoku, bez skoków jasności. Obowiązują szczegółowe wymagania poniżej.
+11. **Zaprojektuj drobne, podłużne elementy do przestrzennego przepływu kolorów.** Każda grafika musi już w swojej kompozycji zawierać takie elementy, zintegrowane z materiałem sceny, wzdłuż których stopniowo przechodzi zmiana koloru lub natężenia światła, tworząc czytelny gradient i wrażenie przepływu. Mogą to być obramowania większych elementów, strumienie wody lub światła, oświetlenie LED, macki, liany, gałęzie drzew lub inne formy dobrane do tematu. Wzorem jest fala koloru spływająca od szczytów wulkanów po lawie; obowiązują szczegółowe wymagania poniżej.
+
+12. **Zapewnij mocne i wyraźne przejścia kolorów.** Zmiany barw oraz ich przepływ muszą być łatwo dostrzegalne w pełnym kadrze aplikacji, w animacji i podczas zoomu. Dobierz nasycenie, kontrast, zakres barw i materiał źródłowy tak, aby kolejne kolory były jednoznacznie rozróżnialne. Wzorem czytelności jest zaakceptowany test motocykla Digital Grid; szczegółowe wymagania poniżej.
 
 **Nie uznawaj pakietu za gotowy wyłącznie na podstawie nieruchomego podglądu. Oznacz niepewne granice i miejsca wymagające ręcznej korekty.**
 
@@ -61,6 +64,59 @@ architektura ani stylistyka science fiction nie są wymagane.
   Poprawne fazy, zmienione piksele lub przejście testów nie potwierdzają tego
   wymagania bez oceny wizualnej. Brak odpowiednio bogatych obszarów światła jest
   brakującym elementem artworku wymagającym poprawy.
+
+## Obowiązkowa przestrzenna propagacja światła i koloru
+
+**Każda nowa lub poprawiana grafika musi być zaprojektowana tak, aby zawierała
+drobne, podłużne elementy przeznaczone do przepływu kolorów i światła wzdłuż
+ich przebiegu. Ich kolor lub jasność zmieniają się kolejno w różnych miejscach
+w czasie.** Wzorem
+jest gradient koloru przechodzący od krateru w dół strumieni lawy. Zasada dotyczy
+każdego tematu i stylu; lawa, pionowy kierunek, fiolet ani parametry tej sceny
+nie są uniwersalnym wymaganiem.
+
+- **Zaplanuj drobne, podłużne elementy już w kompozycji.** Dobierz do sceny np.
+  obramowania większych obiektów, strumienie wody lub światła, pasma oświetlenia
+  LED, macki, liany, gałęzie drzew, świecące żyłki roślin, włókna lub wydłużone
+  struktury abstrakcyjne. Ich obecność jest obowiązkowym założeniem projektu,
+  uwzględnianym w briefie i promptach od początku tworzenia grafiki. Wybierz
+  formy naturalnie pasujące do tematu i zachowujące czytelność w kadrze aplikacji.
+  Przebieg zmiany musi podążać wzdłuż tych form, wynikać z ich kształtu i materiału oraz
+  zachowywać fakturę, odgałęzienia, granice i przesłanianie. Włącz wymaganie do
+  briefu i odpowiednich promptów generowania/edycji.
+- **Nadaj zmianie kierunek i ciągłość.** Kolor lub światło mają płynnie docierać
+  do kolejnych fragmentów elementu, z czytelnym gradientem i wrażeniem przepływu.
+  Samo jednoczesne miganie, zmiana koloru całego elementu albo niezależne losowe
+  błyski nie spełniają tego wymagania. Dobierz kierunek, opóźnienia, tempo,
+  paletę, powrót i sposób powtarzania do kompozycji; nie narzucaj jednego cyklu.
+- **Oddziel materiał od danych czasowych.** Precyzyjna maska widoczności określa
+  rzeczywisty kształt świecącego materiału. Osobna mapa opóźnienia/fazy lub
+  równoważne autorskie sterowanie opisuje postęp zmiany wzdłuż elementu.
+  Próbkowanie danych czasowych nie może zniekształcać konturów ani powodować,
+  że krawędzie strumienia wyprzedzają jego środek. Propagacja koloru/światła
+  może tworzyć wrażenie ruchu bez przesuwania tekstury.
+- **Przejścia kolorów muszą być mocne i wyraźne.** Zapewnij łatwo rozpoznawalne
+  różnice między kolejnymi barwami oraz czytelne kolorowe pasma przepływu w pełnym
+  kadrze aplikacji. Ledwo zauważalne przesunięcie odcienia lub sama zmiana jasności
+  nie spełniają wymagania przejścia przez kolory. Dobierz nasycenie, kontrast,
+  amplitudę i paletę do sceny, zachowując fakturę, granice masek i przesłanianie.
+  Nie pozwól, aby biała emisja, prześwietlenie lub mieszanie z otoczeniem wypłukały
+  różnice barw. Dla białych i neutralnych materiałów przygotuj odpowiednią warstwę
+  koloru lub materiał z chromą: sam obrót odcienia neutralnej bieli nie daje
+  wyraźnych kolorów. Sprawdź wynik na rzeczywistych pikselach renderera, również
+  w zaciemnieniu i podczas odsłaniania. Wzorem czytelności jest zaakceptowany przez
+  użytkownika test Digital Grid 0.2.0. Jego sześć kolorów, kolejność i okres nie
+  stanowią obowiązkowej palety ani ustawień dla wszystkich grafik.
+- **Zachowaj wspólny czas i niezależne światło.** Używaj istniejącego zegara;
+  pauza i zawieszenie zamrażają propagację. Wydzielone elementy mają zachowywać
+  tę animację również przy całkowicie zaciemnionym otoczeniu, od początku
+  symulacji, oraz podczas płynnego odsłaniania sceny. Kopia chronionej warstwy
+  musi zachować jej sterowanie, fazy i mapy czasowe.
+- **Zweryfikuj rzeczywisty przepływ.** Obejrzyj pełne przejście i powtórzenie
+  fali, kilka jej położeń, odgałęzienia i granice, łączne działanie efektów,
+  pauzę, zaciemnienie oraz ruch kamery i zoom. Efekt musi być czytelny w kadrze
+  aplikacji. Zapisz nagranie/próbki i niepewne granice; nieruchomy gradient ani
+  sam test zmienionych pikseli nie potwierdzają propagacji w czasie.
 
 ## Obowiązkowe zaciemnienie z niezależnym światłem
 
@@ -108,14 +164,21 @@ i lawą. Dobierz odpowiedniki do tematu; lawa ani konkretna stylistyka nie są w
   Włącz wymagania do briefu i przekazuj odpowiednie ograniczenia w promptach
   kolejnych etapów. Narzędzie generujące obraz nie odczytuje samo repozytorium.
 - W `authoring-brief.md` pakietu podaj odnośnik do tej instrukcji i używaną wersję
-  (obecnie 1.3),
+  (obecnie 1.6),
   a następnie opisz jej zastosowanie: grupy ruchu, obszary stałe, role masek,
   połączenia, osie, zapas obrazu, maksymalne parametry i przesłanianie.
 - W briefie opisz także dużą liczbę miejsc impulsowego światła: ich rodzaj,
   szacowaną liczbę/gęstość, rozmieszczenie i grupy, związek z materiałem, maski,
   fazy/okresy oraz plan oceny w pełnym kadrze i przy zoomie. Nowe i poprawiane
-  pakiety muszą spełniać wersję 1.3; historyczne wersje briefów i promptów
+  pakiety muszą spełniać wersję 1.6; historyczne wersje briefów i promptów
   zachowują rzeczywisty numer instrukcji użytej przy ich tworzeniu.
+- W briefie wskaż zaprojektowane drobne, podłużne elementy z przestrzenną propagacją światła/koloru, ich związek
+  z materiałem, kierunek i przebieg gradientu, osobne maski oraz dane czasowe,
+  cykl/powrót, zachowanie w zaciemnieniu i plan pełnej oceny w ruchu i przy zoomie.
+- W briefie i odpowiednich promptach wymagaj mocnych, wyraźnych przejść kolorów;
+  opisz paletę, kontrast, przygotowanie materiałów neutralnych oraz sposób oceny
+  rozróżnialności barw w pełnym kadrze. Sama deklaracja parametrów nie zastępuje
+  wizualnego sprawdzenia rzeczywistej animacji.
 - W briefie opisz tryb zaciemnienia: otoczenie, chronione obszary światła i
   kolorów, role warstw/masek, zachowanie animacji przy zerowej jasności otoczenia,
   czas/krzywą odsłaniania, przełączanie i plan oceny płynności cieni. Przekaż
@@ -146,6 +209,12 @@ Opis walidacji pakietu powinien zawierać:
   kolory/impulsy chronionych obszarów od początku, pełne wolne odsłanianie bez
   widocznych skoków w cieniach, zgodność widoku końcowego, przełączanie i pauzę;
   osobno wynik i ograniczenia dla użytego renderera oraz trybu zastępczego.
+- przestrzenną propagację światła/koloru: czytelny kierunek i gradient, kolejne
+  położenia oraz pełny cykl z powrotem/powtórzeniem, zachowanie materiału i
+  odgałęzień, zaciemnienie, pauzę i ocenę podczas ruchu kamery oraz zoomu;
+- mocne, wyraźnie rozróżnialne przejścia barw w pełnym kadrze i przy zoomie,
+  zachowane w zaciemnieniu i podczas odsłaniania, bez wypłukania kolorów przez
+  emisję; próbki kolejnych kolorów oraz ocenę ich przepływu w nagraniu;
 - listę niepewnych granic, wymaganych korekt, ograniczeń i niewykonanych prób.
 
 Bez wykonanej weryfikacji ruchu pakiet pozostaje **niezweryfikowanym pilotażem**.

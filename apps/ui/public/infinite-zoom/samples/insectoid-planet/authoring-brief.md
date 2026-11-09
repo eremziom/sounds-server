@@ -122,6 +122,17 @@ warm reflected light as well as emitters; wet ground and foreground lighting
 must be assessed in motion. The delivered artwork remains an experimental test
 scene; final artistic approval and target-device performance are outstanding.
 
+## Downhill volcanic color travel — revision 0.5.4, 2026-11-09
+
+Follows [shared artwork guidelines v1.3](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the lava authoring brief](lava-authoring-brief.md) for material boundaries,
+separate visibility/timing masks, orange-to-purple downhill propagation, retained
+impulse-light groups, blackout protection and full motion/zoom QA requirements.
+The source painting and existing motion/sky masks are preserved. Only the
+three distant lava domains receive the new traveling color effect. The optional
+colorShift delay-map extension is documented separately from artwork production
+in that brief and the engine's phase2-contract.md.
+
 ## Static sky-occlusion correction — revision 0.5.3, 2026-11-09
 
 Follows [shared artwork guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).

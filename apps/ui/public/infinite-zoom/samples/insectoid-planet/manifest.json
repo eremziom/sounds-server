@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "insectoid-planet",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "canvas": {
     "width": 3840,
     "height": 2160
@@ -629,6 +629,22 @@
       "uri": "/infinite-zoom/samples/insectoid-planet/influence-sky-light.png",
       "width": 1600,
       "height": 900,
+      "critical": true
+    },
+    {
+      "id": "visible-volcano-lava",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/visible-volcano-lava.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-volcano-lava",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/insectoid-planet/delay-volcano-lava.png",
+      "width": 400,
+      "height": 225,
       "critical": true
     }
   ],
@@ -2471,6 +2487,28 @@
               "releaseSeconds": 0.045
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "volcano-lava",
+      "zIndex": 5,
+      "imageAssetId": "plate",
+      "maskAssetId": "visible-volcano-lava",
+      "behaviors": [
+        {
+          "id": "downhill-color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": -1.65,
+            "saturation": 0.08,
+            "lightness": 0,
+            "delayMapAssetId": "delay-volcano-lava",
+            "travelSeconds": 5
+          }
         }
       ]
     }

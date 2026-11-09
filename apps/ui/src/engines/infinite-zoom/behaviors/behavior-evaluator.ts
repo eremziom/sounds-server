@@ -27,7 +27,7 @@ export type BehaviorOutput = Readonly<{ id: string; influenceMaskAssetId?: strin
   { kind: "bend"; amount: number; pivotX: number; pivotY: number; axis: "x" | "y" } |
   { kind: "displace" | "flow"; amplitude: number; fieldAssetId: string } |
   { kind: "opacity"; opacity: number } |
-  { kind: "colorShift"; hue: number; saturation: number; lightness: number } |
+  { kind: "colorShift"; hue: number; saturation: number; lightness: number; delayMapAssetId?: string; travelPhase?: number; travelRadians?: number } |
   { kind: "glow"; amount: number; threshold: number; color?: readonly [number,number,number] }
 )>;
 
@@ -78,7 +78,18 @@ export function createBehaviorEvaluator(groups: readonly BehaviorGroup[]) {
           case "bend": return Object.freeze({ ...common, kind: "bend" as const, amount: behavior.params.amount*oscillation, pivotX: behavior.params.pivotX, pivotY: behavior.params.pivotY, axis: behavior.params.axis });
           case "displace": case "flow": return Object.freeze({ ...common, kind: behavior.kind, amplitude: behavior.params.amplitude*oscillation, fieldAssetId: behavior.params.fieldAssetId });
           case "opacity": return Object.freeze({ ...common, kind: "opacity" as const, opacity: 1+(behavior.params.base-1)*amount+behavior.params.amount*oscillation });
-          case "colorShift": return Object.freeze({ ...common, kind: "colorShift" as const, hue: behavior.params.hue*oscillation, saturation: 1+behavior.params.saturation*oscillation, lightness: behavior.params.lightness*oscillation });
+          case "colorShift": {
+            if (behavior.params.delayMapAssetId) {
+              const delay=behavior.params.travelSeconds!,time=tick/60,period=1/behavior.params.frequencyHz;
+              // Preserve the initial source color at every spatial delay, then
+              // wrap only after the last delayed point has started. This bounds
+              // GPU phase precision without restarting downstream pixels.
+              const travelPhase=behavior.params.phase+2*Math.PI*behavior.params.frequencyHz*(time<=delay?time:delay+(time-delay)%period);
+              return Object.freeze({...common,kind:"colorShift" as const,hue:behavior.params.hue*amount,saturation:1+behavior.params.saturation*amount,lightness:behavior.params.lightness*amount,
+                delayMapAssetId:behavior.params.delayMapAssetId,travelPhase,travelRadians:2*Math.PI*behavior.params.frequencyHz*delay});
+            }
+            return Object.freeze({ ...common, kind: "colorShift" as const, hue: behavior.params.hue*oscillation, saturation: 1+behavior.params.saturation*oscillation, lightness: behavior.params.lightness*oscillation });
+          }
           case "glow": return Object.freeze({ ...common, kind: "glow" as const, amount: behavior.params.amount*(behavior.params.intensity ?? 1)*Math.pow(0.5+0.5*Math.sin(phase),behavior.params.sharpness ?? 1)*amount, threshold: behavior.params.threshold,
             ...(behavior.params.color ? {color:behavior.params.color} : {}) });
           case "pulse": return Object.freeze({ ...common, kind: "pulse" as const, gain: 1 + behavior.params.amount * oscillation });

@@ -129,6 +129,35 @@ try {
     };
     const sceneTick=await tick();
     await evaluate("void(window.izGl=izCanvas.getContext('webgl2'))");
+    if(process.argv.includes("--digital-ui")) {
+      await selectScene("digital");
+      const blackout="document.querySelector('[data-iz-environment-blackout]')";
+      await waitFor(blackout);assert.equal(await evaluate(`${blackout}.checked`),false);
+      await evaluate("void(window.izDigitalNormal=izCanvas.toDataURL())");
+      await click(blackout);await waitFor(`${blackout}.checked`);
+      assert.equal(await tick(),sceneTick,"Blackout does not advance paused simulation");
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalNormal"),false,"Visible checkbox blacks out environment immediately while paused");
+      await evaluate("void(window.izDigitalBlack=izCanvas.toDataURL())");
+      await selectScene("journey");await selectScene("digital");
+      assert.equal(await evaluate(`${blackout}.checked && izCanvas.toDataURL()===izDigitalBlack`),true,"Preference and black frame survive scene parking");
+      await click("document.querySelector('[data-iz-reset]')");await waitFor(`${blackout}.checked`);
+      await click(blackout);await waitFor(`!${blackout}.checked`);
+      await evaluate("void(window.izDigitalPaused=izCanvas.toDataURL())");await delay(250);
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalPaused"),true,"Pause freezes reveal");
+      await click(toggle);await waitFor(`!${audio}.paused && ${canvas}.dataset.visualStatus==='running'`);
+      await delay(600);await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+      assert.equal(await evaluate("izCanvas.toDataURL()===izDigitalPaused"),false,"Playback advances reveal and protected colors");
+      const frozen=await tick();await delay(250);assert.equal(await tick(),frozen);
+      await click(toggle);await waitFor(`!${audio}.paused`);await delay(3600);
+      await click(toggle);await waitFor(`${canvas}.dataset.visualStatus==='paused'`);
+      assert.equal(await evaluate(`${audio}===izAudio && ${canvas}===izCanvas && izCanvas.getContext('webgl2')===izGl`),true,"One audio element, canvas and context");
+      await click("document.querySelector('[data-iz-immersive]')");await waitFor("document.querySelector('[data-iz-immersive-pilot]')");
+      await evaluate("document.querySelector('[data-iz-immersive-pilot]').open=true");
+      assert.equal(await evaluate("!!document.querySelector('[data-iz-immersive-pilot] [data-iz-environment-blackout]')"),true,"Blackout is available in immersive controls");
+      const report=new URL("../../../.tmp/digital-grid-qa/",import.meta.url);await mkdir(report,{recursive:true});
+      const screenshot=await send("Page.captureScreenshot",{format:"png"});await writeFile(new URL("application-blackout-control.png",report),Buffer.from(screenshot.data,"base64"));
+      console.log("Digital Grid UI: blackout checkbox, paused frame, scene parking, reset preference, playback reveal, immersive and one audio/canvas/context OK");return;
+    }
     await selectScene("pilot");
     assert.equal(await evaluate("document.querySelector('[data-iz-state]').dataset.artwork"),"forest-pilot");
     assert.equal(await tick(),sceneTick,"Selecting a pilot cannot advance paused simulation");

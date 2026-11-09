@@ -1,0 +1,586 @@
+{
+  "schemaVersion": 2,
+  "id": "digital-grid",
+  "version": "0.2.0",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "plate",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/plate.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "diagnostic-material",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/diagnostic-material.svg",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "black",
+      "kind": "image",
+      "uri": "/infinite-zoom/samples/digital-grid/black.svg",
+      "width": 16,
+      "height": 9,
+      "critical": true
+    },
+    {
+      "id": "visible-rear-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-rear-wheel.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-rear-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-rear-wheel.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-rear-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-rear-wheel.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "visible-front-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-front-wheel.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-front-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-front-wheel.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-front-wheel",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-front-wheel.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "visible-body-panels",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-body-panels.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-body-panels",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-body-panels.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-body-panels",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-body-panels.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "visible-dome-ribs",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-dome-ribs.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-dome-ribs",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-dome-ribs.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-dome-ribs",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-dome-ribs.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "visible-road-cyan",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-road-cyan.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-road-cyan",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-road-cyan.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-road-cyan",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-road-cyan.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    },
+    {
+      "id": "visible-city-amber",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/visible-city-amber.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "influence-city-amber",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/influence-city-amber.png",
+      "width": 1600,
+      "height": 900,
+      "critical": true
+    },
+    {
+      "id": "delay-city-amber",
+      "kind": "mask",
+      "uri": "/infinite-zoom/samples/digital-grid/delay-city-amber.png",
+      "width": 400,
+      "height": 225,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "black-coverage",
+      "zIndex": 0,
+      "imageAssetId": "black"
+    },
+    {
+      "id": "environment",
+      "zIndex": 1,
+      "imageAssetId": "plate",
+      "behaviors": [
+        {
+          "id": "environment-blackout",
+          "kind": "opacity",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0,
+            "phase": 0,
+            "base": 0,
+            "amount": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "rear-wheel",
+      "zIndex": 2,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-rear-wheel",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-rear-wheel",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-rear-wheel",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-rear-wheel",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 0,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "front-wheel",
+      "zIndex": 3,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-front-wheel",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-front-wheel",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-front-wheel",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-front-wheel",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 1.1,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "body-panels",
+      "zIndex": 4,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-body-panels",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-body-panels",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-body-panels",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-body-panels",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 2.2,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dome-ribs",
+      "zIndex": 5,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-dome-ribs",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-dome-ribs",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-dome-ribs",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-dome-ribs",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 0.7,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "road-cyan",
+      "zIndex": 6,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-road-cyan",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-road-cyan",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-road-cyan",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-road-cyan",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 2.7,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "city-amber",
+      "zIndex": 7,
+      "imageAssetId": "diagnostic-material",
+      "maskAssetId": "visible-city-amber",
+      "behaviors": [
+        {
+          "id": "travel-spectrum-0",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-city-amber",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "travel-spectrum-1",
+          "kind": "colorShift",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": 0,
+            "hue": 3.141592653589793,
+            "saturation": 0,
+            "lightness": 0,
+            "delayMapAssetId": "delay-city-amber",
+            "travelSeconds": 4
+          }
+        },
+        {
+          "id": "white-pass",
+          "kind": "colorShift",
+          "order": 2,
+          "params": {
+            "frequencyHz": 0.08333333333333333,
+            "phase": -1.5707963267948966,
+            "hue": 0,
+            "saturation": -1,
+            "lightness": 0.5
+          }
+        },
+        {
+          "id": "local-impulse",
+          "kind": "glow",
+          "order": 3,
+          "influenceMaskAssetId": "influence-city-amber",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 4.1,
+            "amount": 0.18,
+            "threshold": 0.2,
+            "sharpness": 4,
+            "intensity": 1
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "black-coverage"
+  },
+  "anchors": [
+    {
+      "id": "center",
+      "x": 1920,
+      "y": 1080
+    }
+  ]
+}

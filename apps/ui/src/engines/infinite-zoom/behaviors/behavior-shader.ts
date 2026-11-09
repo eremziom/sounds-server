@@ -11,7 +11,7 @@ export function behaviorUniform(effect: BehaviorOutput): number[] {
     case "bend": return [effect.amount, effect.pivotX, effect.pivotY, effect.axis === "x" ? 0 : 1];
     case "displace": case "flow": return [effect.amplitude, 0, 0, 0];
     case "opacity": return [effect.opacity, 0, 0, 0];
-    case "colorShift": return [effect.hue, effect.saturation, effect.lightness, 0];
+    case "colorShift": return [effect.hue, effect.saturation, effect.lightness, effect.travelPhase ?? 0];
     case "glow": return [effect.amount, effect.threshold, 0, 0];
   }
 }
@@ -73,9 +73,15 @@ export function buildBehaviorShader(groups: readonly BehaviorGroupOutput[]) {
     // Visual operations have a fixed stage order independent of spatial order.
     for (const [e,effect] of group.effects.entries()) if (effect.kind === "colorShift") {
       const name=`effect_${g}_${e}`, w=effect.influenceMaskAssetId?`texture2D(influence_${g}_${e},vUv).r`:"1.0";
-      colors.push(`{ vec3 axis=normalize(vec3(1.0)); float a=${name}.x*${w};
+      let travel="1.0";
+      if(effect.delayMapAssetId){
+        const sampler=`delay_${g}_${e}`;
+        declarations.push(`uniform sampler2D ${sampler};`);masks.push({name:sampler,assetId:effect.delayMapAssetId});
+        travel=`(0.5-0.5*cos(max(0.0,${name}.w-texture2D(${sampler},vUv).r*${effect.travelRadians!.toFixed(12)})))`;
+      }
+      colors.push(`{ vec3 axis=normalize(vec3(1.0)); float colorWeight=${w}*${travel}; float a=${name}.x*colorWeight;
         shifted${g}=shifted${g}*cos(a)+cross(axis,shifted${g})*sin(a)+axis*dot(axis,shifted${g})*(1.0-cos(a));
-        shifted${g}=mix(vec3(dot(shifted${g},vec3(0.2126,0.7152,0.0722))),shifted${g},mix(1.0,${name}.y,${w}))+${name}.z*${w}; }`);
+        shifted${g}=mix(vec3(dot(shifted${g},vec3(0.2126,0.7152,0.0722))),shifted${g},mix(1.0,${name}.y,colorWeight))+${name}.z*colorWeight; }`);
     }
     for (const [e,effect] of group.effects.entries()) if (effect.kind === "opacity") {
       colors.push(`alpha${g} *= mix(1.0,effect_${g}_${e}.x,${effect.influenceMaskAssetId?`texture2D(influence_${g}_${e},vUv).r`:"1.0"});`);
