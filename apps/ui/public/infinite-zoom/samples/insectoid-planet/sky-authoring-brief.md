@@ -1,15 +1,23 @@
-# High-attack cloud openings — revision 0.5.2
+# High-attack cloud openings — revision 0.5.3
 
 Follows [shared artwork-authoring-guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
 The source is the existing 1672x941 painting, registered to the existing 1600x900
 runtime plate; no image generation, repainting or claim of native 4K.
 
 Extract numerous bright cool cloud ridges/openings across the full width of the
-sky from source luminance and local texture. A separate conservative authored
+sky from source luminance and local texture. A separate source-traced authored
 sky/horizon/architecture stencil excludes mountains, volcanoes, buildings,
 spires and antennas. Visibility and emission-influence maps remain separate:
 the stencil defines safe sky support; source-derived grayscale detail defines
 which bright cloud material emits. Preserve dark gaps and painted cloud texture.
+Static silhouettes use the detailed native-source contours in
+`scripts/lib/insectoid-sky-contours.mjs`: curved chitin edges/barbs, individual
+antennae, city roofs, the mountain skyline and open sky through the upper arches.
+Replace the old convex approximations, broad antenna rectangles and 8–16 pixel
+horizon clearance with only a 0–1.2-source-pixel antialias ramp on the sky side.
+Lower glazed interiors remain excluded; their existing independent lights and
+membrane deformation masks are unchanged. This revision only refines data masks;
+it adds no renderer, engine behavior, clock, audio processing or painted pixels.
 Exclude the generated volcanic plume's alpha footprint expanded by 55 source
 pixels, covering its authored maximum flow/bend travel and filtering margin.
 This conservatively withholds some light in clear sky adjacent to the plume;

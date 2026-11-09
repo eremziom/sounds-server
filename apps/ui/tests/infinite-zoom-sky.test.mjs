@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {readFile} from "node:fs/promises";
+import {fileURLToPath} from "node:url";
 import {extractSkyLighting,safeSky} from "../scripts/lib/insectoid-sky-lighting.mjs";
 import {parseArtworkPackage,createArtworkInstance} from "../src/engines/infinite-zoom/artwork/index.ts";
 import {withSceneReveal,createSceneReveal} from "../src/components/infinite-zoom/scene-reveal.ts";
@@ -17,9 +18,18 @@ test("sky detail is source-derived, distributed across the sky and protected by 
   }
   assert.ok(sectors.every(value=>value>5000));assert.ok(selected>150000&&selected<250000);
   assert.ok(weightedLuma/selected>.15);assert.ok(new Set(maps.material).size>200);
-  for(const [sx,sy]of [[400,80],[312,170],[485,200],[790,260],[1250,225],[1220,100],[1487,220],[1200,600],[100,600]]){
+  for(const [sx,sy]of [[386,80],[312,170],[489,220],[310,280],[790,260],[1250,225],[1220,100],[1487,220],[1200,600],[100,600]]){
     const i=Math.floor(sy*maps.height/941)*maps.width+Math.floor(sx*maps.width/1672);assert.equal(maps.visibility[i],0,`Protected landmark ${sx},${sy}`);
   }
+  // Source-inspected clear sky: the previous broad rectangles/convex arch
+  // approximations withheld these pixels even though no static material is here.
+  for(const [sx,sy]of [[400,80],[485,170],[150,100],[200,120],[420,200],[110,155]]){
+    const i=Math.floor(sy*maps.height/941)*maps.width+Math.floor(sx*maps.width/1672);
+    assert.ok(maps.visibility[i]>240,`Clear sky restored at ${sx},${sy}`);
+  }
+  const {sharp}=await import("../scripts/lib/insectoid-chitin-rims.mjs");
+  const packaged=await sharp(fileURLToPath(new URL("visible-sky.png",root))).extractChannel(0).raw().toBuffer();
+  assert.ok(packaged.equals(Buffer.from(maps.visibility)),"Packaged sky visibility matches the reproducible contours");
 });
 
 test("emission-only layers validate conservatively and cannot replace opaque coverage",()=>{

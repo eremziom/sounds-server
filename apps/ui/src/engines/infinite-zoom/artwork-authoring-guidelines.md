@@ -1,6 +1,6 @@
 # Obowiązkowe wytyczne produkcji artworków Infinite Zoom
 
-Wersja instrukcji: **1.2** (2026-11-07). Obowiązuje przy tworzeniu i poprawianiu każdego
+Wersja instrukcji: **1.3** (2026-11-09). Obowiązuje przy tworzeniu i poprawianiu każdego
 artworku, niezależnie od tematu, stylu, użytych narzędzi i liczby warstw.
 To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowanie.
 
@@ -13,7 +13,7 @@ To wspólne źródło zasad; brief konkretnej sceny doprecyzowuje ich zastosowan
 3. **Chroń sąsiednie obszary.** Animacja wybranego fragmentu nie może przesuwać, odkształcać ani przeciągać pikseli elementów, które do niego nie należą.
 4. **Zdefiniuj połączenia i zakotwiczenia.** Wskaż miejsca nieruchome, połączenia między częściami oraz granice dopuszczalnego ruchu. Zmieniaj siłę deformacji stopniowo tam, gdzie wymaga tego konstrukcja obiektu.
 5. **Przygotuj zawartość odsłanianą przez ruch.** Warstwy muszą zawierać wystarczający zapas obrazu. Ruch nie może ujawniać pustych miejsc, duplikatów ani rozciągniętych krawędzi.
-6. **Dopasuj krawędzie masek do materiału i struktury.** Zachowaj potrzebną ostrość, miękkość, przezroczystość i drobne szczegóły. Unikaj jednakowego rozmywania wszystkich granic.
+6. **Bardzo dokładnie dopasuj maski do rzeczywistych konturów, zwłaszcza wokół elementów statycznych.** Maski widoczności, przesłaniania i wpływu efektów muszą odpowiadać kształtom na grafice źródłowej, z zachowaniem cienkich detali, szczelin i prześwitów. Przy nieruchomych elementach nie stosuj uproszczonych obrysów ani szerokich wycięć bezpieczeństwa, które pozostawiają na widocznym tle ciemne „duchy” sylwetek lub blokują jego podświetlenie. Zachowaj potrzebną ostrość, miękkość i przezroczystość materiału; wygładzenie krawędzi nie może tworzyć widocznego odstępu od konturu. Zachowawcze wycięcia przy elementach dynamicznych są dopuszczalne w zakresie uzasadnionym ich maksymalnym łącznym ruchem i próbkowaniem. Sprawdź dopasowanie masek na obrazie źródłowym, podczas rozbłysków, ruchu i zoomu; oznacz niepewne granice do korekty. Unikaj jednakowego rozmywania wszystkich granic.
 7. **Uwzględnij maksymalny łączny ruch.** Maski, zapas obrazu i bezpieczny zakres próbkowania muszą działać przy jednoczesnym zastosowaniu wszystkich przypisanych efektów.
 8. **Zweryfikuj wynik w animacji i podczas zoomu.** Sprawdź pełne cykle, skrajne położenia i nakładające się efekty. Kontroluj ciągłość połączeń, kolejność przesłaniania, stabilność nieruchomych obszarów oraz brak szwów, obwódek i migotania.
 9. **Zaprojektuj dużą liczbę miejsc do impulsowego podświetlania.** Każda grafika, niezależnie od motywu i stylu, musi zawierać liczne drobne punkty, skupiska detali lub pasma materiału przygotowane do lokalnych impulsów światła. Muszą być integralnymi elementami sceny i zachowywać jej fakturę, formę oraz przesłanianie. Obowiązują szczegółowe wymagania poniżej.
@@ -108,13 +108,13 @@ i lawą. Dobierz odpowiedniki do tematu; lawa ani konkretna stylistyka nie są w
   Włącz wymagania do briefu i przekazuj odpowiednie ograniczenia w promptach
   kolejnych etapów. Narzędzie generujące obraz nie odczytuje samo repozytorium.
 - W `authoring-brief.md` pakietu podaj odnośnik do tej instrukcji i używaną wersję
-  (obecnie 1.2),
+  (obecnie 1.3),
   a następnie opisz jej zastosowanie: grupy ruchu, obszary stałe, role masek,
   połączenia, osie, zapas obrazu, maksymalne parametry i przesłanianie.
 - W briefie opisz także dużą liczbę miejsc impulsowego światła: ich rodzaj,
   szacowaną liczbę/gęstość, rozmieszczenie i grupy, związek z materiałem, maski,
   fazy/okresy oraz plan oceny w pełnym kadrze i przy zoomie. Nowe i poprawiane
-  pakiety muszą spełniać wersję 1.2; historyczne wersje briefów i promptów
+  pakiety muszą spełniać wersję 1.3; historyczne wersje briefów i promptów
   zachowują rzeczywisty numer instrukcji użytej przy ich tworzeniu.
 - W briefie opisz tryb zaciemnienia: otoczenie, chronione obszary światła i
   kolorów, role warstw/masek, zachowanie animacji przy zerowej jasności otoczenia,

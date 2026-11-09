@@ -12,7 +12,7 @@ const skyLighting=await createSkyLighting({root,layers,async asset(id,kind,data,
 }});
 manifest.assets=[...manifest.assets.filter(a=>!assets.some(next=>next.id===a.id)),...assets];
 manifest.layers=[...manifest.layers.filter(l=>l.id!=="sky-high-attack"),...layers];
-manifest.version="0.5.2";
+manifest.version="0.5.3";
 await writeFile(new URL("manifest.json",root),JSON.stringify(manifest,null,2)+"\n");
 const production=JSON.parse(await readFile(new URL("production.json",root),"utf8"));
 production.version=manifest.version;production.skyLighting=skyLighting;

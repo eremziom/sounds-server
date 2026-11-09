@@ -122,6 +122,24 @@ warm reflected light as well as emitters; wet ground and foreground lighting
 must be assessed in motion. The delivered artwork remains an experimental test
 scene; final artistic approval and target-device performance are outstanding.
 
+## Static sky-occlusion correction — revision 0.5.3, 2026-11-09
+
+Follows [shared artwork guidelines v1.2](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).
+See [the revised sky brief](sky-authoring-brief.md) for scene-specific application.
+Trace the static mountain skyline, hooked chitin silhouettes, roofline and thin
+antennae at the original 1672x941 source extent; keep visible sky openings through
+the upper arches. Replace broad static safety hulls with a narrow sky-side edge
+antialias ramp. Retain the independent moving plume's 55-source-pixel envelope.
+The lower membranes still deform only inside their guarded interiors; their
+fixed attachment silhouettes and protected glazing must not emit sky light.
+Existing distributed textured cloud/rim impulse sites, signal timing, animated
+protected colors and complete-blackout/reveal behavior remain in place. No new
+engine extension or illustration generation is part of this mask revision.
+Inspect full-frame lighting, static contours, blackout, 15 seconds of combined
+movement and left/right architecture zooms; report sub-texel tracing uncertainty
+separately from technical test results in qa.md. Original source and runtime
+dimensions/provenance remain unchanged.
+
 ## Optional darkness reveal experiment — 2026-11-07
 
 This revision follows [shared artwork guidelines v1.1](../../../../src/engines/infinite-zoom/artwork-authoring-guidelines.md).

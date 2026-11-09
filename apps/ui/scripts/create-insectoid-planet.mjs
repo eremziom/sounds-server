@@ -132,7 +132,7 @@ export async function createInsectoidPlanet(){
   layers.push(smoke.layer);
   const rimLighting=await createChitinRimLighting({root,asset,layers});
   const skyLighting=await createSkyLighting({root,asset,layers});
-  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.5.2",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
+  const manifest={schemaVersion:2,id:"insectoid-planet",version:"0.5.3",canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:"fixed-world"},anchors:[{id:"city",x:740,y:770},{id:"membranes",x:3000,y:1390},{id:"volcano",x:2780,y:560}]};
   await writeFile(new URL("manifest.json",root),JSON.stringify(manifest,null,2)+"\n");
   const production={
     schemaVersion:1,artworkId:manifest.id,version:manifest.version,tool:"built-in image_gen",externalApiCalls:0,

@@ -1,5 +1,48 @@
 # QA — insectoid planet, 2026-11-07
 
+## Revision 0.5.3 — static sky contours, 2026-11-09
+
+Shared authoring guidelines v1.2 apply; see `authoring-brief.md` and
+`sky-authoring-brief.md`. Source-traced curved chitin silhouettes, separate narrow
+antennae, connected city roofs, mountain skyline and open sky through upper
+arches replace the coarse polygons. Static clearance is now a 0–1.2-source-pixel
+sky-side antialias ramp, rather than the previous 8–16 pixel horizon and 2–7 pixel
+architectural guards. The moving smoke's 55-source-pixel exclusion is unchanged.
+The source plate, all motion masks, audio timing and engine code are unchanged.
+
+Combined source-derived light support above 3% now covers 207,580 texels, with
+eight-sector distribution 27,400 / 32,504 / 29,683 / 25,082 / 37,607 / 11,865 /
+19,708 / 23,731. This retains cloud texture and fills the formerly withheld sky
+around buildings, including real gaps between architecture and antennae.
+
+Validation from `apps/ui`:
+
+- `node --experimental-strip-types --test tests/infinite-zoom-sky.test.mjs tests/infinite-zoom-high-attack.test.mjs tests/infinite-zoom-insectoid.test.mjs`:
+  15 passing. Includes source-inspected protected material/clear-sky landmarks,
+  packaged-mask reproducibility, silence/release, blackout and existing local
+  membrane, heat, vapor, smoke and chitin behavior checks.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only --sky-high-precision`:
+  RGBA16F passes pause, release, blackout, controls, context recovery, 15 logical
+  seconds with all authored moving layers, full-frame flashes and left/right
+  camera zooms. Outside-support pixel difference is at most 1 display code
+  value, matching deterministic output dithering tolerance.
+- `node tests/infinite-zoom-renderer.browser.mjs --sky-only`: RGBA8 passes the
+  same checks, with zero outside-support difference and zero silent difference.
+
+Review evidence: repository-root `.tmp/infinite-zoom-artwork/sky-mask-review.png`,
+`sky-peak.png`, `sky-blackout-peak.png`, `sky-motion-{0,30,...,420}.png`,
+`sky-zoom-peak.png`, `sky-motion.webm` and `sky-qa.json`. Source, enlarged left
+silhouettes, full-frame peak, blackout and left/right zoom-cycle samples were
+visually inspected. The clip includes combined moving smoke, membranes and
+lights instead of isolating the sky overlay. This is fixed-tick QA evidence,
+not a real-time performance certification or final artistic approval.
+
+Remaining uncertainty: source antialiasing and the one-runtime-texel limits of
+very fine antennae/barbs can leave small edge differences under extreme zoom.
+The conspicuous, deliberately conservative dark boundary around the moving
+plume is retained under the user's instruction. No per-frame plume occlusion
+or engine extension was introduced. Prior QA below describes earlier masks.
+
 ## Revision 0.5.2 — high-attack sky lighting
 
 Uses shared guidelines v1.2; see `sky-authoring-brief.md`. Two 1600x900 grayscale

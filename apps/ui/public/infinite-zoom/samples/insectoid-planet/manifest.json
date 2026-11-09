@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "id": "insectoid-planet",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "canvas": {
     "width": 3840,
     "height": 2160
