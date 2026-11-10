@@ -1,0 +1,219 @@
+[
+  {
+    "file": "authoring-brief.md",
+    "bytes": 4175,
+    "sha256": "82d90c5b718a77e531343f334e7a261945c6c4a92f9ff4987b6cbea6e167e2a3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\authoring-brief.md"
+  },
+  {
+    "file": "B-04-1024-500.json",
+    "bytes": 432,
+    "sha256": "2d08479aeef3ed8671bd5743a18d8edbd3d2162bd4d8ffd85db3294e8b55f803",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-500.json"
+  },
+  {
+    "file": "B-04-1024-500.png",
+    "bytes": 905348,
+    "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-500.png"
+  },
+  {
+    "file": "B-04-1024-501.json",
+    "bytes": 433,
+    "sha256": "748de2bf9562970bd1ef09108d606787d6012e45861c5db45a2833973c8a985d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-501.json"
+  },
+  {
+    "file": "B-04-1024-501.png",
+    "bytes": 976632,
+    "sha256": "27eabbd52039c035a0c142206068ec4ba78ddd8feb1db55a1f0b0d813eebe69c",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-501.png"
+  },
+  {
+    "file": "B-04-1024-502.json",
+    "bytes": 433,
+    "sha256": "a70ab8558daf51af3d76779d3b98667d0f2292275656207debda61a96356fe73",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-502.json"
+  },
+  {
+    "file": "B-04-1024-502.png",
+    "bytes": 928491,
+    "sha256": "e1243fe3c3a06db0f7b3b9929e339ef5256e1f767b420b4a43ca886c05593c67",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-1024-502.png"
+  },
+  {
+    "file": "B-04-512-500.json",
+    "bytes": 432,
+    "sha256": "32c40b4e24d529ee63ee2f0a95e7ff3e0b5946348ea51ce28428d35ae4ec906b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-500.json"
+  },
+  {
+    "file": "B-04-512-500.png",
+    "bytes": 277823,
+    "sha256": "53ce90da40ed1c887c1853f856006b4e868ba81e4803e4d649c589b19ce50a61",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-500.png"
+  },
+  {
+    "file": "B-04-512-501.json",
+    "bytes": 432,
+    "sha256": "c1225b454e75a6148b6bd0000007d08a82b0b8eaa9e5312d42ce25d224285e0c",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-501.json"
+  },
+  {
+    "file": "B-04-512-501.png",
+    "bytes": 279024,
+    "sha256": "59c7233854f120a3cd7e1dbc47ecf51eca551128103d5b1b9b4c5e794625d306",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-501.png"
+  },
+  {
+    "file": "B-04-512-502.json",
+    "bytes": 432,
+    "sha256": "2bc7103573bba5b9f920d111dd15ebb8d72f004a6e1834e63fa9695882627cb9",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-502.json"
+  },
+  {
+    "file": "B-04-512-502.png",
+    "bytes": 275787,
+    "sha256": "44e0c1440b95cab9729f3a28b5314bf52357e667bbc2d66243ae2e6bd9a27f5b",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-04-512-502.png"
+  },
+  {
+    "file": "B-05-600.json",
+    "bytes": 588,
+    "sha256": "afb74d5991efc21fa732b5a42d7a4a7335f4ca818a39ef712877605994f545d0",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-600.json"
+  },
+  {
+    "file": "B-05-600.png",
+    "bytes": 924261,
+    "sha256": "ce1c414955aa08bd349b31640cbf54acf2f757e6e07b6455c01732c36b6f7062",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-600.png"
+  },
+  {
+    "file": "B-05-601.json",
+    "bytes": 588,
+    "sha256": "75b88f713fa80f6c1b19b17fce29f825496de659e564a05563e8783757d22f6b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-601.json"
+  },
+  {
+    "file": "B-05-601.png",
+    "bytes": 905658,
+    "sha256": "5e05fb2f823f0f4a082540bf81bf2b45f5c0f37d3052446cc2a489a3fe373076",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-601.png"
+  },
+  {
+    "file": "B-05-602.json",
+    "bytes": 585,
+    "sha256": "2419a4d6bb605cf4c1569a24c7e2c0d164c7c29f111c430fdcb53aaa3a739677",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-602.json"
+  },
+  {
+    "file": "B-05-602.png",
+    "bytes": 948333,
+    "sha256": "89ea7122e2f07fbbeb622b323cea872188d7c6e61b2e8b8fdac8eaefd64ca291",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\B-05-602.png"
+  },
+  {
+    "file": "edit-embeds.safetensors",
+    "bytes": 7864416,
+    "sha256": "f56d05b833a651f58b5c9ce116d633de4bc3298f40cf59896b42b5a6d85be387",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\edit-embeds.safetensors"
+  },
+  {
+    "file": "edit-review.webp",
+    "bytes": 199004,
+    "sha256": "2dc30c3321da0f409a75a05b5bf1dfd580c620f1aec3cd7278995c7317cbef26",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\edit-review.webp"
+  },
+  {
+    "file": "encode-command.json",
+    "bytes": 370,
+    "sha256": "3537e73b41c479dc98576761542375b2e577124bb6276f91b18c022c5a52a886",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\encode-command.json"
+  },
+  {
+    "file": "encode-result.json",
+    "bytes": 3439,
+    "sha256": "a7b1c12ebd174dde944603dd6c24c90d33102b2ff99ae1534f23997b12177628",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\encode-result.json"
+  },
+  {
+    "file": "encode-worker.txt",
+    "bytes": 1741,
+    "sha256": "0f8a96f41aa0b05f33d5b1f6288c6d31f4428386b4218b40e408940528770d9f",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\encode-worker.txt"
+  },
+  {
+    "file": "generate-command.json",
+    "bytes": 373,
+    "sha256": "de03e28525b14e7950d742128fe11913214865f76ef3a7d4acc98c515040f67a",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\generate-command.json"
+  },
+  {
+    "file": "generate-embeds.safetensors",
+    "bytes": 7864416,
+    "sha256": "01a41baae2f5d883f2b1def1fa2cdb7e79d7abd03e33107aa4721289ee061623",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\generate-embeds.safetensors"
+  },
+  {
+    "file": "generate-result.json",
+    "bytes": 5899,
+    "sha256": "0dd89dfb9f50c75287d236404b3442f4fbd50288c2d2903069ab845f3c33b271",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\generate-result.json"
+  },
+  {
+    "file": "generate-worker.txt",
+    "bytes": 1348,
+    "sha256": "8f210ce4f40cc51fba1366e3e8e60951ec4206c0395fc4ce548ac769b62ecb9a",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\generate-worker.txt"
+  },
+  {
+    "file": "generation-review.webp",
+    "bytes": 224406,
+    "sha256": "e708d828f9e25ca1d8eb4bc350c83c1393aee9d46bf6aa02d8ff2ef3f97e45a5",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\generation-review.webp"
+  },
+  {
+    "file": "provenance.json",
+    "bytes": 468,
+    "sha256": "becfae3265d2cd8cc340e7fdb1262b35091f065e8e07868c9e99feff5b6716b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\provenance.json"
+  },
+  {
+    "file": "stages.json",
+    "bytes": 796,
+    "sha256": "ad4f4b8e47f1b3c47089fa9e4cb503c40b03c983c6fe73517d48c4c54a652d8b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794304814602127700\\stages.json"
+  }
+]

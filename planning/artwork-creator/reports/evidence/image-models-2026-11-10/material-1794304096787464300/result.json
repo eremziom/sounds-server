@@ -1,0 +1,131 @@
+{
+  "id": "B-07",
+  "source_hashes": {
+    "plate.png": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+    "visible-front-wheel.png": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8"
+  },
+  "reference": "Existing authored front-wheel bright-material mask, threshold red >127; not an object-visibility mask",
+  "thresholds": [
+    140,
+    170,
+    200
+  ],
+  "quality": "not-reviewed",
+  "runs": [
+    {
+      "run": 0,
+      "inference_seconds": 3.6095215000004828,
+      "selected_mask": 0,
+      "model_scores": [
+        0.6847691535949707,
+        0.6105634570121765,
+        0.66986483335495
+      ]
+    },
+    {
+      "run": 1,
+      "inference_seconds": 0.17688349999934871,
+      "selected_mask": 0,
+      "model_scores": [
+        0.6847691535949707,
+        0.6105634570121765,
+        0.66986483335495
+      ]
+    },
+    {
+      "run": 2,
+      "inference_seconds": 0.1765042999995785,
+      "selected_mask": 0,
+      "model_scores": [
+        0.6847691535949707,
+        0.6105634570121765,
+        0.66986483335495
+      ]
+    }
+  ],
+  "selection": "Gamma-encoded Rec.709 luma threshold inside SAM object mask; no reference used for selection",
+  "pixel_contract_sha256": "5189183c51b716e251f6c07769126d04c081e95945790a634c85adc68c3910bf",
+  "prompts": {
+    "input_points": [
+      [
+        [
+          [
+            1380,
+            640
+          ],
+          [
+            1270,
+            620
+          ],
+          [
+            1050,
+            610
+          ]
+        ]
+      ]
+    ],
+    "input_labels": [
+      [
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    ],
+    "input_boxes": [
+      [
+        [
+          1050,
+          410,
+          1440,
+          830
+        ]
+      ]
+    ]
+  },
+  "candidates": [
+    {
+      "threshold": 140,
+      "selection_seconds": 0.007394799999929091,
+      "pixels": 29351,
+      "precision": 0.8618445708834452,
+      "recall": 0.7333024118738405,
+      "iou": 0.6561697491634458,
+      "outside_object_pixels": 0,
+      "dark_gap_pixels_selected": 0,
+      "sha256": "8050b73c6bfbb0f6717f6631c1343d7058b2d1a747f2989b0ca670be5cdc94ea"
+    },
+    {
+      "threshold": 170,
+      "selection_seconds": 0.0075956000000587665,
+      "pixels": 27976,
+      "precision": 0.8878324277952531,
+      "recall": 0.7200255102040817,
+      "iou": 0.6599883084444916,
+      "outside_object_pixels": 0,
+      "dark_gap_pixels_selected": 0,
+      "sha256": "a9effc0476b8d79d20e122e4f760abd812a777b75a291a670f6a569d439c4faa"
+    },
+    {
+      "threshold": 200,
+      "selection_seconds": 0.0077339999998002895,
+      "pixels": 25816,
+      "precision": 0.9033932444995352,
+      "recall": 0.6760783858998145,
+      "iou": 0.6304947283049472,
+      "outside_object_pixels": 0,
+      "dark_gap_pixels_selected": 0,
+      "sha256": "7c7eda98a2093e671b52a46a46e11e6ff3058d7eacb263b2f606508bb7fafb32"
+    }
+  ],
+  "gpu_max_allocated_bytes": 1021741056,
+  "gpu_max_reserved_bytes": 1457520640,
+  "process_memory": {
+    "peak_working_set_bytes": 950509568,
+    "working_set_bytes": 897368064,
+    "peak_commit_bytes": 3419021312
+  },
+  "source_unchanged": true,
+  "gpu_allocated_after_release_bytes": 180355072
+}

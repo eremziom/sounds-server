@@ -1,20 +1,32 @@
 # Stan realizacji
 
-Aktualizacja: **2026-11-09**. Dokumentacja 1.0 została przygotowana.
-Żaden etap wdrożenia kreatora nie został jeszcze rozpoczęty ani odebrany.
+Aktualizacja: **2026-11-10**. KRE-00 rozpoczęty na polecenie użytkownika.
+Żaden etap nie został jeszcze odebrany.
 
 ## Najbliższy krok
 
-**KRE-00 — lokalna próba modeli.**
+**KRE-00 — lokalna próba modeli, do korekty (2026-11-10).**
 Zakres i formularz: [local-model-benchmark.md](local-model-benchmark.md).
-Po rozpoczęciu etapu: diagnostyka środowiska, wybór minimalnej konfiguracji,
-testy modeli i zapis raportu; bez równoległego wdrażania pełnego kreatora.
+Wykonano diagnostykę i przygotowano izolowane narzędzia próbne w
+`tools/artwork-creator/`. Wyniki, ograniczenia i kolejny krok:
+[B-01](reports/KRE-00-2026-11-10.md) oraz
+[B-02/B-03 i pamięć GPU](reports/KRE-00-2026-11-10-capabilities.md).
+Narzędzia przeszły ograniczoną macierz prób; VLM wymaga wskazówki przy błędzie
+maski. Wykonano też [próby modeli obrazu B-04–B-08](reports/KRE-00-2026-11-10-image-models.md):
+Klein/ROCm działa z ograniczoną pamięciowo uwagą, SAM działa na GPU, LaMa na CPU.
+Surowa edycja zmienia tło i światła; wariant z maską je chroni. Złożone maski,
+materiały i rekonstrukcja tła nadal wymagają korekt.
+[B-09–B-11](reports/KRE-00-2026-11-10-sequence-qa.md) wykonano: mediana
+sekwencji 59,844 s, przerwanie/restart oraz podgląd ruchu/zoomu i test integracji
+audio przechodzą technicznie. Podgląd ujawnił błędne maski światła i brak
+zasłaniania drona; brakuje przestrzennej propagacji koloru. Następny krok:
+korekta jakości i ponowna ocena w ruchu, przed odbiorem KRE-00.
 
 ## Lista etapów
 
 | Etap | Stan | Raport/dowody | Następny warunek |
 | --- | --- | --- | --- |
-| KRE-00 | Do rozpoczęcia | Brak | Test na Windows 11 / RX 7800 XT 16 GB / 32 GB RAM |
+| KRE-00 | Do korekty | [B-01](reports/KRE-00-2026-11-10.md), [B-02/B-03](reports/KRE-00-2026-11-10-capabilities.md), [B-04–B-08](reports/KRE-00-2026-11-10-image-models.md), [B-09–B-11](reports/KRE-00-2026-11-10-sequence-qa.md) | Maski materiałów, zasłanianie, tło i propagacja; ponowna ocena i uzgodnienie interwencji |
 | KRE-01 | Nie rozpoczęto | Brak | Wynik KRE-00 |
 | KRE-02 | Nie rozpoczęto | Brak | Kontrakty i zapis projektu |
 | KRE-03 | Nie rozpoczęto | Brak | Działające narzędzia i zadania |
@@ -36,8 +48,10 @@ testy modeli i zapis raportu; bez równoległego wdrażania pełnego kreatora.
 
 ## Propozycje wymagające pomiaru/rozstrzygnięcia
 
-- Zestaw Qwen3.5-9B / FLUX.2 Klein 4B / SAM 2.1 / LaMa nie ma jeszcze wyników
-  na tym komputerze. Depth Anything V2 Small pozostaje opcją dodatkową.
+- Qwen3.5-9B / Klein 4B / SAM 2.1 Tiny / LaMa mają lokalne pomiary techniczne.
+  Pełna sekwencja i gotowość jakościowa nie zostały odebrane. Klein wymaga
+  ograniczonej pamięciowo uwagi i kodowej ochrony niezmienianych obszarów;
+  SAM/selektor materiału i LaMa wymagają korekt. Depth Anything pozostaje opcją.
 - Backend AMD, formaty wag, offload, maksymalna rozdzielczość i budżety czasu.
 - ComfyUI jako wykonawca i llama.cpp jako serwer rozmowy są kandydatami.
 - Konkretne ścieżki nowych modułów, kontrakty endpointów, schemat Prisma i kolejka

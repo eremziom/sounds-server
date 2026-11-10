@@ -1,0 +1,109 @@
+{
+  "version": "1",
+  "pip_version": "24.2",
+  "install": [
+    {
+      "download_info": {
+        "url": "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl",
+        "archive_info": {
+          "hash": "sha256=f68989d48df71cbfc3cb68bf705dc37c0f56e9666feddb59a1a0f5ff7539fe1c",
+          "hashes": {
+            "sha256": "f68989d48df71cbfc3cb68bf705dc37c0f56e9666feddb59a1a0f5ff7539fe1c"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.4",
+        "name": "rocm-sdk-core",
+        "version": "7.2.1"
+      }
+    },
+    {
+      "download_info": {
+        "url": "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl",
+        "archive_info": {
+          "hash": "sha256=19e6ee67e13432b7c1e8a4077df795dcb1239546ae314700c4b4d97e5b4b8f63",
+          "hashes": {
+            "sha256": "19e6ee67e13432b7c1e8a4077df795dcb1239546ae314700c4b4d97e5b4b8f63"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.4",
+        "name": "rocm-sdk-devel",
+        "version": "7.2.1"
+      }
+    },
+    {
+      "download_info": {
+        "url": "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl",
+        "archive_info": {
+          "hash": "sha256=c7fe0b0731af8896093ff69e11496830d3cb6a4aed73e895c60b7cbdc200be92",
+          "hashes": {
+            "sha256": "c7fe0b0731af8896093ff69e11496830d3cb6a4aed73e895c60b7cbdc200be92"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.4",
+        "name": "rocm-sdk-libraries-custom",
+        "version": "7.2.1"
+      }
+    },
+    {
+      "download_info": {
+        "url": "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz",
+        "archive_info": {
+          "hash": "sha256=9084902eaa69213a00a90784ad89e6e5fe73c702df0cc6cc3a70d777c7a6142b",
+          "hashes": {
+            "sha256": "9084902eaa69213a00a90784ad89e6e5fe73c702df0cc6cc3a70d777c7a6142b"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.4",
+        "name": "rocm",
+        "version": "7.2.1",
+        "dynamic": [
+          "provides-extra",
+          "requires-dist"
+        ],
+        "requires_dist": [
+          "rocm==7.2.1",
+          "rocm-sdk-core==7.2.1",
+          "rocm-sdk-libraries-custom==7.2.1; extra == \"libraries\"",
+          "rocm-sdk-devel==7.2.1; extra == \"devel\""
+        ],
+        "provides_extra": [
+          "libraries",
+          "devel"
+        ]
+      }
+    }
+  ],
+  "environment": {
+    "implementation_name": "cpython",
+    "implementation_version": "3.12.6",
+    "os_name": "nt",
+    "platform_machine": "AMD64",
+    "platform_release": "11",
+    "platform_system": "Windows",
+    "platform_version": "10.0.26200",
+    "python_full_version": "3.12.6",
+    "platform_python_implementation": "CPython",
+    "python_version": "3.12",
+    "sys_platform": "win32"
+  }
+}

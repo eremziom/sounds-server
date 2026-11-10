@@ -1,0 +1,604 @@
+{
+  "id": "B-03",
+  "kind": "preserve",
+  "index": 1,
+  "expected_tool": "setBeaconPeriod",
+  "turns": [
+    {
+      "request": {
+        "model": "local",
+        "seed": 301,
+        "temperature": 0.1,
+        "max_tokens": 1200,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Jesteś operatorem lokalnej próby KRE-00. Dostępne narzędzia faktycznie wykonuje kod. Nie generuj kodu. Wybierz właściwą funkcję; nie potwierdzaj wykonania przed ok:true. Błędy walidacji są wiążące. Nieobsługiwany efekt pozostaje niewykonany. Kopie mają istniejący schemat 2; początkowy okres lampki w kopii to 6 s. Cała scena i audio są poza tą próbą. Po wykonaniu odpowiedz krótko po polsku. Maksymalnie 4 wywołania."
+          },
+          {
+            "role": "user",
+            "content": "Nie zmieniaj tła ani żadnych obrazów; zmień tylko okres lampki samolotu na 5 sekund."
+          }
+        ],
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "setBeaconPeriod",
+              "description": "Zmień wyłącznie okres navigation-flash istniejącej lampki. Walidacja silnika, bez zmiany obrazu i tła.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "periodSeconds": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "periodSeconds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "setFlightPath",
+              "description": "Ustaw layer.travel wszystkich trzech części samolotu. Obsługuje bezier/spline, nie pole arc. Punkty są przesunięciami od (0,0).",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "travel": {
+                    "type": "object",
+                    "properties": {
+                      "startSeconds": {
+                        "type": "number"
+                      },
+                      "durationSeconds": {
+                        "type": "number"
+                      },
+                      "path": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "bezier"
+                            ]
+                          },
+                          "segments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "control1": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "control2": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "control1",
+                                "control2",
+                                "to"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "segments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "easing": {
+                        "type": "string",
+                        "enum": [
+                          "linear",
+                          "ease-in",
+                          "ease-out",
+                          "ease-in-out"
+                        ]
+                      },
+                      "orientToPath": {
+                        "type": "boolean"
+                      },
+                      "pivot": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "startSeconds",
+                      "durationSeconds",
+                      "path",
+                      "easing",
+                      "orientToPath",
+                      "pivot"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "travel"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "refineMask",
+              "description": "Wyzeruj prostokąt tylko w kopii maski front-wheel-test. rectangle=[left,top,right,bottom], piksele 1600x900. Nie zmienia innych plików.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "maskId": {
+                    "type": "string",
+                    "enum": [
+                      "front-wheel-test"
+                    ]
+                  },
+                  "rectangle": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "maskId",
+                  "rectangle"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "reportUnsupported",
+              "description": "Zarejestruj brak obsługi efektu. Zwraca błąd, nie generuje kodu i nie modyfikuje sceny.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "effect": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "effect"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "setBeaconPeriod",
+                    "arguments": "{\"periodSeconds\":5}"
+                  },
+                  "id": "UuMS8jnvX0WvuGgO2J2JaUd3qbBXYGOJ"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794300456,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 29,
+          "prompt_tokens": 1149,
+          "total_tokens": 1178,
+          "prompt_tokens_details": {
+            "cached_tokens": 1113
+          }
+        },
+        "id": "chatcmpl-5igd242q9FsTtiNfXvGgrHfxwahBfGXk",
+        "timings": {
+          "cache_n": 1113,
+          "prompt_n": 36,
+          "prompt_ms": 120.825,
+          "prompt_per_token_ms": 3.35625,
+          "prompt_per_second": 297.95158286778394,
+          "predicted_n": 29,
+          "predicted_ms": 345.182,
+          "predicted_per_token_ms": 12.327928571428572,
+          "predicted_per_second": 81.11662832940303
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "local",
+        "seed": 301,
+        "temperature": 0.1,
+        "max_tokens": 1200,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Jesteś operatorem lokalnej próby KRE-00. Dostępne narzędzia faktycznie wykonuje kod. Nie generuj kodu. Wybierz właściwą funkcję; nie potwierdzaj wykonania przed ok:true. Błędy walidacji są wiążące. Nieobsługiwany efekt pozostaje niewykonany. Kopie mają istniejący schemat 2; początkowy okres lampki w kopii to 6 s. Cała scena i audio są poza tą próbą. Po wykonaniu odpowiedz krótko po polsku. Maksymalnie 4 wywołania."
+          },
+          {
+            "role": "user",
+            "content": "Nie zmieniaj tła ani żadnych obrazów; zmień tylko okres lampki samolotu na 5 sekund."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "setBeaconPeriod",
+                  "arguments": "{\"periodSeconds\":5}"
+                },
+                "id": "UuMS8jnvX0WvuGgO2J2JaUd3qbBXYGOJ"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "UuMS8jnvX0WvuGgO2J2JaUd3qbBXYGOJ",
+            "content": "{\"ok\": true, \"artifact\": \"draft-manifest.json\", \"sha256\": \"6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3\", \"validatedBy\": \"parseArtworkPackage\", \"periodSeconds\": 5, \"frequencyHz\": 0.2, \"previousFrequencyHz\": 0.16666666666666666}"
+          }
+        ],
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "setBeaconPeriod",
+              "description": "Zmień wyłącznie okres navigation-flash istniejącej lampki. Walidacja silnika, bez zmiany obrazu i tła.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "periodSeconds": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "periodSeconds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "setFlightPath",
+              "description": "Ustaw layer.travel wszystkich trzech części samolotu. Obsługuje bezier/spline, nie pole arc. Punkty są przesunięciami od (0,0).",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "travel": {
+                    "type": "object",
+                    "properties": {
+                      "startSeconds": {
+                        "type": "number"
+                      },
+                      "durationSeconds": {
+                        "type": "number"
+                      },
+                      "path": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "bezier"
+                            ]
+                          },
+                          "segments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "control1": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "control2": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "control1",
+                                "control2",
+                                "to"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "segments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "easing": {
+                        "type": "string",
+                        "enum": [
+                          "linear",
+                          "ease-in",
+                          "ease-out",
+                          "ease-in-out"
+                        ]
+                      },
+                      "orientToPath": {
+                        "type": "boolean"
+                      },
+                      "pivot": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "startSeconds",
+                      "durationSeconds",
+                      "path",
+                      "easing",
+                      "orientToPath",
+                      "pivot"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "travel"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "refineMask",
+              "description": "Wyzeruj prostokąt tylko w kopii maski front-wheel-test. rectangle=[left,top,right,bottom], piksele 1600x900. Nie zmienia innych plików.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "maskId": {
+                    "type": "string",
+                    "enum": [
+                      "front-wheel-test"
+                    ]
+                  },
+                  "rectangle": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "maskId",
+                  "rectangle"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "reportUnsupported",
+              "description": "Zarejestruj brak obsługi efektu. Zwraca błąd, nie generuje kodu i nie modyfikuje sceny.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "effect": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "effect"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Okres lampki zmieniono na 5 sekund."
+            }
+          }
+        ],
+        "created": 1794300457,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 1323,
+          "total_tokens": 1335,
+          "prompt_tokens_details": {
+            "cached_tokens": 1177
+          }
+        },
+        "id": "chatcmpl-sbsk7BzAVRIbqvIkjdo67KwKBtQstON3",
+        "timings": {
+          "cache_n": 1177,
+          "prompt_n": 146,
+          "prompt_ms": 174.828,
+          "prompt_per_token_ms": 1.1974520547945207,
+          "prompt_per_second": 835.1065046788843,
+          "predicted_n": 12,
+          "predicted_ms": 136.287,
+          "predicted_per_token_ms": 12.389727272727272,
+          "predicted_per_second": 80.71202682574273
+        }
+      }
+    }
+  ],
+  "executions": [
+    {
+      "name": "setBeaconPeriod",
+      "arguments": {
+        "periodSeconds": 5
+      },
+      "result": {
+        "ok": true,
+        "artifact": "draft-manifest.json",
+        "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+        "validatedBy": "parseArtworkPackage",
+        "periodSeconds": 5,
+        "frequencyHz": 0.2,
+        "previousFrequencyHz": 0.16666666666666666
+      }
+    }
+  ],
+  "final": "Okres lampki zmieniono na 5 sekund.",
+  "finish_reason": "stop",
+  "request_seconds": 0.9082692000001771,
+  "process_memory": {
+    "peak_working_set_bytes": 6252335104,
+    "working_set_bytes": 6147465216,
+    "peak_commit_bytes": 8958980096
+  }
+}

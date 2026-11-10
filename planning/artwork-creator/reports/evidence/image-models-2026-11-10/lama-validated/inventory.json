@@ -1,0 +1,219 @@
+[
+  {
+    "file": "aircraft-patch.png",
+    "bytes": 8748,
+    "sha256": "c8d5453a64c1483649ae6315f514f91bcfa35df4ebf9b7c1403ce1a04dc46db3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\aircraft-patch.png"
+  },
+  {
+    "file": "fixture.json",
+    "bytes": 1118,
+    "sha256": "fb5ee64404713ecc0292158542fcae9e9a8163572b2cbf869a84bf394ccfc5d1",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\fixture.json"
+  },
+  {
+    "file": "result.json",
+    "bytes": 10007,
+    "sha256": "1853dbeb3da5223b4d25738cb027e1056824657c83a8a72abad98b08d9a5c8d3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\result.json"
+  },
+  {
+    "file": "review.webp",
+    "bytes": 310850,
+    "sha256": "95199b3d006bcb9b3e8d85b8d007051730dae7664235b8229cd6ebec65998b70",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\review.webp"
+  },
+  {
+    "file": "architecture\\clean.png",
+    "bytes": 393467,
+    "sha256": "f04e3869cca58e29e8fee4015140e812de6b8c4ddf548683ee204a756a39b21e",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\clean.png"
+  },
+  {
+    "file": "architecture\\input.png",
+    "bytes": 434335,
+    "sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\input.png"
+  },
+  {
+    "file": "architecture\\mask.png",
+    "bytes": 556,
+    "sha256": "e25855e128be3c164190a25375e35206bd96d19d9966d8789799d70b7e676712",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\mask.png"
+  },
+  {
+    "file": "architecture\\result-0.json",
+    "bytes": 679,
+    "sha256": "54e5ee314be48d30450e2d4d2fc9d64bf917da9c9de19796780e5d4e16c979b3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-0.json"
+  },
+  {
+    "file": "architecture\\result-0.png",
+    "bytes": 317225,
+    "sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-0.png"
+  },
+  {
+    "file": "architecture\\result-1.json",
+    "bytes": 679,
+    "sha256": "17c11eebedc8ed994ff4b25d1bb47de5e6ac9a46c3cce2c4ec1984758e6a9e5e",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-1.json"
+  },
+  {
+    "file": "architecture\\result-1.png",
+    "bytes": 317225,
+    "sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-1.png"
+  },
+  {
+    "file": "architecture\\result-2.json",
+    "bytes": 679,
+    "sha256": "e6d997bc1522801f9fedb8ab63ffe21caf65ac13e6f3314a40a2065cb198ecaa",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-2.json"
+  },
+  {
+    "file": "architecture\\result-2.png",
+    "bytes": 317225,
+    "sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\architecture\\result-2.png"
+  },
+  {
+    "file": "open-sky\\clean.png",
+    "bytes": 384162,
+    "sha256": "8fee538818c63bc613095d38b301da84d287424063ec938da7cdeb6a8d65eb13",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\clean.png"
+  },
+  {
+    "file": "open-sky\\input.png",
+    "bytes": 432086,
+    "sha256": "88b442977e28fb9d288491fff91029910ec566ef150211bbcb2c19c8c4d9dfe9",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\input.png"
+  },
+  {
+    "file": "open-sky\\mask.png",
+    "bytes": 547,
+    "sha256": "1170af53cba975cc14add919518b66c51b86c62581981adb21a5dce8ef656e52",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\mask.png"
+  },
+  {
+    "file": "open-sky\\result-0.json",
+    "bytes": 677,
+    "sha256": "72962878b42318e4d31b1491f3406a489164ad5f3246e4bc8697b037751662ff",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-0.json"
+  },
+  {
+    "file": "open-sky\\result-0.png",
+    "bytes": 309670,
+    "sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-0.png"
+  },
+  {
+    "file": "open-sky\\result-1.json",
+    "bytes": 677,
+    "sha256": "1ddf0638c4a21b2fff8942985c0d5511f176c87e46245e83d2721e7b98985140",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-1.json"
+  },
+  {
+    "file": "open-sky\\result-1.png",
+    "bytes": 309670,
+    "sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-1.png"
+  },
+  {
+    "file": "open-sky\\result-2.json",
+    "bytes": 677,
+    "sha256": "1329e7de6181346c98a588fb1b005e59ed8123c4dadf84248beb172b9385c848",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-2.json"
+  },
+  {
+    "file": "open-sky\\result-2.png",
+    "bytes": 309670,
+    "sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\open-sky\\result-2.png"
+  },
+  {
+    "file": "organic\\clean.png",
+    "bytes": 881064,
+    "sha256": "c53d5fd44761776d8638953c26b6ad4eefbd22bc6f6e4eda43bbbf75ed250720",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\clean.png"
+  },
+  {
+    "file": "organic\\input.png",
+    "bytes": 880388,
+    "sha256": "6edd2c03672042519af862985cd41542fca4b7a242bac15a8e2a76b293c28f4e",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\input.png"
+  },
+  {
+    "file": "organic\\mask.png",
+    "bytes": 554,
+    "sha256": "888515095b7d5f8e49513198165eb909b0b368ab11d66135146d89381a8cd3c3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\mask.png"
+  },
+  {
+    "file": "organic\\result-0.json",
+    "bytes": 670,
+    "sha256": "16323908313252719ff48a5334dc0d52883a2b41ffa1a41c58e97ca5ea05b1a9",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-0.json"
+  },
+  {
+    "file": "organic\\result-0.png",
+    "bytes": 661279,
+    "sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-0.png"
+  },
+  {
+    "file": "organic\\result-1.json",
+    "bytes": 673,
+    "sha256": "a8fe65d4fb3efa4c9a434213bd1d0bec4a429378c1196ed3353aa454bac602de",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-1.json"
+  },
+  {
+    "file": "organic\\result-1.png",
+    "bytes": 661279,
+    "sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-1.png"
+  },
+  {
+    "file": "organic\\result-2.json",
+    "bytes": 670,
+    "sha256": "0369950fca316eda11612b343acc8bb0207b9e39b91a580196414fc85629b4c7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-2.json"
+  },
+  {
+    "file": "organic\\result-2.png",
+    "bytes": 661279,
+    "sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\lama-validated\\organic\\result-2.png"
+  }
+]

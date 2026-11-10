@@ -1,0 +1,49 @@
+{
+  "packages": {
+    "transformers": "5.22.2",
+    "accelerate": "1.15.0",
+    "safetensors": "0.8.0"
+  },
+  "model_repo": "facebook/sam2.1-hiera-tiny",
+  "revision": "de431c4043854a71d8101e17995dfe596bf101a5",
+  "files": [
+    {
+      "type": "file",
+      "oid": "e8fa1e6d6d31299bba32d2f5759c2d156c8a6bd1",
+      "size": 5695,
+      "path": "config.json"
+    },
+    {
+      "type": "file",
+      "oid": "ab4d169b8fd1a8342e3f9cb4017d7a0f25ec7736",
+      "size": 155908064,
+      "lfs": {
+        "oid": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+        "size": 155908064,
+        "pointerSize": 134
+      },
+      "xetHash": "232fd988e4deafeb039cf6aa245c8fa361fb8d19c131a5e575f092601fe8f343",
+      "path": "model.safetensors"
+    },
+    {
+      "type": "file",
+      "oid": "8499e53cb79bf1786a890021550e6994b9808f39",
+      "size": 683,
+      "path": "preprocessor_config.json"
+    },
+    {
+      "type": "file",
+      "oid": "7556f607c3581a19f545de09d8b3fc98502b9f36",
+      "size": 95,
+      "path": "processor_config.json"
+    },
+    {
+      "type": "file",
+      "oid": "aceb9b5b612e726cea11ae4db21c0964629aac3a",
+      "size": 705,
+      "path": "video_preprocessor_config.json"
+    }
+  ],
+  "license": "Apache-2.0",
+  "source_url": "https://huggingface.co/facebook/sam2.1-hiera-tiny/tree/de431c4043854a71d8101e17995dfe596bf101a5"
+}

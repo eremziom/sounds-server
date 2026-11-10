@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 2,
+  "id": "kre00-unverified-pilot",
+  "version": "0.0.1",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "black",
+      "kind": "image",
+      "width": 16,
+      "height": 9,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/black.svg"
+    },
+    {
+      "id": "backing",
+      "kind": "image",
+      "width": 1024,
+      "height": 576,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/backing.png"
+    },
+    {
+      "id": "source",
+      "kind": "image",
+      "width": 1024,
+      "height": 576,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/B-04-1024-500.png"
+    },
+    {
+      "id": "object",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/object-mask.png"
+    },
+    {
+      "id": "lights",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/light-mask.png"
+    },
+    {
+      "id": "env-lights",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true,
+      "uri": "/infinite-zoom/kre00/environment-light-mask.png"
+    }
+  ],
+  "layers": [
+    {
+      "id": "coverage",
+      "zIndex": 0,
+      "imageAssetId": "black"
+    },
+    {
+      "id": "environment",
+      "zIndex": 1,
+      "imageAssetId": "backing"
+    },
+    {
+      "id": "environment-lights",
+      "zIndex": 2,
+      "imageAssetId": "backing",
+      "maskAssetId": "env-lights",
+      "behaviors": [
+        {
+          "id": "color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 0.7,
+            "hue": 3.141592653589793,
+            "saturation": 0.2,
+            "lightness": 0
+          }
+        },
+        {
+          "id": "impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0.7,
+            "amount": 0.6,
+            "threshold": 0,
+            "sharpness": 4,
+            "intensity": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "zIndex": 3,
+      "imageAssetId": "source",
+      "maskAssetId": "object",
+      "travel": {
+        "startSeconds": 0,
+        "durationSeconds": 12,
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "control1": {
+                "x": 400,
+                "y": -240
+              },
+              "control2": {
+                "x": 1000,
+                "y": -80
+              },
+              "to": {
+                "x": 1440,
+                "y": 180
+              }
+            }
+          ]
+        },
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "pivot": {
+          "x": 1200,
+          "y": 840
+        }
+      }
+    },
+    {
+      "id": "drone-lights",
+      "zIndex": 4,
+      "imageAssetId": "source",
+      "maskAssetId": "lights",
+      "travel": {
+        "startSeconds": 0,
+        "durationSeconds": 12,
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "control1": {
+                "x": 400,
+                "y": -240
+              },
+              "control2": {
+                "x": 1000,
+                "y": -80
+              },
+              "to": {
+                "x": 1440,
+                "y": 180
+              }
+            }
+          ]
+        },
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "pivot": {
+          "x": 1200,
+          "y": 840
+        }
+      },
+      "behaviors": [
+        {
+          "id": "color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 0.7,
+            "hue": 3.141592653589793,
+            "saturation": 0.2,
+            "lightness": 0
+          }
+        },
+        {
+          "id": "impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "frequencyHz": 0.2,
+            "phase": 0.7,
+            "amount": 0.6,
+            "threshold": 0,
+            "sharpness": 4,
+            "intensity": 1.5
+          }
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "coverage"
+  },
+  "anchors": []
+}

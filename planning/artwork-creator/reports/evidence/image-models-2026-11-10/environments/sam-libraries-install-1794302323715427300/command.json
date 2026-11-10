@@ -1,0 +1,19 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--disable-pip-version-check",
+    "--no-cache-dir",
+    "--index-url",
+    "https://pypi.org/simple",
+    "--report",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sam-libraries-install-1794302323715427300\\pip-report.json",
+    "transformers==5.22.2",
+    "accelerate==1.15.0",
+    "safetensors==0.8.0",
+    "--only-binary=:all:"
+  ]
+}

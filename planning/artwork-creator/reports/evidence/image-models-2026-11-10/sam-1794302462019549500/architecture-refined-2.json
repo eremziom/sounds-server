@@ -1,0 +1,58 @@
+{
+  "case": "architecture",
+  "variant": "refined",
+  "run": 2,
+  "seed": 402,
+  "prompts": {
+    "input_points": [
+      [
+        [
+          [
+            236,
+            311
+          ],
+          [
+            278,
+            297
+          ]
+        ]
+      ]
+    ],
+    "input_labels": [
+      [
+        [
+          1,
+          0
+        ]
+      ]
+    ],
+    "input_boxes": [
+      [
+        [
+          226,
+          301,
+          330,
+          349
+        ]
+      ]
+    ]
+  },
+  "input_sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+  "mask_sha256": "2a955c47075743c8b178f18c94150bd349b30895810db8fcbdb0b55872fd1ecb",
+  "input_preparation_seconds": 0.0060493000000860775,
+  "inference_seconds": 0.17326910000065254,
+  "mask_iou": 0.7942518248175182,
+  "predicted_iou_scores": [
+    0.8217031359672546,
+    0.8779904842376709,
+    0.8986822366714478
+  ],
+  "selected_mask": 2,
+  "selection": "highest model score; never selected using reference IoU",
+  "mask_pixels": 1954,
+  "process_memory": {
+    "peak_working_set_bytes": 987963392,
+    "working_set_bytes": 936304640,
+    "peak_commit_bytes": 3388977152
+  }
+}

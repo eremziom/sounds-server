@@ -1,0 +1,11 @@
+{
+  "stage": "generate",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "generate",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\klein-1794304130372470100"
+  ],
+  "wall_seconds": 268.60665830000016,
+  "exit_code": 1
+}

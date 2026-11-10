@@ -1,0 +1,18 @@
+{
+  "case": "architecture",
+  "index": 0,
+  "inference_seconds": 1.4961443000001964,
+  "save_seconds": 0.022724200000084238,
+  "input_sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+  "mask_sha256": "e25855e128be3c164190a25375e35206bd96d19d9966d8789799d70b7e676712",
+  "output_sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+  "masked_pixels": 3498,
+  "outside_mask_exact": true,
+  "input_masked_mae": 37.221839904785156,
+  "result_masked_mae": 51.34457778930664,
+  "process_memory": {
+    "peak_working_set_bytes": 871940096,
+    "working_set_bytes": 864669696,
+    "peak_commit_bytes": 1540583424
+  }
+}

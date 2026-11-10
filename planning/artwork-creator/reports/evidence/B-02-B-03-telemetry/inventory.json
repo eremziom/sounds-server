@@ -1,0 +1,464 @@
+[
+  {
+    "file": "B-02-defect-0.json",
+    "bytes": 3516,
+    "sha256": "7b5478fd755578ea79531265c917debe22011b95dd2756f32f85258db6d3a4b7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-0.json"
+  },
+  {
+    "file": "B-02-defect-1.json",
+    "bytes": 3507,
+    "sha256": "eec24ba212638353e7e02bf8459b8a2f0bce4a86c5a9a85abf66df59f9081fc1",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-1.json"
+  },
+  {
+    "file": "B-02-defect-2.json",
+    "bytes": 3508,
+    "sha256": "fc8d39baaf615f1ed806b66071df315f5e692843418da1d1cf472aafdcf84777",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-2.json"
+  },
+  {
+    "file": "B-02-defect-hint-0.json",
+    "bytes": 3684,
+    "sha256": "703ea1ec58eb3fcb27e2b55bc287d79b975d2fa87581d4ac189563d82c28f0a7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-0.json"
+  },
+  {
+    "file": "B-02-defect-hint-1.json",
+    "bytes": 3676,
+    "sha256": "dc04fe84fe0a899fb6ae1e4db0065b73fc5b9d5eb0fec3b65d84ef8f30a397ce",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-1.json"
+  },
+  {
+    "file": "B-02-defect-hint-2.json",
+    "bytes": 3676,
+    "sha256": "dc67fc30e0e5a8023d2e2bd7ab2d8fdb632e3d282a8cd25163fe1cb5923a12ad",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-2.json"
+  },
+  {
+    "file": "B-02-vehicle-0.json",
+    "bytes": 3380,
+    "sha256": "52a5e9c61de300def7f183c89ab173ce8d0bcb6722273a52deb548da90804a45",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-0.json"
+  },
+  {
+    "file": "B-02-vehicle-1.json",
+    "bytes": 3353,
+    "sha256": "2923212df9729477ddc1c89ac5fd81dbab5d8947ed58c4be743c8ba77705f588",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-1.json"
+  },
+  {
+    "file": "B-02-vehicle-2.json",
+    "bytes": 3352,
+    "sha256": "3da427c90c76fff8e755caaa0b94cc5be44d32cf25bddbdcfe9eafc44010a0a4",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-2.json"
+  },
+  {
+    "file": "B-03-arc-0.json",
+    "bytes": 23978,
+    "sha256": "c6db0fea301cde30b872ca9cc8ea8840cd86d127f2eaeb6e9787713e67f554ec",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-0.json"
+  },
+  {
+    "file": "B-03-arc-1.json",
+    "bytes": 23962,
+    "sha256": "cd41ee2b6b1b854be07abd677082a1f0fd2c13d9fd4a002010135d7561175d06",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-1.json"
+  },
+  {
+    "file": "B-03-arc-2.json",
+    "bytes": 23979,
+    "sha256": "772f5799fba8263c0a6653c965d75a08da4e709448a2cef36e4010258983b07e",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-2.json"
+  },
+  {
+    "file": "B-03-mask-0.json",
+    "bytes": 22414,
+    "sha256": "f9e00ff954830d90bc9a0d377c5575c94eca5b047776532d2fb5f8dfa88a3b5e",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-0.json"
+  },
+  {
+    "file": "B-03-mask-1.json",
+    "bytes": 22425,
+    "sha256": "19863cdb4b6d3e660d52dc4fd04482a0421409212aa8c627daaa6f3d44e4059b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-1.json"
+  },
+  {
+    "file": "B-03-mask-2.json",
+    "bytes": 22423,
+    "sha256": "5c1b91903d12b48af3b3bfbd06b7203b3c9716e61918d241ca62ea8e18dbf304",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-2.json"
+  },
+  {
+    "file": "B-03-period-0.json",
+    "bytes": 22361,
+    "sha256": "c12232b90d885d2b5627810686fa730267045975a000ec57254a9d4652286f2b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-0.json"
+  },
+  {
+    "file": "B-03-period-1.json",
+    "bytes": 22367,
+    "sha256": "1c57f1203eef28b3309c1c0b8fc4939b6d7c2654adac716d9efe3c18d26bae0e",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-1.json"
+  },
+  {
+    "file": "B-03-period-2.json",
+    "bytes": 22362,
+    "sha256": "ae18e39531798213802a23e72ad250e83692a3d195799194b91dd2c05d6973ee",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-2.json"
+  },
+  {
+    "file": "B-03-preserve-0.json",
+    "bytes": 22415,
+    "sha256": "8971603801d04ab70509c384d81bfdc4812359fda86f4f253b861fa804fd8881",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-0.json"
+  },
+  {
+    "file": "B-03-preserve-1.json",
+    "bytes": 22416,
+    "sha256": "2d3d708981210391041acb896a82d6d9df45004029617d3cde8951f45e38ab30",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-1.json"
+  },
+  {
+    "file": "B-03-preserve-2.json",
+    "bytes": 22416,
+    "sha256": "341bb658ae67e64f745bcc68a57389c7fc9c0ebb0cb05e24f21422b83d1cf4bc",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-2.json"
+  },
+  {
+    "file": "B-03-retry-0.json",
+    "bytes": 34732,
+    "sha256": "37434bc4a7423eec666d65c07daf0b1040c493eb1de02a0f98647adc2fc675a2",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-0.json"
+  },
+  {
+    "file": "B-03-retry-1.json",
+    "bytes": 34749,
+    "sha256": "a9fcd62125cb1783d7ee1d50ffc519b8aa215a3acde6fc04c273c6ad01e792f2",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-1.json"
+  },
+  {
+    "file": "B-03-retry-2.json",
+    "bytes": 34735,
+    "sha256": "25aa9998aff07370401cee6a646f931604f5ada6403755173bd449c0f8e3804b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-2.json"
+  },
+  {
+    "file": "B-03-unsupported-0.json",
+    "bytes": 24520,
+    "sha256": "0f1ae3ff1bbfd1cabb3607c67ac6847bf32f49be51d3a23ebc695aa71e1eeeb8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-0.json"
+  },
+  {
+    "file": "B-03-unsupported-1.json",
+    "bytes": 24489,
+    "sha256": "80f873326a067763da1f108fe819ada37713eaec749872ec00bc63b2e62cfbf9",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-1.json"
+  },
+  {
+    "file": "B-03-unsupported-2.json",
+    "bytes": 24438,
+    "sha256": "4346c4d84547094d623e405823f965b9bbba7239921d192a229291682d59f9c5",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-2.json"
+  },
+  {
+    "file": "gpu-memory.jsonl",
+    "bytes": 33465,
+    "sha256": "fecd169470d3ca58aa263a4b4c4fa919e3d86591a05fbfc267c36ca4221beab3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\gpu-memory.jsonl"
+  },
+  {
+    "file": "gpu-stop",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\gpu-stop"
+  },
+  {
+    "file": "result.json",
+    "bytes": 539637,
+    "sha256": "19fdfafb5ef2c1da293d96611276528db6c0dfb0aa71453e735e3b2bd1ab3ec8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\result.json"
+  },
+  {
+    "file": "server.log",
+    "bytes": 190175,
+    "sha256": "5279d5ae24da696f37fef758ad83df79f7c620ac5c464c6a7f4fc2c4d4e5d2ed",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\server.log"
+  },
+  {
+    "file": "source-integrity.json",
+    "bytes": 5494,
+    "sha256": "0c4354540134d8c65c68aea61c4a6ee1c080ca0d7d15a3efd03da67dd4c663ae",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\source-integrity.json"
+  },
+  {
+    "file": "B-02-defect-0\\prediction.png",
+    "bytes": 2949405,
+    "sha256": "4f3099800e16d7012cbfcfa12b444c5c36b4de0f94cc5e3d4edddf56c8c9ea6a",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-0\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-1\\prediction.png",
+    "bytes": 2950445,
+    "sha256": "6c0b14a4be5bfdbc7970018f0557891bb254f29fe2835f1c12312ac95851d31a",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-1\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-2\\prediction.png",
+    "bytes": 2949292,
+    "sha256": "86cc49553c1f5a82c4f28777136bc63a4767caf27c64975dce6ce83350980fc7",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-2\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-hint-0\\prediction.png",
+    "bytes": 2951313,
+    "sha256": "4536494b97bf05f1ac445e38dd1ae875fa597717c05524235534f6a41c2761a7",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-0\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-hint-1\\prediction.png",
+    "bytes": 2951337,
+    "sha256": "a61b0b7582d7a7f189d1dd92bc4939e47c71b1438ef6e25afe4d15ddec0cf722",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-1\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-hint-2\\prediction.png",
+    "bytes": 2951334,
+    "sha256": "0f5ec0fc51fb904f584b0e03679c462def4f663ecf2f4a58e3e49265993073c2",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-defect-hint-2\\prediction.png"
+  },
+  {
+    "file": "B-02-vehicle-0\\prediction.png",
+    "bytes": 2937662,
+    "sha256": "983386e951bebce73271b0ab6191385ddbb5c17285f61dfab478f14698e26ca1",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-0\\prediction.png"
+  },
+  {
+    "file": "B-02-vehicle-1\\prediction.png",
+    "bytes": 2942021,
+    "sha256": "6c7a3efcaf4b08802eb5414f5224a671498a45be587a7c4fd41925dee4f221ea",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-1\\prediction.png"
+  },
+  {
+    "file": "B-02-vehicle-2\\prediction.png",
+    "bytes": 2937531,
+    "sha256": "f8cd442d6c8768fccbd2b4e148937ae18d09b07451d1e8bea884c6f93e55188c",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-02-vehicle-2\\prediction.png"
+  },
+  {
+    "file": "B-03-arc-0-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-arc-1-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-arc-2-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-arc-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-mask-0-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-0-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-mask-1-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-1-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-mask-2-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-mask-2-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-period-0-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-period-1-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-period-2-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-period-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-0-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-1-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-2-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-preserve-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-0-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-0-call2\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-1-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-1-call2\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-2-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-retry-2-call2\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-unsupported-0-call1\\limitation.json",
+    "bytes": 256,
+    "sha256": "df033c1663887b73fb9a20afd6e079c9db7535c4bd2acb99d51eae384cadce88",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-0-call1\\limitation.json"
+  },
+  {
+    "file": "B-03-unsupported-0-call2\\limitation.json",
+    "bytes": 242,
+    "sha256": "7cd94228d5d2386099d232cac1387fcb621b47556e284feb68dbe9716bfe860d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-0-call2\\limitation.json"
+  },
+  {
+    "file": "B-03-unsupported-1-call1\\limitation.json",
+    "bytes": 256,
+    "sha256": "df033c1663887b73fb9a20afd6e079c9db7535c4bd2acb99d51eae384cadce88",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-1-call1\\limitation.json"
+  },
+  {
+    "file": "B-03-unsupported-1-call2\\limitation.json",
+    "bytes": 242,
+    "sha256": "7cd94228d5d2386099d232cac1387fcb621b47556e284feb68dbe9716bfe860d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-1-call2\\limitation.json"
+  },
+  {
+    "file": "B-03-unsupported-2-call1\\limitation.json",
+    "bytes": 256,
+    "sha256": "df033c1663887b73fb9a20afd6e079c9db7535c4bd2acb99d51eae384cadce88",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-2-call1\\limitation.json"
+  },
+  {
+    "file": "B-03-unsupported-2-call2\\limitation.json",
+    "bytes": 242,
+    "sha256": "7cd94228d5d2386099d232cac1387fcb621b47556e284feb68dbe9716bfe860d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\B-03-unsupported-2-call2\\limitation.json"
+  },
+  {
+    "file": "fixture\\benchmark-base-manifest.json",
+    "bytes": 18686,
+    "sha256": "bce42b42c87c6168955f599bcbe04f9849a9dc0aff6c4f12887523f631e60485",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\fixture\\benchmark-base-manifest.json"
+  },
+  {
+    "file": "fixture\\ground-truth.json",
+    "bytes": 598,
+    "sha256": "bd05f5a0c390670cdc3da06c3f8adc3915c6cf765d21d5061fdae529b6ac38a7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\fixture\\ground-truth.json"
+  },
+  {
+    "file": "fixture\\mask-input.png",
+    "bytes": 33663,
+    "sha256": "fe91a529c5c2e1123ec25e502c01bae51bb34ee8a493f2ccd8fb40a1485e959b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\fixture\\mask-input.png"
+  },
+  {
+    "file": "fixture\\mask-overlay.png",
+    "bytes": 2952264,
+    "sha256": "8eddd9a24d9aedb8c9fd06eacdd19b1da2b0b9bc771d680f44ca635142d63bf9",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794301021327259600\\fixture\\mask-overlay.png"
+  }
+]

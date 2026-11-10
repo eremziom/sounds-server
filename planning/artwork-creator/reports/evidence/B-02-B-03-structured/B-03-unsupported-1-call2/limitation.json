@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "code": "UNSUPPORTED_EFFECT",
+  "recorded": true,
+  "effect": "generowanie nowego shadera silnika",
+  "error": "The tool exists and recorded this limitation; the requested engine effect is unavailable. No effect applied."
+}

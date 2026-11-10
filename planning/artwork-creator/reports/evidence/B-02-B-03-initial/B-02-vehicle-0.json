@@ -1,0 +1,75 @@
+{
+  "id": "B-02",
+  "kind": "vehicle",
+  "index": 0,
+  "request": {
+    "model": "local",
+    "seed": 200,
+    "temperature": 0.1,
+    "max_tokens": 500,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Wskaż cały motocykl na pierwszym planie. Zwróć JSON {\"box\":[left,top,right,bottom],\"problem\":\"opis\"}. Współrzędne znormalizowane 0..1, początek lewy górny róg."
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "apps\\ui\\public\\infinite-zoom\\samples\\digital-grid\\plate.png"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "image_sha256": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n[\n\t{\"box\": [90, 396, 921, 916], \"problem\": \"futurystyczny motocykl na pierwszym planie\"}\n]\n```"
+        }
+      }
+    ],
+    "created": 1794300289,
+    "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "system_fingerprint": "b12110-cd959bae9",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 49,
+      "prompt_tokens": 1469,
+      "total_tokens": 1518,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "id": "chatcmpl-a2GUBUobTQepLxtDCqtpsEtbmBwiQoXz",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 1469,
+      "prompt_ms": 3903.872,
+      "prompt_per_token_ms": 2.657503063308373,
+      "prompt_per_second": 376.2930751827929,
+      "predicted_n": 49,
+      "predicted_ms": 589.43,
+      "predicted_per_token_ms": 12.279791666666666,
+      "predicted_per_second": 81.4346063145751
+    }
+  },
+  "request_seconds": 4.615177700000004,
+  "process_memory": {
+    "peak_working_set_bytes": 5551263744,
+    "working_set_bytes": 5514625024,
+    "peak_commit_bytes": 8228384768
+  },
+  "parse_error": "list indices must be integers or slices, not str"
+}

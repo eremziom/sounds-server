@@ -1,0 +1,48 @@
+{
+  "cases": [
+    {
+      "id": "open-sky",
+      "source": "digital-grid/plate.png",
+      "crop": {
+        "left": 800,
+        "top": 0,
+        "width": 512,
+        "height": 512
+      },
+      "at": [
+        140,
+        80
+      ]
+    },
+    {
+      "id": "architecture",
+      "source": "digital-grid/plate.png",
+      "crop": {
+        "left": 950,
+        "top": 0,
+        "width": 512,
+        "height": 512
+      },
+      "at": [
+        230,
+        305
+      ]
+    },
+    {
+      "id": "organic",
+      "source": "forest/backdrop.png",
+      "resize": "cover-512",
+      "at": [
+        200,
+        260
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "digital-grid/plate.png": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+    "digital-grid/aircraft.svg": "ae1998e3a01083397c885a2e178c5fa28a2d279a4810e6cadf8d3f8827e6b324",
+    "forest/backdrop.png": "d82d84734ee011235fcd42519e117020e1058e31ee4b49e4f7c17a63f373cd2e"
+  },
+  "sourceUnchanged": true,
+  "note": "Controlled compositing experiment using an existing sprite, not a new production scene; clean backing is ground truth."
+}

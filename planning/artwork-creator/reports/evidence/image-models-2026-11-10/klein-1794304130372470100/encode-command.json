@@ -1,0 +1,11 @@
+{
+  "stage": "encode",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "encode",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\klein-1794304130372470100"
+  ],
+  "wall_seconds": 13.467587099999946,
+  "exit_code": 0
+}

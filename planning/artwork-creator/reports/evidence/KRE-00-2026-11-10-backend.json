@@ -1,0 +1,12 @@
+{
+  "--version": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "version: 0.9.0-dev (build 12110, commit cd959bae9)\nbuilt with Clang 20.1.8 for Windows x86_64\n"
+  },
+  "--list-devices": {
+    "exit_code": 0,
+    "stdout": "Available devices:\n  Vulkan0: AMD Radeon RX 7800 XT (16368 MiB, 15405 MiB free)\n  Vulkan1: AMD Radeon(TM) Graphics (16237 MiB, 15425 MiB free)\n",
+    "stderr": ""
+  }
+}

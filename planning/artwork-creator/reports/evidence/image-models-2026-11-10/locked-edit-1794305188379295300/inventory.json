@@ -1,0 +1,79 @@
+[
+  {
+    "file": "hull-review.webp",
+    "bytes": 20162,
+    "sha256": "1c2364cd79d48a78f3a7ac2b33afddd33d46b3c4660cce0e3e255fa1350ad295",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\hull-review.webp"
+  },
+  {
+    "file": "hull.png",
+    "bytes": 1094,
+    "sha256": "387a850a60d49dc480a5e1f5cade7bec244201aaf8bdf4c34cc6856e7e7ca267",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\hull.png"
+  },
+  {
+    "file": "locked-600.png",
+    "bytes": 905498,
+    "sha256": "0517fbc2c5e8d301499f48d1a97d0b3edc190a958cd0aad553a7d415fbef43e3",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\locked-600.png"
+  },
+  {
+    "file": "locked-601.png",
+    "bytes": 905222,
+    "sha256": "4a16333f9f4b33573f1a3209e270928f459c223b372e8b4ec867074f5c25708d",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\locked-601.png"
+  },
+  {
+    "file": "locked-602.png",
+    "bytes": 905597,
+    "sha256": "15cb6007fb05fe074d129e14c18296dd4d5a6b68aa18bcfb70a8deba6562dd3c",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\locked-602.png"
+  },
+  {
+    "file": "object.png",
+    "bytes": 1063,
+    "sha256": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\object.png"
+  },
+  {
+    "file": "protected-lights.png",
+    "bytes": 1016,
+    "sha256": "e5af4624c644baffbee013beafd15e519a53c8ffaa2ed75f94ab1f308d448b5a",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\protected-lights.png"
+  },
+  {
+    "file": "result.json",
+    "bytes": 1917,
+    "sha256": "61e9de63449e9e538ca30dcafa1e293aaf6f441ba2ba077279af6ae8a9353d94",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\result.json"
+  },
+  {
+    "file": "review.webp",
+    "bytes": 187682,
+    "sha256": "a6bbaa2dd774d68882d30afc632127569c17c62576898a5e237406c056105575",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\review.webp"
+  },
+  {
+    "file": "status.json",
+    "bytes": 358,
+    "sha256": "7a46f166e24b14b9c1c2ee140415750e01f00fc316a3a250b98702f2185f3f66",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\status.json"
+  },
+  {
+    "file": "worker.txt",
+    "bytes": 1374,
+    "sha256": "ad550271bb5834bdaa79079b78920f7b8cec354c096316876461177ab23274db",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\locked-edit-1794305188379295300\\worker.txt"
+  }
+]

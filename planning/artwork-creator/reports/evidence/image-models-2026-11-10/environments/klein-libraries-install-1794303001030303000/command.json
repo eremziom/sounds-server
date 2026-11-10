@@ -1,0 +1,17 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--disable-pip-version-check",
+    "--no-cache-dir",
+    "--index-url",
+    "https://pypi.org/simple",
+    "--report",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\klein-libraries-install-1794303001030303000\\pip-report.json",
+    "diffusers==0.42.1",
+    "--only-binary=:all:"
+  ]
+}

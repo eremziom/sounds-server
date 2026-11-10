@@ -1,0 +1,10 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+    "fill",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 14.586484299999938
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "file": "authoring-brief.md",
+    "bytes": 4175,
+    "sha256": "82d90c5b718a77e531343f334e7a261945c6c4a92f9ff4987b6cbea6e167e2a3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\authoring-brief.md"
+  },
+  {
+    "file": "edit-embeds.safetensors",
+    "bytes": 7864416,
+    "sha256": "f56d05b833a651f58b5c9ce116d633de4bc3298f40cf59896b42b5a6d85be387",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\edit-embeds.safetensors"
+  },
+  {
+    "file": "encode-command.json",
+    "bytes": 369,
+    "sha256": "c879ec9137e014a8cc6e1b0662b6297d8da7e438a18f998fd729cc46f5ff1582",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\encode-command.json"
+  },
+  {
+    "file": "encode-result.json",
+    "bytes": 3438,
+    "sha256": "9698527d445659f65692bde0198098ac297a9085be654faadcee70768038c1b6",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\encode-result.json"
+  },
+  {
+    "file": "encode-worker.txt",
+    "bytes": 1217,
+    "sha256": "f6349a9fcfff04d6e4337175a67478305a615dde08344a4fa7fec0eac1323ff7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\encode-worker.txt"
+  },
+  {
+    "file": "generate-embeds.safetensors",
+    "bytes": 7864416,
+    "sha256": "01a41baae2f5d883f2b1def1fa2cdb7e79d7abd03e33107aa4721289ee061623",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\generate-embeds.safetensors"
+  },
+  {
+    "file": "provenance.json",
+    "bytes": 468,
+    "sha256": "d9bf7909edcef62d185c50ec9bd92d032d32eb2bde589fe220802d4d1399d990",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\provenance.json"
+  },
+  {
+    "file": "stages.json",
+    "bytes": 397,
+    "sha256": "8d68e65ae3c45ccc9eb5557ffe509c8f37274a5054acaea80ef455d034cffebe",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303938075936600\\stages.json"
+  }
+]

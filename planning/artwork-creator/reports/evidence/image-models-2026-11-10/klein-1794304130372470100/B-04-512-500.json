@@ -1,0 +1,16 @@
+{
+  "id": "B-04",
+  "seed": 500,
+  "width": 512,
+  "height": 288,
+  "steps": 4,
+  "inference_and_decode_seconds": 48.41671459999998,
+  "sha256": "53ce90da40ed1c887c1853f856006b4e868ba81e4803e4d649c589b19ce50a61",
+  "gpu_allocated": 8047398912,
+  "gpu_reserved": 8447328256,
+  "process_memory": {
+    "peak_working_set_bytes": 8323682304,
+    "working_set_bytes": 900136960,
+    "peak_commit_bytes": 18989694976
+  }
+}

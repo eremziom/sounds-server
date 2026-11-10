@@ -1,0 +1,17 @@
+{
+  "torch": "2.9.1+rocm7.2.1",
+  "hip": "7.2.53211-158bd99533",
+  "cuda_available": true,
+  "devices": [
+    {
+      "index": 0,
+      "name": "AMD Radeon RX 7800 XT",
+      "properties": "_CudaDeviceProperties(name='AMD Radeon RX 7800 XT', major=11, minor=0, gcnArchName='gfx1101', total_memory=16368MB, multi_processor_count=30, uuid=30303030-3030-3033-3030-303030303030, pci_bus_id=3, pci_device_id=0, pci_domain_id=0, L2_cache_size=4MB)"
+    }
+  ],
+  "selected_device": "cuda:0",
+  "matmul_device": "cuda:0",
+  "matmul_correct": true,
+  "dtype": "torch.bfloat16",
+  "elapsed_seconds": 3.5512549000004583
+}

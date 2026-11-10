@@ -1,0 +1,37 @@
+[
+  {
+    "file": "authoring-brief.md",
+    "bytes": 4175,
+    "sha256": "82d90c5b718a77e531343f334e7a261945c6c4a92f9ff4987b6cbea6e167e2a3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303776760511800\\authoring-brief.md"
+  },
+  {
+    "file": "encode-command.json",
+    "bytes": 370,
+    "sha256": "8ee690b83a026e329a50676b5ecb910e7c3cc6df55efb61fae32a7b28ba5c268",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303776760511800\\encode-command.json"
+  },
+  {
+    "file": "encode-result.json",
+    "bytes": 971,
+    "sha256": "f06f658c3f7a2c90002f0d94499aa2efa185f2299587d8cad28813907d297401",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303776760511800\\encode-result.json"
+  },
+  {
+    "file": "encode-worker.txt",
+    "bytes": 2222,
+    "sha256": "b718d9a1f7a563047705189a5b9573bf0205551dd8a297cd001e21339a232980",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303776760511800\\encode-worker.txt"
+  },
+  {
+    "file": "provenance.json",
+    "bytes": 468,
+    "sha256": "d9bf7909edcef62d185c50ec9bd92d032d32eb2bde589fe220802d4d1399d990",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\klein-1794303776760511800\\provenance.json"
+  }
+]

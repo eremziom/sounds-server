@@ -1,0 +1,16 @@
+{
+  "id": "B-05",
+  "seed": 600,
+  "inference_and_decode_seconds": 14.469026800000393,
+  "sha256": "ce1c414955aa08bd349b31640cbf54acf2f757e6e07b6455c01732c36b6f7062",
+  "source_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "coarse_edit_region_normalized": [
+    0.1,
+    0.25,
+    0.4,
+    0.65
+  ],
+  "outside_region_mean_absolute_difference": 11.56733226776123,
+  "outside_region_changed_pixel_fraction": 0.8741771215722226,
+  "region_note": "Coarse planned drone area, not a validated object mask; inspect actual generated composition"
+}

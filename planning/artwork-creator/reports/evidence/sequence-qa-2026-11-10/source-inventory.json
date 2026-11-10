@@ -1,0 +1,137 @@
+[
+  {
+    "source": "tools/artwork-creator/benchmark-tools.mjs",
+    "snapshot": "probe-source/benchmark-tools.mjs",
+    "sha256": "eaf9b00a33a36a249f7e9cb506d77f3de0d790b6a0394001b38b1bd51e9d7465"
+  },
+  {
+    "source": "tools/artwork-creator/benchmark-tools.test.mjs",
+    "snapshot": "probe-source/benchmark-tools.test.mjs.txt",
+    "sha256": "06af9413f72f7fcd79d264d82e390c4426f115a13275a07428115157e1fdee44"
+  },
+  {
+    "source": "tools/artwork-creator/bounded_attention.py",
+    "snapshot": "probe-source/bounded_attention.py",
+    "sha256": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+  },
+  {
+    "source": "tools/artwork-creator/cancellation_probe.py",
+    "snapshot": "probe-source/cancellation_probe.py",
+    "sha256": "432d99b178d477eca92e3defcd8fa30ca818947336203704d738d3c54e4d3dcb"
+  },
+  {
+    "source": "tools/artwork-creator/capability_probes.py",
+    "snapshot": "probe-source/capability_probes.py",
+    "sha256": "f86b49166a32e2d4470cd718a4d1d0e0391ebc5f2a5ab6146a9527262380cf3c"
+  },
+  {
+    "source": "tools/artwork-creator/gpu-telemetry.ps1",
+    "snapshot": "probe-source/gpu-telemetry.ps1",
+    "sha256": "212a7dd8cd8e89de483c87e57f7a2818a148673b0db65dc085fd008107881b75"
+  },
+  {
+    "source": "tools/artwork-creator/image_environment.py",
+    "snapshot": "probe-source/image_environment.py",
+    "sha256": "962e86540c9d50c6ac8fbbdf5fadcea0efdb2b76fd6713af7817c440cfd7f9f7"
+  },
+  {
+    "source": "tools/artwork-creator/image_ops.py",
+    "snapshot": "probe-source/image_ops.py",
+    "sha256": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9"
+  },
+  {
+    "source": "tools/artwork-creator/inspect_image_runtime.py",
+    "snapshot": "probe-source/inspect_image_runtime.py",
+    "sha256": "ec698284da0ccb3c5edd06412cb13a5584f2f30f687cbe073037a740f9cb72a6"
+  },
+  {
+    "source": "tools/artwork-creator/klein-authoring-brief.md",
+    "snapshot": "probe-source/klein-authoring-brief.md",
+    "sha256": "f1f17ae5620a431d8d8ba378d1cc9410d9accae5abe15d31c042f11169b7d366"
+  },
+  {
+    "source": "tools/artwork-creator/klein_probe.py",
+    "snapshot": "probe-source/klein_probe.py",
+    "sha256": "673b2b12c80f30ea91551ad7e3b27a73774f3d49847d36bb632e0ca0bef78524"
+  },
+  {
+    "source": "tools/artwork-creator/kre00.py",
+    "snapshot": "probe-source/kre00.py",
+    "sha256": "42574b5a1b4fa2a9d9b6a34b6e376a95a21527c668422b9cc9468853ebf6c347"
+  },
+  {
+    "source": "tools/artwork-creator/lama-fixture.mjs",
+    "snapshot": "probe-source/lama-fixture.mjs",
+    "sha256": "ceb18df640eaca3afdc2c68e3a7ca17cffa45a71163d6f84c454c946e4d7d2ba"
+  },
+  {
+    "source": "tools/artwork-creator/lama_probe.py",
+    "snapshot": "probe-source/lama_probe.py",
+    "sha256": "0c5e6c351ace3ee69ec5f51d3f2627bee29afda187815734b61e9610734e0df8"
+  },
+  {
+    "source": "tools/artwork-creator/locked_edit_probe.py",
+    "snapshot": "probe-source/locked_edit_probe.py",
+    "sha256": "e5f16411e005e91ce7e43a21447493bba2b60806b349e88ec1734f7db08c9449"
+  },
+  {
+    "source": "tools/artwork-creator/material_probe.py",
+    "snapshot": "probe-source/material_probe.py",
+    "sha256": "2ebb5e4f5a76858c66ab971558d169ac042997810fc45c711c6fcf48d267e54c"
+  },
+  {
+    "source": "tools/artwork-creator/preview-browser.mjs",
+    "snapshot": "probe-source/preview-browser.mjs",
+    "sha256": "87ef63db8eed0468d914f96b7665b45b5b649622ae387f3eca42477326e6a295"
+  },
+  {
+    "source": "tools/artwork-creator/preview-package.mjs",
+    "snapshot": "probe-source/preview-package.mjs",
+    "sha256": "d50b74938b3a08621ddeb2c77b417bf720a8f32edcd54cfe1cdfc1bff0e0d6ea"
+  },
+  {
+    "source": "tools/artwork-creator/preview.browser.mjs",
+    "snapshot": "probe-source/preview.browser.mjs",
+    "sha256": "d6369dbc6b053945aa75543d55071e9ab63d7995ae6557594253620d48d9b9cc"
+  },
+  {
+    "source": "tools/artwork-creator/README.md",
+    "snapshot": "probe-source/README.md",
+    "sha256": "b17bb214a8bd81be37668aefe19a512a97e5e545bc581cc83beb28838daf311b"
+  },
+  {
+    "source": "tools/artwork-creator/review-sheet.mjs",
+    "snapshot": "probe-source/review-sheet.mjs",
+    "sha256": "6b85cf77c4d013a5d594ad0be603978457f58910f58365e44ebc8c2a125f1a68"
+  },
+  {
+    "source": "tools/artwork-creator/sam_probe.py",
+    "snapshot": "probe-source/sam_probe.py",
+    "sha256": "e7cea9c556d57205432e9ced990c855d89db88fb93c0e2e8a1a71fffefb41350"
+  },
+  {
+    "source": "tools/artwork-creator/sequence_image_tools.py",
+    "snapshot": "probe-source/sequence_image_tools.py",
+    "sha256": "2a724b978eda14c67e28c3bd60fddb292f26c621ae5a6e8ca4fb4e9c7970da1b"
+  },
+  {
+    "source": "tools/artwork-creator/sequence_probe.py",
+    "snapshot": "probe-source/sequence_probe.py",
+    "sha256": "e2a43221e94b85265889833d3a90e14069f46cc9a398302ffa82af8bb1711142"
+  },
+  {
+    "source": "tools/artwork-creator/test_bounded_attention.py",
+    "snapshot": "probe-source/test_bounded_attention.py.txt",
+    "sha256": "e27a4b098cad878161e28ec8e518446186984a15da7241c2f2c4c0d9306898fa"
+  },
+  {
+    "source": "tools/artwork-creator/test_image_ops.py",
+    "snapshot": "probe-source/test_image_ops.py.txt",
+    "sha256": "bc20588995536ddade528b35301ab6ade069280b47a7175262278d6841a3644e"
+  },
+  {
+    "source": "tools/artwork-creator/test_kre00.py",
+    "snapshot": "probe-source/test_kre00.py.txt",
+    "sha256": "5cfb7f61d42ccb7f67c8836711ba28f26df925af15bcbb2a1844995ad40adf03"
+  }
+]

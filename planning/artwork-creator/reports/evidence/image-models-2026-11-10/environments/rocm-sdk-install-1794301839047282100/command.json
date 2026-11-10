@@ -1,0 +1,19 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--disable-pip-version-check",
+    "--no-cache-dir",
+    "--index-url",
+    "https://pypi.org/simple",
+    "--report",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\rocm-sdk-install-1794301839047282100\\pip-report.json",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "stage": "segment",
+  "input_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "quality": "not-reviewed",
+  "inference_seconds": 2.6972480999993422,
+  "prompts": {
+    "input_points": [
+      [
+        [
+          [
+            320,
+            224
+          ],
+          [
+            321,
+            175
+          ]
+        ]
+      ]
+    ],
+    "input_labels": [
+      [
+        [
+          1,
+          0
+        ]
+      ]
+    ],
+    "input_boxes": [
+      [
+        [
+          240,
+          175,
+          410,
+          270
+        ]
+      ]
+    ]
+  },
+  "selection_note": "Fixed points from manually reviewed seed-500 composition, not autonomous localization",
+  "object_pixels": 2753,
+  "light_pixels": 737,
+  "material_tool_seconds": 4.414313200000834,
+  "gpu_max_allocated_bytes": 936805376,
+  "gpu_max_reserved_bytes": 1384120320,
+  "total_worker_seconds": 11.227363199999672,
+  "process_memory": {
+    "peak_working_set_bytes": 945721344,
+    "working_set_bytes": 942649344,
+    "peak_commit_bytes": 3426938880
+  },
+  "artifacts": {
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "environment-light-mask.png": "3db0162753d7658cf0b43d64afa61ab4562f502a712bcc9f57d4a5fdb120d2f2",
+    "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+    "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+  }
+}

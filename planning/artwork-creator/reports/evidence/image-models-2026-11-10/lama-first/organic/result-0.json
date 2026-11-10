@@ -1,0 +1,18 @@
+{
+  "case": "organic",
+  "index": 0,
+  "inference_seconds": 1.3288449000001492,
+  "save_seconds": 0.029640400000062073,
+  "input_sha256": "6edd2c03672042519af862985cd41542fca4b7a242bac15a8e2a76b293c28f4e",
+  "mask_sha256": "888515095b7d5f8e49513198165eb909b0b368ab11d66135146d89381a8cd3c3",
+  "output_sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+  "masked_pixels": 3498,
+  "outside_mask_exact": true,
+  "input_masked_mae": 54.35915756225586,
+  "result_masked_mae": 42.41461944580078,
+  "process_memory": {
+    "peak_working_set_bytes": 876900352,
+    "working_set_bytes": 867627008,
+    "peak_commit_bytes": 1545252864
+  }
+}

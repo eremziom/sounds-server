@@ -1,0 +1,20 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--disable-pip-version-check",
+    "--no-cache-dir",
+    "--index-url",
+    "https://pypi.org/simple",
+    "--only-binary=:all:",
+    "--report",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\onnx-install-1794301719303871900\\pip-report.json",
+    "onnxruntime==1.31.1",
+    "onnx==1.23.2",
+    "numpy==2.5.4",
+    "pillow==13.0.0"
+  ]
+}

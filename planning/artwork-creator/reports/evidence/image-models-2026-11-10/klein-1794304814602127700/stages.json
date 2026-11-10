@@ -1,0 +1,24 @@
+[
+  {
+    "stage": "encode",
+    "command": [
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+      "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+      "encode",
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\klein-1794304814602127700"
+    ],
+    "wall_seconds": 13.467760800000178,
+    "exit_code": 0
+  },
+  {
+    "stage": "generate",
+    "command": [
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+      "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+      "generate",
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\klein-1794304814602127700"
+    ],
+    "wall_seconds": 82.23077459999968,
+    "exit_code": 0
+  }
+]

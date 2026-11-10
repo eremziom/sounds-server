@@ -1,0 +1,18 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-m",
+    "pip",
+    "--isolated",
+    "install",
+    "--disable-pip-version-check",
+    "--no-cache-dir",
+    "--index-url",
+    "https://pypi.org/simple",
+    "--report",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\torch-rocm-install-1794301968796379400\\pip-report.json",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torch-2.9.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+    "https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/torchvision-0.24.1%2Brocm7.2.1-cp312-cp312-win_amd64.whl",
+    "--only-binary=:all:"
+  ]
+}

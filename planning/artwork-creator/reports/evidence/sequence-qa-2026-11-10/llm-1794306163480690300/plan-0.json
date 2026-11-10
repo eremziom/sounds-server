@@ -1,0 +1,123 @@
+{
+  "id": "B-09-plan",
+  "index": 0,
+  "request": {
+    "model": "local",
+    "seed": 700,
+    "temperature": 0.1,
+    "max_tokens": 500,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "queuePilot",
+          "description": "Kolejkuj istniejący brief bramy/drona: generacja -> SAM -> maska materiału -> LaMa. Zwraca stan queued, nie gotowy artwork.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "seed": {
+                "type": "integer",
+                "enum": [
+                  500
+                ]
+              },
+              "width": {
+                "type": "integer",
+                "enum": [
+                  1024
+                ]
+              },
+              "height": {
+                "type": "integer",
+                "enum": [
+                  576
+                ]
+              }
+            },
+            "required": [
+              "seed",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ],
+    "tool_choice": "auto",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Wywołuj tylko dostępne narzędzia. Stan queued oznacza przyjęty plan, nie wykonane obrazy. Nie deklaruj sukcesu generacji bez artefaktów."
+      },
+      {
+        "role": "user",
+        "content": "Zleć stały pilot KRE-00 według gotowego briefu bramy i drona: seed 500, 1024x576. Sekwencja ma wygenerować draft, wydzielić drona SAM, przygotować osobną maskę świateł i uzupełnić tło LaMa. Maski wymagają późniejszej oceny. Nie zmieniaj muzyki ani scen aplikacji."
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "queuePilot",
+                "arguments": "{\"seed\":500,\"width\":1024,\"height\":576}"
+              },
+              "id": "bUlsSAkAu8tvQWX9yIFc1dVE9WbX1bP8"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 1794306172,
+    "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "system_fingerprint": "b12110-cd959bae9",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 59,
+      "prompt_tokens": 481,
+      "total_tokens": 540,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "id": "chatcmpl-ZMQ00Eyvydblehj1gbhIG81YXnjjkfcc",
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 481,
+      "prompt_ms": 407.192,
+      "prompt_per_token_ms": 0.8465530145530146,
+      "prompt_per_second": 1181.2609285054716,
+      "predicted_n": 59,
+      "predicted_ms": 708.865,
+      "predicted_per_token_ms": 12.221810344827587,
+      "predicted_per_second": 81.82093910688212
+    }
+  },
+  "request_seconds": 1.127083400000629,
+  "tool_execution": {
+    "name": "queuePilot",
+    "result": {
+      "id": 0,
+      "state": "queued",
+      "arguments": {
+        "seed": 500,
+        "width": 1024,
+        "height": 576
+      },
+      "recipe": "fixed-gate-drone-v1",
+      "selection_policy": "Manual reviewed point/box for this known seed; not free-form scene localization"
+    }
+  }
+}

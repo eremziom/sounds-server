@@ -1,0 +1,11 @@
+{
+  "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
+  "artifacts": [
+    {
+      "file": "tokenizer/chat_template.jinja",
+      "url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B/resolve/e7b7dc27f91deacad38e78976d1f2b499d76a294/tokenizer/chat_template.jinja",
+      "git_blob": "01be9b307daa2d425f7c168c9fb145a286e0afb4",
+      "sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8"
+    }
+  ]
+}

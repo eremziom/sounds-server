@@ -1,0 +1,44 @@
+{
+  "source": ".local\\kre00\\runs\\klein-1794304814602127700",
+  "source_hashes_before": {
+    "generate-embeds.safetensors": "01a41baae2f5d883f2b1def1fa2cdb7e79d7abd03e33107aa4721289ee061623",
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b"
+  },
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "single",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\cancel-1794306558161444400\\cancelled"
+  ],
+  "scope": "Owned standalone worker cancellation, not production queue/API cancellation",
+  "observed_steps": [
+    {
+      "step": 0,
+      "seed": 500,
+      "width": 1024,
+      "height": 576
+    }
+  ],
+  "cancel_requested_after_seconds": 10.929246600000624,
+  "terminate_and_wait_seconds": 0.0007642999989911914,
+  "cancelled_exit_code": 1,
+  "cancelled_artifact_exists": false,
+  "restart": {
+    "command": [
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+      "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+      "single",
+      "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\cancel-1794306558161444400\\restarted"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 17.265573500000755
+  },
+  "restart_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "same_seed_reference_hash_equal": true,
+  "source_hashes_after": {
+    "generate-embeds.safetensors": "01a41baae2f5d883f2b1def1fa2cdb7e79d7abd03e33107aa4721289ee061623",
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b"
+  },
+  "source_inputs_unchanged": true,
+  "total_seconds": 28.207535800000187
+}

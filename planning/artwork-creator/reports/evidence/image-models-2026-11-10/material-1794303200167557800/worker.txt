@@ -1,0 +1,6 @@
+[transformers] You are using a model of type `sam2_video` to instantiate a model of type `sam2`. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+Loading weights:   0%|          | 0/309 [00:00<?, ?it/s]Loading weights: 100%|##########| 309/309 [00:00<00:00, 50914.95it/s]
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\integrations\sdpa_attention.py:174: UserWarning: Flash Efficient attention on Current AMD GPU is still experimental. Enable it with TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1. (Triggered internally at C:\b\pytorch\aten\src\ATen\native\transformers\hip\sdp_utils.cpp:310.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\integrations\sdpa_attention.py:174: UserWarning: Mem Efficient attention on Current AMD GPU is still experimental. Enable it with TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1. (Triggered internally at C:\b\pytorch\aten\src\ATen\native\transformers\hip\sdp_utils.cpp:361.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(

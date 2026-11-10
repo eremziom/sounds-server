@@ -1,0 +1,173 @@
+{
+  "stage": "generate",
+  "torch": "2.9.1+rocm7.2.1",
+  "diffusers": "0.42.1",
+  "dtype": "bfloat16",
+  "records": [
+    {
+      "id": "B-04",
+      "seed": 500,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 3.8534504999997807,
+      "sha256": "53ce90da40ed1c887c1853f856006b4e868ba81e4803e4d649c589b19ce50a61",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 8447328256,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 855715840,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 501,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 1.3870378000001438,
+      "sha256": "59c7233854f120a3cd7e1dbc47ecf51eca551128103d5b1b9b4c5e794625d306",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9468641280,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 869445632,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 502,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 1.3972156999998333,
+      "sha256": "44e0c1440b95cab9729f3a28b5314bf52357e667bbc2d66243ae2e6bd9a27f5b",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9468641280,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 870498304,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 500,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 6.852559500000098,
+      "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9579790336,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 890449920,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 501,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 5.982790099999875,
+      "sha256": "27eabbd52039c035a0c142206068ec4ba78ddd8feb1db55a1f0b0d813eebe69c",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 13658750976,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 860454912,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 502,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 5.969350599999416,
+      "sha256": "e1243fe3c3a06db0f7b3b9929e339ef5256e1f767b420b4a43ca886c05593c67",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 13658750976,
+      "process_memory": {
+        "peak_working_set_bytes": 8323964928,
+        "working_set_bytes": 860725248,
+        "peak_commit_bytes": 18820222976
+      }
+    },
+    {
+      "id": "B-05",
+      "seed": 600,
+      "inference_and_decode_seconds": 14.469026800000393,
+      "sha256": "ce1c414955aa08bd349b31640cbf54acf2f757e6e07b6455c01732c36b6f7062",
+      "source_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "coarse_edit_region_normalized": [
+        0.1,
+        0.25,
+        0.4,
+        0.65
+      ],
+      "outside_region_mean_absolute_difference": 11.56733226776123,
+      "outside_region_changed_pixel_fraction": 0.8741771215722226,
+      "region_note": "Coarse planned drone area, not a validated object mask; inspect actual generated composition"
+    },
+    {
+      "id": "B-05",
+      "seed": 601,
+      "inference_and_decode_seconds": 14.377529800000048,
+      "sha256": "5e05fb2f823f0f4a082540bf81bf2b45f5c0f37d3052446cc2a489a3fe373076",
+      "source_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "coarse_edit_region_normalized": [
+        0.1,
+        0.25,
+        0.4,
+        0.65
+      ],
+      "outside_region_mean_absolute_difference": 6.125762462615967,
+      "outside_region_changed_pixel_fraction": 0.8798645645148243,
+      "region_note": "Coarse planned drone area, not a validated object mask; inspect actual generated composition"
+    },
+    {
+      "id": "B-05",
+      "seed": 602,
+      "inference_and_decode_seconds": 14.379361999999674,
+      "sha256": "89ea7122e2f07fbbeb622b323cea872188d7c6e61b2e8b8fdac8eaefd64ca291",
+      "source_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "coarse_edit_region_normalized": [
+        0.1,
+        0.25,
+        0.4,
+        0.65
+      ],
+      "outside_region_mean_absolute_difference": 8.345458984375,
+      "outside_region_changed_pixel_fraction": 0.9333184390251419,
+      "region_note": "Coarse planned drone area, not a validated object mask; inspect actual generated composition"
+    }
+  ],
+  "quality": "not-reviewed",
+  "imports_seconds": 3.575633700000253,
+  "device": "cuda:0",
+  "device_name": "AMD Radeon RX 7800 XT",
+  "hip": "7.2.53211-158bd99533",
+  "initial_gpu_free_total": [
+    17010655232,
+    17163091968
+  ],
+  "attention_backend": "query-chunked native math SDPA, query rows=256; no masks/causality/training",
+  "attention_adapter_sha256": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9",
+  "load_seconds": 7.847114599999259,
+  "gpu_max_allocated_bytes": 11609003008,
+  "gpu_max_reserved_bytes": 14130610176,
+  "gpu_allocated_after_release_bytes": 113246208,
+  "total_worker_seconds": 81.76293470000019,
+  "process_memory": {
+    "peak_working_set_bytes": 8323964928,
+    "working_set_bytes": 873508864,
+    "peak_commit_bytes": 18820222976
+  }
+}

@@ -1,8 +1,11 @@
 # Kreator artworków i odtwarzacz — plan wdrożenia
 
 Wersja dokumentacji: **1.0, 2026-11-09**.
-Status: plan przygotowany; **wdrożenie kreatora i próby lokalnych modeli nie rozpoczęły się**.
-Dokumenty opisują przyszłe prace, nie deklarują dostępnych już funkcji.
+Status: **KRE-00 do korekty, 2026-11-10**; wykonano lokalne próby LLM/VLM,
+modeli obrazu, sekwencji, anulowania i podglądu B-01–B-11.
+[Bieżący raport](reports/KRE-00-2026-11-10-sequence-qa.md) opisuje wyniki
+techniczne oraz niespełnione wymagania jakości. Kreator w UI i etapy
+KRE-01–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres
 
@@ -24,8 +27,8 @@ w chmurze ani zakupu innego sprzętu.
 
 Użytkownik zatwierdził przygotowanie tej dokumentacji i późniejsze wdrażanie
 etapami. Dokumentacja **nie uruchamia instalacji, pobierania wag, migracji ani
-implementacji wszystkich etapów naraz**. Następna praca: KRE-00, po rozpoczęciu
-tego etapu przez użytkownika.
+implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
+2026-11-10; ta autoryzacja nie obejmuje automatycznego wdrażania dalszych etapów.
 
 ## Jak korzystać z planu
 
@@ -62,7 +65,7 @@ Stan sprawdzony w repozytorium przy przygotowaniu planu:
 | Paczki testowe | Przykłady i skrypty przygotowujące konkretne sceny; nie są uniwersalnym kreatorem |
 | Interfejs kreatora | Brak kompletnego procesu prompt → paczka → poprawki → publikacja |
 | Backend kreatora | Brak modeli projektów artworków, wersji, zadań AI i opublikowanej biblioteki |
-| Modele lokalne | Kandydaci wybrani do testów; brak pomiarów i potwierdzenia działania na wskazanym komputerze |
+| Modele lokalne | Qwen/Vulkan, Klein z adapterem pamięci/ROCm, SAM/ROCm i LaMa/CPU mają pomiary. Jakość i pełny proces nadal bez odbioru. Zob. raport |
 
 Obecny katalog studia jest skonfigurowany w kodzie. Dynamiczna biblioteka
 użytkownika wymaga integracji; nie wystarczy wygenerować PNG. Loader i parser

@@ -1,0 +1,13 @@
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|1         | 4/398 [00:00<00:12, 30.98it/s]Loading weights:   2%|2         | 8/398 [00:00<00:17, 21.75it/s]Loading weights:   3%|3         | 12/398 [00:00<00:15, 24.77it/s]Loading weights:   4%|4         | 16/398 [00:00<00:13, 27.66it/s]Loading weights:   5%|4         | 19/398 [00:00<00:20, 18.59it/s]Loading weights:   8%|8         | 33/398 [00:01<00:09, 38.04it/s]Loading weights:  10%|9         | 38/398 [00:01<00:10, 35.30it/s]Loading weights:  11%|#         | 42/398 [00:01<00:10, 35.10it/s]Loading weights:  12%|#1        | 46/398 [00:01<00:11, 31.72it/s]Loading weights:  15%|#5        | 60/398 [00:01<00:07, 47.26it/s]Loading weights:  16%|#6        | 65/398 [00:01<00:07, 46.99it/s]Loading weights:  18%|#7        | 70/398 [00:02<00:09, 35.87it/s]Loading weights:  19%|#8        | 74/398 [00:02<00:09, 34.84it/s]Loading weights: 100%|##########| 398/398 [00:02<00:00, 176.95it/s]
+Traceback (most recent call last):
+  File "D:\Sandbox\sounds-server\tools\artwork-creator\klein_probe.py", line 173, in <module>
+    main(sys.argv[1],Path(sys.argv[2]))
+  File "D:\Sandbox\sounds-server\tools\artwork-creator\klein_probe.py", line 76, in main
+    text = tokenizer.apply_chat_template([{'role':'user','content':prompt}],tokenize=False,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\tokenization_utils_base.py", line 3126, in apply_chat_template
+    chat_template = self.get_chat_template(chat_template, tools)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\tokenization_utils_base.py", line 3365, in get_chat_template
+    raise ValueError(
+ValueError: Cannot use chat template functions because tokenizer.chat_template is not set and no template argument was passed! For information about writing templates and setting the tokenizer.chat_template attribute, please see the documentation at https://huggingface.co/docs/transformers/main/en/chat_templating

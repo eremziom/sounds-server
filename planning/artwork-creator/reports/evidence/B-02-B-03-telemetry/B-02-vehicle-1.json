@@ -1,0 +1,129 @@
+{
+  "id": "B-02",
+  "kind": "vehicle",
+  "index": 1,
+  "request": {
+    "model": "local",
+    "seed": 201,
+    "temperature": 0.1,
+    "max_tokens": 500,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "grounding",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "box": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "problem": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "box",
+            "problem"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Wskaż cały motocykl na pierwszym planie. Zwróć obiekt JSON {\"box\":[left,top,right,bottom],\"problem\":\"opis\"}. Współrzędne całkowite 0..1000, początek lewy górny róg, 1000 oznacza prawą/dolną krawędź."
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "apps\\ui\\public\\infinite-zoom\\samples\\digital-grid\\plate.png"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "image_sha256": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"box\":[91,384,924,911],\"problem\":\"Motocykl\"}"
+        }
+      }
+    ],
+    "created": 1794301037,
+    "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "system_fingerprint": "b12110-cd959bae9",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 25,
+      "prompt_tokens": 1487,
+      "total_tokens": 1512,
+      "prompt_tokens_details": {
+        "cached_tokens": 1483
+      }
+    },
+    "id": "chatcmpl-nKds9oqd8vswId3wGonZKkmVecGJlgSH",
+    "timings": {
+      "cache_n": 1483,
+      "prompt_n": 4,
+      "prompt_ms": 60.956,
+      "prompt_per_token_ms": 15.239,
+      "prompt_per_second": 65.62110374696502,
+      "predicted_n": 25,
+      "predicted_ms": 294.905,
+      "predicted_per_token_ms": 12.287708333333333,
+      "predicted_per_second": 81.38214001119005
+    }
+  },
+  "request_seconds": 0.4961416000001009,
+  "process_memory": {
+    "peak_working_set_bytes": 5978378240,
+    "working_set_bytes": 5790986240,
+    "peak_commit_bytes": 8690626560
+  },
+  "coordinate_system": "integer-0-1000",
+  "assistance": "none",
+  "box_model": [
+    91,
+    384,
+    924,
+    911
+  ],
+  "box": [
+    0.091,
+    0.384,
+    0.924,
+    0.911
+  ],
+  "reference": [
+    0.084375,
+    0.3888888888888889,
+    0.91875,
+    0.9277777777777778
+  ],
+  "iou": 0.9468254390383931,
+  "annotation": {
+    "artifact": "prediction.png",
+    "sha256": "6c7a3efcaf4b08802eb5414f5224a671498a45be587a7c4fd41925dee4f221ea"
+  }
+}

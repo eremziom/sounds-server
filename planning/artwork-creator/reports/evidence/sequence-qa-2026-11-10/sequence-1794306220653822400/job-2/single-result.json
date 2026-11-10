@@ -1,0 +1,45 @@
+{
+  "stage": "single",
+  "torch": "2.9.1+rocm7.2.1",
+  "diffusers": "0.42.1",
+  "dtype": "bfloat16",
+  "records": [
+    {
+      "id": "B-04",
+      "seed": 500,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 7.9159208000000945,
+      "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9586081792,
+      "process_memory": {
+        "peak_working_set_bytes": 8323485696,
+        "working_set_bytes": 867553280,
+        "peak_commit_bytes": 18819727360
+      }
+    }
+  ],
+  "quality": "not-reviewed",
+  "imports_seconds": 3.701151799999934,
+  "device": "cuda:0",
+  "device_name": "AMD Radeon RX 7800 XT",
+  "hip": "7.2.53211-158bd99533",
+  "initial_gpu_free_total": [
+    17010655232,
+    17163091968
+  ],
+  "attention_backend": "query-chunked native math SDPA, query rows=256; no masks/causality/training",
+  "attention_adapter_sha256": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9",
+  "load_seconds": 7.174056100000598,
+  "gpu_max_allocated_bytes": 11606684672,
+  "gpu_max_reserved_bytes": 11974737920,
+  "gpu_allocated_after_release_bytes": 113246208,
+  "total_worker_seconds": 19.65911319999941,
+  "process_memory": {
+    "peak_working_set_bytes": 8323485696,
+    "working_set_bytes": 868974592,
+    "peak_commit_bytes": 18819727360
+  }
+}
