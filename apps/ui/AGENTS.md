@@ -12,6 +12,10 @@ details for local impulse lighting, as required by the shared guidelines.
 Every new or revised artwork must also support complete environmental blackout
 with independently animated light/color regions remaining visible from the start,
 plus smooth reveal and motion/zoom QA as required by the shared guidelines.
+Every new or revised artwork must also plan at least one element that travels
+through the visible frame as part of its composition, following the shared
+guidelines for placement, trajectory, layers, background, occlusion and motion/zoom
+QA. Camera motion alone does not satisfy this requirement.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
