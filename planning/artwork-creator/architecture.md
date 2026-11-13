@@ -2,6 +2,9 @@
 
 Status: **projekt do wdrożenia etapami**, wersja 1.0 z 2026-11-09.
 Ustalenia i zakres: [README.md](README.md). Kroki: [implementation-plan.md](implementation-plan.md).
+Aktualizacja 2026-11-13: fundament danych/API z KRE-01 jest wdrożony;
+[konkretny kontrakt](kre01-contract.md) uszczegóławia poniższy projekt.
+Zadania, koordynator, UI i publikacja pozostają do wdrożenia.
 
 ## Podział odpowiedzialności
 
@@ -46,7 +49,11 @@ TypeScript. ComfyUI może realizować operacje obrazowe przez lokalne API;
 nie jest wymaganym interfejsem użytkownika ani źródłem prawdy o projekcie.
 Dokładny backend i proces uruchamiania rozstrzyga KRE-00.
 
-## Model danych — propozycja nazw, nie istniejący schemat Prisma
+## Model danych — zakres docelowy
+
+W KRE-01 istnieją już modele Prisma `ArtworkProject`, `ArtworkRevision`,
+`ArtworkArtifact`, `ArtworkArtifactInput` i `CreatorMessage` (zapis rozmowy
+bez osobnej encji sesji). Zadania i opublikowane wersje poniżej pozostają planem.
 
 | Encja | Najważniejsze dane |
 | --- | --- |

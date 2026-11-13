@@ -87,6 +87,84 @@ model User {
   sessions        AuthSession[]
   tracks          Track[]
   audioUploads    AudioUpload[]
+  artworkProjects ArtworkProject[]
+}
+
+model ArtworkProject {
+  id               String            @id @default(uuid())
+  ownerId          Int
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  title            String            @db.VarChar(160)
+  activeRevisionId String?           @unique
+  activeRevision   ArtworkRevision?  @relation("ActiveRevision", fields: [activeRevisionId, id], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  revisions        ArtworkRevision[] @relation("ProjectRevisions")
+  artifacts        ArtworkArtifact[]
+  messages         CreatorMessage[]
+
+  @@unique([activeRevisionId, id])
+  @@index([ownerId, updatedAt])
+}
+
+model ArtworkRevision {
+  id             String            @id @default(uuid())
+  projectId      String
+  project        ArtworkProject    @relation("ProjectRevisions", fields: [projectId], references: [id], onDelete: Restrict)
+  activeFor      ArtworkProject?   @relation("ActiveRevision")
+  parentId       String?
+  parent         ArtworkRevision?  @relation("RevisionParent", fields: [parentId, projectId], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  children       ArtworkRevision[] @relation("RevisionParent")
+  restoredFromId String?
+  restoredFrom   ArtworkRevision?  @relation("RevisionRestore", fields: [restoredFromId, projectId], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  restores       ArtworkRevision[] @relation("RevisionRestore")
+  snapshot       Json
+  createdAt      DateTime          @default(now())
+
+  @@unique([id, projectId])
+  @@index([projectId, createdAt])
+}
+
+model ArtworkArtifact {
+  id             String                 @id @default(uuid())
+  projectId      String
+  project        ArtworkProject         @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  kind           String
+  storageKey     String                 @unique
+  mimeType       String
+  sizeBytes      Int
+  sha256         String                 @db.Char(64)
+  width          Int?
+  height         Int?
+  registrationId String?
+  provenance     Json
+  createdAt      DateTime               @default(now())
+  inputs         ArtworkArtifactInput[] @relation("ArtifactOutputs")
+  outputs        ArtworkArtifactInput[] @relation("ArtifactInputs")
+
+  @@unique([id, projectId])
+  @@index([projectId, createdAt])
+}
+
+model ArtworkArtifactInput {
+  artifactId String
+  inputId    String
+  projectId  String
+  artifact   ArtworkArtifact @relation("ArtifactOutputs", fields: [artifactId, projectId], references: [id, projectId], onDelete: Restrict)
+  input      ArtworkArtifact @relation("ArtifactInputs", fields: [inputId, projectId], references: [id, projectId], onDelete: Restrict)
+
+  @@id([artifactId, inputId])
+}
+
+model CreatorMessage {
+  id        String         @id @default(uuid())
+  projectId String
+  project   ArtworkProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  role      String
+  text      String         @db.VarChar(16000)
+  createdAt DateTime       @default(now())
+
+  @@index([projectId, createdAt])
 }
 
 model AuthSession {

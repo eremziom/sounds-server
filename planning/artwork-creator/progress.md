@@ -1,11 +1,16 @@
 # Stan realizacji
 
 Aktualizacja: **2026-11-13**. **KRE-00 odebrany** jako benchmark wykonalności
-lokalnego procesu z poprawkami. KRE-01–KRE-08 nie rozpoczęto.
+lokalnego procesu z poprawkami. **KRE-01 odebrany technicznie**: trwały model
+projektów, rewizji, artefaktów i rozmowy oraz API; [raport](reports/KRE-01-2026-11-13.md).
+KRE-02–KRE-08 nie rozpoczęto.
 
 ## Najbliższy krok
 
-**KRE-01 — projekty, rewizje, artefakty i kontrakty.**
+**KRE-02 — narzędzia, wykonawca i trwałe zadania.** Nie rozpoczęto automatycznie.
+KRE-01 zamyka [raport](reports/KRE-01-2026-11-13.md); API i granice opisuje
+[kontrakt v1](kre01-contract.md). Zastosowano addytywną migrację lokalnej bazy
+developerskiej; testy migracji i restartu używają osobnych, usuwanych baz fixture.
 KRE-00 zamyka [raport końcowy](reports/KRE-00-2026-11-13-closure.md).
 Potwierdzono trzy cykle enkoder → transformer → osobny VAE → SAM → LaMa
 przy aktywnej stronie `/animations` i audio. Wybrano odczyt pread; przyjęty
@@ -35,14 +40,15 @@ końcowy podgląd WebGL oraz ponowiona po awarii prądu integracja audio.
 Końcowy pomiar przy aplikacji i 29 testów są w raporcie zamknięcia. Ziarniste
 granice materiału, styki prowadnic i krawędzie/cienie pozostają ograniczeniami
 pilota do korekty/odbioru w produkcji artworków, nie dowodem pełnej autonomii.
-Nie odebrano pilota jako sceny produkcyjnej. KRE-01 pozostaje nierozpoczęty.
+Nie odebrano pilota jako sceny produkcyjnej. W chwili zamknięcia KRE-00
+KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny raport.
 
 ## Lista etapów
 
 | Etap | Stan | Raport/dowody | Następny warunek |
 | --- | --- | --- | --- |
 | KRE-00 | Odebrany | [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md); B-01–B-11 i pilot zachowane | Zakończony benchmark z opisanymi ograniczeniami |
-| KRE-01 | Nie rozpoczęto | Brak | Wynik KRE-00 |
+| KRE-01 | Odebrany technicznie | [Raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md) | Trwały zapis, historia, własność, zależności i konflikt rewizji potwierdzone |
 | KRE-02 | Nie rozpoczęto | Brak | Kontrakty i zapis projektu |
 | KRE-03 | Nie rozpoczęto | Brak | Działające narzędzia i zadania |
 | KRE-04 | Nie rozpoczęto | Brak | Jedna pełna paczka przez API |
@@ -62,6 +68,7 @@ Nie odebrano pilota jako sceny produkcyjnej. KRE-01 pozostaje nierozpoczęty.
 | 2026-11-09 | Przygotować dokumentację, potem wdrażać stopniowo | Autoryzacja obecnego zadania; nie oznacza wykonania etapów |
 | 2026-11-13 | Poprawki są częścią procesu kreatora; podstawowo prompty, opcjonalnie wskazanie obszaru/pędzel | Potwierdzenie użytkownika w rozmowie przed zamknięciem KRE-00; nie oznacza wymogu ręcznej edycji każdej maski |
 | 2026-11-13 | Finalnie zamknąć KRE-00 po pomiarze przy aplikacji i zapisie ograniczeń | Bieżące polecenie użytkownika; raport zamknięcia zawiera rzeczywiste wyniki |
+| 2026-11-13 | Rozpocząć wdrażanie KRE-01 | Polecenie użytkownika po omówieniu celu tego etapu; bez automatycznego rozpoczęcia kolejnych |
 
 ## Propozycje wymagające pomiaru/rozstrzygnięcia
 
@@ -74,8 +81,8 @@ Nie odebrano pilota jako sceny produkcyjnej. KRE-01 pozostaje nierozpoczęty.
 - Backend/formaty bazowe wybrano w raporcie zamknięcia. Większe rozdzielczości,
   produkcyjna bramka RAM/VRAM/commit i końcowe budżety UI wymagają dalszych prób.
 - llama.cpp/Vulkan jest wybranym serwerem; ComfyUI nie jest wymagany do recepty.
-- Konkretne ścieżki nowych modułów, kontrakty endpointów, schemat Prisma i kolejka
-  są projektowane dopiero w odpowiednich etapach.
+- Moduł API, współdzielone deklaracje, kontrakt endpointów i schemat danych
+  ustalono w KRE-01. Kolejka i wykonawca pozostają zakresem KRE-02.
 - Wymagana liczba korekt użytkownika, potrzeba mattingu i zakres stylów w MVP.
 
 ## Jak aktualizować ten dokument

@@ -2,7 +2,9 @@
 
 Plan 1.0, 2026-11-09. Aktualizacja 2026-11-13: **KRE-00 odebrany** jako
 benchmark wykonalności z ograniczeniami; [raport zamknięcia](reports/KRE-00-2026-11-13-closure.md).
-KRE-01–KRE-08 pozostają **niewdrożone**.
+KRE-01 **wdrożony i sprawdzony technicznie 2026-11-13**;
+[raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md).
+KRE-02–KRE-08 pozostają **niewdrożone**.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
 Każdy etap ma zakończyć się demonstracją i raportem, nie tylko zestawem plików.

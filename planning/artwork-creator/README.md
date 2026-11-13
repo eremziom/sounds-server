@@ -5,8 +5,10 @@ Status: **KRE-00 odebrany, 2026-11-13** jako ograniczony benchmark lokalnego sto
 i procesu z poprawkami. [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md)
 zawiera trzy udane cykle przy aktywnej aplikacji, pomiary RAM/VRAM/commit,
 29 testów i znane ograniczenia. [Pilot](reports/KRE-00-2026-11-13-corrections.md)
-ma osobne dowody ruchu/zoomu; nie jest artworkiem odebranym produkcyjnie. Kreator w UI i etapy
-KRE-01–KRE-08 pozostają niewdrożone.
+ma osobne dowody ruchu/zoomu; nie jest artworkiem odebranym produkcyjnie.
+**KRE-01 wdrożony i sprawdzony technicznie, 2026-11-13:** projekty, rewizje,
+artefakty i zapis rozmowy przez API; [raport](reports/KRE-01-2026-11-13.md),
+[kontrakt](kre01-contract.md). Kreator w UI i KRE-02–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres
 
@@ -30,6 +32,7 @@ Użytkownik zatwierdził przygotowanie tej dokumentacji i późniejsze wdrażani
 etapami. Dokumentacja **nie uruchamia instalacji, pobierania wag, migracji ani
 implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
 2026-11-10; ta autoryzacja nie obejmuje automatycznego wdrażania dalszych etapów.
+2026-11-13 użytkownik osobno zlecił wdrożenie KRE-01. Nie oznacza to rozpoczęcia KRE-02–KRE-08.
 
 ## Jak korzystać z planu
 
@@ -39,6 +42,7 @@ implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
 | [implementation-plan.md](implementation-plan.md) | Kolejność KRE-00–KRE-08, zależności, zakres plików, rezultaty i kryteria odbioru |
 | [local-model-benchmark.md](local-model-benchmark.md) | Pierwszy test sprzętu i modeli, scenariusze, pomiary i formularz wyniku |
 | [progress.md](progress.md) | Aktualny etap, lista prac, decyzje i odnośniki do dowodów |
+| [kre01-contract.md](kre01-contract.md) | Wdrożony kontrakt projektów, rewizji, plików, zależności i API |
 
 Identyfikatory KRE-* należą wyłącznie do tego planu. Nie są rekonstrukcją
 historycznych numerów IZ/APP i nie zmieniają ich znaczenia.
@@ -65,7 +69,7 @@ Stan sprawdzony w repozytorium przy przygotowaniu planu:
 | Animacja | 12 operatorów, reakcje audio, zaciemnienie, ruch warstw; płynne trasy i obrót mają osobny kontrakt |
 | Paczki testowe | Przykłady i skrypty przygotowujące konkretne sceny; nie są uniwersalnym kreatorem |
 | Interfejs kreatora | Brak kompletnego procesu prompt → paczka → poprawki → publikacja |
-| Backend kreatora | Brak modeli projektów artworków, wersji, zadań AI i opublikowanej biblioteki |
+| Backend kreatora | KRE-01: modele projektów, rewizji, artefaktów i rozmowy oraz API; brak zadań AI i opublikowanej biblioteki |
 | Modele lokalne | Qwen/Vulkan, Klein z adapterem pamięci/ROCm, SAM/ROCm i LaMa/CPU mają pomiary. Jakość i pełny proces nadal bez odbioru. Zob. raport |
 
 Obecny katalog studia jest skonfigurowany w kodzie. Dynamiczna biblioteka
