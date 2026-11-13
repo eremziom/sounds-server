@@ -8,7 +8,10 @@ zawiera trzy udane cykle przy aktywnej aplikacji, pomiary RAM/VRAM/commit,
 ma osobne dowody ruchu/zoomu; nie jest artworkiem odebranym produkcyjnie.
 **KRE-01 wdrożony i sprawdzony technicznie, 2026-11-13:** projekty, rewizje,
 artefakty i zapis rozmowy przez API; [raport](reports/KRE-01-2026-11-13.md),
-[kontrakt](kre01-contract.md). Kreator w UI i KRE-02–KRE-08 pozostają niewdrożone.
+[kontrakt](kre01-contract.md).
+**KRE-02 odebrany technicznie:** kolejka, wykonawca i narzędzia wdrożone;
+rzeczywiste Klein/SAM/LaMa 512×288 oraz testy przy audio przeszły. [Raport i ograniczenia](reports/KRE-02-2026-11-13.md),
+[kontrakt](kre02-contract.md). Kreator w UI i KRE-03–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres
 
@@ -33,6 +36,7 @@ etapami. Dokumentacja **nie uruchamia instalacji, pobierania wag, migracji ani
 implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
 2026-11-10; ta autoryzacja nie obejmuje automatycznego wdrażania dalszych etapów.
 2026-11-13 użytkownik osobno zlecił wdrożenie KRE-01. Nie oznacza to rozpoczęcia KRE-02–KRE-08.
+Następnie osobno zlecił wdrożenie KRE-02; nie rozpoczęto automatycznie KRE-03.
 
 ## Jak korzystać z planu
 
@@ -43,6 +47,7 @@ implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
 | [local-model-benchmark.md](local-model-benchmark.md) | Pierwszy test sprzętu i modeli, scenariusze, pomiary i formularz wyniku |
 | [progress.md](progress.md) | Aktualny etap, lista prac, decyzje i odnośniki do dowodów |
 | [kre01-contract.md](kre01-contract.md) | Wdrożony kontrakt projektów, rewizji, plików, zależności i API |
+| [kre02-contract.md](kre02-contract.md) | Kolejka, wykonawca, narzędzia, pamięć i odzyskiwanie |
 
 Identyfikatory KRE-* należą wyłącznie do tego planu. Nie są rekonstrukcją
 historycznych numerów IZ/APP i nie zmieniają ich znaczenia.
@@ -69,7 +74,7 @@ Stan sprawdzony w repozytorium przy przygotowaniu planu:
 | Animacja | 12 operatorów, reakcje audio, zaciemnienie, ruch warstw; płynne trasy i obrót mają osobny kontrakt |
 | Paczki testowe | Przykłady i skrypty przygotowujące konkretne sceny; nie są uniwersalnym kreatorem |
 | Interfejs kreatora | Brak kompletnego procesu prompt → paczka → poprawki → publikacja |
-| Backend kreatora | KRE-01: modele projektów, rewizji, artefaktów i rozmowy oraz API; brak zadań AI i opublikowanej biblioteki |
+| Backend kreatora | KRE-01 i odebrana technicznie kolejka/narzędzia/adaptery KRE-02; brak opublikowanej biblioteki |
 | Modele lokalne | Qwen/Vulkan, Klein z adapterem pamięci/ROCm, SAM/ROCm i LaMa/CPU mają pomiary. Jakość i pełny proces nadal bez odbioru. Zob. raport |
 
 Obecny katalog studia jest skonfigurowany w kodzie. Dynamiczna biblioteka
@@ -123,7 +128,7 @@ i wymiarów, bez obietnicy dowolnych stylów ani pełnej autonomii kreatora.
 | Wydzielanie obiektów | SAM 2.1 Tiny/ROCm | Punkty/ramka, wybrane obiekty i znane granice jakości |
 | Uzupełnianie tła | LaMa ONNX/CPU | Proste tło; architektura i drobna organika mają ograniczenia |
 | Głębia, opcjonalnie | Depth Anything V2 Small | Po podstawowej paczce, jeśli potrzebny do sceny |
-| Wykonawca obrazów | Izolowane workery Python za przyszłym adapterem | Recepta benchmarkowa działa; trwały wykonawca dopiero KRE-02 |
+| Wykonawca obrazów | Trwała kolejka i osobny supervisor KRE-02, izolowane procesy Python | Małe rzeczywiste próbki adapterów i współpraca z audio odebrane technicznie; pełna scena w KRE-03 |
 | Serwer językowy | llama.cpp b12110/Vulkan | Wybrany lokalny serwer dla przypiętych wag |
 
 Podczas instalacji trzeba ponownie sprawdzić dokumentację AMD, wersje backendów

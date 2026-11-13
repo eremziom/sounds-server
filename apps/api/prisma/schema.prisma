@@ -102,6 +102,7 @@ model ArtworkProject {
   revisions        ArtworkRevision[] @relation("ProjectRevisions")
   artifacts        ArtworkArtifact[]
   messages         CreatorMessage[]
+  jobs             ArtworkJob[]
 
   @@unique([activeRevisionId, id])
   @@index([ownerId, updatedAt])
@@ -118,6 +119,7 @@ model ArtworkRevision {
   restoredFromId String?
   restoredFrom   ArtworkRevision?  @relation("RevisionRestore", fields: [restoredFromId, projectId], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
   restores       ArtworkRevision[] @relation("RevisionRestore")
+  jobs           ArtworkJob[]
   snapshot       Json
   createdAt      DateTime          @default(now())
 
@@ -141,8 +143,12 @@ model ArtworkArtifact {
   createdAt      DateTime               @default(now())
   inputs         ArtworkArtifactInput[] @relation("ArtifactOutputs")
   outputs        ArtworkArtifactInput[] @relation("ArtifactInputs")
+  jobId          String?
+  outputName     String?
+  job            ArtworkJob? @relation(fields: [jobId, projectId], references: [id, projectId], onDelete: Restrict)
 
   @@unique([id, projectId])
+  @@unique([jobId, outputName])
   @@index([projectId, createdAt])
 }
 
@@ -164,6 +170,47 @@ model CreatorMessage {
   text      String         @db.VarChar(16000)
   createdAt DateTime       @default(now())
 
+  @@index([projectId, createdAt])
+}
+
+enum ArtworkJobState {
+  queued
+  running
+  succeeded
+  failed
+  cancelled
+}
+
+model ArtworkJob {
+  id String @id @default(uuid())
+  projectId String
+  project ArtworkProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  baseRevisionId String
+  baseRevision ArtworkRevision @relation(fields: [baseRevisionId, projectId], references: [id, projectId], onDelete: Restrict)
+  requestKey String
+  requestHash String @db.Char(64)
+  tool String
+  arguments Json
+  inputIds Json
+  state ArtworkJobState @default(queued)
+  attempt Int @default(0)
+  progress Int @default(0)
+  phase String @default("queued")
+  cancelRequested Boolean @default(false)
+  runToken String?
+  childPid Int?
+  errorCode String?
+  result Json?
+  memory Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  startedAt DateTime?
+  availableAt DateTime @default(now())
+  finishedAt DateTime?
+  artifacts ArtworkArtifact[]
+  @@unique([id, projectId])
+  @@unique([projectId, requestKey])
+  @@index([state, createdAt])
   @@index([projectId, createdAt])
 }
 

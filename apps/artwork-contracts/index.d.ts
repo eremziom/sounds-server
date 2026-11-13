@@ -46,3 +46,39 @@ export interface PublishedArtworkReference {
   manifestSha256: string;
   manifestUri: string;
 }
+
+export type ArtworkToolName = 'generateImage' | 'editImage' | 'segmentObject' |
+  'fillBackground' | 'registerImage' | 'extractLayer' | 'refineMask' |
+  'deriveLightSelection' | 'buildInfluenceMap' | 'buildDelayMap' |
+  'setBehaviors' | 'setTravel' | 'buildPreviewPackage';
+export type ArtworkJobState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled';
+export interface ArtworkJobRequest {
+  baseRevisionId: string;
+  requestKey: string;
+  tool: ArtworkToolName;
+  arguments: Record<string, unknown>;
+  inputIds: string[];
+}
+export interface ArtworkJobResult {
+  outputs: {name: string; artifactId: string}[];
+  baseRevisionId: string;
+  applied: false;
+  details: unknown;
+}
+export interface ArtworkJobRecord extends ArtworkJobRequest {
+  id: string;
+  projectId: string;
+  state: ArtworkJobState;
+  attempt: number;
+  progress: number;
+  phase: string;
+  cancelRequested: boolean;
+  errorCode: string | null;
+  result: ArtworkJobResult | null;
+  memory: unknown;
+  createdAt: string;
+  updatedAt: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+  availableAt: string;
+}

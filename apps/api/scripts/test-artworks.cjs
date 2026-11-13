@@ -59,16 +59,15 @@ async function main() {
     );
     const tracksBefore = (await db.query('SELECT * FROM "Track" ORDER BY id'))
       .rows;
-    await db.query(
-      await readFile(
-        path.join(
-          migrations,
-          '20261113000000_artwork_projects',
-          'migration.sql',
+    for (const entry of entries.filter(
+      (e) => e.name >= '20261113000000_artwork_projects',
+    ))
+      await db.query(
+        await readFile(
+          path.join(migrations, entry.name, 'migration.sql'),
+          'utf8',
         ),
-        'utf8',
-      ),
-    );
+      );
     assert.deepEqual(
       (await db.query('SELECT * FROM "Track" ORDER BY id')).rows,
       tracksBefore,

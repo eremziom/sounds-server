@@ -44,7 +44,7 @@ export class ArtworkStorageService {
     return directory;
   }
 
-  async write(bytes: Buffer, kind: string) {
+  async write(bytes: Buffer, kind: string, reservedKey?: string) {
     if (!bytes.length || bytes.length > ARTIFACT_MAX_BYTES)
       throw invalidArtwork('Artifact size outside supported limit');
     let width: number | null = null,
@@ -76,7 +76,15 @@ export class ArtworkStorageService {
       )
         throw invalidArtwork('Unsupported image dimensions');
     }
-    const storageKey = `${randomUUID()}.${report ? 'json' : 'png'}`;
+    const storageKey =
+      reservedKey ?? `${randomUUID()}.${report ? 'json' : 'png'}`;
+    if (
+      !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\.(png|json)$/.test(
+        storageKey,
+      ) ||
+      !storageKey.endsWith(report ? '.json' : '.png')
+    )
+      throw invalidArtwork('Invalid reserved artifact key');
     const path = join(await this.directory(), storageKey);
     const handle = await open(path, 'wx', 0o600);
     try {

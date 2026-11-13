@@ -1,0 +1,47 @@
+{
+  "tool": "generateImage",
+  "brief": {
+    "intent": "KRE-02 local adapter smoke, unverified garden/drone draft",
+    "qaPlan": "Adapter output only, no artistic acceptance. Preserve actual source resolution; full motion, occlusion, lighting-cycle, blackout/reveal, pause/reset and zoom review remains KRE-03.",
+    "motionPlan": "Drone separate layer, curved left-to-right flight behind the right pillar; clean backing along the route, preserved narrow contours and authored occlusion. Motion/zoom QA remains pending KRE-03.",
+    "composition": "Nocturnal stone gateway in a layered garden; a small cyan survey drone starts at left-middle, with open flight space through the gateway.",
+    "blackoutPlan": "Unlit garden reaches black; independent vein and drone-lamp layers retain colors/impulses from the first frame. Smooth reveal, shadow and pause/zoom QA pending.",
+    "lightingPlan": "Many stone fissures and leaf-vein bands in several foreground and distant groups; cyan-magenta-amber longitudinal gradients, separate material selections, influence and delay maps; later staggered impulses.",
+    "guidelinesPath": "apps/ui/src/engines/infinite-zoom/artwork-authoring-guidelines.md",
+    "guidelinesVersion": "1.7"
+  },
+  "jobId": "72f814b1-2d5f-4f41-bcdd-6bf02e11c92e",
+  "models": {
+    "sam": {
+      "repo": "facebook/sam2.1-hiera-tiny",
+      "revision": "de431c4043854a71d8101e17995dfe596bf101a5"
+    },
+    "lama": {
+      "repo": "opencv/inpainting_lama",
+      "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f"
+    },
+    "klein": {
+      "repo": "black-forest-labs/FLUX.2-klein-4B",
+      "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+    }
+  },
+  "arguments": {
+    "seed": 500,
+    "width": 512,
+    "height": 288,
+    "prompt": "A quiet garden with material-integrated colored light veins and a small moving survey drone. Painterly coherent layered composition."
+  },
+  "toolVersion": "kre02-v1",
+  "actualPrompt": "A quiet garden with material-integrated colored light veins and a small moving survey drone. Painterly coherent layered composition.\r\nLayered animation artwork: preserve integrated material detail and precise boundaries; many distributed material lights, strong longitudinal color gradients, independent lit regions during full environmental blackout and smooth reveal; separate visibility/influence/delay/occlusion masks; an integral moving object, clean revealed background and room for its planned trajectory. No detached decorative light dots or lines. Follow the composition and motion in this brief: Nocturnal stone gateway in a layered garden; a small cyan survey drone starts at left-middle, with open flight space through the gateway. Drone separate layer, curved left-to-right flight behind the right pillar; clean backing along the route, preserved narrow contours and authored occlusion. Motion/zoom QA remains pending KRE-03. Many stone fissures and leaf-vein bands in several foreground and distant groups; cyan-magenta-amber longitudinal gradients, separate material selections, influence and delay maps; later staggered impulses. Unlit garden reaches black; independent vein and drone-lamp layers retain colors/impulses from the first frame. Smooth reveal, shadow and pause/zoom QA pending.",
+  "sourceHashes": {
+    "apps/artwork-worker/worker.py": "f31ae22bf11dc732736b36ba2a2881ad275d346953ed1425bbfad4645e11449f",
+    "apps/artwork-worker/prompts.py": "e2170cd5bce9185cb6d2fa1c61c24d0635b688309ff824eaff831c6af1a753f5",
+    "tools/artwork-creator/image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+    "apps/artwork-worker/build-package.mjs": "9445d2132be7f37b4f6dba47fe2b402e6322c6a2c7aeb29cc3dec91f2bef975e",
+    "tools/artwork-creator/klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+    "tools/artwork-creator/bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+  },
+  "baseRevisionId": "49e28004-d354-49b9-8c7f-b611978f00c6",
+  "guidelinesSha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+  "modelProfileSha256": "d5231dfcc45e57741addd3cdc2a7f61ac3e8c3a6bb3e39b55fc39dbc0b8b3941"
+}

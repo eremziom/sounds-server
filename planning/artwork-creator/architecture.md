@@ -4,7 +4,9 @@ Status: **projekt do wdrożenia etapami**, wersja 1.0 z 2026-11-09.
 Ustalenia i zakres: [README.md](README.md). Kroki: [implementation-plan.md](implementation-plan.md).
 Aktualizacja 2026-11-13: fundament danych/API z KRE-01 jest wdrożony;
 [konkretny kontrakt](kre01-contract.md) uszczegóławia poniższy projekt.
-Zadania, koordynator, UI i publikacja pozostają do wdrożenia.
+KRE-02 dodaje trwałe zadania, narzędzia i wykonawcę; [kontrakt](kre02-contract.md)
+oraz [raport](reports/KRE-02-2026-11-13.md) opisują zakończony odbiór techniczny
+na małych próbkach i jego ograniczenia. Koordynator rozmowy, UI i publikacja pozostają do wdrożenia.
 
 ## Podział odpowiedzialności
 
@@ -53,7 +55,8 @@ Dokładny backend i proces uruchamiania rozstrzyga KRE-00.
 
 W KRE-01 istnieją już modele Prisma `ArtworkProject`, `ArtworkRevision`,
 `ArtworkArtifact`, `ArtworkArtifactInput` i `CreatorMessage` (zapis rozmowy
-bez osobnej encji sesji). Zadania i opublikowane wersje poniżej pozostają planem.
+bez osobnej encji sesji). KRE-02 dodaje `ArtworkJob` i referencje job/output
+w artefaktach. Opublikowane wersje pozostają planem KRE-07.
 
 | Encja | Najważniejsze dane |
 | --- | --- |

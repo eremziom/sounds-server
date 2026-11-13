@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-13T10:10:02.466Z",
+  "deterministic": "passed: HTTP ownership/idempotency, process concurrency/cancellation/crash recovery, retries, memory deferral, output transaction/journal cleanup, no implicit apply, tools/manifest parser",
+  "models": [
+    {
+      "tool": "segmentObject",
+      "state": "succeeded",
+      "errorCode": null,
+      "wallSeconds": 13.826,
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 476377088,
+        "ramAvailableBytes": 17915691008,
+        "dedicatedUsedBytes": 6235762688,
+        "vramAvailableBytes": 10927329280,
+        "commitAvailableBytes": 3934253056
+      },
+      "result": {
+        "applied": false,
+        "details": {
+          "tool": "segmentObject",
+          "quality": "not-reviewed"
+        },
+        "outputs": [
+          {
+            "name": "result",
+            "artifactId": "ef623b30-8550-41b8-bd85-11e61347f724"
+          }
+        ],
+        "baseRevisionId": "b20fc86f-b10e-46f3-9541-91d2ef1175b7"
+      }
+    },
+    {
+      "tool": "fillBackground",
+      "state": "succeeded",
+      "errorCode": null,
+      "wallSeconds": 10.857,
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 476377088,
+        "ramAvailableBytes": 17889853440,
+        "dedicatedUsedBytes": 6191198208,
+        "vramAvailableBytes": 10971893760,
+        "commitAvailableBytes": 6140821504
+      },
+      "result": {
+        "applied": false,
+        "details": {
+          "tool": "fillBackground",
+          "quality": "not-reviewed"
+        },
+        "outputs": [
+          {
+            "name": "result",
+            "artifactId": "be422abd-dd0a-43b6-8500-d84ac5bde517"
+          }
+        ],
+        "baseRevisionId": "b20fc86f-b10e-46f3-9541-91d2ef1175b7"
+      }
+    },
+    {
+      "tool": "generateImage",
+      "state": "queued",
+      "errorCode": "MEMORY_DEFERRED",
+      "wallSeconds": 0.314,
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 476377088,
+        "ramAvailableBytes": 17905942528,
+        "dedicatedUsedBytes": 6194081792,
+        "vramAvailableBytes": 10969010176,
+        "commitAvailableBytes": 6169759744
+      },
+      "result": null
+    },
+    {
+      "tool": "editImage",
+      "state": "queued",
+      "errorCode": "MEMORY_DEFERRED",
+      "wallSeconds": 0.314,
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 476377088,
+        "ramAvailableBytes": 17904750592,
+        "dedicatedUsedBytes": 6194081792,
+        "vramAvailableBytes": 10969010176,
+        "commitAvailableBytes": 6171533312
+      },
+      "result": null
+    }
+  ],
+  "scope": "No production artwork; small fixtures only"
+}

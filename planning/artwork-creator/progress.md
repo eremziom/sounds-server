@@ -3,11 +3,20 @@
 Aktualizacja: **2026-11-13**. **KRE-00 odebrany** jako benchmark wykonalności
 lokalnego procesu z poprawkami. **KRE-01 odebrany technicznie**: trwały model
 projektów, rewizji, artefaktów i rozmowy oraz API; [raport](reports/KRE-01-2026-11-13.md).
-KRE-02–KRE-08 nie rozpoczęto.
+**KRE-02 odebrany technicznie**: kolejka, wykonawca i narzędzia zaimplementowane;
+testy techniczne oraz rzeczywiste Klein/SAM/LaMa 512×288 przy audio przeszły;
+[raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md).
+KRE-03–KRE-08 nie rozpoczęto.
 
 ## Najbliższy krok
 
-**KRE-02 — narzędzia, wykonawca i trwałe zadania.** Nie rozpoczęto automatycznie.
+**KRE-03 — pierwsza kompletna scena przez API bez ręcznej obróbki wyników.**
+Nie rozpoczęto go automatycznie. Po zwolnieniu pamięci przez użytkownika
+KRE-02 przeszedł rzeczywiste encode → transform → decode dla generowania
+i edycji Klein. Końcowo 84 próbki audio/renderera bez zaobserwowanej pauzy,
+utraty kontekstu lub zmiany liczby audio/canvas; edycja zachowała tło poza maską.
+Poprawiono prompt edycji, aby zmieniał wskazany wygląd zamiast odtwarzać scenę.
+Historia wcześniejszego odroczenia przez pamięć pozostaje w raporcie.
 KRE-01 zamyka [raport](reports/KRE-01-2026-11-13.md); API i granice opisuje
 [kontrakt v1](kre01-contract.md). Zastosowano addytywną migrację lokalnej bazy
 developerskiej; testy migracji i restartu używają osobnych, usuwanych baz fixture.
@@ -49,7 +58,7 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | --- | --- | --- | --- |
 | KRE-00 | Odebrany | [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md); B-01–B-11 i pilot zachowane | Zakończony benchmark z opisanymi ograniczeniami |
 | KRE-01 | Odebrany technicznie | [Raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md) | Trwały zapis, historia, własność, zależności i konflikt rewizji potwierdzone |
-| KRE-02 | Nie rozpoczęto | Brak | Kontrakty i zapis projektu |
+| KRE-02 | Odebrany technicznie | [Raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md) | Kolejka/procesy/narzędzia oraz rzeczywiste generate/edit Klein, SAM i LaMa 512×288 przy audio potwierdzone |
 | KRE-03 | Nie rozpoczęto | Brak | Działające narzędzia i zadania |
 | KRE-04 | Nie rozpoczęto | Brak | Jedna pełna paczka przez API |
 | KRE-05 | Nie rozpoczęto | Brak | Działający kreator i potwierdzony LLM |
@@ -69,6 +78,9 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | 2026-11-13 | Poprawki są częścią procesu kreatora; podstawowo prompty, opcjonalnie wskazanie obszaru/pędzel | Potwierdzenie użytkownika w rozmowie przed zamknięciem KRE-00; nie oznacza wymogu ręcznej edycji każdej maski |
 | 2026-11-13 | Finalnie zamknąć KRE-00 po pomiarze przy aplikacji i zapisie ograniczeń | Bieżące polecenie użytkownika; raport zamknięcia zawiera rzeczywiste wyniki |
 | 2026-11-13 | Rozpocząć wdrażanie KRE-01 | Polecenie użytkownika po omówieniu celu tego etapu; bez automatycznego rozpoczęcia kolejnych |
+| 2026-11-13 | Wdrożyć KRE-02 | Osobne polecenie użytkownika; KRE-03 nie rozpoczęto |
+| 2026-11-13 | Użytkownik zwolni pamięć i przekaże sygnał do ponowienia Klein | Odpowiedź na wynik rzeczywistej bramki pamięci, bez zgody na jej omijanie lub zmianę ustawień systemu |
+| 2026-11-13 | Po zwolnieniu pamięci ponowić próbę | Polecenie użytkownika; oba narzędzia Klein zakończyły rzeczywistą inferencję i zapis wyników, końcowy odbiór KRE-02 techniczny, bez produkcyjnego odbioru sceny |
 
 ## Propozycje wymagające pomiaru/rozstrzygnięcia
 
@@ -82,7 +94,9 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
   produkcyjna bramka RAM/VRAM/commit i końcowe budżety UI wymagają dalszych prób.
 - llama.cpp/Vulkan jest wybranym serwerem; ComfyUI nie jest wymagany do recepty.
 - Moduł API, współdzielone deklaracje, kontrakt endpointów i schemat danych
-  ustalono w KRE-01. Kolejka i wykonawca pozostają zakresem KRE-02.
+  ustalono w KRE-01. Kolejka i wykonawca są zaimplementowane w KRE-02;
+  odbiór techniczny nowych adapterów na próbkach 512×288 zakończono. Większe
+  rozmiary, produkcja scen i podgląd w UI wymagają kolejnych etapów.
 - Wymagana liczba korekt użytkownika, potrzeba mattingu i zakres stylów w MVP.
 
 ## Jak aktualizować ten dokument

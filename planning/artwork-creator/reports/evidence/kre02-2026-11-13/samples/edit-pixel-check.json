@@ -1,0 +1,8 @@
+{
+  "outsideMaskExact": true,
+  "insideChangedPixels": 53111,
+  "maskPixels": 53111,
+  "insideMeanAbsoluteDifference": 222.517822265625,
+  "redPixelFraction": 1,
+  "visualArtworkAcceptance": false
+}
