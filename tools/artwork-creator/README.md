@@ -141,3 +141,65 @@ Podgląd nagrywa rzeczywisty lot/blackout/zoom; liczba kroków 1/60 nie stanowi
 benchmarku FPS. Brak portalu i publikacji. Maska środowiska, zasłanianie i
 propagacja koloru nie mają odbioru jakościowego — szczegóły w
 [raporcie B-09–B-11](../../planning/artwork-creator/reports/KRE-00-2026-11-10-sequence-qa.md).
+
+## Korekta pilota (2026-11-13)
+
+Wersja 0.0.3 używa istniejących map opóźnienia koloru i `occlusionMaskAssetId`,
+bez zmian silnika. Recepta jest przypisana hashem do konkretnego draftu seed 500;
+punkty filaru i prowadnice dobrano ręcznie. Nie jest uniwersalnym lokalizatorem.
+Pełny wynik, nagranie i granice jakości: [raport korekt](../../planning/artwork-creator/reports/KRE-00-2026-11-13-corrections.md).
+
+```powershell
+node --test tools/artwork-creator/benchmark-tools.test.mjs tools/artwork-creator/pilot-materials.test.mjs
+node --experimental-strip-types tools/artwork-creator/correct-pilot.mjs .local/kre00/runs/sequence-1794306220653822400/job-0
+# Użyj nowego katalogu wypisanego przez powyższe polecenie:
+node tools/artwork-creator/preview.browser.mjs .local/kre00/runs/NAZWA_KOREKTY
+node tools/artwork-creator/archive-correction.mjs .local/kre00/runs/NAZWA_KOREKTY .local/kre00/runs/NAZWA_KOREKTY/browser-qa-NUMER unikalna-nazwa-dowodow
+```
+
+Wymagane są istniejące lokalne środowiska SAM/ROCm i LaMa/ONNX oraz źródłowe
+maski drona/lampek. Korekta nie instaluje pakietów ani nie pobiera wag.
+GPU/Chromium mogą wymagać dostępu poza sandboxem. Archiwizacja wymaga FFmpeg
+i ffprobe w PATH; odmawia nadpisania istniejącego katalogu dowodów. Filmy i duże
+źródła pozostają w `.local` z inwentarzem SHA256, a próbki archiwum są bezstratne.
+Kolejne uruchomienie korekty/podglądu tworzy nowy katalog; nie uruchamiać starego
+`preview-package.mjs` w katalogu nowej korekty, który ma już własny manifest.
+
+## Zamknięcie KRE-00: aplikacja i modele jednocześnie
+
+[Końcowy raport](../../planning/artwork-creator/reports/KRE-00-2026-11-13-closure.md)
+przyjmuje Qwen/Vulkan, Klein/BF16 z query-chunked attention, pread i osobnym
+dekoderem VAE, SAM/ROCm oraz LaMa/CPU. Ograniczony benchmark jest zakończony.
+Jakość dowolnych promptów i pełna automatyzacja kreatora pozostają do sprawdzenia
+w kolejnych etapach.
+
+```powershell
+node --test tools/artwork-creator/budget-summary.test.mjs
+.local/kre00/venvs/torch-rocm721/Scripts/python.exe -B -m unittest discover -s tools/artwork-creator -p test_klein_loading.py -v
+node tools/artwork-creator/app-budget.browser.mjs
+```
+
+Próba wymaga istniejącego builda UI w `apps/ui/.next`, lokalnych środowisk/wag
+i referencji `.local/kre00/runs/correction-1794554290558` z wcześniejszej próby.
+Uruchamia rzeczywistą aplikację z lokalnym fixture API/autoryzacji/audio;
+wykonuje trzy cykle modeli obrazu i kontroluje stan odtwarzania. Odczyt liczników
+Windows i GPU/Chromium może wymagać działania poza sandboxem. Wszystkie własne
+procesy są kończone po próbie; wyniki trafiają do nowego `app-budget-*`.
+
+Przy osobnym uruchamianiu workerów użyć tej samej kolejności i poczekać na wyjście
+każdego procesu. Katalog operacji musi już mieć brief i wymagane dane wejściowe:
+
+```powershell
+.local/kre00/venvs/torch-rocm721/Scripts/python.exe -B tools/artwork-creator/klein_probe.py encode .local/kre00/runs/OPERACJA --pread-weights
+.local/kre00/venvs/torch-rocm721/Scripts/python.exe -B tools/artwork-creator/klein_probe.py latent .local/kre00/runs/OPERACJA --pread-weights
+.local/kre00/venvs/torch-rocm721/Scripts/python.exe -B tools/artwork-creator/klein_decode.py .local/kre00/runs/OPERACJA
+```
+
+`latent` zapisuje denormalizowane latenty gotowe do VAE; nie jest gotowym PNG.
+Jego historycznie nazwane pole `inference_and_decode_seconds` obejmuje w tym
+trybie samą dyfuzję; czas dekodera jest oddzielnie w `decode-result.json`.
+Odczyt pread jest podmieniany wyłącznie w procesie i przywracany po ładowaniu,
+bez zmian plików bibliotek. Stare `single`/`generate` pozostają profilami
+historycznymi; nie są wybranym wariantem współpracy z aktywną aplikacją.
+Nie zmieniono pliku stronicowania. Zapas commit Windows pozostaje ograniczeniem
+wymagającym bramki zasobów w przyszłym wykonawcy KRE-02.

@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-13",
+  "tests": [
+    {
+      "suite": "node-tools",
+      "chunk_id": "0e548e",
+      "wall_time_seconds": 0.3603843,
+      "exit_code": 0,
+      "original_token_count": 211,
+      "output": "✔ real engine rejects zero period; valid retry changes only the beacon period in an isolated draft (46.6933ms)\n✔ arc validates through engine; all separated parts travel together, source stays unchanged (21.3543ms)\n✔ mask operation corrects exactly the deliberately inserted 3600 pixels (143.8171ms)\n✔ paths and unsupported operations fail closed (1.2503ms)\n✔ delay follows a bent material path by distance, not global screen height (1.1476ms)\n✔ material selection rejects stone faces, dark gaps and protected pixels (1.3297ms)\n✔ corrected package registers spatial flow and stationary occlusion on all moving parts (6.0647ms)\n✔ the full drone silhouette leaves the frame before one-shot travel hides it (0.8641ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 358.8928\n"
+    },
+    {
+      "suite": "benchmark-python",
+      "chunk_id": "426636",
+      "wall_time_seconds": 0.5090439,
+      "exit_code": 0,
+      "original_token_count": 89,
+      "output": "Downloading weights.gguf (resume offset 0 bytes)\r\nDownloading weights.gguf (resume offset 2 bytes)\r\nDownloading weights.gguf (resume offset 25 bytes)\r\nDownloading weights.gguf (resume offset 3 bytes)\r\nDownloading weights.gguf (resume offset 3 bytes)\r\n----------------------------------------------------------------------\r\nRan 12 tests in 0.051s\r\n\r\nOK\r\n"
+    },
+    {
+      "suite": "image-operations",
+      "chunk_id": "638162",
+      "wall_time_seconds": 0.6719286,
+      "exit_code": 0,
+      "original_token_count": 26,
+      "output": "----------------------------------------------------------------------\r\nRan 5 tests in 0.068s\r\n\r\nOK\r\n"
+    }
+  ],
+  "applicationIntegration": {
+    "command": "node tests/infinite-zoom-integration.browser.mjs",
+    "cwd": "apps/ui",
+    "exit_code": 0,
+    "output": "Infinite Zoom app: readiness/cancel, graph reuse, pause/end/next-track, modes/Escape/focus, transition, reset and audio failure isolation OK\nInfinite Zoom first Play: critical load failure blocks music; explicit retry prepares visuals and starts once OK",
+    "source": "Observed completed exec session 54077 after the power interruption."
+  }
+}

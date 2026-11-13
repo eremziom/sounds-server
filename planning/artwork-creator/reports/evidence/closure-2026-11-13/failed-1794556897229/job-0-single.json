@@ -1,0 +1,14 @@
+{
+  "label": "job-0-single",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "single",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794556897229\\job-0",
+    "--pread-weights"
+  ],
+  "pid": 13248,
+  "exitCode": 1,
+  "wallSeconds": 17.174
+}

@@ -1,0 +1,267 @@
+{
+  "gpu": "AMD Radeon RX 7800 XT",
+  "gpuCapacityBytes": 17163091968,
+  "observedMaxDedicatedBytes": 14808461312,
+  "observedMinDedicatedHeadroomBytes": 2354630656,
+  "observedMaxSharedBytes": 994197504,
+  "systemRamBytes": 33514983424,
+  "observedMinAvailableRamBytes": 10703511552,
+  "observedMinCommitHeadroomBytes": 281194496,
+  "samples": 226,
+  "maxSampleGapSeconds": 1.1933618000000052,
+  "audioSecondsAdvanced": 257.718327,
+  "simulationTicksAdvanced": 15468,
+  "healthSamples": 257,
+  "phases": [
+    "baseline",
+    "qwen",
+    "qwen-released",
+    "job-0-encode",
+    "job-0-encode-released",
+    "job-0-latent",
+    "job-0-latent-released",
+    "job-0-decode",
+    "job-0-decode-released",
+    "job-0-occlude",
+    "job-0-occlude-released",
+    "job-0-fill",
+    "job-0-fill-released",
+    "job-1-encode",
+    "job-1-encode-released",
+    "job-1-latent",
+    "job-1-latent-released",
+    "job-1-decode",
+    "job-1-decode-released",
+    "job-1-occlude",
+    "job-1-occlude-released",
+    "job-1-fill",
+    "job-1-fill-released",
+    "job-2-encode",
+    "job-2-encode-released",
+    "job-2-latent",
+    "job-2-latent-released",
+    "job-2-decode",
+    "job-2-decode-released",
+    "job-2-occlude",
+    "job-2-occlude-released",
+    "job-2-fill",
+    "job-2-fill-released",
+    "all-models-released"
+  ],
+  "note": "Sampled WDDM adapter usage includes all system processes; headroom is physical capacity minus observed usage, not an exact instantaneous peak or an allocation guarantee.",
+  "stages": [
+    {
+      "label": "qwen",
+      "command": [
+        "py",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\kre00.py",
+        "probe-sequence-plan",
+        "--runs",
+        "3"
+      ],
+      "pid": 12844,
+      "exitCode": 0,
+      "wallSeconds": 17.186
+    },
+    {
+      "label": "job-0-encode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "encode",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0",
+        "--pread-weights"
+      ],
+      "pid": 4536,
+      "exitCode": 0,
+      "wallSeconds": 14.152
+    },
+    {
+      "label": "job-0-latent",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "latent",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0",
+        "--pread-weights"
+      ],
+      "pid": 10548,
+      "exitCode": 0,
+      "wallSeconds": 16.158
+    },
+    {
+      "label": "job-0-decode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_decode.py",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0"
+      ],
+      "pid": 18652,
+      "exitCode": 0,
+      "wallSeconds": 7.075
+    },
+    {
+      "label": "job-0-occlude",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "occlude",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0"
+      ],
+      "pid": 26168,
+      "exitCode": 0,
+      "wallSeconds": 7.072
+    },
+    {
+      "label": "job-0-fill",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "fill",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0"
+      ],
+      "pid": 24836,
+      "exitCode": 0,
+      "wallSeconds": 12.134
+    },
+    {
+      "label": "job-1-encode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "encode",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-1",
+        "--pread-weights"
+      ],
+      "pid": 416,
+      "exitCode": 0,
+      "wallSeconds": 13.149
+    },
+    {
+      "label": "job-1-latent",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "latent",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-1",
+        "--pread-weights"
+      ],
+      "pid": 11828,
+      "exitCode": 0,
+      "wallSeconds": 16.157
+    },
+    {
+      "label": "job-1-decode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_decode.py",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-1"
+      ],
+      "pid": 26008,
+      "exitCode": 0,
+      "wallSeconds": 7.07
+    },
+    {
+      "label": "job-1-occlude",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "occlude",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-1"
+      ],
+      "pid": 10708,
+      "exitCode": 0,
+      "wallSeconds": 6.068
+    },
+    {
+      "label": "job-1-fill",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "fill",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-1"
+      ],
+      "pid": 20544,
+      "exitCode": 0,
+      "wallSeconds": 11.126
+    },
+    {
+      "label": "job-2-encode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "encode",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2",
+        "--pread-weights"
+      ],
+      "pid": 24204,
+      "exitCode": 0,
+      "wallSeconds": 13.13
+    },
+    {
+      "label": "job-2-latent",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+        "latent",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2",
+        "--pread-weights"
+      ],
+      "pid": 25708,
+      "exitCode": 0,
+      "wallSeconds": 16.186
+    },
+    {
+      "label": "job-2-decode",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_decode.py",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2"
+      ],
+      "pid": 22960,
+      "exitCode": 0,
+      "wallSeconds": 7.077
+    },
+    {
+      "label": "job-2-occlude",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "occlude",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2"
+      ],
+      "pid": 25444,
+      "exitCode": 0,
+      "wallSeconds": 6.058
+    },
+    {
+      "label": "job-2-fill",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "fill",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2"
+      ],
+      "pid": 17304,
+      "exitCode": 0,
+      "wallSeconds": 11.14
+    }
+  ],
+  "scope": "Real built /animations UI with fixture auth/API/audio, default three-world renderer; models run sequentially, not together. Three image-worker cycles, one three-request Qwen run."
+}

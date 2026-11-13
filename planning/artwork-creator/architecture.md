@@ -143,6 +143,13 @@ z potwierdzonym zwolnieniem pamięci i uwzględnieniem zapotrzebowania Windowsa,
 przeglądarki oraz renderera. Offload do RAM i CPU jest narzędziem do pomiaru,
 nie obietnicą zachowania szybkości przy 32 GB RAM.
 
+KRE-00 zamknięto z profilem [opisanym w raporcie końcowym](reports/KRE-00-2026-11-13-closure.md):
+Klein wymaga odczytu pread i zakończenia procesu transformera przed osobnym
+dekoderem VAE. Przyszła bramka dopuszczenia zadania w KRE-02 musi uwzględniać
+także limit commit Windows i rzeczywiste liczniki WDDM konkretnej karty;
+informacja o wolnej pamięci z samego API HIP nie wystarcza. Brak zapasu oznacza
+odroczenie zadania, bez zatrzymywania muzyki ani zmiany ustawień systemowych.
+
 UI otrzymuje postęp i może anulować zadanie, wrócić do projektu lub porównać
 wyniki. Backend nie utrzymuje jednej otwartej operacji HTTP przez całe generowanie.
 Propozycja dla jednego użytkownika: trwała kolejka oparta o istniejącą bazę i

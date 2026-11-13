@@ -1,10 +1,11 @@
 # Kreator artworków i odtwarzacz — plan wdrożenia
 
 Wersja dokumentacji: **1.0, 2026-11-09**.
-Status: **KRE-00 do korekty, 2026-11-10**; wykonano lokalne próby LLM/VLM,
-modeli obrazu, sekwencji, anulowania i podglądu B-01–B-11.
-[Bieżący raport](reports/KRE-00-2026-11-10-sequence-qa.md) opisuje wyniki
-techniczne oraz niespełnione wymagania jakości. Kreator w UI i etapy
+Status: **KRE-00 odebrany, 2026-11-13** jako ograniczony benchmark lokalnego stosu
+i procesu z poprawkami. [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md)
+zawiera trzy udane cykle przy aktywnej aplikacji, pomiary RAM/VRAM/commit,
+29 testów i znane ograniczenia. [Pilot](reports/KRE-00-2026-11-13-corrections.md)
+ma osobne dowody ruchu/zoomu; nie jest artworkiem odebranym produkcyjnie. Kreator w UI i etapy
 KRE-01–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres
@@ -102,17 +103,24 @@ opisuje tamtą wersję. Ten plan definiuje oddzielny przyszły zakres; nie oznac
   projektu. Powtarzalny seed nie jest obietnicą identycznych pikseli na każdym
   urządzeniu i w każdej wersji środowiska.
 
-## Kandydaci, a nie ostateczny wybór modeli
+## Zestaw wybrany w KRE-00
 
-| Rola | Kandydat | Kiedy rozstrzygamy |
+Poniższe role były kandydatami w planie 1.0. Końcowy profil i ograniczenia
+opisuje [raport zamknięcia](reports/KRE-00-2026-11-13-closure.md): Qwen/Vulkan,
+Klein/BF16 z ograniczonym attention, odczytem pread i trzema procesami
+enkoder/transformer/VAE, SAM/ROCm oraz LaMa/CPU. ComfyUI nie jest wymagany;
+Depth Anything pozostaje opcjonalny. Zestaw odebrano dla testowanej recepty
+i wymiarów, bez obietnicy dowolnych stylów ani pełnej autonomii kreatora.
+
+| Rola | Profil po KRE-00 | Zakres potwierdzenia |
 | --- | --- | --- |
-| Rozmowa, analiza obrazów, narzędzia | Qwen3.5-9B, wariant kwantyzowany i zgodna część wizyjna | KRE-00: poprawność narzędzi, jakość analizy i pamięć |
-| Obrazy i edycja | FLUX.2 Klein 4B | KRE-00: generowanie i edycja na AMD, format wag, jakość i czas |
-| Wydzielanie obiektów | SAM 2.1 | KRE-00: punkty/obszary, cienkie krawędzie, zgodność środowiska |
-| Uzupełnianie tła | LaMa, np. wariant ONNX | KRE-00: jakość i czas, CPU/GPU |
+| Rozmowa, analiza obrazów, narzędzia | Qwen3.5-9B Q4_K_M + projektor F16 | Narzędzia i ograniczona analiza; maski wymagają wskazówek |
+| Obrazy i edycja | FLUX.2 Klein 4B BF16 | AMD/ROCm, pread, osobne procesy enkodera/transformera/VAE; edycja chroniona maską |
+| Wydzielanie obiektów | SAM 2.1 Tiny/ROCm | Punkty/ramka, wybrane obiekty i znane granice jakości |
+| Uzupełnianie tła | LaMa ONNX/CPU | Proste tło; architektura i drobna organika mają ograniczenia |
 | Głębia, opcjonalnie | Depth Anything V2 Small | Po podstawowej paczce, jeśli potrzebny do sceny |
-| Wykonawca obrazów | ComfyUI; alternatywny backend za adapterem | KRE-00: zgodny lokalny proces, bez obowiązku używania UI ComfyUI |
-| Serwer językowy | llama.cpp lub zgodny lokalny serwer | KRE-00: konkretna architektura, kwantyzacja, obraz i wywołania narzędzi |
+| Wykonawca obrazów | Izolowane workery Python za przyszłym adapterem | Recepta benchmarkowa działa; trwały wykonawca dopiero KRE-02 |
+| Serwer językowy | llama.cpp b12110/Vulkan | Wybrany lokalny serwer dla przypiętych wag |
 
 Podczas instalacji trzeba ponownie sprawdzić dokumentację AMD, wersje backendów
 i warunki dla konkretnych wag. Nie przenosimy wyników NVIDIA na Radeon ani

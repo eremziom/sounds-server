@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-13",
+  "results": [
+    {
+      "chunk_id": "b7db37",
+      "wall_time_seconds": 0.3866492,
+      "exit_code": 0,
+      "original_token_count": 256,
+      "output": "✔ real engine rejects zero period; valid retry changes only the beacon period in an isolated draft (29.9336ms)\n✔ arc validates through engine; all separated parts travel together, source stays unchanged (22.8123ms)\n✔ mask operation corrects exactly the deliberately inserted 3600 pixels (144.1099ms)\n✔ paths and unsupported operations fail closed (1.2564ms)\n✔ attributes memory to DXGI LUID without summing unrelated adapters (0.6407ms)\n✔ rejects a stopped player, context loss, failed telemetry and ambiguous counters (0.3654ms)\n✔ delay follows a bent material path by distance, not global screen height (0.9256ms)\n✔ material selection rejects stone faces, dark gaps and protected pixels (0.8001ms)\n✔ corrected package registers spatial flow and stationary occlusion on all moving parts (4.4467ms)\n✔ the full drone silhouette leaves the frame before one-shot travel hides it (0.5689ms)\nℹ tests 10\nℹ suites 0\nℹ pass 10\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 382.4637\n"
+    },
+    {
+      "chunk_id": "695c05",
+      "wall_time_seconds": 2.1185015,
+      "exit_code": 0,
+      "original_token_count": 208,
+      "output": "Downloading weights.gguf (resume offset 0 bytes)\r\nDownloading weights.gguf (resume offset 2 bytes)\r\nDownloading weights.gguf (resume offset 25 bytes)\r\nDownloading weights.gguf (resume offset 3 bytes)\r\nDownloading weights.gguf (resume offset 3 bytes)\r\n----------------------------------------------------------------------\r\nRan 12 tests in 0.042s\r\n\r\nOK\r\n----------------------------------------------------------------------\r\nRan 5 tests in 0.081s\r\n\r\nOK\r\ntest_checkpoint_values_and_dtypes_match_and_loader_is_restored (test_klein_loading.ReaderTests.test_checkpoint_values_and_dtypes_match_and_loader_is_restored) ... ok\r\ntest_loader_is_restored_on_error (test_klein_loading.ReaderTests.test_loader_is_restored_on_error) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.006s\r\n\r\nOK\r\n"
+    }
+  ],
+  "scope": "10 Node tests plus 12 benchmark, 5 image-operation and 2 checkpoint-reader Python tests. Model/app coexistence is recorded separately."
+}

@@ -1,0 +1,67 @@
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\utils\deprecation_utils.py:23: FutureWarning: `torch_dtype` is deprecated and will be removed in version 1.0.0. Please use `dtype` instead.
+  deprecate("torch_dtype", "1.0.0", _TORCH_DTYPE_DEPRECATION_MESSAGE)
+Loading pipeline components...:   0%|          | 0/3 [00:00<?, ?it/s]Loading pipeline components...:  33%|###3      | 1/3 [00:03<00:07,  3.53s/it]The config attributes {'force_upcast': True} were passed to AutoencoderKLFlux2, but are not expected and will be ignored. Please verify your config.json configuration file.
+Loading pipeline components...: 100%|##########| 3/3 [00:03<00:00,  1.21s/it]
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\attention_processor.py:2767: UserWarning: Mem Efficient attention on Current AMD GPU is still experimental. Enable it with TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1. (Triggered internally at C:\b\pytorch\aten\src\ATen\native\transformers\hip\sdp_utils.cpp:361.)
+  hidden_states = F.scaled_dot_product_attention(
+Traceback (most recent call last):
+  File "D:\Sandbox\sounds-server\tools\artwork-creator\klein_probe.py", line 194, in <module>
+    main(sys.argv[1],Path(sys.argv[2]),use_pread=len(sys.argv)==4)
+  File "D:\Sandbox\sounds-server\tools\artwork-creator\klein_probe.py", line 116, in main
+    image = pipe(prompt_embeds=embeds,width=width,height=height,num_inference_steps=4,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\utils\_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\pipelines\flux2\pipeline_flux2_klein.py", line 921, in __call__
+    image = self.vae.decode(latents, return_dict=False)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\utils\accelerate_utils.py", line 49, in wrapper
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\autoencoders\autoencoder_kl_flux2.py", line 247, in decode
+    decoded = self._decode(z).sample
+              ^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\autoencoders\autoencoder_kl_flux2.py", line 218, in _decode
+    dec = self.decoder(z)
+          ^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\autoencoders\vae.py", line 304, in forward
+    sample = up_block(sample, latent_embeds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\unets\unet_2d_blocks.py", line 2643, in forward
+    hidden_states = upsampler(hidden_states)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\diffusers\models\upsampling.py", line 186, in forward
+    hidden_states = self.conv(hidden_states)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\conv.py", line 548, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\torch\nn\modules\conv.py", line 543, in _conv_forward
+    return F.conv2d(
+           ^^^^^^^^^
+torch.OutOfMemoryError: HIP out of memory. Tried to allocate 1.27 GiB. GPU 0 has a total capacity of 15.98 GiB of which 7.42 GiB is free. 13.59 GiB allowed; Of the allocated memory 7.86 GiB is allocated by PyTorch, and 387.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

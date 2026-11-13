@@ -1,0 +1,13 @@
+{
+  "label": "job-2-occlude",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+    "occlude",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-2"
+  ],
+  "pid": 25444,
+  "exitCode": 0,
+  "wallSeconds": 6.058
+}

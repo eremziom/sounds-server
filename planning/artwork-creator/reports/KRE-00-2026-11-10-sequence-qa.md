@@ -1,5 +1,10 @@
 # KRE-00 — sekwencja, anulowanie i podgląd, 2026-11-10
 
+> Aktualizacja 2026-11-13: ocenę pilota zastępuje [raport korekt](KRE-00-2026-11-13-corrections.md).
+> Silnik już obsługiwał mapy opóźnienia koloru i nieruchome maski przesłaniania;
+> poniższa diagnoza braku możliwości propagacji była błędna. Nowy pilot ich używa.
+> Wyniki historycznych prób B-09–B-11 pozostają bez zmian.
+
 **B-09–B-11 wykonano technicznie. KRE-00 pozostaje do korekty, bez odbioru jakościowego.**
 Lokalny stos z [poprzedniego raportu](KRE-00-2026-11-10-image-models.md)
 potrafi wykonać całą ograniczoną receptę. Draft nie spełnia wymagań gotowego

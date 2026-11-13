@@ -1,0 +1,26 @@
+[
+  {
+    "name": "AMD Radeon RX 7800 XT",
+    "counter_key": "luid_0x00000000_0x0000dde0",
+    "dedicated_video_bytes": 17163091968,
+    "shared_system_bytes": 16757491712,
+    "vendor_id": 4098,
+    "device_id": 29822
+  },
+  {
+    "name": "AMD Radeon(TM) Graphics",
+    "counter_key": "luid_0x00000000_0x00011399",
+    "dedicated_video_bytes": 509358080,
+    "shared_system_bytes": 16757491712,
+    "vendor_id": 4098,
+    "device_id": 5710
+  },
+  {
+    "name": "Microsoft Basic Render Driver",
+    "counter_key": "luid_0x00000000_0x00011323",
+    "dedicated_video_bytes": 0,
+    "shared_system_bytes": 16757491712,
+    "vendor_id": 5140,
+    "device_id": 140
+  }
+]

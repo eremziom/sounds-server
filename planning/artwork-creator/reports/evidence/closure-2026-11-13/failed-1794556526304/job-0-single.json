@@ -1,0 +1,13 @@
+{
+  "label": "job-0-single",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "single",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794556526304\\job-0"
+  ],
+  "pid": 21060,
+  "exitCode": 3221225477,
+  "wallSeconds": 6.067
+}

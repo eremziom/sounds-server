@@ -1,0 +1,14 @@
+{
+  "app-budget.browser.mjs": "6fbbb09d927740e78039edd0c16f9d9ac8de50274214a1f51c1c5a2a13eb5f04",
+  "app-budget-telemetry.ps1": "2af7818bbd48b32d279e7f5b94cdac6f88c3a314ea3c920adcc75068cd2985d2",
+  "adapter-inventory.py": "913a183e24bee5b120711a3b2d85b3fad897487b4de23ef114ddd620edc4eb0c",
+  "budget-summary.mjs": "a769168cb7f040a397c760cff6e2d37490ebe2a1304d8730130a27eab04de315",
+  "budget-summary.test.mjs": "f4b7f9450693b54c20c400f624ea6edcf5a4121c362bdb7d23491a75d2703416",
+  "klein_probe.py": "508f5155a9e66944789746f4b316d6d7d0b74061ea1b5bb964fe54ef5e34efcb",
+  "klein_decode.py": "009d38fa7c129585f2b30f454f5d0e61d803d07d2b556528bf17183303626982",
+  "klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+  "test_klein_loading.py": "bc26120cf27684ad12a3a86ecfcf1fab5bb876dfff2f7ecc554f9a19608e7cb7",
+  "pilot-correction.py": "662a20e4ece113f68a42377b1a3e6f5df6b3993d1c91cadf6b88281c7ca9c80c",
+  "bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9",
+  "kre00.py": "42574b5a1b4fa2a9d9b6a34b6e376a95a21527c668422b9cc9468853ebf6c347"
+}

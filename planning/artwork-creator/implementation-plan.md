@@ -1,6 +1,8 @@
 # Etapy wdrożenia kreatora i biblioteki
 
-Plan 1.0, 2026-11-09. Wszystkie etapy poniżej są **niewdrożone**.
+Plan 1.0, 2026-11-09. Aktualizacja 2026-11-13: **KRE-00 odebrany** jako
+benchmark wykonalności z ograniczeniami; [raport zamknięcia](reports/KRE-00-2026-11-13-closure.md).
+KRE-01–KRE-08 pozostają **niewdrożone**.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
 Każdy etap ma zakończyć się demonstracją i raportem, nie tylko zestawem plików.

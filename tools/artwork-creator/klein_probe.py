@@ -35,7 +35,7 @@ EDIT = (
 )
 
 
-def main(stage, output):
+def main(stage, output, use_pread=False):
     started = time.perf_counter()
     import numpy as np
     import torch
@@ -48,6 +48,7 @@ def main(stage, output):
     if not output.is_relative_to((DATA/'runs').resolve()):
         raise ValueError('Expected isolated run')
     report = {'stage':stage,'torch':torch.__version__,'diffusers':diffusers.__version__,
+              'pread_weights':use_pread,
               'dtype':'bfloat16','records':[],'quality':'not-reviewed',
               'imports_seconds':time.perf_counter()-started}
     modelroot = DATA/'models/klein4b'
@@ -87,20 +88,23 @@ def main(stage, output):
                 report['records'].append({'name':name,'prompt':prompt,'tokens':tokens,
                     'encode_and_save_seconds':time.perf_counter()-tick,'embedding_sha256':sha256(path)})
                 print(f'Klein encoded {name}, {tokens} tokens',flush=True)
-        elif stage in ['generate','single']:
+        elif stage in ['generate','single','latent']:
             from bounded_attention import bounded_attention
             from diffusers.models.transformers import transformer_flux2
             transformer_flux2.dispatch_attention_fn=bounded_attention
             report['attention_backend']='query-chunked native math SDPA, query rows=256; no masks/causality/training'
             report['attention_adapter_sha256']=sha256(ROOT/'tools/artwork-creator/bounded_attention.py')
-            pipe = Flux2KleinPipeline.from_pretrained(modelroot,local_files_only=True,text_encoder=None,
-                     tokenizer=None,torch_dtype=torch.bfloat16).to(device)
+            from contextlib import nullcontext
+            from klein_loading import pread_weights
+            with pread_weights() if use_pread else nullcontext():
+                pipe = Flux2KleinPipeline.from_pretrained(modelroot,local_files_only=True,text_encoder=None,
+                         tokenizer=None,torch_dtype=torch.bfloat16).to(device)
             pipe.set_progress_bar_config(disable=True)
             report['load_seconds'] = time.perf_counter()-tick
             board = Image.new('RGB',(3*512,2*312),'#111111')
             draw = ImageDraw.Draw(board)
-            for row,(width,height) in enumerate([(1024,576)] if stage=='single' else [(512,288),(1024,576)]):
-                for run in range(1 if stage=='single' else 3):
+            for row,(width,height) in enumerate([(1024,576)] if stage in ['single','latent'] else [(512,288),(1024,576)]):
+                for run in range(1 if stage in ['single','latent'] else 3):
                     seed = 500+run
                     embeds = load_file(str(output/'generate-embeds.safetensors'))['prompt_embeds'].to(device)
                     tick = time.perf_counter()
@@ -109,26 +113,34 @@ def main(stage, output):
                             stream.write(json.dumps({'step':step,'seed':seed,'width':width,'height':height})+'\n')
                         return callback_kwargs
                     with torch.inference_mode():
-                        image = pipe(prompt_embeds=embeds,width=width,height=height,num_inference_steps=4,
+                        output_value = pipe(prompt_embeds=embeds,width=width,height=height,num_inference_steps=4,
                             guidance_scale=1.0,generator=torch.Generator(device='cpu').manual_seed(seed),
-                            callback_on_step_end=progress_callback).images[0]
+                            callback_on_step_end=progress_callback,output_type='latent' if stage=='latent' else 'pil').images
                     torch.cuda.synchronize(index)
                     seconds = time.perf_counter()-tick
-                    if image.size!=(width,height):
-                        raise ValueError(f'Unexpected output size {image.size}')
-                    path = output/f'B-04-{width}-{seed}.png'
-                    image.save(path)
+                    image=None
+                    if stage=='latent':
+                        path=output/f'B-04-{width}-{seed}-latent.safetensors'
+                        save_file({'latents':output_value.cpu().contiguous()},str(path))
+                    else:
+                        image=output_value[0]
+                        if image.size!=(width,height):
+                            raise ValueError(f'Unexpected output size {image.size}')
+                        path = output/f'B-04-{width}-{seed}.png'
+                        image.save(path)
                     record = {'id':'B-04','seed':seed,'width':width,'height':height,'steps':4,
-                        'inference_and_decode_seconds':seconds,'sha256':sha256(path),
+                        'inference_and_decode_seconds':seconds,'sha256':sha256(path),'output_kind':'latent' if stage=='latent' else 'image',
                         'gpu_allocated':torch.cuda.memory_allocated(index),'gpu_reserved':torch.cuda.memory_reserved(index),
                         'process_memory':process_memory(os.getpid())}
                     report['records'].append(record)
                     write_json(output/f'B-04-{width}-{seed}.json',record)
-                    board.paste(image.resize((512,288)),(run*512,row*312+24))
-                    draw.text((run*512+6,row*312+6),f'{width}x{height}, seed {seed}',fill='white')
+                    if image is not None:
+                        board.paste(image.resize((512,288)),(run*512,row*312+24))
+                        draw.text((run*512+6,row*312+6),f'{width}x{height}, seed {seed}',fill='white')
                     print(f'B-04 {width}x{height} seed {seed}: {seconds:.3f}s',flush=True)
-            board.save(output/'generation-review.webp',quality=90)
-            if stage=='single':
+            if stage!='latent':
+                board.save(output/'generation-review.webp',quality=90)
+            if stage in ['single','latent']:
                 return
             original = Image.open(output/'B-04-1024-500.png').convert('RGB')
             original_pixels = np.array(original)
@@ -185,4 +197,6 @@ def main(stage, output):
 
 
 if __name__=='__main__':
-    main(sys.argv[1],Path(sys.argv[2]))
+    if len(sys.argv)>4 or (len(sys.argv)==4 and sys.argv[3]!='--pread-weights'):
+        raise ValueError('Expected stage, output and optional --pread-weights')
+    main(sys.argv[1],Path(sys.argv[2]),use_pread=len(sys.argv)==4)

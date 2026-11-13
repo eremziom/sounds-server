@@ -1,0 +1,3047 @@
+{
+  "result": {
+    "result": {
+      "renderer": "ANGLE (AMD, AMD Radeon RX 7800 XT (0x0000747E) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "frames": 1440,
+      "simulationSeconds": 24,
+      "oneCanvas": true,
+      "noExtraAudio": true,
+      "pause": true,
+      "reset": true,
+      "opaque": true,
+      "occlusionCheck": {
+        "frame": 149,
+        "expectedOverlapPixels": 234,
+        "interiorChanged": 0,
+        "outsideChanged": 2683
+      },
+      "flowCheck": {
+        "blackoutLitPixels": 7220,
+        "blackoutBlackPixels": 582595,
+        "probes": [
+          {
+            "x": 66,
+            "y": 270,
+            "delay": 0.00784313725490196
+          },
+          {
+            "x": 126,
+            "y": 187,
+            "delay": 0.9019607843137255
+          }
+        ],
+        "baseline": [
+          [
+            87,
+            198,
+            255
+          ],
+          [
+            43,
+            191,
+            243
+          ]
+        ],
+        "atOneSecond": [
+          [
+            208,
+            77,
+            255
+          ],
+          [
+            43,
+            191,
+            243
+          ]
+        ],
+        "atFourSeconds": [
+          [
+            255,
+            113,
+            164
+          ],
+          [
+            245,
+            0,
+            225
+          ]
+        ],
+        "changes": {
+          "nearEarly": 121,
+          "farEarly": 0,
+          "farLater": 202
+        }
+      },
+      "resetReadPixels": {
+        "changedChannels": 0,
+        "maxDifference": 0
+      },
+      "logicalReset": true,
+      "portraitWide": true,
+      "diagnostics": {
+        "available": true,
+        "disposed": false,
+        "width": 1400,
+        "height": 600,
+        "estimatedTextureBytes": 8847936,
+        "optionalPending": 0,
+        "optionalFailures": 0,
+        "detailEnabled": true,
+        "estimatedTargetBytes": 6720000,
+        "colorBuffer": "rgba16f",
+        "outputDithering": true,
+        "artworks": 1,
+        "textures": 11,
+        "geometries": 2,
+        "programs": 5,
+        "gpuBudgetBytes": 268435456,
+        "scene": "journey",
+        "cachedInitialArtwork": false,
+        "commandError": false,
+        "recording": null,
+        "cameraTiming": 1,
+        "transition": {
+          "phase": "idle",
+          "error": null,
+          "handoff": null,
+          "placement": null,
+          "region": null,
+          "sourceInstanceId": "kre00-preview",
+          "destinationInstanceId": null,
+          "canStart": false,
+          "qualityLocked": false
+        }
+      },
+      "samples": [
+        {
+          "frame": 0,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 0.7130899693899574,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.12014752195005303,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 0.7130899693899574,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.29769003193052407,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 0.7130899693899574,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.1002728853544598e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 31.329650287409976,
+                "y": -347.32607671193045,
+                "scale": 1,
+                "rotation": -0.46363445212869725,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 31.329650287409976,
+                "y": -347.32607671193045,
+                "scale": 1,
+                "rotation": -0.46363445212869725,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.13601197940979554,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 59,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 1.4853981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.5073765838558686,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 1.4853981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.012849148441480461,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 1.4853981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.0277749330752161e-19,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 68.24162018583567,
+                "y": -328.36941208999264,
+                "scale": 1,
+                "rotation": -0.4179437403842838,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 68.24162018583567,
+                "y": -328.36941208999264,
+                "scale": 1,
+                "rotation": -0.4179437403842838,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 5.415376124217477e-7,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 119,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 2.2707963267948967,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.021962228603013053,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 2.2707963267948967,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.0000076221132037997075,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 2.2707963267948967,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 9.952339306082172e-12,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 167.51502480546728,
+                "y": -269.1427001405628,
+                "scale": 1,
+                "rotation": -0.2929088275056884,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 167.51502480546728,
+                "y": -269.1427001405628,
+                "scale": 1,
+                "rotation": -0.2929088275056884,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200595,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 239,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.24791666666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 7.094594991822224e-18,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.5858580307919e-10,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.00213668623467243,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 495.21723832519115,
+                "y": -114.50936791482147,
+                "scale": 1,
+                "rotation": -0.020671464348855407,
+                "opacity": 0.24791666666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 495.21723832519115,
+                "y": -114.50936791482147,
+                "scale": 1,
+                "rotation": -0.020671464348855407,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 359,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.4979166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.11267519546200595,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.05547413023648921,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.3740806511964251,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 983.2277008049153,
+                "y": -13.746138907412728,
+                "scale": 1,
+                "rotation": 0.08738195889401322,
+                "opacity": 0.4979166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 983.2277008049153,
+                "y": -13.746138907412728,
+                "scale": 1,
+                "rotation": 0.08738195889401322,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 419,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.6229166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.197787143782138,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.5073765838558686,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.197787143782138,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.4733984033479064,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.197787143782138,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.5179221392383258,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1267.6334322012397,
+                "y": 28.241424476576213,
+                "scale": 1,
+                "rotation": 0.10667925224097571,
+                "opacity": 0.6229166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1267.6334322012397,
+                "y": 28.241424476576213,
+                "scale": 1,
+                "rotation": 0.10667925224097571,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 5.415376124217559e-7,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 479,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.7479166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.021962228603013167,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.30637058434202885,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.1895685556291008,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1563.9789500281197,
+                "y": 68.39568469420433,
+                "scale": 1,
+                "rotation": 0.11609945681835675,
+                "opacity": 0.7479166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1563.9789500281197,
+                "y": 68.39568469420433,
+                "scale": 1,
+                "rotation": 0.11609945681835675,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 599,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.9979166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 7.094594991821006e-18,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.000007622113203799749,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.00014688169322890247,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 2150.989822248101,
+                "y": 142.93486712883404,
+                "scale": 1,
+                "rotation": 0.1215047953655768,
+                "opacity": 0.9979166666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 2150.989822248101,
+                "y": 142.93486712883404,
+                "scale": 1,
+                "rotation": 0.1215047953655768,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 719,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.5858580307919e-10,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.0277749330752161e-19,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 2664.822308495875,
+                "y": 204.8127276457459,
+                "scale": 1,
+                "rotation": 0.12049894967225984,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 2664.822308495875,
+                "y": 204.8127276457459,
+                "scale": 1,
+                "rotation": 0.12049894967225984,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 839,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.021962228603013167,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.05547413023648921,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.000004281571611283703,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3028.746355457198,
+                "y": 247.104929462357,
+                "scale": 1,
+                "rotation": 0.11852705754436108,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3028.746355457198,
+                "y": 247.104929462357,
+                "scale": 1,
+                "rotation": 0.11852705754436108,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 959,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 7.094594991821006e-18,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.30637058434202885,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.06742411248663238,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 1079,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.000007622113203799749,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 8.553981633974482,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.5179221392383258,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 1199,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.5041666666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.021962228603013372,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.5858580307920344e-10,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 3.8415926535897933,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.015217520619937905,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 1319,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.004166666666666652,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 7.094594991821006e-18,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.05547413023648921,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 5.41238898038469,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 2.581230042580174e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200412,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 1439,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-corrected-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "west-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.11267519546200559,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "gate-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.30637058434202763,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "east-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "flow",
+                        "kind": "colorShift",
+                        "hue": 3.141592653589793,
+                        "saturation": 1.35,
+                        "lightness": 0,
+                        "delayMapAssetId": "delay",
+                        "travelPhase": 6.983185307179586,
+                        "travelRadians": 2.356194490192345
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 9.952339306081782e-12,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 3166.856354801634,
+                "y": 262.84415414966395,
+                "scale": 1,
+                "rotation": 0.11763617067829567,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "beacon",
+                        "kind": "glow",
+                        "amount": 0.11267519546200705,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        }
+      ],
+      "errors": [],
+      "scope": "Unpublished diagnostic package; recorded real flight, lighting, blackout/reveal and zoom. Artistic acceptance remains separate."
+    }
+  },
+  "exceptions": []
+}
