@@ -1,0 +1,423 @@
+{
+  "schemaVersion": 2,
+  "id": "project-0826a68f-73d9-49a9-81ad-414f4771b31e",
+  "version": "job-08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8",
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+      "kind": "image",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/0e10e45e-5c74-4fee-b0bc-aecdfbd09b72.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/b4ee5b80-4077-4c3b-bcbe-893f4014b08c.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "39b14668-a02d-4767-a16f-bc8271e51232",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/39b14668-a02d-4767-a16f-bc8271e51232.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "cb2ab4e7-e610-45f0-8a8e-038fe350febd",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/cb2ab4e7-e610-45f0-8a8e-038fe350febd.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "4a6325e6-b8bf-497c-901b-960c80b3f7e2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/4a6325e6-b8bf-497c-901b-960c80b3f7e2.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "74cc1e2d-2e6b-444b-91b6-8d66236a029f",
+      "kind": "image",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/74cc1e2d-2e6b-444b-91b6-8d66236a029f.png",
+      "width": 16,
+      "height": 9,
+      "critical": true
+    },
+    {
+      "id": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+      "kind": "image",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/87485806-1be3-47fa-8dc0-d160f9454bc5.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "521ad60e-2297-42c5-a31a-e8afad323bf7",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/521ad60e-2297-42c5-a31a-e8afad323bf7.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "c4cf8234-8b54-4429-9f36-a716a3abef2b",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/c4cf8234-8b54-4429-9f36-a716a3abef2b.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/2eeeeb7f-ce47-4ed3-826f-891c1f8790a4.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "af93db16-8738-41ec-a2df-2fc4dedad98f",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/af93db16-8738-41ec-a2df-2fc4dedad98f.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/8d7dadf4-6d00-4c83-abf1-9d97a0485c2c.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "7fa82841-ec76-466f-a9db-2d36d767fba2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/7fa82841-ec76-466f-a9db-2d36d767fba2.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "0fb6c65f-0577-4190-952c-1780a578126c",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/0fb6c65f-0577-4190-952c-1780a578126c.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "85fe1527-9172-4e0f-aa21-fe0be01262e0",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/85fe1527-9172-4e0f-aa21-fe0be01262e0.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "69264d7c-4849-481e-a49f-531928fa06f2",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/69264d7c-4849-481e-a49f-531928fa06f2.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f",
+      "kind": "mask",
+      "uri": "/infinite-zoom/jobs/08d0bfb3-05b0-4148-a948-b3ef2c1e3ad8/d48b36c0-6ab5-49cf-a0c1-ae76eea8028f.png",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "coverage",
+      "zIndex": 0,
+      "imageAssetId": "74cc1e2d-2e6b-444b-91b6-8d66236a029f"
+    },
+    {
+      "id": "environment",
+      "zIndex": 1,
+      "imageAssetId": "87485806-1be3-47fa-8dc0-d160f9454bc5"
+    },
+    {
+      "id": "west-lights",
+      "zIndex": 2,
+      "behaviors": [
+        {
+          "id": "west-color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "hue": 3.141592653589793,
+            "phase": 0.5,
+            "lightness": 0,
+            "saturation": 0.3,
+            "frequencyHz": 0.125,
+            "travelSeconds": 3,
+            "delayMapAssetId": "af93db16-8738-41ec-a2df-2fc4dedad98f"
+          }
+        },
+        {
+          "id": "west-impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "phase": 0.5,
+            "amount": 0.75,
+            "intensity": 1.5,
+            "sharpness": 5,
+            "threshold": 0,
+            "frequencyHz": 0.25
+          },
+          "modulation": [
+            {
+              "id": "west-bass",
+              "max": 1,
+              "min": 0.6,
+              "signal": "bass",
+              "priority": 0,
+              "operation": "multiply",
+              "attackSeconds": 0.04,
+              "releaseSeconds": 0.2
+            }
+          ],
+          "influenceMaskAssetId": "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4"
+        }
+      ],
+      "maskAssetId": "c4cf8234-8b54-4429-9f36-a716a3abef2b",
+      "imageAssetId": "87485806-1be3-47fa-8dc0-d160f9454bc5"
+    },
+    {
+      "id": "middle-lights",
+      "zIndex": 3,
+      "behaviors": [
+        {
+          "id": "middle-color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "hue": 3.141592653589793,
+            "phase": 1.8,
+            "lightness": 0,
+            "saturation": 0.3,
+            "frequencyHz": 0.125,
+            "travelSeconds": 3,
+            "delayMapAssetId": "0fb6c65f-0577-4190-952c-1780a578126c"
+          }
+        },
+        {
+          "id": "middle-impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "phase": 1.8,
+            "amount": 0.75,
+            "intensity": 1.5,
+            "sharpness": 5,
+            "threshold": 0,
+            "frequencyHz": 0.25
+          },
+          "modulation": [
+            {
+              "id": "middle-bass",
+              "max": 1,
+              "min": 0.6,
+              "signal": "bass",
+              "priority": 0,
+              "operation": "multiply",
+              "attackSeconds": 0.04,
+              "releaseSeconds": 0.2
+            }
+          ],
+          "influenceMaskAssetId": "7fa82841-ec76-466f-a9db-2d36d767fba2"
+        }
+      ],
+      "maskAssetId": "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c",
+      "imageAssetId": "87485806-1be3-47fa-8dc0-d160f9454bc5"
+    },
+    {
+      "id": "east-lights",
+      "zIndex": 4,
+      "behaviors": [
+        {
+          "id": "east-color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "hue": 3.141592653589793,
+            "phase": 3.1,
+            "lightness": 0,
+            "saturation": 0.3,
+            "frequencyHz": 0.125,
+            "travelSeconds": 3,
+            "delayMapAssetId": "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f"
+          }
+        },
+        {
+          "id": "east-impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "phase": 3.1,
+            "amount": 0.75,
+            "intensity": 1.5,
+            "sharpness": 5,
+            "threshold": 0,
+            "frequencyHz": 0.25
+          },
+          "modulation": [
+            {
+              "id": "east-bass",
+              "max": 1,
+              "min": 0.6,
+              "signal": "bass",
+              "priority": 0,
+              "operation": "multiply",
+              "attackSeconds": 0.04,
+              "releaseSeconds": 0.2
+            }
+          ],
+          "influenceMaskAssetId": "69264d7c-4849-481e-a49f-531928fa06f2"
+        }
+      ],
+      "maskAssetId": "85fe1527-9172-4e0f-aa21-fe0be01262e0",
+      "imageAssetId": "87485806-1be3-47fa-8dc0-d160f9454bc5"
+    },
+    {
+      "id": "drone",
+      "zIndex": 5,
+      "travel": {
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "to": {
+                "x": 3400,
+                "y": 20
+              },
+              "control1": {
+                "x": 900,
+                "y": -450
+              },
+              "control2": {
+                "x": 2200,
+                "y": 200
+              }
+            }
+          ]
+        },
+        "pivot": {
+          "x": 1323.8173148840688,
+          "y": 917.1765145848917
+        },
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "startSeconds": 0,
+        "durationSeconds": 24,
+        "headingOffsetRadians": 0.4636476090008061
+      },
+      "maskAssetId": "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+      "occlusionMaskAssetId": "521ad60e-2297-42c5-a31a-e8afad323bf7",
+      "imageAssetId": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72"
+    },
+    {
+      "id": "drone-lights",
+      "zIndex": 6,
+      "travel": {
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "to": {
+                "x": 3400,
+                "y": 20
+              },
+              "control1": {
+                "x": 900,
+                "y": -450
+              },
+              "control2": {
+                "x": 2200,
+                "y": 200
+              }
+            }
+          ]
+        },
+        "pivot": {
+          "x": 1323.8173148840688,
+          "y": 917.1765145848917
+        },
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "startSeconds": 0,
+        "durationSeconds": 24,
+        "headingOffsetRadians": 0.4636476090008061
+      },
+      "behaviors": [
+        {
+          "id": "drone-color",
+          "kind": "colorShift",
+          "order": 0,
+          "params": {
+            "hue": 3.141592653589793,
+            "phase": 0.7,
+            "lightness": 0,
+            "saturation": 0.3,
+            "frequencyHz": 0.125,
+            "travelSeconds": 3,
+            "delayMapAssetId": "4a6325e6-b8bf-497c-901b-960c80b3f7e2"
+          }
+        },
+        {
+          "id": "drone-impulse",
+          "kind": "glow",
+          "order": 1,
+          "params": {
+            "phase": 0.7,
+            "amount": 0.75,
+            "intensity": 1.5,
+            "sharpness": 5,
+            "threshold": 0,
+            "frequencyHz": 0.25
+          },
+          "modulation": [
+            {
+              "id": "drone-bass",
+              "max": 1,
+              "min": 0.6,
+              "signal": "bass",
+              "priority": 0,
+              "operation": "multiply",
+              "attackSeconds": 0.04,
+              "releaseSeconds": 0.2
+            }
+          ],
+          "influenceMaskAssetId": "cb2ab4e7-e610-45f0-8a8e-038fe350febd"
+        }
+      ],
+      "maskAssetId": "39b14668-a02d-4767-a16f-bc8271e51232",
+      "occlusionMaskAssetId": "521ad60e-2297-42c5-a31a-e8afad323bf7",
+      "imageAssetId": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72"
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "coverage"
+  },
+  "anchors": []
+}

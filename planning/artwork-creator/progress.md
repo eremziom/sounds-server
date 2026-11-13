@@ -6,16 +6,21 @@ projektów, rewizji, artefaktów i rozmowy oraz API; [raport](reports/KRE-01-202
 **KRE-02 odebrany technicznie**: kolejka, wykonawca i narzędzia zaimplementowane;
 testy techniczne oraz rzeczywiste Klein/SAM/LaMa 512×288 przy audio przeszły;
 [raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md).
-KRE-03–KRE-08 nie rozpoczęto.
+**KRE-03 wdrożony i sprawdzony technicznie**: rzeczywista kompletna paczka
+przez API, korekty i 32 s ruchu/zoomu w WebGL;
+[raport końcowy i ograniczenia pilota](reports/KRE-03-2026-11-13-closure.md).
+KRE-04–KRE-08 nie rozpoczęto.
 
 ## Najbliższy krok
 
-**KRE-03 — pierwsza kompletna scena przez API bez ręcznej obróbki wyników.**
-Nie rozpoczęto go automatycznie. Po zwolnieniu pamięci przez użytkownika
-KRE-02 przeszedł rzeczywiste encode → transform → decode dla generowania
-i edycji Klein. Końcowo 84 próbki audio/renderera bez zaobserwowanej pauzy,
-utraty kontekstu lub zmiany liczby audio/canvas; edycja zachowała tło poza maską.
-Poprawiono prompt edycji, aby zmieniał wskazany wygląd zamiast odtwarzać scenę.
+**KRE-04 — podstrona kreatora z podglądem i historią, po osobnym poleceniu.**
+KRE-03 zakończył developerowy proces produkcji: po sygnale użytkownika
+wznowiono Klein, wykonano SAM/LaMa, korekty przez API i budowę paczki.
+Końcowy podgląd obejmuje 32 sekundy ruchu/zoomu, światła, przesłanianie,
+blackout/reveal, kontrolowane sygnały audio, pauzę i Reset. Przejrzano sekwencję
+kadrów. Pilot nie został opublikowany; ziarniste granice materiału i cienka
+segmentacja pozostają opisanymi ograniczeniami, bez odbioru estetycznego przez
+użytkownika. KRE-04 nie rozpoczęto automatycznie.
 Historia wcześniejszego odroczenia przez pamięć pozostaje w raporcie.
 KRE-01 zamyka [raport](reports/KRE-01-2026-11-13.md); API i granice opisuje
 [kontrakt v1](kre01-contract.md). Zastosowano addytywną migrację lokalnej bazy
@@ -59,7 +64,7 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | KRE-00 | Odebrany | [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md); B-01–B-11 i pilot zachowane | Zakończony benchmark z opisanymi ograniczeniami |
 | KRE-01 | Odebrany technicznie | [Raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md) | Trwały zapis, historia, własność, zależności i konflikt rewizji potwierdzone |
 | KRE-02 | Odebrany technicznie | [Raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md) | Kolejka/procesy/narzędzia oraz rzeczywiste generate/edit Klein, SAM i LaMa 512×288 przy audio potwierdzone |
-| KRE-03 | Nie rozpoczęto | Brak | Działające narzędzia i zadania |
+| KRE-03 | Odebrany technicznie | [Raport końcowy](reports/KRE-03-2026-11-13-closure.md), [brief pilota](pilots/gate-drone/authoring-brief.md) | Pełna paczka przez API i ruch/zoom potwierdzone, ograniczenia jakości pilota zapisane |
 | KRE-04 | Nie rozpoczęto | Brak | Jedna pełna paczka przez API |
 | KRE-05 | Nie rozpoczęto | Brak | Działający kreator i potwierdzony LLM |
 | KRE-06 | Nie rozpoczęto | Brak | Rozmowa wykonująca narzędzia |

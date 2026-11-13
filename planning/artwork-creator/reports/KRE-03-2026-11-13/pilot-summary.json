@@ -1,0 +1,144 @@
+{
+  "projectId": "0826a68f-73d9-49a9-81ad-414f4771b31e",
+  "revisionId": "251c7120-9787-4bf5-9a4a-a075f17a9d48",
+  "planHash": "a46639a94e15ec442f07be1bd2ad2d82a60d87857a1360929a9df4402efcba06",
+  "bundle": ".local/kre03/runs/pilot-1794572870608/bundle-a46639a94e15ec44",
+  "published": false,
+  "jobs": 99,
+  "jobStates": [
+    "succeeded"
+  ],
+  "artifactCount": 99,
+  "manifestAssets": 17,
+  "textureBytes": 12976704,
+  "outputs": {
+    "source": {
+      "artifactId": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+      "sha256": "22265ebab4e93f6c57d5991c8f87cff9a28cdd820257f3f92b13b52620c56980"
+    },
+    "backing-v2": {
+      "artifactId": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+      "sha256": "d838fc16ecfdf7ac581f74cb7809077dd44f71a44d8ae1d66eb34e729ef25557"
+    },
+    "west-stats-v5": {
+      "artifactId": "2fd85ff4-4727-4d22-adc2-f12b4772bc53",
+      "sha256": "e09374bc09b9b2b84ececad93f17990bc7217e2c0eb0c3554e56e8e4dbb50a81"
+    },
+    "middle-stats-v5": {
+      "artifactId": "aee3a9d4-9f3d-49a2-b45c-bdc2f87b7d2a",
+      "sha256": "12b870e2a37c081f4a0b28fefaff40a247929331982450ed24d7ea35ff028cba"
+    },
+    "east-stats-v5": {
+      "artifactId": "89f746fc-ee44-420f-b731-905192089570",
+      "sha256": "8e1965652f7ed0a5c4288aba016fcb9dcdb4b2a2e7a1681def91047030801d20"
+    }
+  },
+  "selections": {
+    "west-lights": 5714,
+    "middle-lights": 31105,
+    "east-lights": 578
+  },
+  "modelJobs": [
+    {
+      "id": "c9939f2a-e4a2-436e-bd21-3ea15c6d804e",
+      "tool": "segmentObject",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:27:56.906Z",
+      "finishedAt": "2026-11-13T14:28:02.812Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 188166144,
+        "ramAvailableBytes": 23858495488,
+        "dedicatedUsedBytes": 1446100992,
+        "vramAvailableBytes": 15716990976,
+        "commitAvailableBytes": 18833608704
+      }
+    },
+    {
+      "id": "19e93aa5-ba9f-46b1-97f8-e1e0d9688e88",
+      "tool": "fillBackground",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:27:40.079Z",
+      "finishedAt": "2026-11-13T14:27:56.372Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 188166144,
+        "ramAvailableBytes": 23838240768,
+        "dedicatedUsedBytes": 1450295296,
+        "vramAvailableBytes": 15712796672,
+        "commitAvailableBytes": 18770604032
+      }
+    },
+    {
+      "id": "d616b9c5-aebd-480f-a03c-1f1e2064717b",
+      "tool": "segmentObject",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:24:30.669Z",
+      "finishedAt": "2026-11-13T14:24:36.603Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 158674944,
+        "ramAvailableBytes": 23717056512,
+        "dedicatedUsedBytes": 1529724928,
+        "vramAvailableBytes": 15633367040,
+        "commitAvailableBytes": 18586877952
+      }
+    },
+    {
+      "id": "40b79149-af0e-48eb-a938-0437292a41ec",
+      "tool": "fillBackground",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:23:56.435Z",
+      "finishedAt": "2026-11-13T14:24:14.810Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 158674944,
+        "ramAvailableBytes": 23770284032,
+        "dedicatedUsedBytes": 1460256768,
+        "vramAvailableBytes": 15702835200,
+        "commitAvailableBytes": 18730786816
+      }
+    },
+    {
+      "id": "62adfced-cabb-459c-8090-77e37fcfe549",
+      "tool": "segmentObject",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:22:52.943Z",
+      "finishedAt": "2026-11-13T14:22:59.112Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 158674944,
+        "ramAvailableBytes": 23863283712,
+        "dedicatedUsedBytes": 1500889088,
+        "vramAvailableBytes": 15662202880,
+        "commitAvailableBytes": 18795626496
+      }
+    },
+    {
+      "id": "96ade712-ddba-4bd6-82c4-03d41dba99c4",
+      "tool": "generateImage",
+      "state": "succeeded",
+      "startedAt": "2026-11-13T14:21:15.256Z",
+      "finishedAt": "2026-11-13T14:21:54.623Z",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dde0",
+        "sharedUsedBytes": 188166144,
+        "ramAvailableBytes": 23878545408,
+        "dedicatedUsedBytes": 1455013888,
+        "vramAvailableBytes": 15708078080,
+        "commitAvailableBytes": 18827079680
+      }
+    }
+  ],
+  "motion": {
+    "path": ".local/kre03/runs/pilot-1794572870608/bundle-a46639a94e15ec44/qa-1794580645795/motion.webm",
+    "bytes": 10526613,
+    "sha256": "14c1b52f032bba098668dddb8af1cae2eb5f4ebb33ed9e1f5f859edd5f407925"
+  }
+}

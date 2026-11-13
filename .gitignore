@@ -67,4 +67,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Isolated local creator benchmarks (weights, executables, raw results)
 /.local/kre00/
+/.local/kre03/
 __pycache__/

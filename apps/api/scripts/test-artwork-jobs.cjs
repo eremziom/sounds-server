@@ -262,7 +262,7 @@ async function main() {
             .expect(200)
         ).body,
       ).length,
-      13,
+      18,
     );
     await post(
       base,
@@ -303,6 +303,47 @@ async function main() {
     await assert.rejects(
       jobs.retry(project.id, owner.id, completed.id),
       (e) => e.getStatus() === 409,
+    );
+    // A mask cannot silently attach to another image, even at equal dimensions.
+    // Only an explicit registered transfer creates that new dependency.
+    const otherImage = await artworks.upload(
+      project.id,
+      owner.id,
+      {
+        kind: 'image',
+        inputIds: [],
+        registrationId: randomUUID(),
+        provenance: { fixture: true },
+      },
+      png(512, 288),
+    );
+    await post(base, body('extractLayer', {}, [otherImage.id, mask.id])).expect(
+      400,
+    );
+    const transfer = await enqueue('registerMap', { role: 'visibility-mask' }, [
+      otherImage.id,
+      mask.id,
+    ]);
+    await runner.tick();
+    const transferred = await jobs.get(project.id, owner.id, transfer.id);
+    assert.equal(transferred.state, 'succeeded');
+    const transferredId = transferred.result.outputs[0].artifactId;
+    await post(
+      base,
+      body('composeMasks', { operation: 'union', role: 'material-mask' }, [
+        image.id,
+        mask.id,
+        transferredId,
+      ]),
+    ).expect(400);
+    const attached = await enqueue('extractLayer', {}, [
+      otherImage.id,
+      transferredId,
+    ]);
+    await runner.tick();
+    assert.equal(
+      (await jobs.get(project.id, owner.id, attached.id)).state,
+      'succeeded',
     );
     const newer = await artworks.save(project.id, owner.id, {
       baseRevisionId: revision.id,
@@ -386,6 +427,15 @@ async function main() {
     );
     await jobs.cancel(project.id, owner.id, unknownMemory.id);
     for (const [tool, args, inputs] of [
+      ['createColorPlate', { width: 16, height: 9, rgb: [0, 0, 0] }, []],
+      ['createMask', { role: 'visibility-mask', value: 255 }, [image.id]],
+      [
+        'composeMasks',
+        { role: 'material-mask', operation: 'intersect' },
+        [image.id, mask.id, completed.result.outputs[0].artifactId],
+      ],
+      ['registerMap', { role: 'occlusion-mask' }, [image.id, mask.id]],
+      ['inspectSelection', {}, [image.id, mask.id]],
       ['registerImage', { width: 1024, height: 576 }, [image.id]],
       [
         'deriveLightSelection',

@@ -6,7 +6,10 @@ KRE-01 **wdrożony i sprawdzony technicznie 2026-11-13**;
 [raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md).
 KRE-02 **odebrany technicznie**: kolejka/narzędzia i rzeczywiste adaptery
 Klein/SAM/LaMa 512×288 przy audio sprawdzone; [raport i ograniczenia](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md).
-KRE-03–KRE-08 pozostają **niewdrożone**.
+KRE-03 **wdrożony i sprawdzony technicznie**: rzeczywista paczka przez API,
+korekty i podgląd ruchu/zoomu z opisanymi ograniczeniami jakości pilota;
+[raport końcowy](reports/KRE-03-2026-11-13-closure.md).
+KRE-04–KRE-08 pozostają **niewdrożone**.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
 Każdy etap ma zakończyć się demonstracją i raportem, nie tylko zestawem plików.

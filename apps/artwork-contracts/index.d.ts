@@ -50,7 +50,8 @@ export interface PublishedArtworkReference {
 export type ArtworkToolName = 'generateImage' | 'editImage' | 'segmentObject' |
   'fillBackground' | 'registerImage' | 'extractLayer' | 'refineMask' |
   'deriveLightSelection' | 'buildInfluenceMap' | 'buildDelayMap' |
-  'setBehaviors' | 'setTravel' | 'buildPreviewPackage';
+  'setBehaviors' | 'setTravel' | 'buildPreviewPackage' |
+  'createColorPlate' | 'createMask' | 'composeMasks' | 'registerMap' | 'inspectSelection';
 export type ArtworkJobState = 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled';
 export interface ArtworkJobRequest {
   baseRevisionId: string;

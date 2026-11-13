@@ -76,6 +76,41 @@ export const TOOL_REGISTRY = {
     gpu: null,
     schema: object({ dilation: integer(0, 50) }),
   },
+  createColorPlate: {
+    inputs: [],
+    gpu: null,
+    schema: object({
+      width: integer(16, 8192),
+      height: integer(9, 8192),
+      rgb: array(integer(0, 255), 3, 3),
+    }),
+  },
+  createMask: {
+    inputs: ['image'],
+    gpu: null,
+    schema: object(
+      { role, value: integer(0, 255), polygon: array(point, 3, 64) },
+      ['role', 'value'],
+    ),
+  },
+  composeMasks: {
+    inputs: ['image', 'mask', 'mask'],
+    gpu: null,
+    schema: object({
+      operation: enumeration('union', 'intersect', 'subtract'),
+      role,
+    }),
+  },
+  registerMap: {
+    inputs: ['image', 'mask'],
+    gpu: null,
+    schema: object({ role }),
+  },
+  inspectSelection: {
+    inputs: ['image', 'mask'],
+    gpu: null,
+    schema: object({}),
+  },
   registerImage: {
     inputs: ['image'],
     gpu: null,
@@ -110,6 +145,8 @@ export const TOOL_REGISTRY = {
         minSaturation: num(0, 1),
         hueFrom: num(0, 360),
         hueTo: num(0, 360),
+        detailRadius: integer(1, 12),
+        detailContrast: num(1, 64),
       },
       ['minLuma', 'minSaturation'],
     ),
@@ -145,7 +182,17 @@ export const TOOL_REGISTRY = {
     gpu: null,
     schema: object({ layerId: str(), travel: { type: 'object' } }),
   },
-  buildPreviewPackage: { inputs: [], gpu: null, schema: object({}) },
+  buildPreviewPackage: {
+    inputs: [],
+    gpu: null,
+    schema: object(
+      {
+        environmentLayerIds: array(str(), 0, 100),
+        lightLayerIds: array(str(), 0, 100),
+      },
+      [],
+    ),
+  },
 } as const;
 export type ToolName = keyof typeof TOOL_REGISTRY;
 

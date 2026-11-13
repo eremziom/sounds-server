@@ -50,7 +50,7 @@ def parent_watch():
 
 def execute(stage, directory):
     import numpy as np
-    from PIL import Image, ImageFilter
+    from PIL import Image, ImageFilter, ImageDraw
     if np.__version__ != '2.5.4' or Image.__version__ != '13.0.0':
         raise RuntimeError('Pinned NumPy/Pillow environment required')
     Image.MAX_IMAGE_PIXELS = 67108864
@@ -191,13 +191,42 @@ def execute(stage, directory):
         torch.cuda.synchronize(device)
         return
 
+    if tool == 'createColorPlate':
+        if args['width']*9 != args['height']*16: raise ValueError('Color plate must be 16:9')
+        result(Image.new('RGB',(args['width'],args['height']),tuple(args['rgb'])),'image',registration='new')
+        return
     source = image()
     pixels = np.array(source)
     mask_image = image(1, 'L') if len(inputs) > 1 else None
+    if tool=='registerMap':
+        result(mask_image.resize(source.size,Image.Resampling.NEAREST),args['role'])
+        return
     if mask_image is not None and mask_image.size != source.size:
         raise ValueError('Input dimensions differ')
     mask = np.array(mask_image) if mask_image is not None else None
-    if tool == 'registerImage':
+    if tool == 'createMask':
+        value=Image.new('L',source.size,0 if 'polygon' in args else args['value'])
+        if 'polygon' in args:
+            if any(p['x']>source.width or p['y']>source.height for p in args['polygon']): raise ValueError('Mask polygon outside source')
+            ImageDraw.Draw(value).polygon([(p['x'],p['y']) for p in args['polygon']],fill=args['value'])
+        result(value,args['role'])
+    elif tool=='composeMasks':
+        other=np.array(image(2,'L'))
+        if other.shape!=mask.shape: raise ValueError('Masks must share registration')
+        if args['operation']=='union': value=np.maximum(mask,other)
+        elif args['operation']=='intersect': value=np.minimum(mask,other)
+        else: value=np.clip(mask.astype(np.int16)-other.astype(np.int16),0,255).astype(np.uint8)
+        result(Image.fromarray(value),args['role'])
+    elif tool=='inspectSelection':
+        y,x=np.nonzero(mask>0)
+        selection=pixels[mask>0].astype(np.float32)
+        report={'selectedPixels':int(len(x)),'totalPixels':int(mask.size),'fraction':float(len(x)/mask.size),
+                'bounds':{'left':int(x.min()),'top':int(y.min()),'right':int(x.max()+1),'bottom':int(y.max()+1)} if len(x) else None,
+                'centroid':{'x':float(x.mean()),'y':float(y.mean())} if len(x) else None,
+                'meanRGB':selection.mean(axis=0).tolist() if len(x) else None,'visualAcceptance':False}
+        (directory/'selection-report.json').write_text(json.dumps(report),encoding='utf-8')
+        (directory/'result.json').write_text(json.dumps({'outputs':[{'name':'selection','file':'selection-report.json','kind':'report','registration':'none'}],'details':report}),encoding='utf-8')
+    elif tool == 'registerImage':
         if args['width']*9 != args['height']*16:
             raise ValueError('Registration requires normalized 16:9 coordinates')
         result(source.resize((args['width'],args['height']), Image.Resampling.LANCZOS), 'image', registration='new')
@@ -220,6 +249,13 @@ def execute(stage, directory):
         selection = (mask > 0) & (luma >= args['minLuma']) & (saturation >= args['minSaturation'])
         low, high = args.get('hueFrom',0), args.get('hueTo',360)
         selection &= ((hue >= low) & (hue <= high)) if low <= high else ((hue >= low) | (hue <= high))
+        if args.get('detailRadius'):
+            # White top-hat selects real bright material ridges against their
+            # local surface, rather than outlining a thresholded silhouette.
+            size=2*args['detailRadius']+1
+            light=Image.fromarray(np.clip(luma,0,255).astype(np.uint8))
+            opened=np.asarray(light.filter(ImageFilter.MinFilter(size)).filter(ImageFilter.MaxFilter(size)),dtype=np.float32)
+            selection &= luma-opened >= args.get('detailContrast',8)
         result(Image.fromarray(np.where(selection,mask,0).astype(np.uint8)), 'material-mask')
     elif tool == 'buildInfluenceMap':
         result(mask_image.filter(ImageFilter.GaussianBlur(args['feather'])), 'influence-map')

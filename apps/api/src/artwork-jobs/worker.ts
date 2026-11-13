@@ -12,6 +12,15 @@ async function main() {
     new ArtworkStorageService(config),
     config,
   );
+  const pollMilliseconds = Number(
+    config.get<string>('ARTWORK_POLL_MS') ?? '5000',
+  );
+  if (
+    !Number.isSafeInteger(pollMilliseconds) ||
+    pollMilliseconds < 250 ||
+    pollMilliseconds > 30000
+  )
+    throw new Error('ARTWORK_POLL_MS must be 250..30000');
   let stopped = false;
   for (const signal of ['SIGINT', 'SIGTERM'] as const)
     process.on(signal, () => {
@@ -23,7 +32,7 @@ async function main() {
     do {
       await runner.tick();
       if (process.argv.includes('--once')) break;
-      if (!stopped) await delay(5000);
+      if (!stopped) await delay(pollMilliseconds);
     } while (!stopped);
   } finally {
     await db.$disconnect();

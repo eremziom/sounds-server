@@ -42,11 +42,63 @@ application processes can read them; the Codex sandbox required a separate
 approved test invocation. Missing counters defer jobs rather than bypass admission.
 
 Jobs are polled every 5 seconds. `--once` on the compiled API worker entry
-performs one recovery/claim cycle. Starting two workers does not allow two
-operations: one PostgreSQL session advisory lock covers recovery, execution,
-commit and cleanup. Stopping the API leaves the worker independent; stopping
-the worker leaves queued jobs durable. Interruptions produce a retryable failed
-job, not an automatically applied partial result.
+performs one recovery/claim cycle. `ARTWORK_POLL_MS` can override the interval
+within 250–30000 ms; the default remains 5000 ms. Starting two workers does not
+allow two operations: one PostgreSQL session advisory lock covers recovery,
+execution, commit and cleanup. Stopping the API leaves the worker independent;
+stopping the worker leaves queued jobs durable. Interruptions produce a
+retryable failed job, not an automatically applied partial result.
+
+## KRE-03 production client
+
+`production-client.mjs` exports `produceScene({apiUrl, headers, recipe, directory,
+until, onProgress})` for an authenticated API session. It persists the plan,
+idempotency requests and checkpoint locally without saving credentials. All
+image, mask and package outputs come from registered API jobs. It exports a
+self-contained immutable bundle after validating asset checksums; it does not
+publish to the artwork library.
+
+The pilot input is
+`planning/artwork-creator/pilots/gate-drone/recipe.json`, with the scene-specific
+brief beside it. Read the shared authoring guidelines before revising it.
+Correct outputs through new registered operations, never by editing their PNGs
+or the exported manifest. `registerMap` explicitly transfers a normalized
+full-frame 16:9 map to another registered image; other tools require masks bound
+to their exact image. A transfer does not establish visual alignment.
+`deriveLightSelection` optionally accepts `detailRadius` (1–12 native pixels)
+and `detailContrast` (1–64, default 8). It uses local white top-hat contrast to
+select actual bright material ridges instead of entire flat surfaces. Inspect
+the resulting mask in motion/zoom; this is not semantic material segmentation.
+Long runs retain earlier coordinator markers in immutable revision history to
+stay within the 100-decision snapshot limit, preserving authored user decisions.
+Job provenance export follows pagination rather than truncating at 100 jobs.
+
+From `apps/api`, after building:
+
+```powershell
+node scripts/artwork-production-pilot.cjs --until source
+# Resume using the run directory printed above:
+node scripts/artwork-production-pilot.cjs --directory D:/Sandbox/sounds-server/.local/kre03/runs/pilot-<timestamp>
+```
+
+This acceptance harness retains an isolated test database and private artifact
+store for resume, runs real controllers/services and a separate worker, and uses
+a fixture authorization guard. It is not a production server or the KRE-04 UI.
+Memory deferral is not successful generation. The 20-minute client wait deadline
+stops its worker while retaining the queued operation and checkpoint.
+
+From the root, run the actual engine preview on the returned bundle:
+
+```powershell
+node tools/artwork-creator/production-preview.browser.mjs .local/kre03/runs/pilot-<timestamp>/bundle-<hash>
+node --test apps/artwork-worker/production-client.test.mjs
+```
+
+The preview writes WebM motion, PNG captures and technical checks under `qa-*`.
+Controlled normalized signals test audio bindings without adding an audio graph.
+Review actual motion/zoom and material boundaries separately. Technical fixtures
+are not production artwork acceptance. Current status and pilot limitations:
+[KRE-03 report](../../planning/artwork-creator/reports/KRE-03-2026-11-13-closure.md).
 
 ## Checks
 

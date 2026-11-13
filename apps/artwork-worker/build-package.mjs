@@ -14,7 +14,7 @@ if(request.tool==='setBehaviors'||request.tool==='setTravel'){
  layer.parameters={...layer.parameters,[request.tool==='setTravel'?'travel':'behaviors']:request.tool==='setTravel'?args.travel:args.behaviors};
 }
 const maskKinds=['visibility-mask','occlusion-mask','material-mask','influence-map','delay-map'];
-const assets=request.artifacts.filter(a=>a.kind!=='report').map(a=>({id:a.id,kind:maskKinds.includes(a.kind)?'mask':a.kind,
+const availableAssets=request.artifacts.filter(a=>a.kind!=='report').map(a=>({id:a.id,kind:maskKinds.includes(a.kind)?'mask':a.kind,
  uri:`/infinite-zoom/jobs/${request.jobId}/${a.id}.png`,width:a.width,height:a.height,critical:true}));
 const layers=snapshot.layers.map((l,index)=>{
  const p=l.parameters??{};
@@ -37,7 +37,16 @@ const layers=snapshot.layers.map((l,index)=>{
  return {id:l.id,zIndex:index,...p,imageAssetId:l.imageArtifactId};
 });
 const base=[...layers].sort((a,b)=>a.zIndex-b.zIndex)[0];
+const used=new Set(layers.map(l=>l.imageAssetId));
+const references=value=>{if(!value||typeof value!=='object')return;for(const [key,ref]of Object.entries(value)){if((key.endsWith('AssetId')||key==='assetId')&&typeof ref==='string')used.add(ref);else references(ref);}};
+layers.forEach(references);
+const assets=availableAssets.filter(a=>used.has(a.id));
 const manifest={schemaVersion:2,id:`project-${request.projectId}`,version:`job-${request.jobId}`,canvas:{width:3840,height:2160},assets,layers,coverage:{baseLayerId:base?.id},anchors:[]};
 const validated=parseArtworkPackage(manifest);
+const previewControls={environmentLayerIds:args.environmentLayerIds??[],lightLayerIds:args.lightLayerIds??[]};
+for(const id of [...previewControls.environmentLayerIds,...previewControls.lightLayerIds])if(!layers.some(l=>l.id===id)||id===base.id)throw Error('Preview controls require explicit non-coverage layers');
+if(previewControls.environmentLayerIds.some(id=>previewControls.lightLayerIds.includes(id)))throw Error('Environmental and protected light layers must be separate');
+const estimatedTextureBytes=assets.reduce((sum,a)=>sum+a.width*a.height*(a.kind==='mask'?1:4),0);
+if(estimatedTextureBytes>192*1024*1024)throw Error('Preview texture budget exceeded');
 await writeFile(path.join(directory,'result.json'),JSON.stringify({outputs:[{name:'package',file:'package.json',kind:'report',registration:'none'}],details:{runtimeSchema:validated.schemaVersion,visualAcceptance:false}}),{flag:'wx'});
-await writeFile(path.join(directory,'package.json'),JSON.stringify({snapshotCandidate:snapshot,manifest,assetBindings:request.artifacts.map(a=>({artifactId:a.id,uri:`/infinite-zoom/jobs/${request.jobId}/${a.id}.png`})),published:false,visualAcceptance:false},null,2),{flag:'wx'});
+await writeFile(path.join(directory,'package.json'),JSON.stringify({snapshotCandidate:snapshot,manifest,assetBindings:assets.map(a=>({artifactId:a.id,uri:a.uri})),previewControls,technicalReport:{estimatedTextureBytes,sourceDimensions:assets.filter(a=>a.kind==='image').map(a=>({id:a.id,width:a.width,height:a.height})),visualAcceptance:false},published:false,visualAcceptance:false},null,2),{flag:'wx'});

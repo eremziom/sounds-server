@@ -80,20 +80,29 @@ export class ArtworkJobsService {
       throw invalidArtwork('Invalid tool artifact inputs');
     if (dto.tool === 'segmentObject' && !inputs[0]?.registrationId)
       throw invalidArtwork('Register the source image before segmentation');
-    if (inputs.length > 1) {
+    for (const id of dto.inputIds.slice(1)) {
       const image = inputs.find((a) => a.id === dto.inputIds[0])!,
-        mask = inputs.find((a) => a.id === dto.inputIds[1])!;
+        mask = inputs.find((a) => a.id === id)!;
       const edge = await this.db.artworkArtifactInput.findUnique({
         where: {
           artifactId_inputId: { artifactId: mask.id, inputId: image.id },
         },
       });
       if (
-        !edge ||
+        (dto.tool !== 'registerMap' && !edge) ||
         !image.registrationId ||
-        image.registrationId !== mask.registrationId ||
-        image.width !== mask.width ||
-        image.height !== mask.height
+        !mask.registrationId ||
+        (dto.tool !== 'registerMap' &&
+          (image.registrationId !== mask.registrationId ||
+            image.width !== mask.width ||
+            image.height !== mask.height)) ||
+        (dto.tool === 'registerMap' &&
+          (!image.width ||
+            !image.height ||
+            !mask.width ||
+            !mask.height ||
+            image.width * 9 !== image.height * 16 ||
+            mask.width * 9 !== mask.height * 16))
       )
         throw invalidArtwork(
           'Mask must be registered to exact tool input image',
