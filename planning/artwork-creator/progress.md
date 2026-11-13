@@ -9,18 +9,29 @@ testy techniczne oraz rzeczywiste Klein/SAM/LaMa 512×288 przy audio przeszły;
 **KRE-03 wdrożony i sprawdzony technicznie**: rzeczywista kompletna paczka
 przez API, korekty i 32 s ruchu/zoomu w WebGL;
 [raport końcowy i ograniczenia pilota](reports/KRE-03-2026-11-13-closure.md).
-KRE-04–KRE-08 nie rozpoczęto.
+**KRE-04 rozpoczęty na polecenie użytkownika, 2026-11-13.** Pierwszy przyrost:
+chroniony ekran, projekty/plany, referencje, zadania, wybór obrazu, historia,
+porównanie i statyczny podgląd warstw/masek. [Raport częściowy](reports/KRE-04-2026-11-13.md).
+Podgląd animowanej paczki i rzeczywista generacja z UI pozostają do odbioru.
+KRE-05–KRE-08 nie rozpoczęto.
 
 ## Najbliższy krok
 
-**KRE-04 — podstrona kreatora z podglądem i historią, po osobnym poleceniu.**
+**Kontynuacja KRE-04 — produkcja warstwowej paczki z UI i podgląd przez istniejący host.**
+Pierwszy przyrost jest dostępny pod `/animations/create`, przez odnośnik na
+`/animations`. Nie wymaga JSON ani ścieżek plików. Host nadal przyjmuje tylko
+wbudowany katalog: potrzebny jest adapter roboczej paczki z parkowaniem podróży,
+walidacją zasobów i rollbackiem. Nie dodano drugiego renderera ani zegara.
+Próba UI na kontrolowanym API potwierdza ciągłość muzyki/canvas/kontekstu,
+ale nie zastępuje rzeczywistego procesu modeli i QA animacji draftu.
+
 KRE-03 zakończył developerowy proces produkcji: po sygnale użytkownika
 wznowiono Klein, wykonano SAM/LaMa, korekty przez API i budowę paczki.
 Końcowy podgląd obejmuje 32 sekundy ruchu/zoomu, światła, przesłanianie,
 blackout/reveal, kontrolowane sygnały audio, pauzę i Reset. Przejrzano sekwencję
 kadrów. Pilot nie został opublikowany; ziarniste granice materiału i cienka
 segmentacja pozostają opisanymi ograniczeniami, bez odbioru estetycznego przez
-użytkownika. KRE-04 nie rozpoczęto automatycznie.
+użytkownika. KRE-04 rozpoczęto dopiero na kolejne polecenie użytkownika.
 Historia wcześniejszego odroczenia przez pamięć pozostaje w raporcie.
 KRE-01 zamyka [raport](reports/KRE-01-2026-11-13.md); API i granice opisuje
 [kontrakt v1](kre01-contract.md). Zastosowano addytywną migrację lokalnej bazy
@@ -65,7 +76,7 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | KRE-01 | Odebrany technicznie | [Raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md) | Trwały zapis, historia, własność, zależności i konflikt rewizji potwierdzone |
 | KRE-02 | Odebrany technicznie | [Raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md) | Kolejka/procesy/narzędzia oraz rzeczywiste generate/edit Klein, SAM i LaMa 512×288 przy audio potwierdzone |
 | KRE-03 | Odebrany technicznie | [Raport końcowy](reports/KRE-03-2026-11-13-closure.md), [brief pilota](pilots/gate-drone/authoring-brief.md) | Pełna paczka przez API i ruch/zoom potwierdzone, ograniczenia jakości pilota zapisane |
-| KRE-04 | Nie rozpoczęto | Brak | Jedna pełna paczka przez API |
+| KRE-04 | W toku — pierwszy przyrost UI | [Raport częściowy](reports/KRE-04-2026-11-13.md), [dowody UI](reports/evidence/kre04-2026-11-13/browser-summary.json) | Podgląd animowanego draftu i rzeczywista produkcja z UI bez terminala |
 | KRE-05 | Nie rozpoczęto | Brak | Działający kreator i potwierdzony LLM |
 | KRE-06 | Nie rozpoczęto | Brak | Rozmowa wykonująca narzędzia |
 | KRE-07 | Nie rozpoczęto | Brak | Poprawki częściowe i korekta masek |
@@ -84,6 +95,7 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | 2026-11-13 | Finalnie zamknąć KRE-00 po pomiarze przy aplikacji i zapisie ograniczeń | Bieżące polecenie użytkownika; raport zamknięcia zawiera rzeczywiste wyniki |
 | 2026-11-13 | Rozpocząć wdrażanie KRE-01 | Polecenie użytkownika po omówieniu celu tego etapu; bez automatycznego rozpoczęcia kolejnych |
 | 2026-11-13 | Wdrożyć KRE-02 | Osobne polecenie użytkownika; KRE-03 nie rozpoczęto |
+| 2026-11-13 | Zacząć wdrażać KRE-04 | Bieżące polecenie użytkownika po technicznym zamknięciu KRE-03; bez rozpoczynania KRE-05–KRE-08 |
 | 2026-11-13 | Użytkownik zwolni pamięć i przekaże sygnał do ponowienia Klein | Odpowiedź na wynik rzeczywistej bramki pamięci, bez zgody na jej omijanie lub zmianę ustawień systemu |
 | 2026-11-13 | Po zwolnieniu pamięci ponowić próbę | Polecenie użytkownika; oba narzędzia Klein zakończyły rzeczywistą inferencję i zapis wyników, końcowy odbiór KRE-02 techniczny, bez produkcyjnego odbioru sceny |
 

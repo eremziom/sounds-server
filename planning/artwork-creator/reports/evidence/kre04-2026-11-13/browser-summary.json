@@ -1,0 +1,26 @@
+{
+  "test": "apps/ui/tests/artwork-creator.browser.mjs",
+  "backend": "isolated HTTP fixture",
+  "modelInference": false,
+  "projectCreated": true,
+  "planSaved": true,
+  "enqueue": true,
+  "cancelRetry": true,
+  "imageApplied": true,
+  "conflictPreservesInput": true,
+  "compareRestore": true,
+  "notesAndResultsRetained": true,
+  "reloadRecoversProject": true,
+  "locales": [
+    "en",
+    "pl",
+    "es"
+  ],
+  "mobileWidth": 390,
+  "noHorizontalOverflow": true,
+  "samePlayingAudioCanvasAndContextOnNavigation": true,
+  "samePlayingAudioOnCancellation": true,
+  "appRoleGuard": true,
+  "anonymousGuard": true,
+  "animatedDraftPreview": false
+}

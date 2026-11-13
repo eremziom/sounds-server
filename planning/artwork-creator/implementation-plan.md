@@ -9,7 +9,11 @@ Klein/SAM/LaMa 512×288 przy audio sprawdzone; [raport i ograniczenia](reports/K
 KRE-03 **wdrożony i sprawdzony technicznie**: rzeczywista paczka przez API,
 korekty i podgląd ruchu/zoomu z opisanymi ograniczeniami jakości pilota;
 [raport końcowy](reports/KRE-03-2026-11-13-closure.md).
-KRE-04–KRE-08 pozostają **niewdrożone**.
+KRE-04 **w toku, 2026-11-13**: pierwszy przyrost chronionego UI, projekty,
+plan, obrazy/referencje, zadania, historia i podgląd statyczny;
+[raport częściowy](reports/KRE-04-2026-11-13.md). Podgląd animowanej paczki
+i odbiór rzeczywistego procesu z UI pozostają do wykonania.
+KRE-05–KRE-08 pozostają **niewdrożone**.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
 Każdy etap ma zakończyć się demonstracją i raportem, nie tylko zestawem plików.
@@ -161,6 +165,10 @@ granice są obowiązkowe; testy techniczne nie zastępują akceptacji obrazu.
 ## KRE-04 — interfejs kreatora
 
 **Cel:** użytkownik przeprowadza podstawowy proces w aplikacji.
+
+**Stan 2026-11-13:** rozpoczęty; [pierwszy przyrost i dowody](reports/KRE-04-2026-11-13.md).
+Nie jest to zamknięcie etapu. UI zleca `generateImage` do istniejącej kolejki,
+ale próba przeglądarkowa używa kontrolowanego API, a podgląd jest statyczny.
 
 Kroki:
 

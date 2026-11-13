@@ -11,7 +11,13 @@ artefakty i zapis rozmowy przez API; [raport](reports/KRE-01-2026-11-13.md),
 [kontrakt](kre01-contract.md).
 **KRE-02 odebrany technicznie:** kolejka, wykonawca i narzędzia wdrożone;
 rzeczywiste Klein/SAM/LaMa 512×288 oraz testy przy audio przeszły. [Raport i ograniczenia](reports/KRE-02-2026-11-13.md),
-[kontrakt](kre02-contract.md). Kreator w UI i KRE-03–KRE-08 pozostają niewdrożone.
+[kontrakt](kre02-contract.md).
+**KRE-03 wdrożony i sprawdzony technicznie:** pełna paczka przez API i QA ruchu/zoomu,
+z ograniczeniami pilota; [raport końcowy](reports/KRE-03-2026-11-13-closure.md).
+**KRE-04 w toku:** pierwszy przyrost kreatora pod `/animations/create`, projekty,
+zadania, historia i podgląd statyczny; [raport częściowy](reports/KRE-04-2026-11-13.md).
+Animowany draft i rzeczywisty proces z UI wymagają dalszej pracy/odbioru.
+KRE-05–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres
 
@@ -37,6 +43,8 @@ implementacji wszystkich etapów naraz**. Użytkownik rozpoczął KRE-00 dnia
 2026-11-10; ta autoryzacja nie obejmuje automatycznego wdrażania dalszych etapów.
 2026-11-13 użytkownik osobno zlecił wdrożenie KRE-01. Nie oznacza to rozpoczęcia KRE-02–KRE-08.
 Następnie osobno zlecił wdrożenie KRE-02; nie rozpoczęto automatycznie KRE-03.
+Po technicznym zamknięciu KRE-03 użytkownik 2026-11-13 osobno zlecił rozpoczęcie
+KRE-04. Pierwszy przyrost opisuje raport częściowy; nie rozpoczęto KRE-05–KRE-08.
 
 ## Jak korzystać z planu
 
