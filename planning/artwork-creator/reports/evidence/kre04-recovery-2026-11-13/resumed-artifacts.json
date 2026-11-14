@@ -1,0 +1,14 @@
+{
+  "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+  "outputIds": {
+    "source": "073e700f-edc6-46c5-a80c-cb2355e23bfd",
+    "objectMask": "9da4df55-cfc1-4a11-a47a-fb2ed677beb1",
+    "object": "f3aa1ba2-8b5f-42a3-8754-49fd468484d4",
+    "environment": "175f7cc8-d57d-4156-aaed-ca356bd986fa",
+    "whole": "6d05d55b-60d0-4f1f-89a2-0b24ded4e54a",
+    "material": "001b4226-29e9-4ff0-91e4-182430c6f489",
+    "influence": "acaf13f0-8c91-4ae0-9986-6cf854338e34",
+    "delay": "093ce991-6049-4ca1-915c-3e71dc761ca2",
+    "coverage": "1169545d-6691-4349-a907-649a22401a4a"
+  }
+}

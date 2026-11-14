@@ -1,5 +1,10 @@
 # Etapy wdrożenia kreatora i biblioteki
 
+**Aktualny stan, 2026-11-14: KRE-04 zamknięty funkcjonalnie.**
+[Raport zamknięcia i ponowione testy](reports/KRE-04-2026-11-14-closure.md).
+Opisy przyrostów poniżej zachowują ich historyczne wyniki; retusz pilota
+i otwarta diagnostyka pierwszego odczytu WebGL nie zmieniają odbioru funkcji UI.
+
 Plan 1.0, 2026-11-09. Aktualizacja 2026-11-13: **KRE-00 odebrany** jako
 benchmark wykonalności z ograniczeniami; [raport zamknięcia](reports/KRE-00-2026-11-13-closure.md).
 KRE-01 **wdrożony i sprawdzony technicznie 2026-11-13**;
@@ -9,10 +14,22 @@ Klein/SAM/LaMa 512×288 przy audio sprawdzone; [raport i ograniczenia](reports/K
 KRE-03 **wdrożony i sprawdzony technicznie**: rzeczywista paczka przez API,
 korekty i podgląd ruchu/zoomu z opisanymi ograniczeniami jakości pilota;
 [raport końcowy](reports/KRE-03-2026-11-13-closure.md).
-KRE-04 **w toku, 2026-11-13**: pierwszy przyrost chronionego UI, projekty,
+KRE-04 **historycznie w toku, 2026-11-13**: pierwszy przyrost chronionego UI, projekty,
 plan, obrazy/referencje, zadania, historia i podgląd statyczny;
-[raport częściowy](reports/KRE-04-2026-11-13.md). Podgląd animowanej paczki
-i odbiór rzeczywistego procesu z UI pozostają do wykonania.
+[raport częściowy](reports/KRE-04-2026-11-13.md). Późniejszy podgląd animowanej
+paczki przeszedł rzeczywistą próbę API/JWT/workera. Po zwolnieniu pamięci
+przeszedł także techniczny proces nowej generacji i paczki przez UI.
+Pozostają korekty, pełne QA i stabilizacja Resetu;
+[aktualny raport](reports/KRE-04-2026-11-13-recovery.md).
+**Aktualizacja 2026-11-14:** zapisany wygenerowany draft przeszedł 50,64 s
+QA lotu, zoomu, blackout/reveal i pauzy bez nowej inferencji. UI rozróżnia
+otwarcie paczki od przełączenia na widok immersyjny. Nadal otwarte są korekty
+obrazu i sporadyczna różnica pierwszego odczytu WebGL;
+[raport](reports/KRE-04-2026-11-14.md). Kolejny przyrost poprawił przesłanianie
+przez filar za pomocą istniejących formularzy SAM/rejestracji, zapisał nową
+rewizję, 52,03 s QA i sprawdził odzyskanie bez nowych zadań. Pozostają korekty
+maski/tła/lamp i błąd pierwszego odczytu w obu formatach bufora;
+[raport przyrostu](reports/KRE-04-2026-11-14-occlusion.md). Wtedy KRE-04 pozostawał w toku.
 KRE-05–KRE-08 pozostają **niewdrożone**.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
@@ -166,9 +183,22 @@ granice są obowiązkowe; testy techniczne nie zastępują akceptacji obrazu.
 
 **Cel:** użytkownik przeprowadza podstawowy proces w aplikacji.
 
+**Aktualny wynik, 2026-11-14:** etap zamknięty funkcjonalnie;
+[raport zamknięcia](reports/KRE-04-2026-11-14-closure.md).
+Użytkownik doprecyzował, że celem jest sprawdzenie możliwości
+w aplikacji, a nie perfekcyjny artwork testowy. Dalszy retusz pilota nie
+jest warunkiem odbioru tego zakresu. Osobno pozostaje diagnostyka pierwszego
+odczytu WebGL, z zachowaniem nieudanych wyników testów.
+[Przegląd kryteriów i dowodów](reports/KRE-04-functional-review-2026-11-14.md).
+Poniższy opis rozpoczęcia jest historyczny.
+
 **Stan 2026-11-13:** rozpoczęty; [pierwszy przyrost i dowody](reports/KRE-04-2026-11-13.md).
-Nie jest to zamknięcie etapu. UI zleca `generateImage` do istniejącej kolejki,
-ale próba przeglądarkowa używa kontrolowanego API, a podgląd jest statyczny.
+Nie jest to zamknięcie etapu. Pierwsza próba używała kontrolowanego API i
+statycznego podglądu. Kolejna potwierdziła animowany draft przez rzeczywiste
+API/JWT/workera. Generacja nowego źródła, początkowo odroczona przez pamięć,
+po sygnale użytkownika zakończyła się wraz z technicznym przepływem do podglądu.
+Pozostają korekty/QA nowej sceny i Reset;
+[wyniki](reports/KRE-04-2026-11-13-recovery.md).
 
 Kroki:
 

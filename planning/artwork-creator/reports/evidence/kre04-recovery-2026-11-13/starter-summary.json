@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "realApi": true,
+    "realJwt": true,
+    "realWorker": true,
+    "modelInference": false,
+    "starterImported": true,
+    "blackout": {
+      "black": 916627,
+      "lit": 99109,
+      "pixels": 1024000
+    },
+    "pause": true,
+    "sameContext": true,
+    "reload": true
+  },
+  "starterProjectId": "b011184b-0ac7-4896-afbf-c4ff1a409846",
+  "events": [
+    {
+      "tool": "buildPreviewPackage",
+      "jobId": "8bb0ff73-5766-45b8-9a2e-4b3103b9a60c",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 638599168,
+        "ramAvailableBytes": 15943053312,
+        "dedicatedUsedBytes": 5688516608,
+        "vramAvailableBytes": 11474575360,
+        "commitAvailableBytes": 7852863488
+      }
+    }
+  ],
+  "scope": "Real API/JWT/worker, private database; no publication"
+}

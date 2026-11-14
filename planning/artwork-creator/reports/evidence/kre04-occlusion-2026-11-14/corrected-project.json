@@ -1,0 +1,148 @@
+{
+  "id": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+  "ownerId": 1,
+  "title": "KRE-04 real production",
+  "activeRevisionId": "dd2d57b7-b21b-48fa-b437-cebe2566a6b6",
+  "createdAt": "2026-11-13T20:31:32.434Z",
+  "updatedAt": "2026-11-14T11:16:20.021Z",
+  "revision": {
+    "id": "dd2d57b7-b21b-48fa-b437-cebe2566a6b6",
+    "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+    "parentId": "b4a3a1d6-7648-49b1-a17b-1cb4a25cbcd1",
+    "restoredFromId": null,
+    "snapshot": {
+      "brief": {
+        "intent": "Wide cinematic painterly night conservatory. Textured stone portal and thick near pillar at right, fine luminous moss fissures and leaf veins in multiple foreground and distant groups, strong cyan magenta amber material gradients. One small compact survey drone at left-middle x25% y45%, width10%, crisp silhouette, separate tiny lamps. Clear flight space and coherent garden behind it. No spotlight cone, beam, trail, fog, floating particles, detached dots, text or watermark.",
+        "qaPlan": "Inspect mask contours, inpainted backing, full curved flight, pillar occlusion, color cycles/propagation, blackout/reveal shadows, zoom, pause/reset and portrait/wide coverage. Record motion and uncertain boundaries; no still-only acceptance.",
+        "motionPlan": "Separate drone visibility and lamp layers; 24-second curved left-to-right flight behind the right pillar, tangent rotation about measured mask centroid; inpaint its entire revealed backing. No searchlight beam, trail or baked glow.",
+        "composition": "Dark alien garden and mossed stone gateway at right, thick foreground pillar near x=68%; small compact cyan drone at x=25%, y=45%, width 10%; open middle flight space.",
+        "blackoutPlan": "Opaque black coverage; independently animated garden details and drone lamps remain visible from the start while environment and hull reach zero opacity. Smooth eight-second reveal and return; pause and zoom QA required.",
+        "lightingPlan": "Many dozens of fine stone fissures and leaf-vein bands across three garden groups; saturated cyan-magenta-amber gradients along material, dark gaps preserved; distinct visibility, influence and delay maps, staggered local impulses and bass binding.",
+        "guidelinesPath": "apps/ui/src/engines/infinite-zoom/artwork-authoring-guidelines.md",
+        "guidelinesVersion": "1.7"
+      },
+      "layers": [
+        {
+          "id": "coverage",
+          "parameters": {},
+          "imageArtifactId": "1169545d-6691-4349-a907-649a22401a4a",
+          "maskArtifactIds": []
+        },
+        {
+          "id": "environment",
+          "parameters": {},
+          "imageArtifactId": "175f7cc8-d57d-4156-aaed-ca356bd986fa",
+          "maskArtifactIds": []
+        },
+        {
+          "id": "lights",
+          "parameters": {
+            "behaviors": [
+              {
+                "id": "material-flow",
+                "kind": "colorShift",
+                "order": 0,
+                "params": {
+                  "hue": 3.141592653589793,
+                  "phase": 0.5,
+                  "lightness": 0,
+                  "saturation": 0.3,
+                  "frequencyHz": 0.125,
+                  "travelSeconds": 3,
+                  "delayMapAssetId": "093ce991-6049-4ca1-915c-3e71dc761ca2"
+                },
+                "influenceMaskAssetId": "acaf13f0-8c91-4ae0-9986-6cf854338e34"
+              },
+              {
+                "id": "material-impulse",
+                "kind": "glow",
+                "order": 1,
+                "params": {
+                  "phase": 0.5,
+                  "amount": 0.55,
+                  "sharpness": 4,
+                  "threshold": 0.2,
+                  "frequencyHz": 0.125
+                },
+                "modulation": [
+                  {
+                    "id": "bass",
+                    "max": 1,
+                    "min": 0.25,
+                    "signal": "bass",
+                    "priority": 0,
+                    "operation": "multiply",
+                    "attackSeconds": 0.04,
+                    "releaseSeconds": 0.4
+                  }
+                ],
+                "influenceMaskAssetId": "acaf13f0-8c91-4ae0-9986-6cf854338e34"
+              }
+            ],
+            "maskAssetId": "001b4226-29e9-4ff0-91e4-182430c6f489"
+          },
+          "imageArtifactId": "175f7cc8-d57d-4156-aaed-ca356bd986fa",
+          "maskArtifactIds": [
+            "001b4226-29e9-4ff0-91e4-182430c6f489",
+            "acaf13f0-8c91-4ae0-9986-6cf854338e34",
+            "093ce991-6049-4ca1-915c-3e71dc761ca2"
+          ]
+        },
+        {
+          "id": "object",
+          "parameters": {
+            "travel": {
+              "path": {
+                "kind": "bezier",
+                "segments": [
+                  {
+                    "to": {
+                      "x": 2800,
+                      "y": 0
+                    },
+                    "control1": {
+                      "x": 933.3333333333334,
+                      "y": -400
+                    },
+                    "control2": {
+                      "x": 1866.6666666666667,
+                      "y": -400
+                    }
+                  }
+                ]
+              },
+              "easing": "ease-in-out",
+              "startSeconds": 0,
+              "durationSeconds": 24
+            },
+            "occlusionMaskAssetId": "3ca05769-6866-4e17-b559-3ff6c0103056"
+          },
+          "imageArtifactId": "f3aa1ba2-8b5f-42a3-8754-49fd468484d4",
+          "maskArtifactIds": [
+            "3ca05769-6866-4e17-b559-3ff6c0103056"
+          ]
+        }
+      ],
+      "decisions": [],
+      "artifactIds": [
+        "073e700f-edc6-46c5-a80c-cb2355e23bfd",
+        "1169545d-6691-4349-a907-649a22401a4a",
+        "9da4df55-cfc1-4a11-a47a-fb2ed677beb1",
+        "175f7cc8-d57d-4156-aaed-ca356bd986fa",
+        "f3aa1ba2-8b5f-42a3-8754-49fd468484d4",
+        "6d05d55b-60d0-4f1f-89a2-0b24ded4e54a",
+        "001b4226-29e9-4ff0-91e4-182430c6f489",
+        "acaf13f0-8c91-4ae0-9986-6cf854338e34",
+        "093ce991-6049-4ca1-915c-3e71dc761ca2",
+        "bbb942e0-b6c2-44e1-905c-e30747c73d24",
+        "3ca05769-6866-4e17-b559-3ff6c0103056"
+      ],
+      "schemaVersion": 1
+    },
+    "createdAt": "2026-11-14T11:16:20.006Z",
+    "validation": {
+      "staleArtifactIds": [],
+      "ready": true
+    }
+  }
+}

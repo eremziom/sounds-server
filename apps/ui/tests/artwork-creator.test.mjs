@@ -118,3 +118,46 @@ test("API client follows >100 revision pages and does not put credentials in bro
   assert.equal(calls[0][1].credentials, "same-origin");
   assert.equal(calls[0][1].headers, undefined);
 });
+
+test("preview builds only a complete saved revision and retries with the same deterministic key", async () => {
+  const calls = [];
+  let complete = false;
+  const session = createCreatorSession(mock({
+    project: async () => ({ ...project, revision: { ...revision, snapshot: { ...snapshot, layers: complete ? [{ id: "source" }] : [] } } }),
+    enqueue: async (id, job) => calls.push(job),
+  }));
+  await session.open("p1"); await session.buildPreview(); assert.deepEqual(calls, []);
+  complete = true; await session.refresh(); await session.buildPreview(); await session.buildPreview();
+  assert.equal(calls.length, 2); assert.equal(calls[0].tool, "buildPreviewPackage");
+  assert.equal(calls[0].baseRevisionId, "r1"); assert.equal(calls[0].requestKey, calls[1].requestKey);
+  assert.deepEqual(calls[0].arguments, {}); assert.deepEqual(calls[0].inputIds, []);
+});
+
+test("production tool retries an uncertain enqueue with the same key, but a different input starts a new operation", async () => {
+  const requests = [];
+  const session = createCreatorSession(mock({ enqueue: async (id, job) => {
+    requests.push({ id, ...job });
+    if (requests.length === 1) throw new Error("Lost response");
+  } }));
+  await session.open("p1");
+  await session.runTool("extractLayer", {}, ["image", "mask"]);
+  await session.runTool("extractLayer", {}, ["image", "mask"]);
+  await session.runTool("extractLayer", {}, ["image", "new-mask"]);
+  assert.equal(requests[0].requestKey, requests[1].requestKey);
+  assert.notEqual(requests[1].requestKey, requests[2].requestKey);
+  assert.equal(requests[1].baseRevisionId, "r1");
+  assert.deepEqual(requests[2].inputIds, ["image", "new-mask"]);
+  assert.equal(session.getSnapshot().error, null);
+});
+
+test("keeping a tool result saves its input closure without applying a new image or losing authored layers", async () => {
+  let saved;
+  const source = { id: "source", kind: "image", inputs: [] };
+  const mask = { id: "mask", kind: "visibility-mask", inputs: [{ inputId: "source" }] };
+  const session = createCreatorSession(mock({ artifacts: async () => [source, mask], save: async (id, base, next) => { saved = { id, base, next }; } }));
+  await session.open("p1"); await session.keepResult("mask");
+  assert.equal(saved.base, "r1");
+  assert.deepEqual(saved.next.artifactIds, ["source", "mask"]);
+  assert.deepEqual(saved.next.layers, snapshot.layers);
+  assert.deepEqual(saved.next.decisions, snapshot.decisions);
+});

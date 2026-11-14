@@ -1,0 +1,189 @@
+{
+  "checks": {
+    "realApi": true,
+    "realJwt": true,
+    "realWorker": true,
+    "modelInference": true,
+    "sourceGenerationInference": true,
+    "starterImported": true,
+    "blackout": {
+      "black": 916646,
+      "lit": 99120,
+      "pixels": 1024000
+    },
+    "pause": true,
+    "sameContext": true,
+    "reload": true,
+    "layeredProduction": true,
+    "productionProjectId": "1c7a16c5-f510-4767-8052-16f36e1f66df"
+  },
+  "starterProjectId": "61a8a1cb-0228-488c-98f8-d4ef807e2351",
+  "events": [
+    {
+      "tool": "buildPreviewPackage",
+      "jobId": "7ef75f48-ffef-4703-bd43-4075da148faf",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 528207872,
+        "ramAvailableBytes": 22452310016,
+        "dedicatedUsedBytes": 1773584384,
+        "vramAvailableBytes": 15389507584,
+        "commitAvailableBytes": 17654194176
+      }
+    },
+    {
+      "tool": "generateImage",
+      "jobId": "6374a9e6-12ce-4768-80a7-c02a7baae7c5",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 528207872,
+        "ramAvailableBytes": 22414721024,
+        "dedicatedUsedBytes": 1781710848,
+        "vramAvailableBytes": 15381381120,
+        "commitAvailableBytes": 17604915200
+      }
+    },
+    {
+      "tool": "segmentObject",
+      "jobId": "2e59e162-c2ea-49a3-b21a-c4181a277702",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 570150912,
+        "ramAvailableBytes": 21782454272,
+        "dedicatedUsedBytes": 1956306944,
+        "vramAvailableBytes": 15206785024,
+        "commitAvailableBytes": 16665292800
+      }
+    },
+    {
+      "tool": "extractLayer",
+      "jobId": "18b4d8c0-3c5a-4951-9e37-269405f3b0c8",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22043123712,
+        "dedicatedUsedBytes": 1917771776,
+        "vramAvailableBytes": 15245320192,
+        "commitAvailableBytes": 17154600960
+      }
+    },
+    {
+      "tool": "fillBackground",
+      "jobId": "34c29cc5-6956-4fc7-99e1-94b5f4da83d0",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22064390144,
+        "dedicatedUsedBytes": 1944510464,
+        "vramAvailableBytes": 15218581504,
+        "commitAvailableBytes": 17122349056
+      }
+    },
+    {
+      "tool": "createMask",
+      "jobId": "ec8f4e1b-13ff-447b-a770-b53059957129",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22080184320,
+        "dedicatedUsedBytes": 1925636096,
+        "vramAvailableBytes": 15237455872,
+        "commitAvailableBytes": 17104711680
+      }
+    },
+    {
+      "tool": "deriveLightSelection",
+      "jobId": "f7d9e338-b2c0-485c-8f04-492891065ce9",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22056460288,
+        "dedicatedUsedBytes": 1960239104,
+        "vramAvailableBytes": 15202852864,
+        "commitAvailableBytes": 17003147264
+      }
+    },
+    {
+      "tool": "buildInfluenceMap",
+      "jobId": "850dd54b-0157-4fae-ba35-96df516c0ca4",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22063456256,
+        "dedicatedUsedBytes": 1946869760,
+        "vramAvailableBytes": 15216222208,
+        "commitAvailableBytes": 17064075264
+      }
+    },
+    {
+      "tool": "buildDelayMap",
+      "jobId": "c2551522-2970-49de-baa0-ef1aa4e3bfc9",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 22037295104,
+        "dedicatedUsedBytes": 1952374784,
+        "vramAvailableBytes": 15210717184,
+        "commitAvailableBytes": 17027174400
+      }
+    },
+    {
+      "tool": "createColorPlate",
+      "jobId": "44a208b4-e17e-4265-87b4-8bdec7dd8462",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 21972307968,
+        "dedicatedUsedBytes": 1933238272,
+        "vramAvailableBytes": 15229853696,
+        "commitAvailableBytes": 16969158656
+      }
+    },
+    {
+      "tool": "buildPreviewPackage",
+      "jobId": "9f8a6d70-e365-41a6-8cc2-3e3f7a2e3f46",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 555405312,
+        "ramAvailableBytes": 21971832832,
+        "dedicatedUsedBytes": 1947656192,
+        "vramAvailableBytes": 15215435776,
+        "commitAvailableBytes": 16917446656
+      }
+    }
+  ],
+  "scope": "Real API/JWT/worker, private database; no publication"
+}

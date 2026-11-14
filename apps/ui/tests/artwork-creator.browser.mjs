@@ -9,9 +9,10 @@ import { authSession } from "./helpers/auth-fixtures.mjs";
 // HTTP fixture tests the real UI/BFF/session. It intentionally does not load model weights.
 const auth = authSession({ accessToken: `header.${Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 900 })).toString("base64url")}.signature` });
 const t = JSON.parse(await readFile(new URL("../messages/en.json", import.meta.url), "utf8")).app.creator;
-const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=", "base64");
+const png = await readFile(new URL("../public/infinite-zoom/samples/forest/backdrop.png", import.meta.url));
+const packages = new Map();
 const tone = await readFile(new URL("../../api/src/audio/fixtures/tone.mp3", import.meta.url));
-let project, revisions = [], jobs = [], artifacts = [], messages = [], conflict = false, roles = ["USER"], writes = 0, apiError;
+let project, revisions = [], jobs = [], artifacts = [], messages = [], conflict = false, roles = ["USER"], writes = 0, packageReads = 0, apiError;
 const api = createServer((req, res) => {
   void (async () => {
     res.setHeader("Content-Type", "application/json");
@@ -33,7 +34,10 @@ const api = createServer((req, res) => {
     if (parts[2] !== project?.id) return json({}, 404);
     if (parts.length === 3) return json(project);
     if (parts[3] === "artifacts") {
-      if (parts[5] === "file") { res.setHeader("Content-Type", "image/png"); return res.end(png); }
+      if (parts[5] === "file") {
+        if (packages.has(parts[4])) { packageReads++; return json(packages.get(parts[4])); }
+        res.setHeader("Content-Type", "image/png"); return res.end(png);
+      }
       return json(artifacts);
     }
     function save(snapshot, restoredFromId = null) {
@@ -69,6 +73,10 @@ api.listen(0, "127.0.0.1"); await once(api, "listening");
 try {
   await withAuthBrowser(`http://127.0.0.1:${api.address().port}`, async ({ send, evaluate, waitFor, origin }) => {
     await send("Page.bringToFront"); await send("Emulation.setFocusEmulationEnabled", { enabled: true });
+    await send("Page.addScriptToEvaluateOnNewDocument", { source: `
+      const getContext=HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext=function(kind,attrs){return getContext.call(this,kind,kind==='webgl2'?{...attrs,preserveDrawingBuffer:true}:attrs);};
+    ` });
     await send("Network.setCookies", { cookies: [
       { name: "accessToken", value: auth.accessToken, url: origin, path: "/", httpOnly: true },
       { name: "refreshToken", value: auth.refreshToken, url: origin, path: "/", httpOnly: true },
@@ -106,10 +114,61 @@ try {
     assert.equal(await evaluate("!creatorAudio.paused && creatorCanvas.getContext('webgl2')===creatorGL"), true, "Cancellation preserves playing music and WebGL context");
     await click(button(t.retry)); await waitFor(`document.querySelector('[data-creator-job]').innerText.includes(${JSON.stringify(t.states.queued)})`);
     assert.equal(jobs[0].attempt, 1);
-    const image = { id: randomUUID(), kind: "image", mimeType: "image/png", width: 1, height: 1, registrationId: randomUUID(), inputs: [], createdAt: new Date().toISOString() };
+    const image = { id: randomUUID(), kind: "image", mimeType: "image/png", width: 3840, height: 2160, registrationId: randomUUID(), inputs: [], createdAt: new Date().toISOString() };
     artifacts.push(image); jobs[0].state = "succeeded"; jobs[0].progress = 100; jobs[0].phase = "succeeded";
     await waitFor(button(t.apply)); await click(button(t.apply)); await waitFor("document.querySelector('[data-creator-layers] article')");
     assert.equal(project.revision.snapshot.layers[0].imageArtifactId, image.id);
+    const staleBuild = { ...jobs[0], id: randomUUID(), tool: "buildPreviewPackage", baseRevisionId: randomUUID(), state: "queued", phase: "queued", result: null };
+    jobs.push(staleBuild);
+    await waitFor(`document.querySelectorAll('[data-creator-job]').length===2`);
+    assert.equal(await evaluate("document.querySelector('[data-creator-build-preview]').disabled"), false, "A queued preview for an older revision cannot block preparing the current revision");
+    await click(button(t.buildPreview));
+    await waitFor(`document.querySelectorAll('[data-creator-job]').length===3`);
+    assert.equal(await evaluate("document.querySelector('[data-creator-build-preview]').disabled"), true, "The current revision cannot enqueue duplicate pending previews");
+    assert.ok(await evaluate(`document.querySelector('[data-draft-preview]').textContent.includes(${JSON.stringify(t.previewQueued)})`));
+    const build = jobs[0], reportId = randomUUID();
+    assert.equal(build.tool, "buildPreviewPackage"); assert.equal(build.baseRevisionId, project.activeRevisionId);
+    const uri = `/infinite-zoom/jobs/${build.id}/${image.id}.png`;
+    const envelope = { published: false, visualAcceptance: false, snapshotCandidate: structuredClone(project.revision.snapshot),
+      manifest: { schemaVersion: 2, id: `project-${project.id}`, version: `job-${build.id}`, canvas: { width: 3840, height: 2160 },
+        assets: [{ id: image.id, kind: "image", uri, width: 3840, height: 2160, critical: true }],
+        layers: [{ id: "source", zIndex: 0, imageAssetId: image.id }], coverage: { baseLayerId: "source" }, anchors: [] }, assetBindings: [{ artifactId: image.id, uri }] };
+    packages.set(reportId, envelope);
+    artifacts.push({ id: reportId, kind: "report", mimeType: "application/json", width: null, height: null, inputs: [] });
+    build.state = "succeeded"; build.progress = 100; build.result = { baseRevisionId: build.baseRevisionId, outputs: [{ name: "package", artifactId: reportId }] };
+    await waitFor("!document.querySelector('[data-creator-show-preview]').disabled");
+    assert.equal(staleBuild.state, "queued", "An older queued job cannot block opening a ready preview");
+    jobs.splice(jobs.indexOf(staleBuild), 1);
+    await click("document.querySelector('[data-player-toggle]')");
+    await waitFor("creatorAudio.paused && creatorCanvas.dataset.visualStatus==='paused'");
+    await evaluate("window.parkedPixels=creatorCanvas.toDataURL();window.parkedTick=creatorCanvas.dataset.simulationTick");
+    await click(button(t.showPreview)); await waitFor("document.querySelector('[data-iz-end-draft]') && document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='immersive'");
+    assert.equal(await evaluate("creatorAudio.paused && creatorCanvas.dataset.simulationTick===parkedTick && creatorCanvas.getContext('webgl2')===creatorGL"), true, "Preview never starts paused music or advances the clock");
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+    await waitFor("document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='background'");
+    assert.ok(await evaluate("!!document.querySelector('[data-iz-end-draft]')"), "Display mode does not end or restart draft");
+    const beforeModeReads=packageReads;
+    // Reject any accidental reload of the package while changing display mode.
+    envelope.snapshotCandidate.brief.intent = "Mode switch must not reload this envelope";
+    await click("document.querySelector('[data-creator-preview-immersive]')");
+    await waitFor("document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='immersive'");
+    assert.equal(await evaluate("creatorAudio.paused && creatorCanvas.dataset.simulationTick===parkedTick && creatorCanvas.getContext('webgl2')===creatorGL && !document.querySelector('[data-draft-preview] [role=alert]')"),true,"Immersive button preserves the paused draft and its context");
+    assert.equal(packageReads,beforeModeReads,"Immersive button does not reload the package");
+    envelope.snapshotCandidate = structuredClone(project.revision.snapshot);
+    await click("document.querySelector('[data-iz-end-draft]')"); await waitFor("!document.querySelector('[data-iz-end-draft]')");
+    assert.equal(await evaluate("creatorCanvas.toDataURL()===parkedPixels && creatorCanvas.dataset.simulationTick===parkedTick"), true, "Paused return restores exact journey pixels and clock");
+    envelope.snapshotCandidate.brief.intent = "Unaccepted replacement";
+    await click(button(t.showPreview)); await waitFor("document.querySelector('[data-draft-preview] [role=alert]')");
+    assert.equal(await evaluate("creatorCanvas.toDataURL()===parkedPixels && creatorAudio.paused && !document.querySelector('[data-iz-end-draft]')"), true, "Invalid draft cannot replace valid journey or manipulate audio");
+    envelope.snapshotCandidate = structuredClone(project.revision.snapshot);
+    await click(button(t.showPreview)); await waitFor("document.querySelector('[data-iz-end-draft]')");
+    await click("document.querySelector('[data-player-toggle]')"); await waitFor("!creatorAudio.paused && Number(creatorCanvas.dataset.simulationTick)>Number(parkedTick)+5");
+    // Route teardown returns from an active immersive draft in the same host.
+    await evaluate("window.next.router.push('/animations')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]') && !document.querySelector('[data-iz-end-draft]')");
+    assert.equal(await evaluate("document.querySelector('[data-infinite-zoom-layout]').dataset.mode==='background' && !creatorAudio.paused && creatorCanvas.getContext('webgl2')===creatorGL"), true);
+    await click("document.querySelector('a[href=\"/animations/create\"]')"); await waitFor("document.querySelector('#creator-project')");
+    await evaluate(`(()=>{const el=document.querySelector('#creator-project');el.value=${JSON.stringify(project.id)};el.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await waitFor("document.querySelector('textarea[name=intent]')");
     await input("textarea[name=intent]", "Conflict edit"); conflict = true;
     await click(button(t.save)); await waitFor("document.querySelector('[data-creator-error]')");
     assert.equal(await evaluate("document.querySelector('textarea[name=intent]').value"), "Conflict edit");
@@ -121,7 +180,7 @@ try {
     // Restore the first plan; source selection remains in the immutable history.
     await evaluate(`(()=>{const list=document.querySelector('[data-artwork-creator] ol');[...list.querySelectorAll('button')].filter(el=>el.textContent===${JSON.stringify(t.restore)}).at(-1).click();})()`);
     await waitFor("!document.querySelector('[data-creator-layers]').querySelector('article')");
-    assert.equal(project.revision.restoredFromId, oldId); assert.equal(messages.length, 1); assert.equal(artifacts.length, 1);
+    assert.equal(project.revision.restoredFromId, oldId); assert.equal(messages.length, 1); assert.equal(artifacts.length, 2);
     const before = await evaluate("creatorCanvas.dataset.simulationTick");
     await click("document.querySelector('[data-artwork-creator] a[href=\"/animations\"]')"); await waitFor("document.querySelector('[data-infinite-zoom-controls]')");
     assert.equal(await evaluate("!creatorAudio.paused && creatorAudio===document.querySelector('audio') && creatorCanvas===document.querySelector('[data-infinite-zoom-canvas]') && creatorGL===creatorCanvas.getContext('webgl2')"), true);
@@ -152,6 +211,8 @@ try {
     roles = ["ADMIN"]; await send("Page.navigate", { url: `${origin}/animations/create` }); await waitFor("location.pathname==='/access-denied'");
     await send("Network.deleteCookies", { name: "accessToken", url: origin });
     await send("Network.deleteCookies", { name: "refreshToken", url: origin });
+    const privateAsset = await fetch(`${origin}/infinite-zoom/drafts/${project.id}/${image.id}.png`);
+    assert.equal(privateAsset.status, 401); assert.equal(privateAsset.headers.get("cache-control"), "private, no-store");
     await send("Page.navigate", { url: `${origin}/animations/create` }); await waitFor("location.pathname==='/login'");
     if (apiError) throw apiError;
     await writeFile(new URL("browser-summary.json", directory), JSON.stringify({
@@ -160,7 +221,9 @@ try {
       conflictPreservesInput: true, compareRestore: true, notesAndResultsRetained: true,
       reloadRecoversProject: true, locales: ["en", "pl", "es"], mobileWidth: 390, noHorizontalOverflow: true,
       samePlayingAudioCanvasAndContextOnNavigation: true, samePlayingAudioOnCancellation: true,
-      appRoleGuard: true, anonymousGuard: true, animatedDraftPreview: false,
+      appRoleGuard: true, anonymousGuard: true, animatedDraftPreview: true, invalidDraftRetainsPixels: true,
+      pausedPreviewRetainsClockAndMusic: true, pausedReturnRestoresPixels: true, modeSwitchRetainsDraft: true,
+      routeCleanupRestoresScene: true, privateDraftAssetGuard: true, packageBuilder: "HTTP fixture", sourceAnimation: "single image; animated operators tested separately in WebGL fixture",
     }, null, 2) + "\n");
     console.log("KRE-04 UI fixture: project/plan, queued generation, cancel/retry, image choice, conflict, compare/restore, notes, reload, PL/EN/ES, mobile, guards and same playing audio/canvas/context OK. No model inference claimed.");
   });

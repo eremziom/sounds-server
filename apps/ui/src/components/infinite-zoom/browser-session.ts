@@ -1,4 +1,6 @@
-import {STUDIO_ARTWORKS,type BehaviorKind,type VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
+import {STUDIO_ARTWORKS,type ActiveVisualScene,type BehaviorKind,type VisualScene} from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
+import { createDraftPreview } from "./draft-preview.ts";
+import { createDraftEnvironment, type DraftEnvironmentGroups } from "./draft-environment.ts";
 import { createInfiniteZoomController } from "../../engines/infinite-zoom/index.ts";
 import { createAudioModulation } from "../../engines/infinite-zoom/modulation/audio-modulation.ts";
 import { sampleKickAttack } from "../../engines/infinite-zoom/modulation/kick-signal.ts";
@@ -30,6 +32,7 @@ export function createBrowserVisualSession(options: {
   let rimLightingEnabled=false;
   const reveal=createSceneReveal();
   const blackout=createEnvironmentBlackout();
+  const draftEnvironment=createDraftEnvironment();
   let lastKickAt:number|null=null,kickEvent=0;
   const studioManifests=new Map<VisualScene,unknown>();
   let scenePreparation: Promise<void> | null = null;
@@ -84,7 +87,7 @@ export function createBrowserVisualSession(options: {
             if (!["disposed", "error"].includes(status)) engine.setSuspended("context-lost", !available);
           },
           onError() { diagnostics.event("CONTEXT_RESTORE_FAILED", engine.getSnapshot().session.tick, "error"); fault = true; publish(); },
-          evaluate(instance) { runCommands(); reveal.step(instance); blackout.step(instance); },
+          evaluate(instance) { runCommands(); if (lease?.getScene() === "draft") draftEnvironment.step(instance); else { reveal.step(instance); blackout.step(instance); } },
           modulation: () => modulation.getSnapshot(),
         }, signal);
         lease = prepared; pendingResize = false;
@@ -139,6 +142,7 @@ export function createBrowserVisualSession(options: {
       rimLightingEnabled,
       sceneRevealEnabled:reveal.getSnapshot().enabled, sceneRevealProgress:reveal.getSnapshot().progress,
       environmentBlackoutEnabled:blackout.getSnapshot().enabled,
+      draftBlackoutEnabled:draftEnvironment.getSnapshot().enabled, draftBlackoutAvailable:draftEnvironment.getSnapshot().available,
       diagnostics: Object.freeze({ ...diagnostics.getSnapshot(), quality: quality.getSnapshot(),
         tick: snapshot.session.tick, status: snapshot.status, seed: snapshot.session.seed,
         resources: lease?.getDiagnostics() ?? null, camera: lease?.camera.getSnapshot() ?? null,
@@ -159,6 +163,37 @@ export function createBrowserVisualSession(options: {
   }
   const observer = new ResizeObserver(() => { measure(); applyResize(); }); observer.observe(canvas.parentElement!);
   const timer = setInterval(publish, 200); // UI/resize polling only; never advances simulation.
+  async function selectArtwork(next: ActiveVisualScene, manifest?: unknown, requestSignal?: AbortSignal) {
+    if (!lease || disposed || sceneLoading) throw new Error("Visual host cannot select artwork");
+    if (next === lease.getScene() && next !== "draft") return;
+    sceneLoading=true; commands.length=0;
+    engine.setSuspended("artwork-loading",true); publish();
+    const operation=(async()=>{
+      try {
+        const signal=AbortSignal.any([selectionLifetime.signal, ...(requestSignal ? [requestSignal] : []), AbortSignal.timeout(15000)]);
+        if (next !== "journey" && next !== "draft" && !studioManifests.has(next)) {
+          const response=await fetch(`/infinite-zoom/samples/${STUDIO_ARTWORKS[next]}/manifest.json`,{signal});
+          if (!response.ok) throw new Error("Cannot load pilot manifest");
+          const value=await response.json();
+          studioManifests.set(next,next==="alien" ? withSceneReveal(value) : value);
+        }
+        await lease!.selectScene(next,next === "draft" ? manifest : studioManifests.get(next),signal);
+        if (next !== "draft") { setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);blackout.apply(lease!.instance); }
+        lease!.render();fault=false;
+      } catch (failure) { if (!disposed && next !== "draft") fault=true; throw failure; }
+      finally {
+        sceneLoading=false;
+        if (!disposed) { engine.setSuspended("artwork-loading",false); publish(); }
+      }
+    })();
+    scenePreparation=operation;
+    try { await operation; } finally { if (scenePreparation===operation) scenePreparation=null; }
+  }
+  const draft = createDraftPreview({
+    async prepare() { if (scenePreparation) await scenePreparation.catch(() => {}); await prepare(); },
+    getScene: () => lease?.getScene() ?? "journey",
+    select: selectArtwork,
+  });
   const connection = {
     async prepareForPlayback() {
       options.enableAnalysis();
@@ -179,28 +214,15 @@ export function createBrowserVisualSession(options: {
     },
     async selectScene(next: VisualScene) {
       if (!lease || disposed || sceneLoading || next === lease.getScene()) return;
-      sceneLoading=true; commands.length=0;
-      engine.setSuspended("artwork-loading",true); publish();
-      const operation=(async()=>{
-        try {
-          const signal=AbortSignal.any([selectionLifetime.signal,AbortSignal.timeout(15000)]);
-          if (next !== "journey" && !studioManifests.has(next)) {
-            const response=await fetch(`/infinite-zoom/samples/${STUDIO_ARTWORKS[next]}/manifest.json`,{signal});
-            if (!response.ok) throw new Error("Cannot load pilot manifest");
-            const manifest=await response.json();
-            studioManifests.set(next,next==="alien" ? withSceneReveal(manifest) : manifest);
-          }
-          await lease!.selectScene(next,studioManifests.get(next),signal);
-          setRimLightingVisibility(lease!.instance,rimLightingEnabled);reveal.apply(lease!.instance);blackout.apply(lease!.instance);lease!.render();fault=false;
-        } catch (failure) { if (!disposed) fault=true; throw failure; }
-        finally {
-          sceneLoading=false;
-          if (!disposed) { engine.setSuspended("artwork-loading",false); publish(); }
-        }
-      })();
-      scenePreparation=operation;
-      try { await operation; } finally { if (scenePreparation===operation) scenePreparation=null; }
+      if (draft.isActive()) throw new Error("Exit draft preview before selecting a catalogue scene");
+      await selectArtwork(next);
     },
+    async previewDraft(manifest: unknown, signal: AbortSignal, groups?: DraftEnvironmentGroups) {
+      await draft.start(manifest,signal);
+      if (!signal.aborted && lease?.getScene() === "draft") { draftEnvironment.configure(lease.instance,groups); lease.render(); publish(); }
+    },
+    async endDraftPreview() { await draft.end(); draftEnvironment.clear(); if (!disposed) publish(); },
+    setDraftBlackout(enabled: boolean) { if (lease?.getScene() === "draft" && !sceneLoading) { draftEnvironment.setEnabled(enabled,lease.instance); lease.render(); publish(); } },
     setPilotControl(kind: BehaviorKind, enabled: boolean, strength: number) { if (lease && !disposed && !sceneLoading) { lease.setPilotControl(kind,enabled,strength); publish(); } },
     setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) { if (lease && !disposed && !sceneLoading) { lease.setPilotPreset(preset); publish(); } },
     setPilotCameraMotion(enabled: boolean) { if (lease && !disposed && !sceneLoading) { lease.setPilotCameraMotion(enabled); publish(); } },
@@ -224,6 +246,7 @@ export function createBrowserVisualSession(options: {
     exportReplay() { return lease?.exportReplay() ?? null; },
     reset() {
       if (!lease || disposed) return;
+      if (lease.getScene() === "draft") { commands.length=0; lease.reset(); draftEnvironment.apply(lease.instance); lease.render(); publish(); return; }
       commands.length = 0; modulation.reset();
       kickEvent=0;lastKickAt=options.signals.current?.bass?.attackAt??null;
       try { engine.reset();setRimLightingVisibility(lease.instance,rimLightingEnabled);reveal.restart(lease.instance);blackout.apply(lease.instance);lease.render();fault = false;playback.sync(); } catch { fault = true; }
@@ -231,7 +254,7 @@ export function createBrowserVisualSession(options: {
     },
     dispose() {
       if (disposed) return; disposed = true;
-      selectionLifetime.abort(); observer.disconnect(); clearInterval(timer); playback.dispose(); commands.length = 0; engine.dispose(); lease = null;
+      draft.dispose(); selectionLifetime.abort(); observer.disconnect(); clearInterval(timer); playback.dispose(); commands.length = 0; engine.dispose(); lease = null;
     },
   };
   return { connection, prewarm: prepare };

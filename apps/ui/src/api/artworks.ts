@@ -49,10 +49,12 @@ export function createArtworkClient(request: typeof fetch = fetch) {
   return {
     projects: (signal?: AbortSignal) => pages<Project>("", signal),
     create: (title: string, signal?: AbortSignal) => call<Project>("", signal, { title }),
+    starter: (signal?: AbortSignal) => call<Project>("/starter/night-garden", signal, {}),
     project: (id: string, signal?: AbortSignal) => call<Project>(`/${id}`, signal),
     history: (id: string, signal?: AbortSignal) => pages<RevisionSummary>(`/${id}/revisions`, signal),
     revision: (id: string, revisionId: string, signal?: AbortSignal) => call<Revision>(`/${id}/revisions/${revisionId}`, signal),
     artifacts: (id: string, signal?: AbortSignal) => call<Artifact[]>(`/${id}/artifacts`, signal),
+    previewPackage: (id: string, artifactId: string, signal?: AbortSignal) => call<unknown>(`/${id}/artifacts/${artifactId}/file`, signal),
     messages: (id: string, signal?: AbortSignal) => pages<Message>(`/${id}/messages`, signal),
     message: (id: string, text: string, signal?: AbortSignal) => call<Message>(`/${id}/messages`, signal, { text }),
     jobs: (id: string, signal?: AbortSignal) => pages<ArtworkJobRecord>(`/${id}/jobs`, signal),

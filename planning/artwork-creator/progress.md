@@ -1,6 +1,39 @@
 # Stan realizacji
 
-Aktualizacja: **2026-11-13**. **KRE-00 odebrany** jako benchmark wykonalności
+**Poprawka po zgłoszeniu użytkownika, 2026-11-14:** odblokowano podgląd
+w obecności zadań starszych rewizji i uruchomiono lokalnego wykonawcę.
+[Przyczyna, zmiany i regresja](reports/KRE-04-2026-11-14-preview-unblock.md).
+
+**KRE-04 zamknięty funkcjonalnie, 2026-11-14**, po poleceniu dokończenia etapu.
+Powtórzona weryfikacja i zakres odbioru: [raport zamknięcia](reports/KRE-04-2026-11-14-closure.md).
+KRE-05–08 nie rozpoczęto. Diagnostyka WebGL pozostaje osobną otwartą kwestią;
+pilot nie uzyskał odbioru produkcyjnego.
+
+**Aktualne doprecyzowanie użytkownika, 2026-11-14:** KRE-04 sprawdza możliwości
+kreatora i odtwarzania artworku w aplikacji. **Zakres UI jest zrealizowany
+i zweryfikowany funkcjonalnie.** Retusz pilota nie stanowi warunku odbioru
+tego zakresu. Osobno pozostaje otwarta diagnostyka różnicy pierwszego odczytu
+WebGL; nieudane testy zachowują swój wynik.
+[Aktualny przegląd kryteriów](reports/KRE-04-functional-review-2026-11-14.md).
+Poniższe wpisy opisują wcześniejsze przyrosty i ich ówczesną ocenę.
+
+## Historia przyrostów przed zamknięciem
+
+Aktualizacja: **2026-11-14**. **Kontynuacja KRE-04:** przez formularze
+SAM/rejestracji zapisano nową rewizję z przesłanianiem drona przez filar.
+Nagranie 52,03 s i wznowienie bez nowych zadań przeszły. Pozostają korekty
+precyzji maski, tła i lamp; ścisły test pierwszego odczytu odtworzył błąd
+1/255 zarówno w RGBA8, jak i RGBA16F, przy niezmienionym stanie/kamerze.
+[Aktualny raport i dowody](reports/KRE-04-2026-11-14-occlusion.md).
+
+Poprzedni przyrost KRE-04: rozróżniono otwarcie
+paczki i widok immersyjny, dodano próbę zapisanej generacji bez inferencji
+oraz nagranie 50,64 s pełnego lotu/zoomu, blackout i odsłaniania. Test rzeczywistego
+API oraz build i test UI przechodzą. QA ujawniło nadal wymagane korekty obrazu;
+sporadyczna różnica pierwszego odczytu WebGL występuje już przed Resetem.
+[Bieżący raport i dowody](reports/KRE-04-2026-11-14.md). **KRE-04 nadal w toku.**
+
+**KRE-00 odebrany** jako benchmark wykonalności
 lokalnego procesu z poprawkami. **KRE-01 odebrany technicznie**: trwały model
 projektów, rewizji, artefaktów i rozmowy oraz API; [raport](reports/KRE-01-2026-11-13.md).
 **KRE-02 odebrany technicznie**: kolejka, wykonawca i narzędzia zaimplementowane;
@@ -12,18 +45,45 @@ przez API, korekty i 32 s ruchu/zoomu w WebGL;
 **KRE-04 rozpoczęty na polecenie użytkownika, 2026-11-13.** Pierwszy przyrost:
 chroniony ekran, projekty/plany, referencje, zadania, wybór obrazu, historia,
 porównanie i statyczny podgląd warstw/masek. [Raport częściowy](reports/KRE-04-2026-11-13.md).
-Podgląd animowanej paczki i rzeczywista generacja z UI pozostają do odbioru.
+Podgląd animowanej paczki przeszedł rzeczywistą próbę API/JWT/workera.
+Po zwolnieniu pamięci przez użytkownika również nowa generacja Klein i pełny
+techniczny przepływ UI zakończyły się poprawnie. Pozostają korekty jakości,
+pełne QA nowej paczki i niestabilna asercja Resetu.
+[Raport ostatniego odzyskania](reports/KRE-04-2026-11-13-recovery.md).
 KRE-05–KRE-08 nie rozpoczęto.
+
+**Punkt odzyskania po awarii prądu, 2026-11-13:** zapisane są również zmiany
+drugiego przyrostu: podgląd draftu w istniejącym hoście, chronione PNG,
+walidacja paczki względem rewizji/zadania oraz powrót do zaparkowanej sceny.
+Po awarii ponownie przeszły **38/38 testów**, WebGL `--pilot-only` z testami
+draftu oraz rozszerzony test przeglądarkowy kreatora. Odbudowano uszkodzony
+wynik/cache Next.js; build przechodzi. Szczegóły i nierozstrzygnięta wcześniejsza
+asercja Resetu: [punkt odzyskania w raporcie](reports/KRE-04-2026-11-13.md#punkt-odzyskania-po-awarii-prądu).
+Nie jest to zamknięcie KRE-04 ani odbiór produkcyjnego artworku.
 
 ## Najbliższy krok
 
-**Kontynuacja KRE-04 — produkcja warstwowej paczki z UI i podgląd przez istniejący host.**
+**KRE-04 zamknięty funkcjonalnie.** [Raport](reports/KRE-04-2026-11-14-closure.md).
+Dalszy retusz pilota nie jest zadaniem tego etapu.
+Otwartą diagnostykę WebGL prowadzimy jako osobną kwestię techniczną.
+KRE-05 wymaga osobnego polecenia. Poniżej historia prób, nie lista prac
+retuszerskich wymaganych do odbioru interfejsu.
 Pierwszy przyrost jest dostępny pod `/animations/create`, przez odnośnik na
-`/animations`. Nie wymaga JSON ani ścieżek plików. Host nadal przyjmuje tylko
-wbudowany katalog: potrzebny jest adapter roboczej paczki z parkowaniem podróży,
-walidacją zasobów i rollbackiem. Nie dodano drugiego renderera ani zegara.
-Próba UI na kontrolowanym API potwierdza ciągłość muzyki/canvas/kontekstu,
-ale nie zastępuje rzeczywistego procesu modeli i QA animacji draftu.
+`/animations`. Nie wymaga JSON ani ścieżek plików. Adapter roboczej paczki,
+parkowanie podróży, prywatne PNG i rollback są wdrożone. Ostatnia rzeczywista
+próba API/JWT/workera potwierdziła podgląd pilota, blackout/reveal, zoom, pauzę,
+reload i wspólny kontekst. Formularze produkcji warstw i składania sceny są
+zapisane. Po sygnale „Zwolniłem pamięć” wcześniejsze zadanie Klein zakończyło
+się poprawnie; potwierdzono także SAM/LaMa, zapis i animowany podgląd nowej
+paczki. Następne prace: stabilizacja Resetu i pełne QA/korekty jakości sceny.
+Wyniki i granice wcześniejszego odbioru: [raport odzyskania](reports/KRE-04-2026-11-13-recovery.md).
+Kontynuacja 2026-11-14 uzupełniła nagranie zapisanej produkcji i sprawdzenie
+blackout/reveal przy zoomie; korekty tła, masek i przesłaniania pozostają otwarte.
+Reset nie jest uznany za ustabilizowany na podstawie kolejnych udanych prób.
+[Aktualny raport](reports/KRE-04-2026-11-14.md).
+Kolejna kontynuacja poprawiła przesłanianie przez filar na nowej rewizji
+`dd2d57b7-b21b-48fa-b437-cebe2566a6b6`; oryginał zachowano w historii.
+[Korekta przez UI i otwarte ograniczenia](reports/KRE-04-2026-11-14-occlusion.md).
 
 KRE-03 zakończył developerowy proces produkcji: po sygnale użytkownika
 wznowiono Klein, wykonano SAM/LaMa, korekty przez API i budowę paczki.
@@ -76,7 +136,7 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | KRE-01 | Odebrany technicznie | [Raport](reports/KRE-01-2026-11-13.md), [kontrakt](kre01-contract.md) | Trwały zapis, historia, własność, zależności i konflikt rewizji potwierdzone |
 | KRE-02 | Odebrany technicznie | [Raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md) | Kolejka/procesy/narzędzia oraz rzeczywiste generate/edit Klein, SAM i LaMa 512×288 przy audio potwierdzone |
 | KRE-03 | Odebrany technicznie | [Raport końcowy](reports/KRE-03-2026-11-13-closure.md), [brief pilota](pilots/gate-drone/authoring-brief.md) | Pełna paczka przez API i ruch/zoom potwierdzone, ograniczenia jakości pilota zapisane |
-| KRE-04 | W toku — pierwszy przyrost UI | [Raport częściowy](reports/KRE-04-2026-11-13.md), [dowody UI](reports/evidence/kre04-2026-11-13/browser-summary.json) | Podgląd animowanego draftu i rzeczywista produkcja z UI bez terminala |
+| KRE-04 | Zamknięty funkcjonalnie, 2026-11-14 | [Raport zamknięcia](reports/KRE-04-2026-11-14-closure.md), [przegląd kryteriów](reports/KRE-04-functional-review-2026-11-14.md) | Zakres UI odebrany; osobno otwarta diagnostyka WebGL i jakość pilota |
 | KRE-05 | Nie rozpoczęto | Brak | Działający kreator i potwierdzony LLM |
 | KRE-06 | Nie rozpoczęto | Brak | Rozmowa wykonująca narzędzia |
 | KRE-07 | Nie rozpoczęto | Brak | Poprawki częściowe i korekta masek |

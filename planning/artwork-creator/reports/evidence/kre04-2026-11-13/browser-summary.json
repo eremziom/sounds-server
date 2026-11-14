@@ -22,5 +22,13 @@
   "samePlayingAudioOnCancellation": true,
   "appRoleGuard": true,
   "anonymousGuard": true,
-  "animatedDraftPreview": false
+  "animatedDraftPreview": true,
+  "invalidDraftRetainsPixels": true,
+  "pausedPreviewRetainsClockAndMusic": true,
+  "pausedReturnRestoresPixels": true,
+  "modeSwitchRetainsDraft": true,
+  "routeCleanupRestoresScene": true,
+  "privateDraftAssetGuard": true,
+  "packageBuilder": "HTTP fixture",
+  "sourceAnimation": "single image; animated operators tested separately in WebGL fixture"
 }

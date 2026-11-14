@@ -94,9 +94,14 @@ permissions using a temporary PostgreSQL database and temporary audio storage.
 pnpm dev                 # API (3000) and UI (3001) with file watching
 pnpm dev:api             # API only
 pnpm dev:ui              # UI only
+pnpm artwork:worker      # Creator job worker (separate terminal, after API build)
 pnpm build               # Build workspace applications
 pnpm start:prod          # Run the compiled API
 ```
+
+The artwork creator also needs the separate job worker above. `pnpm dev`
+starts the API and UI only; without the worker, preview preparation and image
+generation remain queued. See [worker setup](apps/artwork-worker/README.md).
 
 The existing `start`, `start:dev` and `start:debug` commands also remain
 available from the repository root. To run a command directly for the backend:

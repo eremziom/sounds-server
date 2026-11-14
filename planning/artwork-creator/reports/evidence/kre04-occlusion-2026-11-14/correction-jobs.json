@@ -1,0 +1,84 @@
+[
+  {
+    "id": "fe0777b8-e1af-4296-82d6-52b24eb124f0",
+    "tool": "registerMap",
+    "arguments": {
+      "role": "occlusion-mask"
+    },
+    "inputIds": [
+      "f3aa1ba2-8b5f-42a3-8754-49fd468484d4",
+      "bbb942e0-b6c2-44e1-905c-e30747c73d24"
+    ],
+    "state": "succeeded",
+    "phase": "succeeded",
+    "memory": {
+      "adapter": "AMD Radeon RX 7800 XT",
+      "adapterKey": "luid_0x00000000_0x0000dd4c",
+      "sharedUsedBytes": 672448512,
+      "ramAvailableBytes": 14525759488,
+      "dedicatedUsedBytes": 6104231936,
+      "vramAvailableBytes": 11058860032,
+      "commitAvailableBytes": 7505518592
+    },
+    "outputs": [
+      {
+        "name": "result",
+        "artifactId": "3ca05769-6866-4e17-b559-3ff6c0103056"
+      }
+    ]
+  },
+  {
+    "id": "eefbf1f4-8191-4d03-8e5f-9c5e8ae5b263",
+    "tool": "segmentObject",
+    "arguments": {
+      "role": "occlusion-mask",
+      "points": [
+        {
+          "x": 731.2868217054264,
+          "y": 103.1937984496124,
+          "label": 1
+        },
+        {
+          "x": 737.2403100775193,
+          "y": 279.8139534883721,
+          "label": 1
+        },
+        {
+          "x": 739.2248062015503,
+          "y": 468.3410852713178,
+          "label": 1
+        },
+        {
+          "x": 568.5581395348837,
+          "y": 279.8139534883721,
+          "label": 0
+        },
+        {
+          "x": 899.968992248062,
+          "y": 279.8139534883721,
+          "label": 0
+        }
+      ]
+    },
+    "inputIds": [
+      "073e700f-edc6-46c5-a80c-cb2355e23bfd"
+    ],
+    "state": "succeeded",
+    "phase": "succeeded",
+    "memory": {
+      "adapter": "AMD Radeon RX 7800 XT",
+      "adapterKey": "luid_0x00000000_0x0000dd4c",
+      "sharedUsedBytes": 672448512,
+      "ramAvailableBytes": 14595547136,
+      "dedicatedUsedBytes": 5995180032,
+      "vramAvailableBytes": 11167911936,
+      "commitAvailableBytes": 7514116096
+    },
+    "outputs": [
+      {
+        "name": "result",
+        "artifactId": "bbb942e0-b6c2-44e1-905c-e30747c73d24"
+      }
+    ]
+  }
+]

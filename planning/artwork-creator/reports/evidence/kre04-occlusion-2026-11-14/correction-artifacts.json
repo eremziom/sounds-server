@@ -1,0 +1,183 @@
+[
+  {
+    "id": "f3aa1ba2-8b5f-42a3-8754-49fd468484d4",
+    "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+    "kind": "image",
+    "mimeType": "image/png",
+    "sizeBytes": 1065790,
+    "sha256": "4afc3ead66c37a4aa019b54b384abf7f823e47b9f7008351b256206e93218524",
+    "width": 1024,
+    "height": 576,
+    "registrationId": "7c21bf80-0388-4c97-a084-e4b45119c055",
+    "provenance": {
+      "tool": "extractLayer",
+      "jobId": "18b4d8c0-3c5a-4951-9e37-269405f3b0c8",
+      "models": {
+        "sam": {
+          "repo": "facebook/sam2.1-hiera-tiny",
+          "revision": "de431c4043854a71d8101e17995dfe596bf101a5"
+        },
+        "lama": {
+          "repo": "opencv/inpainting_lama",
+          "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f"
+        },
+        "klein": {
+          "repo": "black-forest-labs/FLUX.2-klein-4B",
+          "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+        }
+      },
+      "arguments": {},
+      "toolVersion": "kre02-v1",
+      "sourceHashes": {
+        "apps/artwork-worker/worker.py": "f2f25f612154c5e2e01b8d5e94937e72f36332dc7c2ee85c0c6b524dcfaef4cc",
+        "apps/artwork-worker/prompts.py": "e2170cd5bce9185cb6d2fa1c61c24d0635b688309ff824eaff831c6af1a753f5",
+        "tools/artwork-creator/image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+        "apps/artwork-worker/build-package.mjs": "d473a931b626e2c63e1325968061212e9209776f9c0d48b2b610e465b4605604",
+        "tools/artwork-creator/klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+        "tools/artwork-creator/bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+      },
+      "baseRevisionId": "38785070-ac55-44c0-ae00-e769a5e596a9",
+      "guidelinesSha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+      "modelProfileSha256": "d5231dfcc45e57741addd3cdc2a7f61ac3e8c3a6bb3e39b55fc39dbc0b8b3941"
+    },
+    "createdAt": "2026-11-13T21:48:14.636Z",
+    "inputs": [
+      {
+        "inputId": "073e700f-edc6-46c5-a80c-cb2355e23bfd"
+      },
+      {
+        "inputId": "9da4df55-cfc1-4a11-a47a-fb2ed677beb1"
+      }
+    ]
+  },
+  {
+    "id": "bbb942e0-b6c2-44e1-905c-e30747c73d24",
+    "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+    "kind": "occlusion-mask",
+    "mimeType": "image/png",
+    "sizeBytes": 3723,
+    "sha256": "4c9787cc1d480e62ecb7a4e5e18ab43c0c98c643ac88f9bc54cd9404175eb76a",
+    "width": 1024,
+    "height": 576,
+    "registrationId": "7c21bf80-0388-4c97-a084-e4b45119c055",
+    "provenance": {
+      "tool": "segmentObject",
+      "jobId": "eefbf1f4-8191-4d03-8e5f-9c5e8ae5b263",
+      "models": {
+        "sam": {
+          "repo": "facebook/sam2.1-hiera-tiny",
+          "revision": "de431c4043854a71d8101e17995dfe596bf101a5"
+        },
+        "lama": {
+          "repo": "opencv/inpainting_lama",
+          "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f"
+        },
+        "klein": {
+          "repo": "black-forest-labs/FLUX.2-klein-4B",
+          "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+        }
+      },
+      "arguments": {
+        "role": "occlusion-mask",
+        "points": [
+          {
+            "x": 731.2868217054264,
+            "y": 103.1937984496124,
+            "label": 1
+          },
+          {
+            "x": 737.2403100775193,
+            "y": 279.8139534883721,
+            "label": 1
+          },
+          {
+            "x": 739.2248062015503,
+            "y": 468.3410852713178,
+            "label": 1
+          },
+          {
+            "x": 568.5581395348837,
+            "y": 279.8139534883721,
+            "label": 0
+          },
+          {
+            "x": 899.968992248062,
+            "y": 279.8139534883721,
+            "label": 0
+          }
+        ]
+      },
+      "toolVersion": "kre02-v1",
+      "sourceHashes": {
+        "apps/artwork-worker/worker.py": "f2f25f612154c5e2e01b8d5e94937e72f36332dc7c2ee85c0c6b524dcfaef4cc",
+        "apps/artwork-worker/prompts.py": "e2170cd5bce9185cb6d2fa1c61c24d0635b688309ff824eaff831c6af1a753f5",
+        "tools/artwork-creator/image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+        "apps/artwork-worker/build-package.mjs": "d473a931b626e2c63e1325968061212e9209776f9c0d48b2b610e465b4605604",
+        "tools/artwork-creator/klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+        "tools/artwork-creator/bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+      },
+      "baseRevisionId": "b4a3a1d6-7648-49b1-a17b-1cb4a25cbcd1",
+      "guidelinesSha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+      "modelProfileSha256": "d5231dfcc45e57741addd3cdc2a7f61ac3e8c3a6bb3e39b55fc39dbc0b8b3941"
+    },
+    "createdAt": "2026-11-14T11:16:14.327Z",
+    "inputs": [
+      {
+        "inputId": "073e700f-edc6-46c5-a80c-cb2355e23bfd"
+      }
+    ]
+  },
+  {
+    "id": "3ca05769-6866-4e17-b559-3ff6c0103056",
+    "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+    "kind": "occlusion-mask",
+    "mimeType": "image/png",
+    "sizeBytes": 3723,
+    "sha256": "4c9787cc1d480e62ecb7a4e5e18ab43c0c98c643ac88f9bc54cd9404175eb76a",
+    "width": 1024,
+    "height": 576,
+    "registrationId": "7c21bf80-0388-4c97-a084-e4b45119c055",
+    "provenance": {
+      "tool": "registerMap",
+      "jobId": "fe0777b8-e1af-4296-82d6-52b24eb124f0",
+      "models": {
+        "sam": {
+          "repo": "facebook/sam2.1-hiera-tiny",
+          "revision": "de431c4043854a71d8101e17995dfe596bf101a5"
+        },
+        "lama": {
+          "repo": "opencv/inpainting_lama",
+          "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f"
+        },
+        "klein": {
+          "repo": "black-forest-labs/FLUX.2-klein-4B",
+          "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+        }
+      },
+      "arguments": {
+        "role": "occlusion-mask"
+      },
+      "toolVersion": "kre02-v1",
+      "sourceHashes": {
+        "apps/artwork-worker/worker.py": "f2f25f612154c5e2e01b8d5e94937e72f36332dc7c2ee85c0c6b524dcfaef4cc",
+        "apps/artwork-worker/prompts.py": "e2170cd5bce9185cb6d2fa1c61c24d0635b688309ff824eaff831c6af1a753f5",
+        "tools/artwork-creator/image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+        "apps/artwork-worker/build-package.mjs": "d473a931b626e2c63e1325968061212e9209776f9c0d48b2b610e465b4605604",
+        "tools/artwork-creator/klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+        "tools/artwork-creator/bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+      },
+      "baseRevisionId": "b4a3a1d6-7648-49b1-a17b-1cb4a25cbcd1",
+      "guidelinesSha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+      "modelProfileSha256": "d5231dfcc45e57741addd3cdc2a7f61ac3e8c3a6bb3e39b55fc39dbc0b8b3941"
+    },
+    "createdAt": "2026-11-14T11:16:18.543Z",
+    "inputs": [
+      {
+        "inputId": "f3aa1ba2-8b5f-42a3-8754-49fd468484d4"
+      },
+      {
+        "inputId": "bbb942e0-b6c2-44e1-905c-e30747c73d24"
+      }
+    ]
+  }
+]

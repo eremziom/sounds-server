@@ -1,4 +1,4 @@
-import { defaultPilotControls, validateBehaviorControl, STUDIO_ARTWORKS, type BehaviorKind, type VisualScene } from "./pilot-controls.ts";
+import { defaultPilotControls, validateBehaviorControl, STUDIO_ARTWORKS, type BehaviorKind, type ActiveVisualScene } from "./pilot-controls.ts";
 import { createCameraTiming } from "../modulation/camera-timing.ts";
 import { createLogicalRecorder, type JourneyCommand } from "../diagnostics/logical-replay.ts";
 import type { PreparedEngine, StepContext } from "../core/contracts.ts";
@@ -75,10 +75,10 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
     const packages = Object.freeze(cached.map(lease => Object.freeze({ id:lease.loaded.manifest.id, version:lease.loaded.manifest.version })));
     const recording = options.recordLogical ? createLogicalRecorder(options.seed ?? 181, packages) : null;
     const timing = createCameraTiming(), pendingCommands: JourneyCommand[] = [];
-    let commandError = false, scene: VisualScene = "journey", selecting = false;
+    let commandError = false, scene: ActiveVisualScene = "journey", selecting = false, draftGeneration = 0;
     let pilot: ArtworkLease | null = null, journeyCamera: SavedCameraState | null = null;
-    const studioCache = new Map<VisualScene, ArtworkLease>();
-    const studioCameras = new Map<VisualScene, SavedCameraState>();
+    const studioCache = new Map<ActiveVisualScene, ArtworkLease>();
+    const studioCameras = new Map<ActiveVisualScene, SavedCameraState>();
     let journeyResidents: readonly ArtworkLease[] | null = null;
     let journeyComposition: SceneComposition | null = null, pilotCameraMotion=false, pilotDirection=1;
     let pilotControls=defaultPilotControls();
@@ -155,6 +155,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       get instance() { return scene !== "journey" ? pilot!.instance : current.instance; }, camera, transition: journeyTransition,
       getScene() { return scene; },
       getPilotControls() {
+        if (scene === "draft") return [];
         if(scene === "journey" || !pilot)return pilotControls;
         const used=new Set(pilot.instance.manifest.behaviors.map(b=>b.kind));
         for(const layer of pilot.instance.manifest.layers){
@@ -163,7 +164,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
         }
         return Object.freeze(pilotControls.filter(control=>used.has(control.kind)));
       },
-      getPilotCameraMotion() { return pilotCameraMotion; },
+      getPilotCameraMotion() { return scene !== "draft" && pilotCameraMotion; },
       setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) {
         if (!["subtle","all","none"].includes(preset)) validateBehaviorControl(preset as BehaviorKind,1);
         pilotControls=Object.freeze(pilotControls.map(c=>Object.freeze({ ...c,
@@ -185,9 +186,9 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
         pilotCameraMotion=enabled;
         if (!enabled && scene !== "journey") { try { camera.returnTo("full-frame",2); } catch { camera.halt(); } }
       },
-      async selectScene(next: VisualScene, manifest?: unknown, requestSignal: AbortSignal = new AbortController().signal) {
-        if (disposed || selecting || !["journey",...Object.keys(STUDIO_ARTWORKS)].includes(next)) throw new Error("Cannot select artwork");
-        if (next===scene) return;
+      async selectScene(next: ActiveVisualScene, manifest?: unknown, requestSignal: AbortSignal = new AbortController().signal) {
+        if (disposed || selecting || !["journey","draft",...Object.keys(STUDIO_ARTWORKS)].includes(next)) throw new Error("Cannot select artwork");
+        if (next===scene && next !== "draft") return;
         selecting=true;
         let acquired: ArtworkLease | null = null;
         const previousPilot=pilot;
@@ -195,25 +196,30 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
           const selectionSignal=AbortSignal.any([requestSignal,selectionLifetime.signal]);
           selectionSignal.throwIfAborted();
           if (next !== "journey" && !studioCache.has(next)) {
+            if (next === "draft") {
+              const candidate = parseArtworkPackage(manifest);
+              if (candidate.portal || artworkTextureBytes(candidate) > 192 * 1024 * 1024) throw new Error("Invalid draft artwork or budget");
+            }
             const loaded=await loadArtwork(manifest,selectionSignal,options.decode);
-            acquired={loaded,instance:createArtworkInstance(`${options.instanceId}:${next}`,loaded.manifest)};
-            if (loaded.manifest.id !== STUDIO_ARTWORKS[next] || loaded.manifest.portal) throw new Error("Invalid pilot artwork");
+            acquired={loaded,instance:createArtworkInstance(`${options.instanceId}:${next}${next === "draft" ? `-${++draftGeneration}` : ""}`,loaded.manifest)};
+            if (next !== "draft" && (loaded.manifest.id !== STUDIO_ARTWORKS[next] || loaded.manifest.portal)) throw new Error("Invalid pilot artwork");
           }
           selectionSignal.throwIfAborted();
           if (disposed) throw new Error("Artwork is disposed");
           const previousScene=scene, previousCamera=camera.captureState(), composition=renderer.getComposition();
           if (scene === "journey") { journeyCamera=previousCamera; journeyComposition=composition; journeyResidents=renderer.getArtworks(); }
-          else studioCameras.set(scene,previousCamera);
+          else if (scene !== "draft") studioCameras.set(scene,previousCamera);
           if (next !== "journey") {
             pilot=studioCache.get(next) ?? acquired;
-            for (const control of pilotControls) pilot!.instance.setBehaviorStrength(control.kind,control.enabled ? control.strength : 0);
+            if (next !== "draft") for (const control of pilotControls) pilot!.instance.setBehaviorStrength(control.kind,control.enabled ? control.strength : 0);
           }
           const target=next !== "journey" ? [{...pilot!}] : journeyResidents!;
           renderer.replaceArtworks(target,next !== "journey" ? {sourceId:pilot!.instance.id} : journeyComposition!,{
             apply() { scene=next; if (next !== "journey") { const saved=studioCameras.get(next); if (saved) camera.restoreState(saved); else camera.reset(FULL_FRAME); } else camera.restoreState(journeyCamera!); },
             rollback() { scene=previousScene; pilot=previousPilot; camera.restoreState(previousCamera); },
           });
-          if (acquired) studioCache.set(next,acquired);
+          if (acquired && next !== "draft") studioCache.set(next,acquired);
+          if (previousScene === "draft") previousPilot!.loaded.dispose();
           pendingCommands.length=0; commandError=false; recording?.stop();
           acquired=null;
         } catch (failure) { pilot=previousPilot; acquired?.loaded.dispose(); throw failure; }
@@ -238,7 +244,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       step(context: StepContext) {
         if (disposed) throw new Error("Artwork is disposed");
         const modulation = options.modulation?.();
-        timing.step(modulation?.signals,context.dt);
+        if (scene !== "draft") timing.step(modulation?.signals,context.dt);
         options.evaluate?.(scene !== "journey" ? pilot!.instance : current.instance, context);
         for (const command of pendingCommands.splice(0)) {
           try {
@@ -258,7 +264,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
           } catch { commandError=true; }
         }
         if (scene !== "journey") {
-          if (pilotCameraMotion && !camera.getSnapshot().moving) {
+          if (scene !== "draft" && pilotCameraMotion && !camera.getSnapshot().moving) {
             const pose=camera.getSnapshot().pose;
             const x=pose.logScale<0.6 ? 1920 : 1920+pilotDirection*600;
             try { camera.retarget({x,y:1080,rotation:0,logScale:0.65},3); pilotDirection*=-1; } catch { pilotCameraMotion=false; }
@@ -292,8 +298,10 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
       reset() {
         if (disposed) throw new Error("Artwork is disposed");
         if (scene !== "journey") {
-          pilot!.instance.reset(); camera.reset(FULL_FRAME); pilotDirection=1; commandError=false;
-          pendingCommands.length=0; timing.reset(); recording?.stop(); renderer.render(); return;
+          pilot!.instance.reset(); camera.reset(FULL_FRAME); commandError=false;
+          pendingCommands.length=0;
+          if (scene !== "draft") { pilotDirection=1; timing.reset(); }
+          recording?.stop(); renderer.render(); return;
         }
         looping = false; travelPaused = false; commandError=false; timing.reset(); pendingCommands.length=0; recording?.reset();
         decorateEnabled = false;
@@ -332,6 +340,7 @@ export async function prepareArtwork(options: ArtworkPreparationOptions, signal:
           if (!cached.includes(current)) current.loaded.dispose();
           for (const lease of cached) lease.loaded.dispose();
           for (const studio of studioCache.values()) studio.loaded.dispose();
+          if (scene === "draft") pilot?.loaded.dispose();
         }
       },
     } satisfies PreparedEngine & Record<string, unknown>;

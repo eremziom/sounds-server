@@ -6,6 +6,7 @@ const failure = (status: number, code: string) => Response.json({ code }, { stat
 
 /** Deliberately allowlisted BFF. Cookies and upstream response headers never pass through. */
 export function artworkRoute(parts: string[], method: string): { file: boolean; upload: boolean } | null {
+  if (method === "POST" && parts.length === 3 && parts[0] === "projects" && parts[1] === "starter" && parts[2] === "night-garden") return { file: false, upload: false };
   if (parts[0] !== "projects" || !["GET", "POST"].includes(method)) return null;
   if (parts.length === 1) return { file: false, upload: false };
   if (!uuid.test(parts[1])) return null;

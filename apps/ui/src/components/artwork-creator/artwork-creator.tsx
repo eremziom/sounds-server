@@ -7,6 +7,8 @@ import { ProtectedLink } from "../application/protected-link";
 import { Button } from "../ui/button";
 import { artifactUrl, ArtworkRequestError, createArtworkClient, type Artifact, type Revision } from "../../api/artworks";
 import { createCreatorSession } from "./creator-session";
+import { DraftPreviewControls } from "./draft-preview-controls";
+import { ProductionControls } from "./production-controls";
 import type { ArtworkBrief, ArtworkRevisionSnapshot } from "../../../../artwork-contracts/index.d.ts";
 
 const briefFields = ["intent", "composition", "motionPlan", "lightingPlan", "blackoutPlan", "qaPlan"] as const;
@@ -88,6 +90,13 @@ export function ArtworkCreator() {
       <ProtectedLink href="/animations" className="text-sm underline">{t("back")}</ProtectedLink>
     </div>
     <p className="rounded border p-3 text-sm">{t("milestone")}</p>
+    <div className="space-y-2 rounded border p-3">
+      <h2 className="font-semibold">{t("starterTitle")}</h2>
+      <p className="text-sm text-muted-foreground">{t("starterHelp")}</p>
+      <Button type="button" data-creator-starter disabled={state.busy || dirty} onClick={async () => {
+        await session.starter(); const selected = session.getSnapshot().project; if (selected) rememberProject(selected.id);
+      }}>{t("starterOpen")}</Button>
+    </div>
     {errorText && <p role="alert" data-creator-error className="rounded border border-destructive p-3">{errorText}</p>}
     <div className="grid gap-4 md:grid-cols-2">
       <form onSubmit={create} className="space-y-2">
@@ -156,6 +165,10 @@ export function ArtworkCreator() {
           </div>
         </div>
         <div className="space-y-5">
+          {revision && <DraftPreviewControls key={`${project.id}:${revision.id}`} projectId={project.id} revision={revision}
+            jobs={state.jobs} artifacts={state.artifacts} disabled={state.busy || dirty} onBuild={session.buildPreview} />}
+          {revision && <ProductionControls key={project.id} projectId={project.id} revision={revision} artifacts={state.artifacts} jobs={state.jobs}
+            disabled={state.busy || dirty || jobActive} onRun={session.runTool} onAssemble={session.assemble} onKeep={session.keepResult} />}
           <section className="space-y-2" aria-label={t("jobs")}>
             <h3 className="font-semibold">{t("jobs")}</h3>
             {!state.jobs.length && <p className="text-sm">{t("noJobs")}</p>}

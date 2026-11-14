@@ -2,7 +2,7 @@ import { prepareArtwork } from "/engine/artwork/prepare-artwork.ts";
 import { decodeArtworkAsset } from "/engine/artwork/artwork-loader.ts";
 import { pixels,hash,opaque,check,waitFor } from "/fixture.mjs";
 
-window.runForestPilot=async()=>{
+window.runForestPilot=async(highPrecisionColor=false)=>{
   const [forest,pilot]=await Promise.all(["forest","forest-pilot"].map(async id=>await(await fetch(`/infinite-zoom/samples/${id}/manifest.json`)).json()));
   const canvas=document.createElement("canvas");document.body.append(canvas);
   const viewport={width:1280,height:720,dpr:1,renderScale:1};
@@ -11,9 +11,15 @@ window.runForestPilot=async()=>{
   const compare=(a,b)=>{let max=0;for(let i=0;i<a.length;i++)max=Math.max(max,Math.abs(a[i]-b[i]));return max;};
   const visibleDifference=(a,b)=>{let count=0;for(let i=0;i<a.length;i+=4)if(Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2])>=24)count++;return count;};
   window.forestPilotCaptures={};
+  window.forestPilotDiagnostics={};
+  const difference=(a,b)=>{
+    let maximum=0,channels=0;const samples=[];
+    for(let i=0;i<a.length;i++){const delta=Math.abs(a[i]-b[i]);if(!delta)continue;maximum=Math.max(maximum,delta);channels++;if(samples.length<16)samples.push({index:i,before:a[i],after:b[i]});}
+    return{maximum,channels,samples};
+  };
   const capture=name=>{lease.render();window.forestPilotCaptures[name]=canvas.toDataURL("image/png");};
   try {
-    lease=await prepareArtwork({canvas,manifest:forest,instanceId:"pilot-test",viewport,recordLogical:true,
+    lease=await prepareArtwork({canvas,manifest:forest,instanceId:"pilot-test",viewport,recordLogical:true,highPrecisionColor,
       onAvailabilityChange(){},onError(e){errors.push(String(e));},
       async decode(asset,signal){
         if(failDecode&&asset.uri.includes("forest-pilot"))throw new Error("Injected pilot decode failure");
@@ -24,6 +30,38 @@ window.runForestPilot=async()=>{
     const gl=canvas.getContext("webgl2");
     lease.setLoop(true);for(let i=0;i<100;i++)step();
     const journey=lease.getLogicalSnapshot(),frame=pixels(canvas,lease.render);
+    const draft=structuredClone(pilot);draft.id="draft-test";
+    const timing=lease.getDiagnostics().cameraTiming;
+    lease.setPilotPreset("none");
+    await lease.selectScene("draft",draft);
+    check(lease.getScene()==="draft"&&canvas.getContext("webgl2")===gl,"Draft reuses the journey renderer and context");
+    check(lease.getDiagnostics().artworks===1,"Draft exchanges GPU residency instead of adding another renderer");
+    const draftInitial=pixels(canvas,lease.render),draftState=lease.instance.getSnapshot();
+    const draftCamera=JSON.stringify(lease.camera.getSnapshot()),redraw=pixels(canvas,lease.render),initialRedrawDifference=compare(draftInitial,redraw);
+    window.forestPilotDiagnostics={viewport,renderer:gl.getParameter(gl.RENDERER),version:gl.getParameter(gl.VERSION),initialRedraw:difference(draftInitial,redraw),cameraUnchanged:draftCamera===JSON.stringify(lease.camera.getSnapshot()),stateUnchanged:JSON.stringify(draftState)===JSON.stringify(lease.instance.getSnapshot()),resources:lease.getDiagnostics()};
+    check(initialRedrawDifference===0,`Frozen draft redraw is pixel-identical before Reset: ${JSON.stringify(window.forestPilotDiagnostics)}`);
+    for(let i=0;i<90;i++)step();
+    check(compare(draftInitial,pixels(canvas,lease.render))>0,"Authored draft animation runs despite disabled pilot presets");
+    const frozen=JSON.stringify(lease.instance.getSnapshot());
+    for(let i=0;i<8;i++)lease.render();
+    check(JSON.stringify(lease.instance.getSnapshot())===frozen,"Draft redraw while paused cannot advance behavior phases");
+    lease.reset();
+    const resetDifference=compare(draftInitial,pixels(canvas,lease.render)),resetState=lease.instance.getSnapshot();
+    window.forestPilotDiagnostics.reset={maximum:resetDifference,cameraUnchanged:draftCamera===JSON.stringify(lease.camera.getSnapshot()),stateUnchanged:JSON.stringify(draftState)===JSON.stringify(resetState)};
+    check(resetDifference===0&&JSON.stringify(draftState)===JSON.stringify(resetState),`Draft Reset restores its authored first frame: pixels=${resetDifference}; initialRedraw=${initialRedrawDifference}; resetRedraw=${compare(draftInitial,pixels(canvas,lease.render))}; camera=${draftCamera===JSON.stringify(lease.camera.getSnapshot())}; state=${JSON.stringify(draftState)===JSON.stringify(resetState)}; changedLayers=${JSON.stringify(resetState.layers.filter((layer,index)=>JSON.stringify(layer)!==JSON.stringify(draftState.layers[index])).map(layer=>layer.id))}`);
+    check(lease.getDiagnostics().cameraTiming===timing,"Draft stepping and Reset preserve parked camera timing");
+    const cancelled=new AbortController();cancelled.abort();
+    let draftFailed=false;try{await lease.selectScene("draft",draft,cancelled.signal);}catch{draftFailed=true;}
+    check(draftFailed&&compare(draftInitial,pixels(canvas,lease.render))===0,"Cancelled draft replacement retains the previous frame");
+    const draw=gl.drawElements;
+    gl.drawElements=function(){gl.drawElements=draw;throw Error("Injected draft GPU failure");};
+    draftFailed=false;try{await lease.selectScene("draft",draft);}catch{draftFailed=true;}
+    check(draftFailed&&lease.getScene()==="draft"&&compare(draftInitial,pixels(canvas,lease.render))===0,"Draft GPU failure rolls back exact prior draft pixels");
+    for(let i=0;i<3;i++){await lease.selectScene("draft",draft);check(lease.getDiagnostics().artworks===1,"Repeated drafts retain one GPU lease");}
+    await lease.selectScene("journey");
+    check(JSON.stringify(lease.getLogicalSnapshot().artworks)===JSON.stringify(journey.artworks)&&JSON.stringify(lease.camera.getSnapshot())===JSON.stringify(journey.camera),"Preview returns exact parked artwork phases and camera trajectory");
+    check(lease.getLoop()&&compare(frame,pixels(canvas,lease.render))===0,"Preview preserves Loop intent, transition and original nested pixels");
+    lease.setPilotPreset("all");
     failDecode=true;
     let failed=false;try{await lease.selectScene("pilot",pilot);}catch{failed=true;}
     check(failed&&lease.getScene()==="journey","Failed critical pilot load preserves the journey");
@@ -92,5 +130,5 @@ window.runForestPilot=async()=>{
       opaque(pixels(canvas,lease.render));lease.setPilotCameraMotion(false);lease.reset();
     }
   } finally {lease?.dispose();canvas.remove();check(closed.every(a=>a.closes===1),"Every bitmap closes exactly once, including failed selections");}
-  return {operators:12,changed,visiblePixels,oneContext:true,loadRollback:true,gpuRollback:true,preservesJourney:true,cacheReuse:true,portraitWide:true};
+  return {operators:12,changed,visiblePixels,oneContext:true,loadRollback:true,gpuRollback:true,preservesJourney:true,cacheReuse:true,portraitWide:true,draftParking:true,draftReset:true,draftRollback:true,draftBoundedResources:true};
 };

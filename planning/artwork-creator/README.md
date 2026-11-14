@@ -1,5 +1,17 @@
 # Kreator artworków i odtwarzacz — plan wdrożenia
 
+**KRE-04 zamknięty funkcjonalnie, 2026-11-14.** Powtórzono testy kreatora,
+buildy UI/API oraz rzeczywiste odzyskanie projektu. [Raport zamknięcia](reports/KRE-04-2026-11-14-closure.md)
+jest aktualnym statusem; poniższe opisy przyrostów zachowują historię prac.
+Diagnostyka WebGL i jakość pilota pozostają jawnymi ograniczeniami.
+
+**Aktualizacja zakresu, 2026-11-14:** użytkownik potwierdził, że KRE-04 służy
+sprawdzeniu możliwości w aplikacji, nie dopracowaniu artworku testowego.
+Zakres UI jest zrealizowany i zweryfikowany funkcjonalnie; jakość pilota
+opisujemy osobno. Otwarta diagnostyka WebGL i nieudane testy pozostają jawne.
+[Aktualny przegląd odbioru](reports/KRE-04-functional-review-2026-11-14.md)
+aktualizuje wcześniejsze poniższe oceny wiążące odbiór z retuszem.
+
 Wersja dokumentacji: **1.0, 2026-11-09**.
 Status: **KRE-00 odebrany, 2026-11-13** jako ograniczony benchmark lokalnego stosu
 i procesu z poprawkami. [Raport zamknięcia](reports/KRE-00-2026-11-13-closure.md)
@@ -14,9 +26,21 @@ rzeczywiste Klein/SAM/LaMa 512×288 oraz testy przy audio przeszły. [Raport i o
 [kontrakt](kre02-contract.md).
 **KRE-03 wdrożony i sprawdzony technicznie:** pełna paczka przez API i QA ruchu/zoomu,
 z ograniczeniami pilota; [raport końcowy](reports/KRE-03-2026-11-13-closure.md).
-**KRE-04 w toku:** pierwszy przyrost kreatora pod `/animations/create`, projekty,
+**Historia KRE-04, przed zamknięciem:** pierwszy przyrost kreatora pod `/animations/create`, projekty,
 zadania, historia i podgląd statyczny; [raport częściowy](reports/KRE-04-2026-11-13.md).
-Animowany draft i rzeczywisty proces z UI wymagają dalszej pracy/odbioru.
+Animowany draft przeszedł rzeczywistą próbę API/JWT/workera. Formularze produkcji
+warstw są wdrożone. Po zwolnieniu pamięci nowa generacja Klein oraz przepływ
+SAM/LaMa → paczka → podgląd z UI przeszły. Pozostają korekty i pełne QA nowej
+paczki oraz stabilizacja Resetu. [Bieżący raport](reports/KRE-04-2026-11-13-recovery.md).
+**Kontynuacja 2026-11-14:** rozróżniono przyciski otwarcia paczki i widoku
+immersyjnego, dodano odtwarzalną próbę QA zapisanej generacji bez inferencji.
+Nagranie 50,64 s obejmuje lot, zoom, blackout/reveal i pauzę. Nadal wymagane
+są korekty obrazu oraz wyjaśnienie sporadycznej różnicy pierwszego odczytu WebGL;
+[raport tego przyrostu](reports/KRE-04-2026-11-14.md). Późniejsza kontynuacja
+zapisała przez UI nową rewizję z przesłanianiem drona przez filar oraz nagranie
+52,03 s; wznowienie nie tworzy nowych zadań. Pozostają precyzja maski, tło,
+lampy i odtworzona różnica pierwszego odczytu w RGBA8/RGBA16F.
+[Raport przyrostu](reports/KRE-04-2026-11-14-occlusion.md). W chwili tego przyrostu KRE-04 nie zamknięto.
 KRE-05–KRE-08 pozostają niewdrożone.
 
 ## Cel produktu i ustalony zakres

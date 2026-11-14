@@ -1,0 +1,23 @@
+﻿{
+    "id":  "1c7a16c5-f510-4767-8052-16f36e1f66df",
+    "title":  "KRE-04 real production",
+    "activeRevisionId":  "e915940d-7e5e-4033-af3f-bd1424d2e919",
+    "jobs":  [
+                 {
+                     "id":  "6374a9e6-12ce-4768-80a7-c02a7baae7c5",
+                     "tool":  "generateImage",
+                     "state":  "queued",
+                     "phase":  "MEMORY_DEFERRED",
+                     "errorCode":  "MEMORY_DEFERRED",
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  456146944,
+                                    "ramAvailableBytes":  15686266880,
+                                    "dedicatedUsedBytes":  5376163840,
+                                    "vramAvailableBytes":  11786928128,
+                                    "commitAvailableBytes":  7885213696
+                                }
+                 }
+             ]
+}

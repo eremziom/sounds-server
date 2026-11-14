@@ -4,5 +4,6 @@ import { ArtworkJobsService } from './artwork-jobs.service';
 @Module({
   controllers: [ArtworkJobsController],
   providers: [ArtworkJobsService],
+  exports: [ArtworkJobsService],
 })
 export class ArtworkJobsModule {}

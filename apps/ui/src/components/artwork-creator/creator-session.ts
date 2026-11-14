@@ -1,5 +1,7 @@
 import { createArtworkClient, type Artifact, type Message, type Project, type Revision, type RevisionSummary } from "../../api/artworks.ts";
 import type { ArtworkJobRecord, ArtworkRevisionSnapshot } from "../../../../artwork-contracts/index.d.ts";
+import type { ArtworkToolName } from "../../../../artwork-contracts/index.d.ts";
+import { assembleScene, includeArtifacts, type SceneAssembly } from "./scene-assembly.ts";
 
 export interface CreatorState {
   projects: Project[]; project: Project | null; history: RevisionSummary[];
@@ -12,6 +14,7 @@ const INITIAL: CreatorState = { projects: [], project: null, history: [], artifa
 export function createCreatorSession(api = createArtworkClient()) {
   let state = INITIAL, lifetime = new AbortController(), generation = 0, disposed = false;
   let pendingGeneration: { signature: string; requestKey: string } | null = null;
+  let pendingTool: { signature: string; requestKey: string } | null = null;
   const listeners = new Set<() => void>();
   function publish(change: Partial<CreatorState>) {
     if (disposed) return;
@@ -46,12 +49,20 @@ export function createCreatorSession(api = createArtworkClient()) {
       if (disposed) return;
       lifetime.abort(); lifetime = new AbortController(); generation++;
       pendingGeneration = null;
+      pendingTool = null;
       publish({ ...INITIAL, projects: state.projects });
       await perform(async signal => { const data = await read(id, signal); if (!signal.aborted) publish(data); });
     },
     create(title: string) {
       return perform(async signal => {
         const project = await api.create(title.trim(), signal);
+        const data = await read(project.id, signal);
+        if (!signal.aborted) publish({ ...data, comparison: null, projects: [project, ...state.projects] });
+      });
+    },
+    starter() {
+      return perform(async signal => {
+        const project = await api.starter(signal);
         const data = await read(project.id, signal);
         if (!signal.aborted) publish({ ...data, comparison: null, projects: [project, ...state.projects] });
       });
@@ -84,6 +95,48 @@ export function createCreatorSession(api = createArtworkClient()) {
           tool: "generateImage", arguments: args, inputIds: [] }, signal);
         if (signal.aborted) return;
         pendingGeneration = null;
+        await update(project.id, signal);
+      });
+    },
+    buildPreview() {
+      const project = state.project;
+      return perform(async signal => {
+        if (!project?.revision?.validation.ready || !project.revision.snapshot.layers.length) return;
+        const layerIds = project.revision.snapshot.layers.map(l => l.id);
+        const args = layerIds.includes("coverage") && layerIds.includes("environment") ? {
+          environmentLayerIds: layerIds.filter(id => ["environment", "object", "drone"].includes(id)),
+          lightLayerIds: layerIds.filter(id => id === "lights" || id.endsWith("-lights")),
+        } : {};
+        await api.enqueue(project.id, { baseRevisionId: project.revision.id,
+          requestKey: `preview-${project.revision.id}`, tool: "buildPreviewPackage", arguments: args, inputIds: [] }, signal);
+        await update(project.id, signal);
+      });
+    },
+    runTool(tool: ArtworkToolName, args: Record<string, unknown>, inputIds: string[]) {
+      const project = state.project;
+      return perform(async signal => {
+        if (!project?.activeRevisionId) return;
+        const signature = JSON.stringify([project.id, project.activeRevisionId, tool, args, inputIds]);
+        if (pendingTool?.signature !== signature) pendingTool = { signature, requestKey: crypto.randomUUID() };
+        await api.enqueue(project.id, { baseRevisionId: project.activeRevisionId, requestKey: pendingTool.requestKey, tool, arguments: args, inputIds }, signal);
+        if (signal.aborted) return;
+        pendingTool = null; await update(project.id, signal);
+      });
+    },
+    keepResult(id: string) {
+      const project = state.project;
+      return perform(async signal => {
+        if (!project?.revision) return;
+        const snapshot = project.revision.snapshot;
+        await api.save(project.id, project.activeRevisionId, { ...snapshot, artifactIds: includeArtifacts(state.artifacts, snapshot.artifactIds, [id]) }, signal);
+        await update(project.id, signal);
+      });
+    },
+    assemble(options: SceneAssembly) {
+      const project = state.project;
+      return perform(async signal => {
+        if (!project?.revision) return;
+        await api.save(project.id, project.activeRevisionId, assembleScene(project.revision.snapshot, state.artifacts, options), signal);
         await update(project.id, signal);
       });
     },
