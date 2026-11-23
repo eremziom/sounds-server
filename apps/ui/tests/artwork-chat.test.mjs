@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { ArtworkRequestError } from '../src/api/artworks.ts';
 import { createChatSession } from '../src/components/artwork-creator/chat-session.ts';
 
 const input = { baseRevisionId: 'r1', text: 'Niech dron leci po łuku.', mode: 'plan' };
@@ -20,6 +21,34 @@ test('uncertain network outcome retries the identical turn and blocks a differen
   await session.send(input); assert.equal(session.getSnapshot().uncertain, true);
   await session.send({ ...input, text: 'Inny obiekt' }); assert.equal(requests.length, 1);
   await session.retry(); assert.deepEqual(requests[0], requests[1]); assert.equal(session.getSnapshot().uncertain, false);
+});
+test('a rejected turn allows a corrected submission with a new request ID', async () => {
+  const requests = [];
+  const rejection = new ArtworkRequestError(409, 'ARTWORK_REVISION_CONFLICT');
+  const { session } = fixture({ chat: async (_id, request) => {
+    requests.push(request);
+    if (requests.length === 1) throw rejection;
+    return {};
+  } });
+  await session.send(input);
+  assert.equal(session.getSnapshot().error, rejection);
+  assert.equal(session.getSnapshot().uncertain, false);
+  await session.retry();
+  await session.send({ ...input, baseRevisionId: 'r2' });
+  assert.equal(requests.length, 2);
+  assert.equal(requests[1].baseRevisionId, 'r2');
+  assert.notEqual(requests[0].requestId, requests[1].requestId);
+});
+test('history refresh failure leaves an acknowledged turn settled', async () => {
+  const error = new Error('History unavailable');
+  const { session, calls } = fixture({ messages: async () => { throw error; } });
+  await session.send(input);
+  assert.equal(session.getSnapshot().error, error);
+  assert.equal(session.getSnapshot().uncertain, false);
+  await session.retry();
+  assert.equal(calls.length, 1);
+  await session.send(input);
+  assert.equal(calls.length, 2);
 });
 test('leaving during a response prevents late writes; reopening recovers from the API', async () => {
   let finish; const { session } = fixture({ chat: () => new Promise(resolve => { finish = resolve; }) });

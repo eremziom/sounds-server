@@ -124,7 +124,9 @@ async function main() {
     process.env.DATABASE_URL = url.toString();
     db = new PrismaService();
     await db.$connect();
-    temp = await mkdtemp(path.join(repo, '.tmp/kre02-'));
+    const tempRoot = path.join(repo, '.tmp');
+    await mkdir(tempRoot, { recursive: true });
+    temp = await mkdtemp(path.join(tempRoot, 'kre02-'));
     const settings = {
       DATABASE_URL: url.toString(),
       ARTWORK_REPO_ROOT: repo,
@@ -294,7 +296,11 @@ async function main() {
       owner.id,
       duplicate[0].body.id,
     );
-    assert.equal(completed.state, 'succeeded');
+    assert.equal(
+      completed.state,
+      'succeeded',
+      `refineMask: ${completed.errorCode}`,
+    );
     assert.equal(completed.result.applied, false);
     assert.equal(
       await db.artworkArtifact.count({ where: { jobId: completed.id } }),

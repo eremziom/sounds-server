@@ -245,7 +245,7 @@ try {
     await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
     const overflow = await evaluate("[...document.querySelectorAll('[data-artwork-creator] *')].filter(el=>el.getBoundingClientRect().right>document.documentElement.clientWidth+1).slice(0,12).map(el=>({tag:el.tagName,classes:el.className,text:el.textContent.slice(0,80),width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))");
     assert.equal(await evaluate("document.documentElement.scrollWidth<=document.documentElement.clientWidth"), true, `No horizontal overflow on mobile: ${JSON.stringify(overflow)}`);
-    const directory = new URL("../../../planning/artwork-creator/reports/evidence/kre05-2026-11-14/", import.meta.url);
+    const directory = new URL("../../../.tmp/artwork-creator-browser/", import.meta.url);
     await mkdir(directory, { recursive: true });
     const mobile = await send("Page.captureScreenshot", { format: "png" });
     await writeFile(new URL("creator-mobile.png", directory), Buffer.from(mobile.data, "base64"));

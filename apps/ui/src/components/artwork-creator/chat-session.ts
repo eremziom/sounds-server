@@ -1,5 +1,5 @@
 import type { CreatorChatRequest, CreatorChatReply } from '../../../../artwork-contracts/index.d.ts';
-import { createArtworkClient, type Message } from '../../api/artworks.ts';
+import { ArtworkRequestError, createArtworkClient, type Message } from '../../api/artworks.ts';
 
 export function chatPayload(message: Message): CreatorChatRequest | CreatorChatReply | { results: unknown[] } | null {
   if (!['chat-user', 'chat-assistant', 'chat-tool'].includes(message.role)) return null;
@@ -37,7 +37,14 @@ export function createChatSession(projectId: string, api = createArtworkClient()
       try {
         await api.chat(projectId, request, signal);
         if (!signal.aborted && ticket === generation) { pending = null; publish({ uncertain: false }); await refresh(signal, ticket); }
-      } catch (error) { if (!signal.aborted && ticket === generation) publish({ error, uncertain: true }); }
+      } catch (error) {
+        if (signal.aborted || ticket !== generation) return;
+        if (error instanceof ArtworkRequestError && (
+          (error.status >= 400 && error.status < 500 && error.status !== 408) ||
+          (error.status === 503 && error.code === 'ARTWORK_CHAT_DISABLED')
+        )) pending = null;
+        publish({ error, uncertain: pending !== null });
+      }
       finally { if (!signal.aborted && ticket === generation) publish({ sending: false }); }
     },
     async cancel(requestId: string) {

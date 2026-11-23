@@ -3,7 +3,7 @@ require('reflect-metadata');
 require('dotenv').config({ quiet: true });
 const assert = require('node:assert/strict');
 const { randomUUID } = require('node:crypto');
-const { readdir, readFile, mkdtemp, rm } = require('node:fs/promises');
+const { readdir, readFile, mkdir, mkdtemp, rm } = require('node:fs/promises');
 const path = require('node:path');
 const { Pool } = require('pg');
 const { Test } = require('@nestjs/testing');
@@ -46,11 +46,14 @@ async function main() {
         ),
       );
     process.env.DATABASE_URL = url.toString();
-    directory = await mkdtemp(path.resolve('../../.tmp/kre05-'));
+    const tempRoot = path.resolve('../../.tmp');
+    await mkdir(tempRoot, { recursive: true });
+    directory = await mkdtemp(path.join(tempRoot, 'kre05-'));
     const config = new ConfigService({
       ...process.env,
       ARTWORK_REPO_ROOT: path.resolve('../..'),
-      ARTWORK_STORAGE_DIR: directory,
+      ARTWORK_STORAGE_DIR: path.join(directory, 'artwork'),
+      AUDIO_STORAGE_DIR: path.join(directory, 'audio'),
     });
     const fakeModel = {
       enabled: () => true,
