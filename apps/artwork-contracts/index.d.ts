@@ -83,3 +83,27 @@ export interface ArtworkJobRecord extends ArtworkJobRequest {
   finishedAt: string | null;
   availableAt: string;
 }
+
+/** KRE-05: proposals are durable conversation records, never applied implicitly. */
+export interface CreatorChatRequest {
+  requestId: string;
+  baseRevisionId: string | null;
+  text: string;
+  mode: 'discuss' | 'plan';
+  imageArtifactId?: string;
+  point?: { x: number; y: number };
+}
+export interface CreatorChatAction {
+  tool: ArtworkToolName;
+  arguments: Record<string, unknown>;
+  inputIds: string[];
+}
+export interface CreatorChatReply {
+  version: 1;
+  requestId: string;
+  baseRevisionId: string | null;
+  status: 'pending' | 'proposed' | 'answered' | 'failed' | 'cancelled';
+  text: string;
+  actions: CreatorChatAction[];
+  errorCode?: string;
+}

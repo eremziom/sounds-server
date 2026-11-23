@@ -1,5 +1,11 @@
 # Kreator artworków i odtwarzacz — plan wdrożenia
 
+**KRE-05 zamknięty funkcjonalnie na sprawdzonym profilu, 2026-11-23.**
+Qwen/Vulkan rozpoznaje dwa sprawdzone wskazania, a jedna propozycja zmiany
+trasy zachowuje wspólny lot kadłuba i świateł. Potwierdzenie zapisu korzysta
+z aktywnej rewizji. [Raport odbioru](reports/KRE-05-2026-11-23-followup.md),
+[kontrakt](kre05-contract.md).
+
 **KRE-04 zamknięty funkcjonalnie, 2026-11-14.** Powtórzono testy kreatora,
 buildy UI/API oraz rzeczywiste odzyskanie projektu. [Raport zamknięcia](reports/KRE-04-2026-11-14-closure.md)
 jest aktualnym statusem; poniższe opisy przyrostów zachowują historię prac.
@@ -41,7 +47,8 @@ zapisała przez UI nową rewizję z przesłanianiem drona przez filar oraz nagra
 52,03 s; wznowienie nie tworzy nowych zadań. Pozostają precyzja maski, tło,
 lampy i odtworzona różnica pierwszego odczytu w RGBA8/RGBA16F.
 [Raport przyrostu](reports/KRE-04-2026-11-14-occlusion.md). W chwili tego przyrostu KRE-04 nie zamknięto.
-KRE-05–KRE-08 pozostają niewdrożone.
+W chwili zamknięcia KRE-04 etapy KRE-05–KRE-08 pozostawały niewdrożone;
+bieżący przyrost KRE-05 opisano na początku dokumentu.
 
 ## Cel produktu i ustalony zakres
 

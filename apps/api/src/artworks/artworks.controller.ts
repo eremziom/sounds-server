@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -15,6 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/auth.interfaces';
 import {
@@ -140,12 +142,17 @@ export class ArtworksController {
   @Get(':projectId/artifacts/:id/file')
   @Header('Cache-Control', 'private, no-store')
   @Header('X-Content-Type-Options', 'nosniff')
-  file(
+  async file(
     @Param('projectId', new ParseUUIDPipe({ version: '4' })) p: string,
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Req() r: AuthenticatedRequest,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    return this.artworks.file(p, r.user.userId, id);
+    const file = await this.artworks.file(p, r.user.userId, id);
+    const stream = file.getStream();
+    if (response.destroyed) stream.destroy();
+    else response.once('close', () => stream.destroy());
+    return file;
   }
   @Get(':projectId/messages')
   @Header('Cache-Control', 'private, no-store')

@@ -9,6 +9,7 @@ import { artifactUrl, ArtworkRequestError, createArtworkClient, type Artifact, t
 import { createCreatorSession } from "./creator-session";
 import { DraftPreviewControls } from "./draft-preview-controls";
 import { ProductionControls } from "./production-controls";
+import { CreatorChat } from "./creator-chat";
 import type { ArtworkBrief, ArtworkRevisionSnapshot } from "../../../../artwork-contracts/index.d.ts";
 
 const briefFields = ["intent", "composition", "motionPlan", "lightingPlan", "blackoutPlan", "qaPlan"] as const;
@@ -117,7 +118,9 @@ export function ArtworkCreator() {
     {project && <>
       <h2 className="text-xl font-semibold">{project.title}</h2>
       <div className="grid items-start gap-6 lg:grid-cols-2">
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
+          <CreatorChat key={project.id} projectId={project.id} revisionId={project.activeRevisionId} artifacts={state.artifacts} jobs={state.jobs}
+            disabled={state.busy || dirty} onExecuted={session.refresh} />
           <form ref={form} key={revision?.id ?? project.id} onSubmit={save} onChange={() => setDirty(true)} className="space-y-3">
             <h3 className="font-semibold">{t("brief")}</h3>
             {briefFields.map(field => <label key={field} className="block text-sm font-medium">
@@ -161,10 +164,10 @@ export function ArtworkCreator() {
               <label className="block text-sm">{t("note")}<textarea name="note" required maxLength={16000} className={`${inputClass} mt-1`} /></label>
               <Button disabled={state.busy || dirty} type="submit" variant="outline">{t("addNote")}</Button>
             </form>
-            <ul className="max-h-60 space-y-2 overflow-auto text-sm">{state.messages.map(message => <li key={message.id} className="whitespace-pre-wrap rounded border p-2">{message.text}</li>)}</ul>
+            <ul className="max-h-60 space-y-2 overflow-auto text-sm">{state.messages.filter(message => !message.role.startsWith('chat-')).map(message => <li key={message.id} className="whitespace-pre-wrap rounded border p-2">{message.text}</li>)}</ul>
           </div>
         </div>
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           {revision && <DraftPreviewControls key={`${project.id}:${revision.id}`} projectId={project.id} revision={revision}
             jobs={state.jobs} artifacts={state.artifacts} disabled={state.busy || dirty} onBuild={session.buildPreview} />}
           {revision && <ProductionControls key={project.id} projectId={project.id} revision={revision} artifacts={state.artifacts} jobs={state.jobs}
@@ -204,7 +207,7 @@ export function ArtworkCreator() {
           </section>}
         </div>
       </div>
-      <section className="space-y-3">
+      <section data-creator-history className="space-y-3">
         <h3 className="font-semibold">{t("history")}</h3>
         <ol className="max-h-64 space-y-2 overflow-auto">{state.history.map((item, index) => <li key={item.id} className="flex flex-wrap items-center gap-2 rounded border p-2 text-sm">
           <span>{t("revision", { index: state.history.length - index })} · <time dateTime={item.createdAt}>{item.createdAt.replace("T", " ").slice(0, 19)} UTC</time>{item.id === project.activeRevisionId ? ` · ${t("active")}` : ""}</span>

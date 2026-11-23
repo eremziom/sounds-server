@@ -10,6 +10,12 @@ const req = (method = "GET", body, headers = {}) => new Request(`${origin}/api/a
 });
 
 test("BFF allowlists project routes, methods and v4 identifiers", () => {
+  assert.ok(artworkRoute([...route, 'chat'], 'POST'));
+  assert.ok(artworkRoute([...route, 'chat', 'status'], 'GET'));
+  assert.ok(artworkRoute([...route, 'chat', id, 'execute'], 'POST'));
+  assert.ok(artworkRoute([...route, 'chat', id, 'cancel'], 'POST'));
+  assert.equal(artworkRoute([...route, 'chat', 'status'], 'POST'), null);
+  assert.equal(artworkRoute([...route, 'chat', id, 'shell'], 'POST'), null);
   for (const [parts, method] of [[["tools"], "GET"], [["projects", "../auth"], "GET"], [route, "DELETE"], [[...route, "jobs", id, "unknown"], "POST"], [[...route, "file"], "GET"]]) assert.equal(artworkRoute(parts, method), null);
   for (const [parts, method] of [[["projects"], "POST"], [route, "GET"], [[...route, "revisions", id], "GET"], [[...route, "jobs", id, "cancel"], "POST"], [[...route, "artifacts", id, "file"], "GET"]]) assert.ok(artworkRoute(parts, method));
 });

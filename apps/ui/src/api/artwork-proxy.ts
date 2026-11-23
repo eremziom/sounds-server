@@ -12,10 +12,12 @@ export function artworkRoute(parts: string[], method: string): { file: boolean; 
   if (!uuid.test(parts[1])) return null;
   const tail = parts.slice(2);
   const valid = method === "GET"
-    ? tail.length === 0 || tail.length === 1 && ["revisions", "artifacts", "messages", "jobs"].includes(tail[0]) ||
+    ? tail.length === 0 || tail.length === 2 && tail[0] === "chat" && tail[1] === "status" || tail.length === 1 && ["revisions", "artifacts", "messages", "jobs"].includes(tail[0]) ||
       tail.length === 2 && ["revisions", "jobs"].includes(tail[0]) && uuid.test(tail[1]) ||
       tail.length === 3 && tail[0] === "artifacts" && uuid.test(tail[1]) && tail[2] === "file"
-    : tail.length === 1 && ["revisions", "artifacts", "messages", "jobs", "restore"].includes(tail[0]) ||
+    : tail.length === 1 && ["revisions", "artifacts", "messages", "jobs", "restore", "chat"].includes(tail[0]) ||
+      tail.length === 3 && tail[0] === "chat" && uuid.test(tail[1]) && ["cancel", "execute"].includes(tail[2]) ||
+      tail.length === 4 && tail[0] === "chat" && uuid.test(tail[1]) && tail[2] === "apply" && uuid.test(tail[3]) ||
       tail.length === 3 && tail[0] === "jobs" && uuid.test(tail[1]) && ["cancel", "retry"].includes(tail[2]);
   return valid ? { file: tail[2] === "file", upload: method === "POST" && tail[0] === "artifacts" } : null;
 }

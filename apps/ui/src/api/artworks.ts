@@ -1,4 +1,4 @@
-import type { ArtworkJobRecord, ArtworkJobRequest, ArtworkRevisionSnapshot, ArtworkRevisionValidation } from "../../../artwork-contracts/index.d.ts";
+import type { ArtworkJobRecord, ArtworkJobRequest, ArtworkRevisionSnapshot, ArtworkRevisionValidation, CreatorChatRequest, CreatorChatReply } from "../../../artwork-contracts/index.d.ts";
 
 export interface Revision {
   id: string; parentId: string | null; restoredFromId: string | null; createdAt: string;
@@ -47,6 +47,11 @@ export function createArtworkClient(request: typeof fetch = fetch) {
     }
   }
   return {
+    chatStatus: (id: string, signal?: AbortSignal) => call<{ enabled: boolean; heavyJobsEnabled: boolean }>(`/${id}/chat/status`, signal),
+    chat: (id: string, turn: CreatorChatRequest, signal?: AbortSignal) => call<CreatorChatReply>(`/${id}/chat`, signal, turn),
+    cancelChat: (id: string, requestId: string, signal?: AbortSignal) => call<CreatorChatReply>(`/${id}/chat/${requestId}/cancel`, signal, {}),
+    executeChat: (id: string, requestId: string, signal?: AbortSignal) => call<{ requestId: string; results: { tool: string; jobId?: string; state?: string; errorCode?: string }[] }>(`/${id}/chat/${requestId}/execute`, signal, {}),
+    applyChat: (id: string, requestId: string, jobId: string, signal?: AbortSignal) => call<Revision>(`/${id}/chat/${requestId}/apply/${jobId}`, signal, {}),
     projects: (signal?: AbortSignal) => pages<Project>("", signal),
     create: (title: string, signal?: AbortSignal) => call<Project>("", signal, { title }),
     starter: (signal?: AbortSignal) => call<Project>("/starter/night-garden", signal, {}),

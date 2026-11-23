@@ -33,6 +33,27 @@ const api = createServer((req, res) => {
     }
     if (parts[2] !== project?.id) return json({}, 404);
     if (parts.length === 3) return json(project);
+    if (parts[3] === 'chat') {
+      if (parts[4] === 'status') return json({ enabled: true, heavyJobsEnabled: false });
+      if (parts.length === 4) {
+        const reply = { version: 1, requestId: body.requestId, baseRevisionId: body.baseRevisionId, status: body.mode === 'plan' ? 'proposed' : 'answered',
+          text: body.mode === 'plan' ? 'Proponuję przygotować podkład koloru.' : 'Który obiekt chcesz zmienić?',
+          actions: body.mode === 'plan' ? [{ tool: 'createColorPlate', arguments: { width: 16, height: 9, rgb: [0, 0, 0] }, inputIds: [] }] : [] };
+        messages.unshift({ id: body.requestId, role: 'chat-user', text: JSON.stringify(body), createdAt: new Date().toISOString() });
+        messages.unshift({ id: randomUUID(), role: 'chat-assistant', text: JSON.stringify(reply), createdAt: new Date().toISOString() });
+        return json(reply, 201);
+      }
+      const reply = messages.find(m => m.role === 'chat-assistant' && JSON.parse(m.text).requestId === parts[4]);
+      if (!reply) return json({}, 404);
+      if (parts[5] === 'cancel') { const data = JSON.parse(reply.text); data.status = 'cancelled'; data.actions = []; reply.text = JSON.stringify(data); return json(data, 201); }
+      if (parts[5] === 'execute') {
+        const action = JSON.parse(reply.text).actions[0], job = { ...action, id: randomUUID(), projectId: project.id, baseRevisionId: project.activeRevisionId, state: 'queued', attempt: 0, progress: 0, phase: 'queued', cancelRequested: false, result: null, errorCode: null };
+        jobs.unshift(job);
+        const result = { requestId: parts[4], results: [{ tool: action.tool, jobId: job.id, state: job.state }] };
+        messages.unshift({ id: randomUUID(), role: 'chat-tool', text: JSON.stringify(result), createdAt: new Date().toISOString() }); return json(result, 201);
+      }
+      return json({}, 404);
+    }
     if (parts[3] === "artifacts") {
       if (parts[5] === "file") {
         if (packages.has(parts[4])) { packageReads++; return json(packages.get(parts[4])); }
@@ -178,7 +199,7 @@ try {
     const oldId = revisions.at(-1).id;
     await evaluate(`${button(t.compare)}.click()`); await waitFor("document.querySelector('[data-creator-comparison]')");
     // Restore the first plan; source selection remains in the immutable history.
-    await evaluate(`(()=>{const list=document.querySelector('[data-artwork-creator] ol');[...list.querySelectorAll('button')].filter(el=>el.textContent===${JSON.stringify(t.restore)}).at(-1).click();})()`);
+    await evaluate(`(()=>{const list=document.querySelector('[data-creator-history] ol');[...list.querySelectorAll('button')].filter(el=>el.textContent===${JSON.stringify(t.restore)}).at(-1).click();})()`);
     await waitFor("!document.querySelector('[data-creator-layers]').querySelector('article')");
     assert.equal(project.revision.restoredFromId, oldId); assert.equal(messages.length, 1); assert.equal(artifacts.length, 2);
     const before = await evaluate("creatorCanvas.dataset.simulationTick");
@@ -192,13 +213,39 @@ try {
     assert.equal(await evaluate("document.querySelector('[data-artwork-creator]').innerText.includes('Keep the gate silhouette')"), true);
     assert.equal(await evaluate("document.querySelectorAll('audio').length"), 1);
     assert.equal(await evaluate("document.querySelectorAll('[data-infinite-zoom-canvas]').length"), 1);
+    const jobsBeforeChat = jobs.length;
+    await evaluate("window.next.router.push('/library')");
+    await waitFor("document.querySelector('[data-track-id=\"1\"] button') && document.querySelector('[data-infinite-zoom-canvas]')?.dataset.visualStatus==='ready'");
+    await evaluate("document.querySelector('audio').loop=true");
+    await click("document.querySelector('[data-track-id=\"1\"] button')");
+    await waitFor("!document.querySelector('audio').paused");
+    await evaluate(`window.next.router.push('/animations/create?project=${project.id}')`);
+    await waitFor("document.querySelector('textarea[name=intent]')");
+    await evaluate("window.chatAudio=document.querySelector('audio');window.chatCanvas=document.querySelector('[data-infinite-zoom-canvas]');window.chatGL=chatCanvas.getContext('webgl2')");
+    await waitFor('!chatAudio.paused');
+    await input('[data-chat-text]', 'Który element powinien się poruszać?');
+    await waitFor("!document.querySelector('[data-chat-send]').disabled");
+    await click("document.querySelector('[data-chat-send]')");
+    await waitFor("document.querySelector('[data-creator-chat]').textContent.includes('Który obiekt chcesz zmienić?')");
+    assert.equal(jobs.length, jobsBeforeChat, 'Discussing an idea cannot enqueue jobs');
+    await evaluate("(()=>{const el=document.querySelector('[data-chat-mode]');el.value='plan';el.dispatchEvent(new Event('change',{bubbles:true}));})()");
+    await input('[data-chat-text]', 'Przygotuj czarny podkład.'); await click("document.querySelector('[data-chat-send]')");
+    await waitFor("document.querySelector('[data-chat-execute]')");
+    assert.equal(jobs.length, jobsBeforeChat, 'A proposal remains unexecuted');
+    await click("document.querySelector('[data-chat-execute]')");
+    await waitFor(`document.querySelectorAll('[data-creator-job]').length===${jobsBeforeChat + 1}`);
+    assert.equal(jobs[0].tool, 'createColorPlate');
+    assert.equal(await evaluate("!chatAudio.paused && chatAudio===document.querySelector('audio') && chatCanvas===document.querySelector('[data-infinite-zoom-canvas]') && chatGL===chatCanvas.getContext('webgl2')"), true, 'Chat execution preserves the playing audio and renderer');
+    await send('Page.reload'); await waitFor("document.querySelector('[data-creator-chat]')?.textContent.includes('Przygotuj czarny podkład.')");
+    assert.equal(jobs.length, jobsBeforeChat + 1, 'Reopening chat cannot enqueue again');
     for (const locale of ["pl", "es"]) {
       await send("Network.setCookie", { name: "locale", value: locale, url: origin, path: "/" });
       await send("Page.reload"); await waitFor(`document.documentElement.lang===${JSON.stringify(locale)} && document.querySelector('textarea[name=intent]')`);
     }
     await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
-    assert.equal(await evaluate("document.documentElement.scrollWidth<=document.documentElement.clientWidth"), true, "No horizontal overflow on mobile");
-    const directory = new URL("../../../planning/artwork-creator/reports/evidence/kre04-2026-11-13/", import.meta.url);
+    const overflow = await evaluate("[...document.querySelectorAll('[data-artwork-creator] *')].filter(el=>el.getBoundingClientRect().right>document.documentElement.clientWidth+1).slice(0,12).map(el=>({tag:el.tagName,classes:el.className,text:el.textContent.slice(0,80),width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))");
+    assert.equal(await evaluate("document.documentElement.scrollWidth<=document.documentElement.clientWidth"), true, `No horizontal overflow on mobile: ${JSON.stringify(overflow)}`);
+    const directory = new URL("../../../planning/artwork-creator/reports/evidence/kre05-2026-11-14/", import.meta.url);
     await mkdir(directory, { recursive: true });
     const mobile = await send("Page.captureScreenshot", { format: "png" });
     await writeFile(new URL("creator-mobile.png", directory), Buffer.from(mobile.data, "base64"));
@@ -224,6 +271,8 @@ try {
       appRoleGuard: true, anonymousGuard: true, animatedDraftPreview: true, invalidDraftRetainsPixels: true,
       pausedPreviewRetainsClockAndMusic: true, pausedReturnRestoresPixels: true, modeSwitchRetainsDraft: true,
       routeCleanupRestoresScene: true, privateDraftAssetGuard: true, packageBuilder: "HTTP fixture", sourceAnimation: "single image; animated operators tested separately in WebGL fixture",
+      chatModel: 'controlled HTTP fixture; no model inference', chatDiscussionDoesNotEnqueue: true, chatProposalDoesNotEnqueue: true,
+      chatExplicitExecution: true, chatReloadDoesNotEnqueue: true, chatPreservesPlayingAudioAndRenderer: true,
     }, null, 2) + "\n");
     console.log("KRE-04 UI fixture: project/plan, queued generation, cancel/retry, image choice, conflict, compare/restore, notes, reload, PL/EN/ES, mobile, guards and same playing audio/canvas/context OK. No model inference claimed.");
   });

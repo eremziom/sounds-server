@@ -1,6 +1,7 @@
 // Uses the actual engine parser; no replica of its behavior or camera contract.
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
+import {isDeepStrictEqual} from 'node:util';
 import {parseArtworkPackage} from '../ui/src/engines/infinite-zoom/artwork/artwork-package.ts';
 let authorized=false;
 for await(const chunk of process.stdin){if(chunk.toString().startsWith('START\n')){authorized=true;break;}throw Error('Invalid supervisor authorization');}
@@ -10,8 +11,17 @@ if(!directory.startsWith(root+path.sep))throw Error('Outside operation root');
 const request=JSON.parse(await readFile(path.join(directory,'request.json'),'utf8'));
 const snapshot=structuredClone(request.snapshot), args=request.arguments;
 if(request.tool==='setBehaviors'||request.tool==='setTravel'){
- const layer=snapshot.layers.find(l=>l.id===args.layerId);if(!layer)throw Error('Unknown layer');
- layer.parameters={...layer.parameters,[request.tool==='setTravel'?'travel':'behaviors']:request.tool==='setTravel'?args.travel:args.behaviors};
+ const layer=snapshot.layers.find(l=>l.id===args.layerId);
+ if(!layer)throw Error('Unknown layer');
+ if(request.tool==='setTravel'){
+  const linked=(args.linkedLayerIds??[]).map(id=>snapshot.layers.find(l=>l.id===id));
+  const previous=layer.parameters.travel;
+  if(linked.some(l=>!l||!previous||!isDeepStrictEqual(l.parameters.travel,previous)))
+   throw Error('Linked layers must share the original trajectory');
+  for(const target of [layer,...linked])target.parameters.travel=args.travel;
+ }else{
+  layer.parameters.behaviors=args.behaviors;
+ }
 }
 const maskKinds=['visibility-mask','occlusion-mask','material-mask','influence-map','delay-map'];
 const availableAssets=request.artifacts.filter(a=>a.kind!=='report').map(a=>({id:a.id,kind:maskKinds.includes(a.kind)?'mask':a.kind,

@@ -180,7 +180,14 @@ export const TOOL_REGISTRY = {
   setTravel: {
     inputs: [],
     gpu: null,
-    schema: object({ layerId: str(), travel: { type: 'object' } }),
+    schema: object(
+      {
+        layerId: str(),
+        linkedLayerIds: array(str(), 1, 32),
+        travel: { type: 'object' },
+      },
+      ['layerId', 'travel'],
+    ),
   },
   buildPreviewPackage: {
     inputs: [],
@@ -272,6 +279,17 @@ export function validateTool(tool: string, args: unknown, inputIds: string[]) {
       (a.direction === 'radial' && !a.origin)
     )
       fail('direction configuration');
+  }
+  if (tool === 'setTravel') {
+    const { layerId, linkedLayerIds = [] } = args as {
+      layerId: string;
+      linkedLayerIds?: string[];
+    };
+    if (
+      new Set([layerId, ...linkedLayerIds]).size !==
+      1 + linkedLayerIds.length
+    )
+      fail('linkedLayerIds');
   }
   return definition;
 }

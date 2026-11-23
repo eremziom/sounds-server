@@ -1,5 +1,8 @@
 # Etapy wdrożenia kreatora i biblioteki
 
+**KRE-05 zamknięty funkcjonalnie na sprawdzonym profilu, 2026-11-23.**
+[Raport odbioru z Qwen/Vulkan, kolejką i podglądem](reports/KRE-05-2026-11-23-followup.md).
+
 **Aktualny stan, 2026-11-14: KRE-04 zamknięty funkcjonalnie.**
 [Raport zamknięcia i ponowione testy](reports/KRE-04-2026-11-14-closure.md).
 Opisy przyrostów poniżej zachowują ich historyczne wyniki; retusz pilota
@@ -30,7 +33,8 @@ przez filar za pomocą istniejących formularzy SAM/rejestracji, zapisał nową
 rewizję, 52,03 s QA i sprawdził odzyskanie bez nowych zadań. Pozostają korekty
 maski/tła/lamp i błąd pierwszego odczytu w obu formatach bufora;
 [raport przyrostu](reports/KRE-04-2026-11-14-occlusion.md). Wtedy KRE-04 pozostawał w toku.
-KRE-05–KRE-08 pozostają **niewdrożone**.
+W chwili zamknięcia KRE-04 etapy KRE-05–KRE-08 pozostawały **niewdrożone**;
+aktualny przyrost KRE-05 opisano na początku dokumentu.
 Wyniki i bieżący status zapisujemy w [progress.md](progress.md).
 
 Każdy etap ma zakończyć się demonstracją i raportem, nie tylko zestawem plików.
@@ -224,6 +228,12 @@ wejście/wyjście z podglądu oraz izolacja audio. Nie tworzyć testów odwzorow
 wyłącznie układ komponentów bez sprawdzania zachowania.
 
 ## KRE-05 — rozmowa sterująca procesem
+
+**Stan 2026-11-23: zamknięty funkcjonalnie na sprawdzonym profilu.**
+Qwen/Vulkan zaproponował zmianę błysku i wspólnej trasy, a kolejka i API
+zapisały i odtworzyły zmiany w nowej rewizji. Sprawdzono wskazanie na obrazie,
+odczyt stanu po zapisie oraz zmianę koloru i reakcji na bas.
+[Raport odbioru](reports/KRE-05-2026-11-23-followup.md).
 
 **Cel:** lokalny model prowadzi tworzenie i poprawki na podstawie intencji.
 

@@ -1,12 +1,20 @@
 # Stan realizacji
 
+**KRE-05 zamknięty funkcjonalnie na sprawdzonym profilu, 2026-11-23.**
+Sprawdzono wskazanie kadłuba i kolumny, wspólną zmianę trasy kadłuba i świateł
+oraz potwierdzenie zapisu z aktywnej rewizji. [Raport odbioru](reports/KRE-05-2026-11-23-followup.md).
+Pierwszy przyrost opisuje [raport z 14 listopada](reports/KRE-05-2026-11-14.md),
+a konfigurację i limity [kontrakt](kre05-contract.md). Rozmowa z modelem jest
+domyślnie wyłączona.
+KRE-06–08 pozostają do rozpoczęcia.
+
 **Poprawka po zgłoszeniu użytkownika, 2026-11-14:** odblokowano podgląd
 w obecności zadań starszych rewizji i uruchomiono lokalnego wykonawcę.
 [Przyczyna, zmiany i regresja](reports/KRE-04-2026-11-14-preview-unblock.md).
 
 **KRE-04 zamknięty funkcjonalnie, 2026-11-14**, po poleceniu dokończenia etapu.
 Powtórzona weryfikacja i zakres odbioru: [raport zamknięcia](reports/KRE-04-2026-11-14-closure.md).
-KRE-05–08 nie rozpoczęto. Diagnostyka WebGL pozostaje osobną otwartą kwestią;
+W chwili zamknięcia KRE-04 nie rozpoczęto KRE-05–08. Diagnostyka WebGL pozostaje osobną otwartą kwestią;
 pilot nie uzyskał odbioru produkcyjnego.
 
 **Aktualne doprecyzowanie użytkownika, 2026-11-14:** KRE-04 sprawdza możliwości
@@ -66,7 +74,8 @@ Nie jest to zamknięcie KRE-04 ani odbiór produkcyjnego artworku.
 **KRE-04 zamknięty funkcjonalnie.** [Raport](reports/KRE-04-2026-11-14-closure.md).
 Dalszy retusz pilota nie jest zadaniem tego etapu.
 Otwartą diagnostykę WebGL prowadzimy jako osobną kwestię techniczną.
-KRE-05 wymaga osobnego polecenia. Poniżej historia prób, nie lista prac
+KRE-05 rozpoczęto na osobne polecenie; bieżący zakres i odroczenia opisuje
+[raport](reports/KRE-05-2026-11-14.md). Poniżej historia prób, nie lista prac
 retuszerskich wymaganych do odbioru interfejsu.
 Pierwszy przyrost jest dostępny pod `/animations/create`, przez odnośnik na
 `/animations`. Nie wymaga JSON ani ścieżek plików. Adapter roboczej paczki,
@@ -137,10 +146,10 @@ KRE-01 pozostawał nierozpoczęty; jego późniejsze wdrożenie opisuje osobny r
 | KRE-02 | Odebrany technicznie | [Raport](reports/KRE-02-2026-11-13.md), [kontrakt](kre02-contract.md) | Kolejka/procesy/narzędzia oraz rzeczywiste generate/edit Klein, SAM i LaMa 512×288 przy audio potwierdzone |
 | KRE-03 | Odebrany technicznie | [Raport końcowy](reports/KRE-03-2026-11-13-closure.md), [brief pilota](pilots/gate-drone/authoring-brief.md) | Pełna paczka przez API i ruch/zoom potwierdzone, ograniczenia jakości pilota zapisane |
 | KRE-04 | Zamknięty funkcjonalnie, 2026-11-14 | [Raport zamknięcia](reports/KRE-04-2026-11-14-closure.md), [przegląd kryteriów](reports/KRE-04-functional-review-2026-11-14.md) | Zakres UI odebrany; osobno otwarta diagnostyka WebGL i jakość pilota |
-| KRE-05 | Nie rozpoczęto | Brak | Działający kreator i potwierdzony LLM |
-| KRE-06 | Nie rozpoczęto | Brak | Rozmowa wykonująca narzędzia |
-| KRE-07 | Nie rozpoczęto | Brak | Poprawki częściowe i korekta masek |
-| KRE-08 | Nie rozpoczęto | Brak | Publikacja i biblioteka |
+| KRE-05 | Zamknięty funkcjonalnie, 2026-11-23 | [Raport odbioru](reports/KRE-05-2026-11-23-followup.md), [kontrakt](kre05-contract.md) | Próby rozmowy, kolejki i podglądu na lokalnym profilu ukończone |
+| KRE-06 | Nie rozpoczęto | Brak | Poprawki częściowe i korekta masek |
+| KRE-07 | Nie rozpoczęto | Brak | Publikacja i biblioteka |
+| KRE-08 | Nie rozpoczęto | Brak | Odbiór kompletnego procesu i stabilizacja |
 
 ## Ustalenia produktu
 
