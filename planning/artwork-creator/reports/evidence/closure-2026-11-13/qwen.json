@@ -1,0 +1,14 @@
+{
+  "label": "qwen",
+  "command": [
+    "py",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\kre00.py",
+    "probe-sequence-plan",
+    "--runs",
+    "3"
+  ],
+  "pid": 12844,
+  "exitCode": 0,
+  "wallSeconds": 17.186
+}

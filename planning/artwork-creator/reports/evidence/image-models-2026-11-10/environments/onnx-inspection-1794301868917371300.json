@@ -1,0 +1,174 @@
+{
+  "onnx": "1.23.2",
+  "onnxruntime": "1.31.1",
+  "opsets": [
+    [
+      "",
+      21
+    ]
+  ],
+  "operations": [
+    [
+      "",
+      "Add"
+    ],
+    [
+      "",
+      "BatchNormalization"
+    ],
+    [
+      "",
+      "Cast"
+    ],
+    [
+      "",
+      "Clip"
+    ],
+    [
+      "",
+      "Concat"
+    ],
+    [
+      "",
+      "Constant"
+    ],
+    [
+      "",
+      "ConstantOfShape"
+    ],
+    [
+      "",
+      "Conv"
+    ],
+    [
+      "",
+      "ConvTranspose"
+    ],
+    [
+      "",
+      "Cos"
+    ],
+    [
+      "",
+      "DequantizeLinear"
+    ],
+    [
+      "",
+      "Div"
+    ],
+    [
+      "",
+      "Einsum"
+    ],
+    [
+      "",
+      "Gather"
+    ],
+    [
+      "",
+      "MatMul"
+    ],
+    [
+      "",
+      "Mul"
+    ],
+    [
+      "",
+      "Neg"
+    ],
+    [
+      "",
+      "Pad"
+    ],
+    [
+      "",
+      "Range"
+    ],
+    [
+      "",
+      "Relu"
+    ],
+    [
+      "",
+      "Reshape"
+    ],
+    [
+      "",
+      "Shape"
+    ],
+    [
+      "",
+      "Sigmoid"
+    ],
+    [
+      "",
+      "Sin"
+    ],
+    [
+      "",
+      "Slice"
+    ],
+    [
+      "",
+      "Sqrt"
+    ],
+    [
+      "",
+      "Squeeze"
+    ],
+    [
+      "",
+      "Sub"
+    ],
+    [
+      "",
+      "Transpose"
+    ],
+    [
+      "",
+      "Unsqueeze"
+    ]
+  ],
+  "available_providers": [
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "inputs": [
+    {
+      "name": "image",
+      "shape": [
+        "batch",
+        3,
+        512,
+        512
+      ],
+      "type": "tensor(float)"
+    },
+    {
+      "name": "mask",
+      "shape": [
+        "batch",
+        1,
+        512,
+        512
+      ],
+      "type": "tensor(float)"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "shape": [
+        "batch",
+        3,
+        512,
+        512
+      ],
+      "type": "tensor(float)"
+    }
+  ],
+  "active_providers": [
+    "CPUExecutionProvider"
+  ],
+  "elapsed_seconds": 8.914846800000305
+}

@@ -1,0 +1,33 @@
+{
+  "tool": "fillBackground",
+  "jobId": "d92f7b01-8bcd-43de-9ff8-1257acb52ebd",
+  "models": {
+    "sam": {
+      "repo": "facebook/sam2.1-hiera-tiny",
+      "revision": "de431c4043854a71d8101e17995dfe596bf101a5"
+    },
+    "lama": {
+      "repo": "opencv/inpainting_lama",
+      "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f"
+    },
+    "klein": {
+      "repo": "black-forest-labs/FLUX.2-klein-4B",
+      "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+    }
+  },
+  "arguments": {
+    "dilation": 2
+  },
+  "toolVersion": "kre02-v1",
+  "sourceHashes": {
+    "apps/artwork-worker/worker.py": "f31ae22bf11dc732736b36ba2a2881ad275d346953ed1425bbfad4645e11449f",
+    "apps/artwork-worker/prompts.py": "e2170cd5bce9185cb6d2fa1c61c24d0635b688309ff824eaff831c6af1a753f5",
+    "tools/artwork-creator/image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+    "apps/artwork-worker/build-package.mjs": "9445d2132be7f37b4f6dba47fe2b402e6322c6a2c7aeb29cc3dec91f2bef975e",
+    "tools/artwork-creator/klein_loading.py": "d7224368a441afeee5dc6d905812f93f2e1cf5eeaa9696acc09420697db337f4",
+    "tools/artwork-creator/bounded_attention.py": "4991787868b6a59e713ee609cfbf9670bb4378772f2be72736f1c03d8c2635c9"
+  },
+  "baseRevisionId": "49e28004-d354-49b9-8c7f-b611978f00c6",
+  "guidelinesSha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+  "modelProfileSha256": "d5231dfcc45e57741addd3cdc2a7f61ac3e8c3a6bb3e39b55fc39dbc0b8b3941"
+}

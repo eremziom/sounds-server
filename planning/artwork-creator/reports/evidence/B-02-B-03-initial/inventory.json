@@ -1,0 +1,345 @@
+[
+  {
+    "file": "B-02-defect-0.json",
+    "bytes": 2622,
+    "sha256": "cf6c6c924f66c0815da565ec11f5e33e0c027abd3ee5ea2548129cda68ae4b2e",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-0.json"
+  },
+  {
+    "file": "B-02-defect-1.json",
+    "bytes": 2612,
+    "sha256": "2288adb82d1df4739925ee046e9483feab83b2f2008fbc11ad32f70713647a13",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-1.json"
+  },
+  {
+    "file": "B-02-defect-2.json",
+    "bytes": 2613,
+    "sha256": "a3e1bb611a2b1b5ecb430f3c48d1787c9b064a2d3c858840bfda719dc3d31bdd",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-2.json"
+  },
+  {
+    "file": "B-02-vehicle-0.json",
+    "bytes": 2257,
+    "sha256": "e0dbcdda2cb4ba45035e49540387e39eb03912a41aa160cc42cae91f096deca8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-vehicle-0.json"
+  },
+  {
+    "file": "B-02-vehicle-1.json",
+    "bytes": 2240,
+    "sha256": "20f8085cd6353642578f05ee7ae1c786c4cd924e15ea2cb5220e0ea0e074a083",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-vehicle-1.json"
+  },
+  {
+    "file": "B-02-vehicle-2.json",
+    "bytes": 2240,
+    "sha256": "3538df15045ccdfc9124e060b8c7402cfacd5c3cb2762d84f82567158cfcdcca",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-vehicle-2.json"
+  },
+  {
+    "file": "B-03-arc-0.json",
+    "bytes": 23976,
+    "sha256": "01796dad5986571188baf44e03ff8a0add3afc3e991422153ce042f289e364ca",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-0.json"
+  },
+  {
+    "file": "B-03-arc-1.json",
+    "bytes": 23963,
+    "sha256": "298db904e871d0c2842ddd66c64280711a90c3835c131b4fea69896ef89062ac",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-1.json"
+  },
+  {
+    "file": "B-03-arc-2.json",
+    "bytes": 23966,
+    "sha256": "f6c66c197635f41787f8821d7699c10c135be4594f2f96ed6d68fa3311810066",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-2.json"
+  },
+  {
+    "file": "B-03-mask-0.json",
+    "bytes": 22426,
+    "sha256": "32e3b3d695f0230d8819597c44330f3faea42063b872079fd9e7103e5ddecb86",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-0.json"
+  },
+  {
+    "file": "B-03-mask-1.json",
+    "bytes": 22424,
+    "sha256": "b098cd2832ee329608f18d3829bdfc21b90e587b58610bcc9ed5bc6a004a1e6a",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-1.json"
+  },
+  {
+    "file": "B-03-mask-2.json",
+    "bytes": 22427,
+    "sha256": "9d6a7d5985f11a09692c545c13e6715a1c86c80c6c76c76dfb4b032253731847",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-2.json"
+  },
+  {
+    "file": "B-03-period-0.json",
+    "bytes": 22353,
+    "sha256": "bb6d14d8e0d244ebbbab6b81134f43caeaeb9dfa73865f8d6f3d19a2cbefb3dd",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-0.json"
+  },
+  {
+    "file": "B-03-period-1.json",
+    "bytes": 22366,
+    "sha256": "cc3fd5a818fc91b4389f394f1426e17331d92c6ad12d2b77d78d20d373198bf5",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-1.json"
+  },
+  {
+    "file": "B-03-period-2.json",
+    "bytes": 22367,
+    "sha256": "c77a4e45739e8d10ce890fcaa86d3986bf1f3c777da6696b796f4e76d7c59c7a",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-2.json"
+  },
+  {
+    "file": "B-03-preserve-0.json",
+    "bytes": 22415,
+    "sha256": "a6108f8b52c91ad67d2232f8c842eaa2bcb8648f9eaff6da6553eb2e6a1650ff",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-0.json"
+  },
+  {
+    "file": "B-03-preserve-1.json",
+    "bytes": 22414,
+    "sha256": "49015dc00dcda431b6a60b07d5dffb1d2632de7332338b9179e7a5bac7dba182",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-1.json"
+  },
+  {
+    "file": "B-03-preserve-2.json",
+    "bytes": 22405,
+    "sha256": "061c7bc9b153b05b6fb88007966e2f95c4889f28f31e1a81c3c477384bf6315d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-2.json"
+  },
+  {
+    "file": "B-03-retry-0.json",
+    "bytes": 34723,
+    "sha256": "08a1747c9142e337cdac9917537c48c96ce15d183009e960a514020e893049f8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-0.json"
+  },
+  {
+    "file": "B-03-retry-1.json",
+    "bytes": 34748,
+    "sha256": "a6b9060ded080a10bb75a08b1bac2353867cc35e7515d59c51bfa42a89223c10",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-1.json"
+  },
+  {
+    "file": "B-03-retry-2.json",
+    "bytes": 34734,
+    "sha256": "8cb845a21a26d9b8f4b490cc427cc9cbc9fb2bb9f85f8da2a2b14dba15c8cbac",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-2.json"
+  },
+  {
+    "file": "B-03-unsupported-0.json",
+    "bytes": 23966,
+    "sha256": "7ba25e272dd9e8d24c36235d597eee96a2a6bbefa7825d51377142e252de8d78",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-unsupported-0.json"
+  },
+  {
+    "file": "B-03-unsupported-1.json",
+    "bytes": 23942,
+    "sha256": "a4c2ef6bdd2b441cbc6d37f2d320ff91a6954fbfbbfd2bed2fc064583aa780d0",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-unsupported-1.json"
+  },
+  {
+    "file": "B-03-unsupported-2.json",
+    "bytes": 23729,
+    "sha256": "b0c5ae88ceb2721dc4bdeeea4e52e0ca44a198eba0d2728a1af7b84a0888b88d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-unsupported-2.json"
+  },
+  {
+    "file": "result.json",
+    "bytes": 516979,
+    "sha256": "9b3eb4b5e94c2ce6caadff2f7a56fc6f1deaef2cf300996e927cec5f4dcdcc65",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\result.json"
+  },
+  {
+    "file": "server.log",
+    "bytes": 176503,
+    "sha256": "ee206ea0a82e844e3849c09c0fccf9ce2ba4509b278ec0eb60a5aa01cfa511c1",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\server.log"
+  },
+  {
+    "file": "source-integrity.json",
+    "bytes": 5494,
+    "sha256": "0c4354540134d8c65c68aea61c4a6ee1c080ca0d7d15a3efd03da67dd4c663ae",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\source-integrity.json"
+  },
+  {
+    "file": "B-02-defect-0\\prediction.png",
+    "bytes": 2949492,
+    "sha256": "51b4e93f979d92b9cd321783a087a99fb00c97cc687ebd8e8d3721e8ba3b6937",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-0\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-1\\prediction.png",
+    "bytes": 2949986,
+    "sha256": "e2b475e7e3fd6a0bf55580bc5cf13acf393e79930d698a9823f4c7eabc3bfb57",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-1\\prediction.png"
+  },
+  {
+    "file": "B-02-defect-2\\prediction.png",
+    "bytes": 2949149,
+    "sha256": "7bc95158284ef2e28a6af6b2dd5c1993d66e7e03b4f3721c32df0860d1bc8d43",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-02-defect-2\\prediction.png"
+  },
+  {
+    "file": "B-03-arc-0-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-arc-1-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-arc-2-call1\\draft-manifest.json",
+    "bytes": 20189,
+    "sha256": "9872a04bd1004cbed36d638f01281b8b81cb67ec6d13cf43b0c354d52a719581",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-arc-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-mask-0-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-0-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-mask-1-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-1-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-mask-2-call1\\mask-corrected.png",
+    "bytes": 33319,
+    "sha256": "9ed53e6f2e5ca7edbc9ac1c7f490ff19df07c04d548e8e38f9dc6f5f388634b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-mask-2-call1\\mask-corrected.png"
+  },
+  {
+    "file": "B-03-period-0-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-period-1-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-period-2-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-period-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-0-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-0-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-1-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-1-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-preserve-2-call1\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-preserve-2-call1\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-0-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-0-call2\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-1-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-1-call2\\draft-manifest.json"
+  },
+  {
+    "file": "B-03-retry-2-call2\\draft-manifest.json",
+    "bytes": 18670,
+    "sha256": "6a62989fc0f8b33d13db2e69e8b92b95fd787c2cbea26eb1610ea4dad622ffa3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\B-03-retry-2-call2\\draft-manifest.json"
+  },
+  {
+    "file": "fixture\\benchmark-base-manifest.json",
+    "bytes": 18686,
+    "sha256": "bce42b42c87c6168955f599bcbe04f9849a9dc0aff6c4f12887523f631e60485",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\fixture\\benchmark-base-manifest.json"
+  },
+  {
+    "file": "fixture\\ground-truth.json",
+    "bytes": 598,
+    "sha256": "bd05f5a0c390670cdc3da06c3f8adc3915c6cf765d21d5061fdae529b6ac38a7",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\fixture\\ground-truth.json"
+  },
+  {
+    "file": "fixture\\mask-input.png",
+    "bytes": 33663,
+    "sha256": "fe91a529c5c2e1123ec25e502c01bae51bb34ee8a493f2ccd8fb40a1485e959b",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\fixture\\mask-input.png"
+  },
+  {
+    "file": "fixture\\mask-overlay.png",
+    "bytes": 2952264,
+    "sha256": "8eddd9a24d9aedb8c9fd06eacdd19b1da2b0b9bc771d680f44ca635142d63bf9",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\llm-1794300277489923900\\fixture\\mask-overlay.png"
+  }
+]

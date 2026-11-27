@@ -1,0 +1,245 @@
+{
+  "run": ".local\\kre00\\runs\\correction-1794549945059",
+  "qa": ".local\\kre00\\runs\\correction-1794549945059\\browser-qa-1794550024834",
+  "artifacts": [
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/authoring-brief.md",
+      "bytes": 2984,
+      "sha256": "32b69d91cc8d44d0bbecc0a96f0f70338720877f1306e2a4b8928dcac390ed76"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/B-04-1024-500.png",
+      "bytes": 905348,
+      "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/backing-fill-mask.png",
+      "bytes": 2414,
+      "sha256": "7a82d1ebdd96b8d2a32f96918ecd5cf8a35e984747712baedf55c05c5f492216"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/backing.png",
+      "bytes": 898417,
+      "sha256": "e3194cce73adcabd8dc82304896693812d3fec6352b9664b80e512f70d5f6e1e"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/black.svg",
+      "bytes": 105,
+      "sha256": "47be07d35d42d7167c50f6b00860d2494177d6aca1ecd5b769bef807114d66ce"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/flow-0.png",
+      "bytes": 56852,
+      "sha256": "73f40e6928cd30f59ad5a1e5c555600770a9ea9965cbdf4f136d8c5d916ed9cc"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/flow-1.png",
+      "bytes": 56397,
+      "sha256": "ef3881641aec53d6c8ace62c36c32b6b43d4dbaef0108e3b25c51f0c758fa3fc"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/flow-4.png",
+      "bytes": 55117,
+      "sha256": "9e7de478a2fb1bd9c01fbf7295d60015ab98677689274f7a0195c4158de9edfe"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-0.png",
+      "bytes": 61116,
+      "sha256": "64dd5b8ea9832e25338e33b474fb0df29301dfbb73602e8606cd514ed88e5e48"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-1079.png",
+      "bytes": 1121743,
+      "sha256": "ccc4fd40c4e5288752b2c7a9206844a518d2b01eab0c54d1f8d9f05abca54704"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-119.png",
+      "bytes": 60023,
+      "sha256": "97bf2b0134714b0dd7122abee8c1b36f0e1be1ca9034c360a6fab6bcf51c988b"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-1199.png",
+      "bytes": 1058518,
+      "sha256": "42317a4b8405e06f06c73b6e7540befa25164af4b62210adf68db4a93eaf5d4a"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-1319.png",
+      "bytes": 590876,
+      "sha256": "a89911cfbd91c59c23b25ccd522e4f5723ece859f247c27b58c2fad973d69bcd"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-1439.png",
+      "bytes": 56344,
+      "sha256": "74cbcdaea56a273bf754a753c6478d738bc6feb4ad74c4209dc3f8bf375dc55f"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-239.png",
+      "bytes": 1071326,
+      "sha256": "38c8a9de3dfe172f90aa6f01b5c6b015447aad6a0031f983e10c79d58ba8e188"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-359.png",
+      "bytes": 1160822,
+      "sha256": "9b896ebc017ebf4f69c4dd1597518a8fe7a8ad1542ae00db04d727dd0ab5dedb"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-419.png",
+      "bytes": 1192842,
+      "sha256": "d1501577c4441fa1893bcf2c750015fa6f5b2b5975ed5f0e4cd74000ba95f0fb"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-479.png",
+      "bytes": 1215962,
+      "sha256": "b904a67ad7a4bf345f87c15fff8e4c42999c1fe712fa550fa96abc2cc1a26d50"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-59.png",
+      "bytes": 60757,
+      "sha256": "0b1c9ad8ac81aaafe53532e37bd16ff3d296ec0724b1851f085790c70d865489"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-599.png",
+      "bytes": 1234854,
+      "sha256": "d56e99d3ac5ad2abbc7e220c6b6d9b1424e3975daa60d5b6ace72428a85f360c"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-719.png",
+      "bytes": 1130805,
+      "sha256": "0b496cb1b16349eabcb88a247a07377c980f32ee4eda3e91cd7e4840d9730fe7"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-839.png",
+      "bytes": 1128920,
+      "sha256": "870408a3cd242c3e0f7b25eeaa6b582c594c6a7b58f8442e89ff2dbd94627d55"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/frame-959.png",
+      "bytes": 1117693,
+      "sha256": "237866f74a8231afb2d71f42b30bcb93d9db08ae833392fe24a84143803791a1"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/initial-blackout.png",
+      "bytes": 61061,
+      "sha256": "ebd23703949725015768e65eb1e1c4a075927cf80e0d3ffa7f035f717c9d9c84"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/motion.webm",
+      "bytes": 5954234,
+      "sha256": "1e796e36f4875b7ae29451f3bd61b59eb553e3553fb982d188bc65a9b31d5d13"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/pillar-crossing.png",
+      "bytes": 1192842,
+      "sha256": "d1501577c4441fa1893bcf2c750015fa6f5b2b5975ed5f0e4cd74000ba95f0fb"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/reset.png",
+      "bytes": 61061,
+      "sha256": "ebd23703949725015768e65eb1e1c4a075927cf80e0d3ffa7f035f717c9d9c84"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/browser-qa-1794550024834/result.json",
+      "bytes": 93595,
+      "sha256": "0d3e7fff1b11661aa7c33fdc0059e0faf24a077b887a6a2d0c80b2dc5ba6f7a9"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction-fill-worker.txt",
+      "bytes": 39,
+      "sha256": "2198668390b9bbc3392c911766fb4906751a69e53bfac4c9e7c818b0af3a6603"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction-fill.json",
+      "bytes": 531,
+      "sha256": "16d2113f26782d70d8bff3fd3776d1dd2b23804dcc9d1d4ef776df9e0b062442"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction-occlude-worker.txt",
+      "bytes": 1486,
+      "sha256": "8c4b26f72b5025a7062141e4aedf32d3931085044f77c7856e9220bd3422e3d8"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction-occlude.json",
+      "bytes": 1190,
+      "sha256": "3d842c99b0967e7e4f3745bb4d51830b81f5183de0712555a8fe39b188ce75a6"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction-result.json",
+      "bytes": 2665,
+      "sha256": "ee2590b8f4b4ac49fa5322628479359e9309d99b64f80cb2a4782e169ce0b019"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/correction.json",
+      "bytes": 3933,
+      "sha256": "35d3e7b642469afe063701642037a285b55d27ad137211df633f66132b9659bf"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/east-light-mask.png",
+      "bytes": 4845,
+      "sha256": "06fdf6842d80aeede805c8de05a816d6245b8e3cca50f3e124995fd94e0257a4"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/fill-command.json",
+      "bytes": 346,
+      "sha256": "383519568b6f365415269f827e7665ce94381eb6e8eba770e7206d551c34eb15"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/gate-light-mask.png",
+      "bytes": 5468,
+      "sha256": "8612a0e3452c2be9eb5b29d20546f33a259d98ad1a1550917e44f5cacf9f48f1"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/light-mask.png",
+      "bytes": 992,
+      "sha256": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/mask-overlay.webp",
+      "bytes": 112780,
+      "sha256": "2267c40bdcf03ed6d3bd3254e9b49c5f69a5cc656838613087c1e7b954c51d5c"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/material-delay.png",
+      "bytes": 16229,
+      "sha256": "9d67feee1db02806e51b26503bf8dd5adf63167d31d380c51db8f32985f0ddf7"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/object-mask.png",
+      "bytes": 1063,
+      "sha256": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/occlude-command.json",
+      "bytes": 360,
+      "sha256": "ea4101f97388f65cefd0f3cd1ef054cbff8d5ef6475558c237389d7e7d8c8a66"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/occlusion-mask.png",
+      "bytes": 2576,
+      "sha256": "2b65890f070209036d9642bc03a4b0b50ff4342d4307b05392904508cc45cffb"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/preview-manifest.json",
+      "bytes": 6770,
+      "sha256": "4e69bd996489307f881f46342e3fc921402c7fc2a5e6410b5ae3074a653cf03d"
+    },
+    {
+      "path": ".local/kre00/runs/correction-1794549945059/west-light-mask.png",
+      "bytes": 3695,
+      "sha256": "0869db2caaf512714e6f40ec784966da884a33689757d02c53ca9a51cff3db7d"
+    }
+  ],
+  "sourceHashes": {
+    "pilot-materials.mjs": "af6ec050b1e4ca8a1fa1a1d3157dfc2184428d8ba3d6857276da33ab8f7ed62f",
+    "pilot-materials.test.mjs": "d5ee80f03284d3ac277bfa6ca515adc1f894f71655255078773934f508ccdd22",
+    "pilot-correction.json": "f8025a1b3775e8cdd9e3b6885e82941da35af01383ad5a11973fda86bf898d05",
+    "pilot-correction.py": "662a20e4ece113f68a42377b1a3e6f5df6b3993d1c91cadf6b88281c7ca9c80c",
+    "correct-pilot.mjs": "46d74512d3de9eb8564f41402cb4a6d651dae6fc200844d91dafcda66fb25ff4",
+    "corrected-package.mjs": "0f6c5213fbf6fc8709f9079b3064495a9a4c252c4595e5b2b124340453015e93",
+    "corrected-authoring-brief.md": "a8a05c0b5bb1c764875fb80debe2942303dc1456c94ea1aa2a35fff9ad7c29a6",
+    "preview-browser.mjs": "1f803ea27b17ef99613b770e3b506503b583f97728ebfe4b04a5758f4211e1e8",
+    "preview.browser.mjs": "d6369dbc6b053945aa75543d55071e9ab63d7995ae6557594253620d48d9b9cc",
+    "image_ops.py": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+    "archive-correction.mjs": "0bbad96a83920f29e66b4c8ce7fca0b4baa3d675639ef41b70783212b5990745",
+    "artwork-authoring-guidelines.md": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "source": ".local\\kre00\\runs\\sequence-1794306220653822400\\job-0",
+  "recipe": "reviewed-gate-drone-v2",
+  "sourceHashesBefore": {
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9",
+    "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812"
+  },
+  "sourceHashesAfter": {
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9",
+    "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812"
+  },
+  "sourceUnchanged": true,
+  "stages": [
+    {
+      "stage": "occlude",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "occlude",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\correction-1794549945059"
+      ],
+      "exitCode": 0,
+      "wallSeconds": 5.44
+    },
+    {
+      "stage": "fill",
+      "command": [
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+        "-B",
+        "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+        "fill",
+        "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\correction-1794549945059"
+      ],
+      "exitCode": 0,
+      "wallSeconds": 9.479
+    }
+  ],
+  "materialPixels": [
+    1741,
+    2557,
+    1943
+  ],
+  "artifacts": {
+    "black.svg": "47be07d35d42d7167c50f6b00860d2494177d6aca1ecd5b769bef807114d66ce",
+    "backing.png": "e3194cce73adcabd8dc82304896693812d3fec6352b9664b80e512f70d5f6e1e",
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9",
+    "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+    "occlusion-mask.png": "2b65890f070209036d9642bc03a4b0b50ff4342d4307b05392904508cc45cffb",
+    "material-delay.png": "9d67feee1db02806e51b26503bf8dd5adf63167d31d380c51db8f32985f0ddf7",
+    "west-light-mask.png": "0869db2caaf512714e6f40ec784966da884a33689757d02c53ca9a51cff3db7d",
+    "gate-light-mask.png": "8612a0e3452c2be9eb5b29d20546f33a259d98ad1a1550917e44f5cacf9f48f1",
+    "east-light-mask.png": "06fdf6842d80aeede805c8de05a816d6245b8e3cca50f3e124995fd94e0257a4"
+  },
+  "scope": "Manually authored selections of this seed-500 image; not an autonomous scene locator"
+}

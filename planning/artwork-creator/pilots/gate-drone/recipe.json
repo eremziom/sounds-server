@@ -1,0 +1,1740 @@
+{
+  "version": 1,
+  "title": "KRE-03 Night Garden Flight",
+  "brief": {
+    "intent": "KRE-03 layered night garden with an integral flying survey drone",
+    "guidelinesVersion": "1.7",
+    "guidelinesPath": "apps/ui/src/engines/infinite-zoom/artwork-authoring-guidelines.md",
+    "composition": "Dark alien garden and mossed stone gateway at right, thick foreground pillar near x=68%; small compact cyan drone at x=25%, y=45%, width 10%; open middle flight space.",
+    "motionPlan": "Separate drone visibility and lamp layers; 24-second curved left-to-right flight behind the right pillar, tangent rotation about measured mask centroid; inpaint its entire revealed backing. No searchlight beam, trail or baked glow.",
+    "lightingPlan": "Many dozens of fine stone fissures and leaf-vein bands across three garden groups; saturated cyan-magenta-amber gradients along material, dark gaps preserved; distinct visibility, influence and delay maps, staggered local impulses and bass binding.",
+    "blackoutPlan": "Opaque black coverage; independently animated garden details and drone lamps remain visible from the start while environment and hull reach zero opacity. Smooth eight-second reveal and return; pause and zoom QA required.",
+    "qaPlan": "Inspect mask contours, inpainted backing, full curved flight, pillar occlusion, color cycles/propagation, blackout/reveal shadows, zoom, pause/reset and portrait/wide coverage. Record motion and uncertain boundaries; no still-only acceptance."
+  },
+  "steps": [
+    {
+      "key": "source",
+      "tool": "generateImage",
+      "arguments": {
+        "prompt": "Wide cinematic painterly night conservatory. Textured stone portal and thick near pillar at right, fine luminous moss fissures and leaf veins in multiple foreground and distant groups, strong cyan magenta amber material gradients. One small compact survey drone at left-middle x25% y45%, width10%, crisp silhouette, separate tiny lamps. Clear flight space and coherent garden behind it. No spotlight cone, beam, trail, fog, floating particles, detached dots, text or watermark.",
+        "seed": 785,
+        "width": 1024,
+        "height": 576
+      },
+      "inputs": []
+    },
+    {
+      "key": "object-mask",
+      "tool": "segmentObject",
+      "arguments": {
+        "points": [
+          {
+            "x": 350,
+            "y": 247,
+            "label": 1
+          },
+          {
+            "x": 308,
+            "y": 233,
+            "label": 1
+          },
+          {
+            "x": 400,
+            "y": 243,
+            "label": 1
+          },
+          {
+            "x": 350,
+            "y": 205,
+            "label": 0
+          }
+        ],
+        "box": [
+          281,
+          216,
+          423,
+          286
+        ],
+        "role": "visibility-mask"
+      },
+      "inputs": [
+        "source"
+      ]
+    },
+    {
+      "key": "object-stats",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "source",
+        "object-mask"
+      ]
+    },
+    {
+      "key": "removal-mask",
+      "tool": "refineMask",
+      "arguments": {
+        "operation": "dilate",
+        "radius": 14,
+        "role": "visibility-mask"
+      },
+      "inputs": [
+        "source",
+        "object-mask"
+      ]
+    },
+    {
+      "key": "remote-left-removal",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 415,
+            "y": 183
+          },
+          {
+            "x": 440,
+            "y": 183
+          },
+          {
+            "x": 440,
+            "y": 208
+          },
+          {
+            "x": 415,
+            "y": 208
+          }
+        ]
+      },
+      "inputs": [
+        "source"
+      ]
+    },
+    {
+      "key": "remote-right-removal",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 918,
+            "y": 201
+          },
+          {
+            "x": 949,
+            "y": 201
+          },
+          {
+            "x": 949,
+            "y": 225
+          },
+          {
+            "x": 918,
+            "y": 225
+          }
+        ]
+      },
+      "inputs": [
+        "source"
+      ]
+    },
+    {
+      "key": "remote-removal",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "visibility-mask",
+        "operation": "union"
+      },
+      "inputs": [
+        "source",
+        "remote-left-removal",
+        "remote-right-removal"
+      ]
+    },
+    {
+      "key": "complete-removal",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "visibility-mask",
+        "operation": "union"
+      },
+      "inputs": [
+        "source",
+        "removal-mask",
+        "remote-removal"
+      ]
+    },
+    {
+      "key": "backing",
+      "tool": "fillBackground",
+      "arguments": {
+        "dilation": 0
+      },
+      "inputs": [
+        "source",
+        "complete-removal"
+      ]
+    },
+    {
+      "key": "pillar-mask",
+      "tool": "segmentObject",
+      "arguments": {
+        "points": [
+          {
+            "x": 700,
+            "y": 300,
+            "label": 1
+          },
+          {
+            "x": 510,
+            "y": 300,
+            "label": 0
+          }
+        ],
+        "box": [
+          580,
+          0,
+          850,
+          576
+        ],
+        "role": "occlusion-mask"
+      },
+      "inputs": [
+        "backing"
+      ]
+    },
+    {
+      "key": "object-occlusion",
+      "tool": "registerMap",
+      "arguments": {
+        "role": "occlusion-mask"
+      },
+      "inputs": [
+        "source",
+        "pillar-mask"
+      ]
+    },
+    {
+      "key": "whole-garden",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255
+      },
+      "inputs": [
+        "backing"
+      ]
+    },
+    {
+      "key": "garden-material",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 65,
+        "minSaturation": 0.5,
+        "hueFrom": 140,
+        "hueTo": 335
+      },
+      "inputs": [
+        "backing",
+        "whole-garden"
+      ]
+    },
+    {
+      "key": "west-region",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 340,
+            "y": 0
+          },
+          {
+            "x": 340,
+            "y": 576
+          },
+          {
+            "x": 0,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing"
+      ]
+    },
+    {
+      "key": "west-material",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing",
+        "garden-material",
+        "west-region"
+      ]
+    },
+    {
+      "key": "west-influence",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing",
+        "west-material"
+      ]
+    },
+    {
+      "key": "west-delay",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing",
+        "west-material"
+      ]
+    },
+    {
+      "key": "west-stats",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing",
+        "west-material"
+      ]
+    },
+    {
+      "key": "middle-region",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 341,
+            "y": 0
+          },
+          {
+            "x": 681,
+            "y": 0
+          },
+          {
+            "x": 681,
+            "y": 576
+          },
+          {
+            "x": 341,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing"
+      ]
+    },
+    {
+      "key": "middle-material",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing",
+        "garden-material",
+        "middle-region"
+      ]
+    },
+    {
+      "key": "middle-influence",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing",
+        "middle-material"
+      ]
+    },
+    {
+      "key": "middle-delay",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing",
+        "middle-material"
+      ]
+    },
+    {
+      "key": "middle-stats",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing",
+        "middle-material"
+      ]
+    },
+    {
+      "key": "east-region",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 682,
+            "y": 0
+          },
+          {
+            "x": 1023,
+            "y": 0
+          },
+          {
+            "x": 1023,
+            "y": 576
+          },
+          {
+            "x": 682,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing"
+      ]
+    },
+    {
+      "key": "east-material",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing",
+        "garden-material",
+        "east-region"
+      ]
+    },
+    {
+      "key": "east-influence",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing",
+        "east-material"
+      ]
+    },
+    {
+      "key": "east-delay",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": true
+      },
+      "inputs": [
+        "backing",
+        "east-material"
+      ]
+    },
+    {
+      "key": "east-stats",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing",
+        "east-material"
+      ]
+    },
+    {
+      "key": "drone-lamps",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 155,
+        "minSaturation": 0.25,
+        "hueFrom": 140,
+        "hueTo": 300
+      },
+      "inputs": [
+        "source",
+        "object-mask"
+      ]
+    },
+    {
+      "key": "drone-influence",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.25
+      },
+      "inputs": [
+        "source",
+        "drone-lamps"
+      ]
+    },
+    {
+      "key": "drone-delay",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "x"
+      },
+      "inputs": [
+        "source",
+        "drone-lamps"
+      ]
+    },
+    {
+      "key": "black",
+      "tool": "createColorPlate",
+      "arguments": {
+        "width": 16,
+        "height": 9,
+        "rgb": [
+          0,
+          0,
+          0
+        ]
+      },
+      "inputs": []
+    },
+    {
+      "key": "flight-removal-v2",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 277,
+            "y": 205
+          },
+          {
+            "x": 441,
+            "y": 205
+          },
+          {
+            "x": 441,
+            "y": 307
+          },
+          {
+            "x": 277,
+            "y": 307
+          }
+        ]
+      },
+      "inputs": [
+        "source"
+      ]
+    },
+    {
+      "key": "complete-removal-v2",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "visibility-mask",
+        "operation": "union"
+      },
+      "inputs": [
+        "source",
+        "flight-removal-v2",
+        "remote-removal"
+      ]
+    },
+    {
+      "key": "backing-v2",
+      "tool": "fillBackground",
+      "arguments": {
+        "dilation": 0
+      },
+      "inputs": [
+        "source",
+        "complete-removal-v2"
+      ]
+    },
+    {
+      "key": "pillar-mask-v2",
+      "tool": "segmentObject",
+      "arguments": {
+        "points": [
+          {
+            "x": 700,
+            "y": 300,
+            "label": 1
+          },
+          {
+            "x": 510,
+            "y": 300,
+            "label": 0
+          }
+        ],
+        "box": [
+          580,
+          0,
+          850,
+          576
+        ],
+        "role": "occlusion-mask"
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "whole-garden-v2",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 0,
+            "y": 205
+          },
+          {
+            "x": 605,
+            "y": 205
+          },
+          {
+            "x": 605,
+            "y": 0
+          },
+          {
+            "x": 805,
+            "y": 0
+          },
+          {
+            "x": 805,
+            "y": 250
+          },
+          {
+            "x": 1023,
+            "y": 250
+          },
+          {
+            "x": 1023,
+            "y": 575
+          },
+          {
+            "x": 0,
+            "y": 575
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "garden-material-v2",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 100,
+        "minSaturation": 0.4,
+        "hueFrom": 0,
+        "hueTo": 360
+      },
+      "inputs": [
+        "backing-v2",
+        "whole-garden-v2"
+      ]
+    },
+    {
+      "key": "west-region-v2",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 340,
+            "y": 0
+          },
+          {
+            "x": 340,
+            "y": 576
+          },
+          {
+            "x": 0,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "west-material-v2",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v2",
+        "west-region-v2"
+      ]
+    },
+    {
+      "key": "west-influence-v2",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v2"
+      ]
+    },
+    {
+      "key": "west-delay-v2",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v2"
+      ]
+    },
+    {
+      "key": "west-stats-v2",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "west-material-v2"
+      ]
+    },
+    {
+      "key": "middle-region-v2",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 341,
+            "y": 0
+          },
+          {
+            "x": 681,
+            "y": 0
+          },
+          {
+            "x": 681,
+            "y": 576
+          },
+          {
+            "x": 341,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "middle-material-v2",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v2",
+        "middle-region-v2"
+      ]
+    },
+    {
+      "key": "middle-influence-v2",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v2"
+      ]
+    },
+    {
+      "key": "middle-delay-v2",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v2"
+      ]
+    },
+    {
+      "key": "middle-stats-v2",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "middle-material-v2"
+      ]
+    },
+    {
+      "key": "east-region-v2",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 682,
+            "y": 0
+          },
+          {
+            "x": 1023,
+            "y": 0
+          },
+          {
+            "x": 1023,
+            "y": 576
+          },
+          {
+            "x": 682,
+            "y": 576
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "east-material-v2",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v2",
+        "east-region-v2"
+      ]
+    },
+    {
+      "key": "east-influence-v2",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v2"
+      ]
+    },
+    {
+      "key": "east-delay-v2",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": true
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v2"
+      ]
+    },
+    {
+      "key": "east-stats-v2",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "east-material-v2"
+      ]
+    },
+    {
+      "key": "object-occlusion-v2",
+      "tool": "registerMap",
+      "arguments": {
+        "role": "occlusion-mask"
+      },
+      "inputs": [
+        "source",
+        "pillar-mask-v2"
+      ]
+    },
+    {
+      "key": "garden-material-v3",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 60,
+        "minSaturation": 0.4,
+        "hueFrom": 0,
+        "hueTo": 360,
+        "detailRadius": 3,
+        "detailContrast": 8
+      },
+      "inputs": [
+        "backing-v2",
+        "whole-garden-v2"
+      ]
+    },
+    {
+      "key": "west-material-v3",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "west-region-v2"
+      ]
+    },
+    {
+      "key": "west-influence-v3",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v3"
+      ]
+    },
+    {
+      "key": "west-delay-v3",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v3"
+      ]
+    },
+    {
+      "key": "west-stats-v3",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "west-material-v3"
+      ]
+    },
+    {
+      "key": "middle-material-v3",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "middle-region-v2"
+      ]
+    },
+    {
+      "key": "middle-influence-v3",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v3"
+      ]
+    },
+    {
+      "key": "middle-delay-v3",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v3"
+      ]
+    },
+    {
+      "key": "middle-stats-v3",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "middle-material-v3"
+      ]
+    },
+    {
+      "key": "east-material-v3",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "east-region-v2"
+      ]
+    },
+    {
+      "key": "east-influence-v3",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v3"
+      ]
+    },
+    {
+      "key": "east-delay-v3",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": true
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v3"
+      ]
+    },
+    {
+      "key": "east-stats-v3",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "east-material-v3"
+      ]
+    },
+    {
+      "key": "west-region-v4",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 0,
+            "y": 195
+          },
+          {
+            "x": 335,
+            "y": 195
+          },
+          {
+            "x": 335,
+            "y": 410
+          },
+          {
+            "x": 225,
+            "y": 445
+          },
+          {
+            "x": 225,
+            "y": 575
+          },
+          {
+            "x": 0,
+            "y": 575
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "middle-region-v4",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 336,
+            "y": 280
+          },
+          {
+            "x": 600,
+            "y": 280
+          },
+          {
+            "x": 600,
+            "y": 0
+          },
+          {
+            "x": 830,
+            "y": 0
+          },
+          {
+            "x": 830,
+            "y": 575
+          },
+          {
+            "x": 520,
+            "y": 575
+          },
+          {
+            "x": 520,
+            "y": 470
+          },
+          {
+            "x": 336,
+            "y": 470
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "east-region-v4",
+      "tool": "createMask",
+      "arguments": {
+        "role": "visibility-mask",
+        "value": 255,
+        "polygon": [
+          {
+            "x": 831,
+            "y": 250
+          },
+          {
+            "x": 1023,
+            "y": 250
+          },
+          {
+            "x": 1023,
+            "y": 575
+          },
+          {
+            "x": 831,
+            "y": 575
+          }
+        ]
+      },
+      "inputs": [
+        "backing-v2"
+      ]
+    },
+    {
+      "key": "west-material-v4",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "west-region-v4"
+      ]
+    },
+    {
+      "key": "west-influence-v4",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v4"
+      ]
+    },
+    {
+      "key": "west-delay-v4",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v4"
+      ]
+    },
+    {
+      "key": "west-stats-v4",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "west-material-v4"
+      ]
+    },
+    {
+      "key": "middle-material-v4",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "middle-region-v4"
+      ]
+    },
+    {
+      "key": "middle-influence-v4",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v4"
+      ]
+    },
+    {
+      "key": "middle-delay-v4",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v4"
+      ]
+    },
+    {
+      "key": "middle-stats-v4",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "middle-material-v4"
+      ]
+    },
+    {
+      "key": "east-material-v4",
+      "tool": "composeMasks",
+      "arguments": {
+        "role": "material-mask",
+        "operation": "intersect"
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3",
+        "east-region-v4"
+      ]
+    },
+    {
+      "key": "east-influence-v4",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v4"
+      ]
+    },
+    {
+      "key": "east-delay-v4",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": true
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v4"
+      ]
+    },
+    {
+      "key": "east-stats-v4",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "east-material-v4"
+      ]
+    },
+    {
+      "key": "west-material-v5",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 0,
+        "minSaturation": 0,
+        "hueFrom": 330,
+        "hueTo": 80
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3"
+      ]
+    },
+    {
+      "key": "west-influence-v5",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v5"
+      ]
+    },
+    {
+      "key": "west-delay-v5",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "west-material-v5"
+      ]
+    },
+    {
+      "key": "west-stats-v5",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "west-material-v5"
+      ]
+    },
+    {
+      "key": "middle-material-v5",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 0,
+        "minSaturation": 0,
+        "hueFrom": 80,
+        "hueTo": 230
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3"
+      ]
+    },
+    {
+      "key": "middle-influence-v5",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v5"
+      ]
+    },
+    {
+      "key": "middle-delay-v5",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": false
+      },
+      "inputs": [
+        "backing-v2",
+        "middle-material-v5"
+      ]
+    },
+    {
+      "key": "middle-stats-v5",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "middle-material-v5"
+      ]
+    },
+    {
+      "key": "east-material-v5",
+      "tool": "deriveLightSelection",
+      "arguments": {
+        "minLuma": 0,
+        "minSaturation": 0,
+        "hueFrom": 230,
+        "hueTo": 330
+      },
+      "inputs": [
+        "backing-v2",
+        "garden-material-v3"
+      ]
+    },
+    {
+      "key": "east-influence-v5",
+      "tool": "buildInfluenceMap",
+      "arguments": {
+        "feather": 0.4
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v5"
+      ]
+    },
+    {
+      "key": "east-delay-v5",
+      "tool": "buildDelayMap",
+      "arguments": {
+        "direction": "y",
+        "reverse": true
+      },
+      "inputs": [
+        "backing-v2",
+        "east-material-v5"
+      ]
+    },
+    {
+      "key": "east-stats-v5",
+      "tool": "inspectSelection",
+      "arguments": {},
+      "inputs": [
+        "backing-v2",
+        "east-material-v5"
+      ]
+    }
+  ],
+  "layers": [
+    {
+      "id": "coverage",
+      "imageArtifactId": "artifact:black",
+      "maskArtifactIds": [],
+      "parameters": {}
+    },
+    {
+      "id": "environment",
+      "imageArtifactId": "artifact:backing-v2",
+      "maskArtifactIds": [],
+      "parameters": {}
+    },
+    {
+      "id": "west-lights",
+      "imageArtifactId": "artifact:backing-v2",
+      "maskArtifactIds": [
+        "artifact:west-material-v5",
+        "artifact:west-influence-v5",
+        "artifact:west-delay-v5"
+      ],
+      "parameters": {
+        "maskAssetId": "artifact:west-material-v5",
+        "behaviors": [
+          {
+            "id": "west-color",
+            "kind": "colorShift",
+            "order": 0,
+            "params": {
+              "frequencyHz": 0.125,
+              "phase": 0.5,
+              "hue": 3.141592653589793,
+              "saturation": 0.3,
+              "lightness": 0,
+              "delayMapAssetId": "artifact:west-delay-v5",
+              "travelSeconds": 3
+            }
+          },
+          {
+            "id": "west-impulse",
+            "kind": "glow",
+            "order": 1,
+            "influenceMaskAssetId": "artifact:west-influence-v5",
+            "params": {
+              "frequencyHz": 0.25,
+              "phase": 0.5,
+              "amount": 0.75,
+              "threshold": 0,
+              "sharpness": 5,
+              "intensity": 1.5
+            },
+            "modulation": [
+              {
+                "id": "west-bass",
+                "signal": "bass",
+                "operation": "multiply",
+                "priority": 0,
+                "min": 0.6,
+                "max": 1,
+                "attackSeconds": 0.04,
+                "releaseSeconds": 0.2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "middle-lights",
+      "imageArtifactId": "artifact:backing-v2",
+      "maskArtifactIds": [
+        "artifact:middle-material-v5",
+        "artifact:middle-influence-v5",
+        "artifact:middle-delay-v5"
+      ],
+      "parameters": {
+        "maskAssetId": "artifact:middle-material-v5",
+        "behaviors": [
+          {
+            "id": "middle-color",
+            "kind": "colorShift",
+            "order": 0,
+            "params": {
+              "frequencyHz": 0.125,
+              "phase": 1.8,
+              "hue": 3.141592653589793,
+              "saturation": 0.3,
+              "lightness": 0,
+              "delayMapAssetId": "artifact:middle-delay-v5",
+              "travelSeconds": 3
+            }
+          },
+          {
+            "id": "middle-impulse",
+            "kind": "glow",
+            "order": 1,
+            "influenceMaskAssetId": "artifact:middle-influence-v5",
+            "params": {
+              "frequencyHz": 0.25,
+              "phase": 1.8,
+              "amount": 0.75,
+              "threshold": 0,
+              "sharpness": 5,
+              "intensity": 1.5
+            },
+            "modulation": [
+              {
+                "id": "middle-bass",
+                "signal": "bass",
+                "operation": "multiply",
+                "priority": 0,
+                "min": 0.6,
+                "max": 1,
+                "attackSeconds": 0.04,
+                "releaseSeconds": 0.2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "east-lights",
+      "imageArtifactId": "artifact:backing-v2",
+      "maskArtifactIds": [
+        "artifact:east-material-v5",
+        "artifact:east-influence-v5",
+        "artifact:east-delay-v5"
+      ],
+      "parameters": {
+        "maskAssetId": "artifact:east-material-v5",
+        "behaviors": [
+          {
+            "id": "east-color",
+            "kind": "colorShift",
+            "order": 0,
+            "params": {
+              "frequencyHz": 0.125,
+              "phase": 3.1,
+              "hue": 3.141592653589793,
+              "saturation": 0.3,
+              "lightness": 0,
+              "delayMapAssetId": "artifact:east-delay-v5",
+              "travelSeconds": 3
+            }
+          },
+          {
+            "id": "east-impulse",
+            "kind": "glow",
+            "order": 1,
+            "influenceMaskAssetId": "artifact:east-influence-v5",
+            "params": {
+              "frequencyHz": 0.25,
+              "phase": 3.1,
+              "amount": 0.75,
+              "threshold": 0,
+              "sharpness": 5,
+              "intensity": 1.5
+            },
+            "modulation": [
+              {
+                "id": "east-bass",
+                "signal": "bass",
+                "operation": "multiply",
+                "priority": 0,
+                "min": 0.6,
+                "max": 1,
+                "attackSeconds": 0.04,
+                "releaseSeconds": 0.2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "drone",
+      "imageArtifactId": "artifact:source",
+      "maskArtifactIds": [
+        "artifact:object-mask",
+        "artifact:object-occlusion-v2"
+      ],
+      "parameters": {
+        "maskAssetId": "artifact:object-mask",
+        "occlusionMaskAssetId": "artifact:object-occlusion-v2",
+        "travel": {
+          "startSeconds": 0,
+          "durationSeconds": 24,
+          "path": {
+            "kind": "bezier",
+            "segments": [
+              {
+                "control1": {
+                  "x": 900,
+                  "y": -450
+                },
+                "control2": {
+                  "x": 2200,
+                  "y": 200
+                },
+                "to": {
+                  "x": 3400,
+                  "y": 20
+                }
+              }
+            ]
+          },
+          "easing": "ease-in-out",
+          "orientToPath": true,
+          "headingOffsetRadians": 0.4636476090008061,
+          "pivot": {
+            "pivotFromSelection": "object-stats"
+          }
+        }
+      }
+    },
+    {
+      "id": "drone-lights",
+      "imageArtifactId": "artifact:source",
+      "maskArtifactIds": [
+        "artifact:drone-lamps",
+        "artifact:drone-influence",
+        "artifact:drone-delay",
+        "artifact:object-occlusion-v2"
+      ],
+      "parameters": {
+        "maskAssetId": "artifact:drone-lamps",
+        "occlusionMaskAssetId": "artifact:object-occlusion-v2",
+        "travel": {
+          "startSeconds": 0,
+          "durationSeconds": 24,
+          "path": {
+            "kind": "bezier",
+            "segments": [
+              {
+                "control1": {
+                  "x": 900,
+                  "y": -450
+                },
+                "control2": {
+                  "x": 2200,
+                  "y": 200
+                },
+                "to": {
+                  "x": 3400,
+                  "y": 20
+                }
+              }
+            ]
+          },
+          "easing": "ease-in-out",
+          "orientToPath": true,
+          "headingOffsetRadians": 0.4636476090008061,
+          "pivot": {
+            "pivotFromSelection": "object-stats"
+          }
+        },
+        "behaviors": [
+          {
+            "id": "drone-color",
+            "kind": "colorShift",
+            "order": 0,
+            "params": {
+              "frequencyHz": 0.125,
+              "phase": 0.7,
+              "hue": 3.141592653589793,
+              "saturation": 0.3,
+              "lightness": 0,
+              "delayMapAssetId": "artifact:drone-delay",
+              "travelSeconds": 3
+            }
+          },
+          {
+            "id": "drone-impulse",
+            "kind": "glow",
+            "order": 1,
+            "influenceMaskAssetId": "artifact:drone-influence",
+            "params": {
+              "frequencyHz": 0.25,
+              "phase": 0.7,
+              "amount": 0.75,
+              "threshold": 0,
+              "sharpness": 5,
+              "intensity": 1.5
+            },
+            "modulation": [
+              {
+                "id": "drone-bass",
+                "signal": "bass",
+                "operation": "multiply",
+                "priority": 0,
+                "min": 0.6,
+                "max": 1,
+                "attackSeconds": 0.04,
+                "releaseSeconds": 0.2
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "previewControls": {
+    "environmentLayerIds": [
+      "environment",
+      "drone"
+    ],
+    "lightLayerIds": [
+      "west-lights",
+      "middle-lights",
+      "east-lights",
+      "drone-lights"
+    ]
+  }
+}

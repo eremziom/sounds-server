@@ -1,0 +1,14 @@
+{
+  "label": "job-0-encode",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "encode",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794556897229\\job-0",
+    "--pread-weights"
+  ],
+  "pid": 5336,
+  "exitCode": 0,
+  "wallSeconds": 13.14
+}

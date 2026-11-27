@@ -1,0 +1,7 @@
+{
+  "model_lock_sha256": "80de1a6a0490c26de3e9de975ad042f0c5891d032c1b9c41dde6d24fef948f92",
+  "brief_source_sha256": "f1f17ae5620a431d8d8ba378d1cc9410d9accae5abe15d31c042f11169b7d366",
+  "guidelines_sha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+  "worker_sha256": "3d80b180efde82c6723fc4c0de27b8aef2a2beaefd88885f4af669e1b611ff98",
+  "strategy": "separate encoding and generation processes, BF16, one heavy GPU worker at a time"
+}

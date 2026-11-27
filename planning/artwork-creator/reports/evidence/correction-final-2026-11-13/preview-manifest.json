@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 2,
+  "id": "kre00-corrected-pilot",
+  "version": "0.0.3",
+  "anchors": [],
+  "canvas": {
+    "width": 3840,
+    "height": 2160
+  },
+  "assets": [
+    {
+      "id": "black",
+      "uri": "/infinite-zoom/kre00/black.svg",
+      "kind": "image",
+      "width": 16,
+      "height": 9,
+      "critical": true
+    },
+    {
+      "id": "backing",
+      "uri": "/infinite-zoom/kre00/backing.png",
+      "kind": "image",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "source",
+      "uri": "/infinite-zoom/kre00/B-04-1024-500.png",
+      "kind": "image",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "object",
+      "uri": "/infinite-zoom/kre00/object-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "lights",
+      "uri": "/infinite-zoom/kre00/light-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "occlusion",
+      "uri": "/infinite-zoom/kre00/occlusion-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "delay",
+      "uri": "/infinite-zoom/kre00/material-delay.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "west",
+      "uri": "/infinite-zoom/kre00/west-light-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "gate",
+      "uri": "/infinite-zoom/kre00/gate-light-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    },
+    {
+      "id": "east",
+      "uri": "/infinite-zoom/kre00/east-light-mask.png",
+      "kind": "mask",
+      "width": 1024,
+      "height": 576,
+      "critical": true
+    }
+  ],
+  "layers": [
+    {
+      "id": "coverage",
+      "zIndex": 0,
+      "imageAssetId": "black",
+      "behaviors": [],
+      "regions": []
+    },
+    {
+      "id": "environment",
+      "zIndex": 1,
+      "imageAssetId": "backing",
+      "behaviors": [],
+      "regions": []
+    },
+    {
+      "id": "west-lights",
+      "zIndex": 2,
+      "imageAssetId": "backing",
+      "behaviors": [
+        {
+          "id": "flow",
+          "order": 0,
+          "kind": "colorShift",
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 0.7,
+            "hue": 3.141592653589793,
+            "saturation": 0.35,
+            "lightness": 0,
+            "delayMapAssetId": "delay",
+            "travelSeconds": 3
+          }
+        },
+        {
+          "id": "impulse",
+          "order": 1,
+          "kind": "glow",
+          "params": {
+            "frequencyHz": 0.16666666666666666,
+            "phase": 0.7,
+            "amount": 0.45,
+            "threshold": 0,
+            "sharpness": 8,
+            "intensity": 1.2
+          }
+        }
+      ],
+      "regions": [],
+      "maskAssetId": "west"
+    },
+    {
+      "id": "gate-lights",
+      "zIndex": 3,
+      "imageAssetId": "backing",
+      "behaviors": [
+        {
+          "id": "flow",
+          "order": 0,
+          "kind": "colorShift",
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 0.7,
+            "hue": 3.141592653589793,
+            "saturation": 0.35,
+            "lightness": 0,
+            "delayMapAssetId": "delay",
+            "travelSeconds": 3
+          }
+        },
+        {
+          "id": "impulse",
+          "order": 1,
+          "kind": "glow",
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 2.1,
+            "amount": 0.45,
+            "threshold": 0,
+            "sharpness": 8,
+            "intensity": 1.2
+          }
+        }
+      ],
+      "regions": [],
+      "maskAssetId": "gate"
+    },
+    {
+      "id": "east-lights",
+      "zIndex": 4,
+      "imageAssetId": "backing",
+      "behaviors": [
+        {
+          "id": "flow",
+          "order": 0,
+          "kind": "colorShift",
+          "params": {
+            "frequencyHz": 0.125,
+            "phase": 0.7,
+            "hue": 3.141592653589793,
+            "saturation": 0.35,
+            "lightness": 0,
+            "delayMapAssetId": "delay",
+            "travelSeconds": 3
+          }
+        },
+        {
+          "id": "impulse",
+          "order": 1,
+          "kind": "glow",
+          "params": {
+            "frequencyHz": 0.09090909090909091,
+            "phase": 4,
+            "amount": 0.45,
+            "threshold": 0,
+            "sharpness": 8,
+            "intensity": 1.2
+          }
+        }
+      ],
+      "regions": [],
+      "maskAssetId": "east"
+    },
+    {
+      "id": "drone",
+      "zIndex": 5,
+      "imageAssetId": "source",
+      "travel": {
+        "startSeconds": 0,
+        "durationSeconds": 16,
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "pivot": {
+          "x": 1200,
+          "y": 840
+        },
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "control1": {
+                "x": 400,
+                "y": -200
+              },
+              "control2": {
+                "x": 1000,
+                "y": -80
+              },
+              "to": {
+                "x": 3200,
+                "y": 180
+              }
+            }
+          ]
+        }
+      },
+      "occlusionMaskAssetId": "occlusion",
+      "behaviors": [],
+      "regions": [],
+      "maskAssetId": "object"
+    },
+    {
+      "id": "drone-lights",
+      "zIndex": 6,
+      "imageAssetId": "source",
+      "travel": {
+        "startSeconds": 0,
+        "durationSeconds": 16,
+        "easing": "ease-in-out",
+        "orientToPath": true,
+        "pivot": {
+          "x": 1200,
+          "y": 840
+        },
+        "path": {
+          "kind": "bezier",
+          "segments": [
+            {
+              "control1": {
+                "x": 400,
+                "y": -200
+              },
+              "control2": {
+                "x": 1000,
+                "y": -80
+              },
+              "to": {
+                "x": 3200,
+                "y": 180
+              }
+            }
+          ]
+        }
+      },
+      "occlusionMaskAssetId": "occlusion",
+      "behaviors": [
+        {
+          "id": "beacon",
+          "order": 0,
+          "kind": "glow",
+          "params": {
+            "frequencyHz": 0.5,
+            "phase": 0.7,
+            "amount": 0.45,
+            "threshold": 0,
+            "sharpness": 8,
+            "intensity": 1.2
+          }
+        }
+      ],
+      "regions": [],
+      "maskAssetId": "lights"
+    }
+  ],
+  "coverage": {
+    "baseLayerId": "coverage"
+  },
+  "behaviors": []
+}

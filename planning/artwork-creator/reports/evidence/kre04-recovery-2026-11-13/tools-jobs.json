@@ -1,0 +1,183 @@
+﻿{
+    "id":  "09b021d8-30f1-42f0-9702-a5a0501fc1b8",
+    "title":  "Nocny ogrĂłd â€” dron (pilot KRE-03)",
+    "activeRevisionId":  "74077f39-d28e-4545-9e34-9438e465458d",
+    "jobs":  [
+                 {
+                     "id":  "41a153f1-9308-4361-958c-1c7fd198e30c",
+                     "tool":  "buildPreviewPackage",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  671981568,
+                                    "ramAvailableBytes":  17036767232,
+                                    "dedicatedUsedBytes":  5815304192,
+                                    "vramAvailableBytes":  11347787776,
+                                    "commitAvailableBytes":  7433097216
+                                }
+                 },
+                 {
+                     "id":  "be40878a-8e77-4893-afe9-90d5aaa7c0c1",
+                     "tool":  "segmentObject",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  527581184,
+                                    "ramAvailableBytes":  16386641920,
+                                    "dedicatedUsedBytes":  5657460736,
+                                    "vramAvailableBytes":  11505631232,
+                                    "commitAvailableBytes":  6925946880
+                                }
+                 },
+                 {
+                     "id":  "c285b6d5-3511-47dd-a425-f38f4422b80e",
+                     "tool":  "deriveLightSelection",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16726949888,
+                                    "dedicatedUsedBytes":  5879488512,
+                                    "vramAvailableBytes":  11283603456,
+                                    "commitAvailableBytes":  6999531520
+                                }
+                 },
+                 {
+                     "id":  "a65f564a-cea5-406a-a071-3ee9f601a55b",
+                     "tool":  "extractLayer",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16377831424,
+                                    "dedicatedUsedBytes":  5829681152,
+                                    "vramAvailableBytes":  11333410816,
+                                    "commitAvailableBytes":  6762647552
+                                }
+                 },
+                 {
+                     "id":  "54941af6-aa17-47d0-8d9f-b9648d8427d4",
+                     "tool":  "fillBackground",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16419106816,
+                                    "dedicatedUsedBytes":  5890498560,
+                                    "vramAvailableBytes":  11272593408,
+                                    "commitAvailableBytes":  6745612288
+                                }
+                 },
+                 {
+                     "id":  "ab5601be-8d62-4a76-8d98-31d36e6c6c2b",
+                     "tool":  "buildInfluenceMap",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16734138368,
+                                    "dedicatedUsedBytes":  5877137408,
+                                    "vramAvailableBytes":  11285954560,
+                                    "commitAvailableBytes":  7056805888
+                                }
+                 },
+                 {
+                     "id":  "da6d1c8b-beed-4b15-b9ba-7c14d914db86",
+                     "tool":  "createMask",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16728748032,
+                                    "dedicatedUsedBytes":  5868486656,
+                                    "vramAvailableBytes":  11294605312,
+                                    "commitAvailableBytes":  7053074432
+                                }
+                 },
+                 {
+                     "id":  "2cc9d03b-97c9-4d73-9c22-68645b12a871",
+                     "tool":  "buildDelayMap",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16714887168,
+                                    "dedicatedUsedBytes":  5865070592,
+                                    "vramAvailableBytes":  11298021376,
+                                    "commitAvailableBytes":  7053832192
+                                }
+                 },
+                 {
+                     "id":  "1add9dfe-a930-4d13-bea7-ae5311f05fe6",
+                     "tool":  "createColorPlate",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  726646784,
+                                    "ramAvailableBytes":  16689725440,
+                                    "dedicatedUsedBytes":  5900992512,
+                                    "vramAvailableBytes":  11262099456,
+                                    "commitAvailableBytes":  6956519424
+                                }
+                 },
+                 {
+                     "id":  "f5c89ec9-4803-4e72-beca-92d2d1576424",
+                     "tool":  "buildPreviewPackage",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  697155584,
+                                    "ramAvailableBytes":  16245923840,
+                                    "dedicatedUsedBytes":  5861670912,
+                                    "vramAvailableBytes":  11301421056,
+                                    "commitAvailableBytes":  6764822528
+                                }
+                 },
+                 {
+                     "id":  "c1845e9c-e6ce-410b-85f0-2fbfee5996d1",
+                     "tool":  "buildPreviewPackage",
+                     "state":  "succeeded",
+                     "phase":  "succeeded",
+                     "errorCode":  null,
+                     "memory":  {
+                                    "adapter":  "AMD Radeon RX 7800 XT",
+                                    "adapterKey":  "luid_0x00000000_0x0000dddb",
+                                    "sharedUsedBytes":  697155584,
+                                    "ramAvailableBytes":  16351969280,
+                                    "dedicatedUsedBytes":  5878710272,
+                                    "vramAvailableBytes":  11284381696,
+                                    "commitAvailableBytes":  6710489088
+                                }
+                 }
+             ]
+}

@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "pnpm --parallel --filter api --filter ui dev",
     "dev:api": "pnpm --filter api dev",
+    "artwork:worker": "pnpm --filter api artwork:worker",
     "dev:ui": "pnpm --filter ui dev",
     "build": "pnpm -r build",
     "format": "pnpm -r format",

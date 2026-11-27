@@ -1,0 +1,15 @@
+Downloading weights.gguf
+Downloading weights.gguf
+test_bad_download_does_not_become_usable_weights (test_kre00.EvidenceTests.test_bad_download_does_not_become_usable_weights) ... ok
+test_network_timeout_never_promotes_partial_weights (test_kre00.EvidenceTests.test_network_timeout_never_promotes_partial_weights) ... ok
+test_preserves_previous_evidence (test_kre00.EvidenceTests.test_preserves_previous_evidence) ... ok
+test_real_process_memory_high_water_mark (test_kre00.EvidenceTests.test_real_process_memory_high_water_mark) ... ok
+test_refuses_under_sampled_measurement (test_kre00.EvidenceTests.test_refuses_under_sampled_measurement) ... ok
+test_rejects_corrupted_cached_weights_without_network (test_kre00.EvidenceTests.test_rejects_corrupted_cached_weights_without_network) ... ok
+test_summary_does_not_hide_outlier (test_kre00.EvidenceTests.test_summary_does_not_hide_outlier) ... ok
+test_valid_cached_weights_are_reused (test_kre00.EvidenceTests.test_valid_cached_weights_are_reused) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.016s
+
+OK

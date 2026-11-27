@@ -1,0 +1,428 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\llama\\b12110\\llama-server.exe",
+    "-m",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "--mmproj",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\mmproj-F16.gguf",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18790",
+    "-ngl",
+    "99",
+    "--device",
+    "Vulkan0",
+    "-c",
+    "16384",
+    "--jinja",
+    "--parallel",
+    "1",
+    "-lv",
+    "4"
+  ],
+  "model_sha256": "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8",
+  "projector_sha256": "f70dc3509053962b0d0d3ee8a7eacebf5d60aa560cad78254ae8698516ae029f",
+  "guidelines": "apps\\ui\\src\\engines\\infinite-zoom\\artwork-authoring-guidelines.md",
+  "guidelines_sha256": "d40889b3fe0c467f907f7f6033096fc41c7aa8c3cacb1c28b17827b74c1c4789",
+  "quality": "not-reviewed",
+  "ram_peak_bytes": 5446742016,
+  "vram_peak_bytes": null,
+  "telemetry_note": "RAM: native server process only; exact VRAM peak not instrumented, sampled WDDM maxima recorded separately",
+  "cases": [
+    {
+      "id": "B-09-plan",
+      "index": 0,
+      "request": {
+        "model": "local",
+        "seed": 700,
+        "temperature": 0.1,
+        "max_tokens": 500,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "queuePilot",
+              "description": "Kolejkuj istniejący brief bramy/drona: generacja -> SAM -> maska materiału -> LaMa. Zwraca stan queued, nie gotowy artwork.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "seed": {
+                    "type": "integer",
+                    "enum": [
+                      500
+                    ]
+                  },
+                  "width": {
+                    "type": "integer",
+                    "enum": [
+                      1024
+                    ]
+                  },
+                  "height": {
+                    "type": "integer",
+                    "enum": [
+                      576
+                    ]
+                  }
+                },
+                "required": [
+                  "seed",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Wywołuj tylko dostępne narzędzia. Stan queued oznacza przyjęty plan, nie wykonane obrazy. Nie deklaruj sukcesu generacji bez artefaktów."
+          },
+          {
+            "role": "user",
+            "content": "Zleć stały pilot KRE-00 według gotowego briefu bramy i drona: seed 500, 1024x576. Sekwencja ma wygenerować draft, wydzielić drona SAM, przygotować osobną maskę świateł i uzupełnić tło LaMa. Maski wymagają późniejszej oceny. Nie zmieniaj muzyki ani scen aplikacji."
+          }
+        ]
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "queuePilot",
+                    "arguments": "{\"seed\":500,\"width\":1024,\"height\":576}"
+                  },
+                  "id": "bUlsSAkAu8tvQWX9yIFc1dVE9WbX1bP8"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794306172,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 59,
+          "prompt_tokens": 481,
+          "total_tokens": 540,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-ZMQ00Eyvydblehj1gbhIG81YXnjjkfcc",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 481,
+          "prompt_ms": 407.192,
+          "prompt_per_token_ms": 0.8465530145530146,
+          "prompt_per_second": 1181.2609285054716,
+          "predicted_n": 59,
+          "predicted_ms": 708.865,
+          "predicted_per_token_ms": 12.221810344827587,
+          "predicted_per_second": 81.82093910688212
+        }
+      },
+      "request_seconds": 1.127083400000629,
+      "tool_execution": {
+        "name": "queuePilot",
+        "result": {
+          "id": 0,
+          "state": "queued",
+          "arguments": {
+            "seed": 500,
+            "width": 1024,
+            "height": 576
+          },
+          "recipe": "fixed-gate-drone-v1",
+          "selection_policy": "Manual reviewed point/box for this known seed; not free-form scene localization"
+        }
+      }
+    },
+    {
+      "id": "B-09-plan",
+      "index": 1,
+      "request": {
+        "model": "local",
+        "seed": 701,
+        "temperature": 0.1,
+        "max_tokens": 500,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "queuePilot",
+              "description": "Kolejkuj istniejący brief bramy/drona: generacja -> SAM -> maska materiału -> LaMa. Zwraca stan queued, nie gotowy artwork.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "seed": {
+                    "type": "integer",
+                    "enum": [
+                      500
+                    ]
+                  },
+                  "width": {
+                    "type": "integer",
+                    "enum": [
+                      1024
+                    ]
+                  },
+                  "height": {
+                    "type": "integer",
+                    "enum": [
+                      576
+                    ]
+                  }
+                },
+                "required": [
+                  "seed",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Wywołuj tylko dostępne narzędzia. Stan queued oznacza przyjęty plan, nie wykonane obrazy. Nie deklaruj sukcesu generacji bez artefaktów."
+          },
+          {
+            "role": "user",
+            "content": "Zleć stały pilot KRE-00 według gotowego briefu bramy i drona: seed 500, 1024x576. Sekwencja ma wygenerować draft, wydzielić drona SAM, przygotować osobną maskę świateł i uzupełnić tło LaMa. Maski wymagają późniejszej oceny. Nie zmieniaj muzyki ani scen aplikacji."
+          }
+        ]
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "queuePilot",
+                    "arguments": "{\"seed\":500,\"width\":1024,\"height\":576}"
+                  },
+                  "id": "SrQqPuMfaJ0BVtjxtkAyMpyJHN3GYtJJ"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794306173,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 59,
+          "prompt_tokens": 481,
+          "total_tokens": 540,
+          "prompt_tokens_details": {
+            "cached_tokens": 477
+          }
+        },
+        "id": "chatcmpl-TmZRI33RVovwBvRr3EHrJMggbba1p6iU",
+        "timings": {
+          "cache_n": 477,
+          "prompt_n": 4,
+          "prompt_ms": 44.934,
+          "prompt_per_token_ms": 11.2335,
+          "prompt_per_second": 89.01945074998888,
+          "predicted_n": 59,
+          "predicted_ms": 718.823,
+          "predicted_per_token_ms": 12.3935,
+          "predicted_per_second": 80.6874571347884
+        }
+      },
+      "request_seconds": 0.7673875999989832,
+      "tool_execution": {
+        "name": "queuePilot",
+        "result": {
+          "id": 1,
+          "state": "queued",
+          "arguments": {
+            "seed": 500,
+            "width": 1024,
+            "height": 576
+          },
+          "recipe": "fixed-gate-drone-v1",
+          "selection_policy": "Manual reviewed point/box for this known seed; not free-form scene localization"
+        }
+      }
+    },
+    {
+      "id": "B-09-plan",
+      "index": 2,
+      "request": {
+        "model": "local",
+        "seed": 702,
+        "temperature": 0.1,
+        "max_tokens": 500,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "queuePilot",
+              "description": "Kolejkuj istniejący brief bramy/drona: generacja -> SAM -> maska materiału -> LaMa. Zwraca stan queued, nie gotowy artwork.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "seed": {
+                    "type": "integer",
+                    "enum": [
+                      500
+                    ]
+                  },
+                  "width": {
+                    "type": "integer",
+                    "enum": [
+                      1024
+                    ]
+                  },
+                  "height": {
+                    "type": "integer",
+                    "enum": [
+                      576
+                    ]
+                  }
+                },
+                "required": [
+                  "seed",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Wywołuj tylko dostępne narzędzia. Stan queued oznacza przyjęty plan, nie wykonane obrazy. Nie deklaruj sukcesu generacji bez artefaktów."
+          },
+          {
+            "role": "user",
+            "content": "Zleć stały pilot KRE-00 według gotowego briefu bramy i drona: seed 500, 1024x576. Sekwencja ma wygenerować draft, wydzielić drona SAM, przygotować osobną maskę świateł i uzupełnić tło LaMa. Maski wymagają późniejszej oceny. Nie zmieniaj muzyki ani scen aplikacji."
+          }
+        ]
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "queuePilot",
+                    "arguments": "{\"seed\":500,\"width\":1024,\"height\":576}"
+                  },
+                  "id": "6080jDLbcxk41cl8lh2vBdJwrmI7Qz3F"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794306174,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 59,
+          "prompt_tokens": 481,
+          "total_tokens": 540,
+          "prompt_tokens_details": {
+            "cached_tokens": 477
+          }
+        },
+        "id": "chatcmpl-beyQ01vCvsfLfXfOKq3pRHO19KPqblDP",
+        "timings": {
+          "cache_n": 477,
+          "prompt_n": 4,
+          "prompt_ms": 43.909,
+          "prompt_per_token_ms": 10.97725,
+          "prompt_per_second": 91.09749709626728,
+          "predicted_n": 59,
+          "predicted_ms": 710.043,
+          "predicted_per_token_ms": 12.242120689655172,
+          "predicted_per_second": 81.68519371362015
+        }
+      },
+      "request_seconds": 0.7582916999999725,
+      "tool_execution": {
+        "name": "queuePilot",
+        "result": {
+          "id": 2,
+          "state": "queued",
+          "arguments": {
+            "seed": 500,
+            "width": 1024,
+            "height": 576
+          },
+          "recipe": "fixed-gate-drone-v1",
+          "selection_policy": "Manual reviewed point/box for this known seed; not free-form scene localization"
+        }
+      }
+    }
+  ],
+  "probe_source_hashes": {
+    "kre00.py": "42574b5a1b4fa2a9d9b6a34b6e376a95a21527c668422b9cc9468853ebf6c347",
+    "capability_probes.py": "f86b49166a32e2d4470cd718a4d1d0e0391ebc5f2a5ab6146a9527262380cf3c",
+    "benchmark-tools.mjs": "eaf9b00a33a36a249f7e9cb506d77f3de0d790b6a0394001b38b1bd51e9d7465",
+    "gpu-telemetry.ps1": "212a7dd8cd8e89de483c87e57f7a2818a148673b0db65dc085fd008107881b75"
+  },
+  "process_to_ready_seconds": 4.0895543999995425,
+  "queued_jobs": 3,
+  "scope": "Fixed pilot queue, real model call and executed disk write; heavy workers run only after LLM unload",
+  "process_memory_before_shutdown": {
+    "peak_working_set_bytes": 5446742016,
+    "working_set_bytes": 5446742016,
+    "peak_commit_bytes": 8037347328
+  },
+  "process_shutdown_seconds": 0.5690673000008246,
+  "exit_code": 1,
+  "gpu_telemetry_exit_code": 0,
+  "gpu_observed": {
+    "samples": 6,
+    "max_process_dedicated_bytes_all_adapters": 7070023680,
+    "last_process_dedicated_bytes_all_adapters": 0,
+    "first_sample_seconds_after_sampler_start": 5.6718991,
+    "max_sample_gap_seconds": 1.0775188999999994,
+    "note": "Windows WDDM sampled counters, all adapters for owned PID; not an exact allocation peak or physical GPU mapping"
+  }
+}

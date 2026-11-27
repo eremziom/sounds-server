@@ -1,0 +1,54 @@
+{
+  "checks": {
+    "realApi": true,
+    "realJwt": true,
+    "realWorker": true,
+    "modelInference": true,
+    "sourceGenerationInference": false,
+    "starterImported": true,
+    "blackout": {
+      "black": 916641,
+      "lit": 99113,
+      "pixels": 1024000
+    },
+    "pause": true,
+    "sameContext": true,
+    "reload": true,
+    "layeredProduction": true,
+    "productionProjectId": "09b021d8-30f1-42f0-9702-a5a0501fc1b8"
+  },
+  "starterProjectId": "934837e5-8848-41ec-a8ae-7d650eaad593",
+  "events": [
+    {
+      "tool": "buildPreviewPackage",
+      "jobId": "1e2f90d9-efea-4deb-82c5-2e9f6bfcc9ed",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 641437696,
+        "ramAvailableBytes": 16985993216,
+        "dedicatedUsedBytes": 5825257472,
+        "vramAvailableBytes": 11337834496,
+        "commitAvailableBytes": 7430729728
+      }
+    },
+    {
+      "tool": "buildPreviewPackage",
+      "jobId": "c1845e9c-e6ce-410b-85f0-2fbfee5996d1",
+      "state": "succeeded",
+      "phase": "succeeded",
+      "memory": {
+        "adapter": "AMD Radeon RX 7800 XT",
+        "adapterKey": "luid_0x00000000_0x0000dddb",
+        "sharedUsedBytes": 697155584,
+        "ramAvailableBytes": 16351969280,
+        "dedicatedUsedBytes": 5878710272,
+        "vramAvailableBytes": 11284381696,
+        "commitAvailableBytes": 6710489088
+      }
+    }
+  ],
+  "scope": "Real API/JWT/worker, private database; no publication"
+}

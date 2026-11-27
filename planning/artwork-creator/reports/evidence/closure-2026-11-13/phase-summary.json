@@ -1,0 +1,223 @@
+{
+  "phases": {
+    "baseline": {
+      "samples": 4,
+      "maxDedicatedBytes": 5891760128,
+      "minAvailableRamBytes": 18557050880,
+      "minCommitHeadroomBytes": 4721405952
+    },
+    "qwen": {
+      "samples": 15,
+      "maxDedicatedBytes": 12936499200,
+      "minAvailableRamBytes": 12868009984,
+      "minCommitHeadroomBytes": 348835840
+    },
+    "qwen-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5887303680,
+      "minAvailableRamBytes": 18568773632,
+      "minCommitHeadroomBytes": 7856242688
+    },
+    "job-0-encode": {
+      "samples": 12,
+      "maxDedicatedBytes": 14421078016,
+      "minAvailableRamBytes": 11217678336,
+      "minCommitHeadroomBytes": 569229312
+    },
+    "job-0-encode-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5887303680,
+      "minAvailableRamBytes": 19059023872,
+      "minCommitHeadroomBytes": 7882117120
+    },
+    "job-0-latent": {
+      "samples": 14,
+      "maxDedicatedBytes": 14808461312,
+      "minAvailableRamBytes": 10703511552,
+      "minCommitHeadroomBytes": 786563072
+    },
+    "job-0-latent-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5872623616,
+      "minAvailableRamBytes": 19116613632,
+      "minCommitHeadroomBytes": 8099999744
+    },
+    "job-0-decode": {
+      "samples": 6,
+      "maxDedicatedBytes": 9012228096,
+      "minAvailableRamBytes": 18288091136,
+      "minCommitHeadroomBytes": 2709200896
+    },
+    "job-0-decode-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5867380736,
+      "minAvailableRamBytes": 19069009920,
+      "minCommitHeadroomBytes": 7893368832
+    },
+    "job-0-occlude": {
+      "samples": 6,
+      "maxDedicatedBytes": 7579947008,
+      "minAvailableRamBytes": 18233872384,
+      "minCommitHeadroomBytes": 2868523008
+    },
+    "job-0-occlude-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5871050752,
+      "minAvailableRamBytes": 19075883008,
+      "minCommitHeadroomBytes": 7886962688
+    },
+    "job-0-fill": {
+      "samples": 10,
+      "maxDedicatedBytes": 5870526464,
+      "minAvailableRamBytes": 18643607552,
+      "minCommitHeadroomBytes": 6812012544
+    },
+    "job-0-fill-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5879701504,
+      "minAvailableRamBytes": 19055542272,
+      "minCommitHeadroomBytes": 7871995904
+    },
+    "job-1-encode": {
+      "samples": 11,
+      "maxDedicatedBytes": 14286729216,
+      "minAvailableRamBytes": 10718793728,
+      "minCommitHeadroomBytes": 403177472
+    },
+    "job-1-encode-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5857144832,
+      "minAvailableRamBytes": 19196854272,
+      "minCommitHeadroomBytes": 7916466176
+    },
+    "job-1-latent": {
+      "samples": 14,
+      "maxDedicatedBytes": 14788538368,
+      "minAvailableRamBytes": 11757252608,
+      "minCommitHeadroomBytes": 281194496
+    },
+    "job-1-latent-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5897003008,
+      "minAvailableRamBytes": 20345241600,
+      "minCommitHeadroomBytes": 7829680128
+    },
+    "job-1-decode": {
+      "samples": 6,
+      "maxDedicatedBytes": 9309769728,
+      "minAvailableRamBytes": 19490938880,
+      "minCommitHeadroomBytes": 2435182592
+    },
+    "job-1-decode-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5860302848,
+      "minAvailableRamBytes": 20312260608,
+      "minCommitHeadroomBytes": 7883194368
+    },
+    "job-1-occlude": {
+      "samples": 5,
+      "maxDedicatedBytes": 7541936128,
+      "minAvailableRamBytes": 19483512832,
+      "minCommitHeadroomBytes": 2896896000
+    },
+    "job-1-occlude-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5858467840,
+      "minAvailableRamBytes": 20174700544,
+      "minCommitHeadroomBytes": 7893467136
+    },
+    "job-1-fill": {
+      "samples": 10,
+      "maxDedicatedBytes": 5874196480,
+      "minAvailableRamBytes": 19665985536,
+      "minCommitHeadroomBytes": 6824943616
+    },
+    "job-1-fill-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5870264320,
+      "minAvailableRamBytes": 20076621824,
+      "minCommitHeadroomBytes": 7805837312
+    },
+    "job-2-encode": {
+      "samples": 12,
+      "maxDedicatedBytes": 14668550144,
+      "minAvailableRamBytes": 12403552256,
+      "minCommitHeadroomBytes": 303398912
+    },
+    "job-2-encode-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5849817088,
+      "minAvailableRamBytes": 20190056448,
+      "minCommitHeadroomBytes": 7928250368
+    },
+    "job-2-latent": {
+      "samples": 14,
+      "maxDedicatedBytes": 14797189120,
+      "minAvailableRamBytes": 12398370816,
+      "minCommitHeadroomBytes": 572526592
+    },
+    "job-2-latent-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5854535680,
+      "minAvailableRamBytes": 20274679808,
+      "minCommitHeadroomBytes": 7944298496
+    },
+    "job-2-decode": {
+      "samples": 6,
+      "maxDedicatedBytes": 9010401280,
+      "minAvailableRamBytes": 19478847488,
+      "minCommitHeadroomBytes": 1158230016
+    },
+    "job-2-decode-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5875245056,
+      "minAvailableRamBytes": 20278358016,
+      "minCommitHeadroomBytes": 7945138176
+    },
+    "job-2-occlude": {
+      "samples": 6,
+      "maxDedicatedBytes": 7563046912,
+      "minAvailableRamBytes": 19490074624,
+      "minCommitHeadroomBytes": 3280510976
+    },
+    "job-2-occlude-released": {
+      "samples": 3,
+      "maxDedicatedBytes": 5850865664,
+      "minAvailableRamBytes": 20523999232,
+      "minCommitHeadroomBytes": 7909883904
+    },
+    "job-2-fill": {
+      "samples": 10,
+      "maxDedicatedBytes": 5871050752,
+      "minAvailableRamBytes": 20088942592,
+      "minCommitHeadroomBytes": 6910775296
+    },
+    "job-2-fill-released": {
+      "samples": 4,
+      "maxDedicatedBytes": 5846671360,
+      "minAvailableRamBytes": 20505165824,
+      "minCommitHeadroomBytes": 7899869184
+    },
+    "all-models-released": {
+      "samples": 7,
+      "maxDedicatedBytes": 5876555776,
+      "minAvailableRamBytes": 20455010304,
+      "minCommitHeadroomBytes": 7790317568
+    }
+  },
+  "cycles": [
+    {
+      "index": 0,
+      "workerSeconds": 56.59100000000001
+    },
+    {
+      "index": 1,
+      "workerSeconds": 53.56999999999999
+    },
+    {
+      "index": 2,
+      "workerSeconds": 53.591
+    }
+  ],
+  "scope": "Worker elapsed times exclude explicit 4-second release observations; include up to one second completion polling per worker."
+}

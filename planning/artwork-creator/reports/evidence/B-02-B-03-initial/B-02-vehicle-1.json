@@ -1,0 +1,75 @@
+{
+  "id": "B-02",
+  "kind": "vehicle",
+  "index": 1,
+  "request": {
+    "model": "local",
+    "seed": 201,
+    "temperature": 0.1,
+    "max_tokens": 500,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "Wskaż cały motocykl na pierwszym planie. Zwróć JSON {\"box\":[left,top,right,bottom],\"problem\":\"opis\"}. Współrzędne znormalizowane 0..1, początek lewy górny róg."
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "apps\\ui\\public\\infinite-zoom\\samples\\digital-grid\\plate.png"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "image_sha256": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n[\n\t{\"bbox_2d\": [89, 398, 922, 916], \"label\": \"motocykl na pierwszym planie\"}\n]\n```"
+        }
+      }
+    ],
+    "created": 1794300293,
+    "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "system_fingerprint": "b12110-cd959bae9",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 48,
+      "prompt_tokens": 1469,
+      "total_tokens": 1517,
+      "prompt_tokens_details": {
+        "cached_tokens": 1465
+      }
+    },
+    "id": "chatcmpl-tUzhV2H7AwUYzX3BO2iN1E1uh4PHeoYI",
+    "timings": {
+      "cache_n": 1465,
+      "prompt_n": 4,
+      "prompt_ms": 40.329,
+      "prompt_per_token_ms": 10.08225,
+      "prompt_per_second": 99.18420987378809,
+      "predicted_n": 48,
+      "predicted_ms": 577.337,
+      "predicted_per_token_ms": 12.283765957446809,
+      "predicted_per_second": 81.40825895447547
+    }
+  },
+  "request_seconds": 0.7905937000000449,
+  "process_memory": {
+    "peak_working_set_bytes": 5860171776,
+    "working_set_bytes": 5674115072,
+    "peak_commit_bytes": 8548818944
+  },
+  "parse_error": "list indices must be integers or slices, not str"
+}

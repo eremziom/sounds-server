@@ -1,0 +1,25 @@
+{
+  "width": 1600,
+  "height": 900,
+  "sourceSha256": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+  "defectPixels": [
+    40,
+    40,
+    100,
+    100
+  ],
+  "defectNormalized": [
+    0.025,
+    0.044444444444444446,
+    0.0625,
+    0.1111111111111111
+  ],
+  "note": "Deliberate rectangular spill; not a production artwork revision",
+  "vehicleBoxApproximate": [
+    0.084375,
+    0.3888888888888889,
+    0.91875,
+    0.9277777777777778
+  ],
+  "vehicleGroundTruth": "Manual approximate extent after visual source inspection; not pixel segmentation"
+}

@@ -1,0 +1,12 @@
+{
+  "stage": "fill",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+    "fill",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\correction-1794554290558"
+  ],
+  "exitCode": 0,
+  "wallSeconds": 10.364
+}

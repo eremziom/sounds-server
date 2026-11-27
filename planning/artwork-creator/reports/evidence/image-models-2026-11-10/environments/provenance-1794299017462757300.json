@@ -1,0 +1,27 @@
+{
+  "release": "b12110",
+  "release_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b12110",
+  "model_repo": "unsloth/Qwen3.5-9B-GGUF",
+  "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
+  "license": "Apache-2.0 (model); MIT (llama.cpp)",
+  "artifacts": [
+    {
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b12110/llama-b12110-bin-win-vulkan-x64.zip",
+      "file": ".local\\kre00\\downloads\\llama-b12110-bin-win-vulkan-x64.zip",
+      "sha256": "9732a5e48887ca54d0bfe4af4324dc85fd56cd8cda19b52df3542fa6ebe6874f",
+      "bytes": 37661146
+    },
+    {
+      "url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/3885219b6810b007914f3a7950a8d1b469d598a5/Qwen3.5-9B-Q4_K_M.gguf",
+      "file": ".local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+      "sha256": "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8",
+      "bytes": 5680522464
+    },
+    {
+      "url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/3885219b6810b007914f3a7950a8d1b469d598a5/mmproj-F16.gguf",
+      "file": ".local\\kre00\\models\\mmproj-F16.gguf",
+      "sha256": "f70dc3509053962b0d0d3ee8a7eacebf5d60aa560cad78254ae8698516ae029f",
+      "bytes": 918166080
+    }
+  ]
+}

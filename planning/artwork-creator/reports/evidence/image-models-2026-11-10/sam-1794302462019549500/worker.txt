@@ -1,0 +1,24 @@
+[transformers] You are using a model of type `sam2_video` to instantiate a model of type `sam2`. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+Loading weights:   0%|          | 0/309 [00:00<?, ?it/s]Loading weights: 100%|##########| 309/309 [00:00<00:00, 41977.00it/s]
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\integrations\sdpa_attention.py:174: UserWarning: Flash Efficient attention on Current AMD GPU is still experimental. Enable it with TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1. (Triggered internally at C:\b\pytorch\aten\src\ATen\native\transformers\hip\sdp_utils.cpp:310.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\Sandbox\sounds-server\.local\kre00\venvs\torch-rocm721\Lib\site-packages\transformers\integrations\sdpa_attention.py:174: UserWarning: Mem Efficient attention on Current AMD GPU is still experimental. Enable it with TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1. (Triggered internally at C:\b\pytorch\aten\src\ATen\native\transformers\hip\sdp_utils.cpp:361.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+B-06 open-sky point 1: 8.403s, IoU=0.927
+B-06 open-sky point 2: 0.175s, IoU=0.927
+B-06 open-sky point 3: 0.174s, IoU=0.927
+B-06 open-sky refined 1: 0.172s, IoU=0.919
+B-06 open-sky refined 2: 0.173s, IoU=0.919
+B-06 open-sky refined 3: 0.174s, IoU=0.919
+B-06 architecture point 1: 0.175s, IoU=0.787
+B-06 architecture point 2: 0.173s, IoU=0.787
+B-06 architecture point 3: 0.173s, IoU=0.787
+B-06 architecture refined 1: 0.172s, IoU=0.794
+B-06 architecture refined 2: 0.172s, IoU=0.794
+B-06 architecture refined 3: 0.173s, IoU=0.794
+B-06 organic point 1: 0.174s, IoU=0.887
+B-06 organic point 2: 0.173s, IoU=0.887
+B-06 organic point 3: 0.172s, IoU=0.887
+B-06 organic refined 1: 0.174s, IoU=0.916
+B-06 organic refined 2: 0.174s, IoU=0.916
+B-06 organic refined 3: 0.173s, IoU=0.916

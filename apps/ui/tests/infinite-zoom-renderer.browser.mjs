@@ -209,7 +209,9 @@ try {
   } else if (process.argv.includes("--layered-only")) {
     await runLayered();
   } else if (process.argv.includes("--pilot-only")) {
-    const pilot=await send("Runtime.evaluate",{expression:"window.runForestPilot()",awaitPromise:true,returnByValue:true});
+    const pilot=await send("Runtime.evaluate",{expression:`window.runForestPilot(${process.argv.includes("--pilot-high-precision")})`,awaitPromise:true,returnByValue:true});
+    const diagnostics=await send("Runtime.evaluate",{expression:"window.forestPilotDiagnostics",returnByValue:true});
+    await writeFile(new URL("forest-pilot-diagnostics.json",reportDirectory),JSON.stringify({diagnostics:diagnostics.result.value,result:pilot.result.value??null,exception:pilot.exceptionDetails??null},null,2));
     assert.equal(pilot.exceptionDetails,undefined,JSON.stringify(pilot.exceptionDetails));
     assert.deepEqual(errors,[]);console.log("Infinite Zoom forest pilot:",JSON.stringify(pilot.result.value));
     const captures=await send("Runtime.evaluate",{expression:"Object.keys(window.forestPilotCaptures)",returnByValue:true});

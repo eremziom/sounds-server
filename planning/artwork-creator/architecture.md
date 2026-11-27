@@ -2,6 +2,11 @@
 
 Status: **projekt do wdrożenia etapami**, wersja 1.0 z 2026-11-09.
 Ustalenia i zakres: [README.md](README.md). Kroki: [implementation-plan.md](implementation-plan.md).
+Aktualizacja 2026-11-13: fundament danych/API z KRE-01 jest wdrożony;
+[konkretny kontrakt](kre01-contract.md) uszczegóławia poniższy projekt.
+KRE-02 dodaje trwałe zadania, narzędzia i wykonawcę; [kontrakt](kre02-contract.md)
+oraz [raport](reports/KRE-02-2026-11-13.md) opisują zakończony odbiór techniczny
+na małych próbkach i jego ograniczenia. Koordynator rozmowy, UI i publikacja pozostają do wdrożenia.
 
 ## Podział odpowiedzialności
 
@@ -46,7 +51,12 @@ TypeScript. ComfyUI może realizować operacje obrazowe przez lokalne API;
 nie jest wymaganym interfejsem użytkownika ani źródłem prawdy o projekcie.
 Dokładny backend i proces uruchamiania rozstrzyga KRE-00.
 
-## Model danych — propozycja nazw, nie istniejący schemat Prisma
+## Model danych — zakres docelowy
+
+W KRE-01 istnieją już modele Prisma `ArtworkProject`, `ArtworkRevision`,
+`ArtworkArtifact`, `ArtworkArtifactInput` i `CreatorMessage` (zapis rozmowy
+bez osobnej encji sesji). KRE-02 dodaje `ArtworkJob` i referencje job/output
+w artefaktach. Opublikowane wersje pozostają planem KRE-07.
 
 | Encja | Najważniejsze dane |
 | --- | --- |
@@ -142,6 +152,13 @@ Jedna ciężka operacja GPU na raz w pierwszej wersji. Modele ładowane kolejno,
 z potwierdzonym zwolnieniem pamięci i uwzględnieniem zapotrzebowania Windowsa,
 przeglądarki oraz renderera. Offload do RAM i CPU jest narzędziem do pomiaru,
 nie obietnicą zachowania szybkości przy 32 GB RAM.
+
+KRE-00 zamknięto z profilem [opisanym w raporcie końcowym](reports/KRE-00-2026-11-13-closure.md):
+Klein wymaga odczytu pread i zakończenia procesu transformera przed osobnym
+dekoderem VAE. Przyszła bramka dopuszczenia zadania w KRE-02 musi uwzględniać
+także limit commit Windows i rzeczywiste liczniki WDDM konkretnej karty;
+informacja o wolnej pamięci z samego API HIP nie wystarcza. Brak zapasu oznacza
+odroczenie zadania, bez zatrzymywania muzyki ani zmiany ustawień systemowych.
 
 UI otrzymuje postęp i może anulować zadanie, wrócić do projektu lub porównać
 wyniki. Backend nie utrzymuje jednej otwartej operacji HTTP przez całe generowanie.

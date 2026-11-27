@@ -1,0 +1,1356 @@
+{
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1
+  },
+  "health": [
+    {
+      "audioTime": 0.329247,
+      "paused": false,
+      "ended": false,
+      "tick": 10,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:53.342Z"
+    },
+    {
+      "audioTime": 0.335511,
+      "paused": false,
+      "ended": false,
+      "tick": 10,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:53.349Z"
+    },
+    {
+      "audioTime": 1.33537,
+      "paused": false,
+      "ended": false,
+      "tick": 70,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:54.350Z"
+    },
+    {
+      "audioTime": 2.34298,
+      "paused": false,
+      "ended": false,
+      "tick": 130,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:55.359Z"
+    },
+    {
+      "audioTime": 3.36,
+      "paused": false,
+      "ended": false,
+      "tick": 190,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:56.369Z"
+    },
+    {
+      "audioTime": 4.36978,
+      "paused": false,
+      "ended": false,
+      "tick": 250,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:57.384Z"
+    },
+    {
+      "audioTime": 5.380019,
+      "paused": false,
+      "ended": false,
+      "tick": 310,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:58.387Z"
+    },
+    {
+      "audioTime": 6.387573,
+      "paused": false,
+      "ended": false,
+      "tick": 370,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:50:59.396Z"
+    },
+    {
+      "audioTime": 7.39252,
+      "paused": false,
+      "ended": false,
+      "tick": 430,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:00.403Z"
+    },
+    {
+      "audioTime": 8.402174,
+      "paused": false,
+      "ended": false,
+      "tick": 502,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:01.415Z"
+    },
+    {
+      "audioTime": 9.409541,
+      "paused": false,
+      "ended": false,
+      "tick": 562,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:02.424Z"
+    },
+    {
+      "audioTime": 10.416,
+      "paused": false,
+      "ended": false,
+      "tick": 622,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:03.432Z"
+    },
+    {
+      "audioTime": 11.433338,
+      "paused": false,
+      "ended": false,
+      "tick": 682,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:04.442Z"
+    },
+    {
+      "audioTime": 12.438674,
+      "paused": false,
+      "ended": false,
+      "tick": 742,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:05.449Z"
+    },
+    {
+      "audioTime": 13.452635,
+      "paused": false,
+      "ended": false,
+      "tick": 802,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:06.465Z"
+    },
+    {
+      "audioTime": 14.46908,
+      "paused": false,
+      "ended": false,
+      "tick": 862,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:07.478Z"
+    },
+    {
+      "audioTime": 15.478777,
+      "paused": false,
+      "ended": false,
+      "tick": 922,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:08.489Z"
+    },
+    {
+      "audioTime": 16.486138,
+      "paused": false,
+      "ended": false,
+      "tick": 982,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:09.499Z"
+    },
+    {
+      "audioTime": 17.497475,
+      "paused": false,
+      "ended": false,
+      "tick": 1042,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:10.512Z"
+    },
+    {
+      "audioTime": 18.514978,
+      "paused": false,
+      "ended": false,
+      "tick": 1102,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:11.525Z"
+    },
+    {
+      "audioTime": 19.52,
+      "paused": false,
+      "ended": false,
+      "tick": 1162,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:12.533Z"
+    },
+    {
+      "audioTime": 20.528,
+      "paused": false,
+      "ended": false,
+      "tick": 1222,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:13.542Z"
+    },
+    {
+      "audioTime": 21.536,
+      "paused": false,
+      "ended": false,
+      "tick": 1282,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:14.552Z"
+    },
+    {
+      "audioTime": 22.549157,
+      "paused": false,
+      "ended": false,
+      "tick": 1342,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:15.558Z"
+    },
+    {
+      "audioTime": 23.561486,
+      "paused": false,
+      "ended": false,
+      "tick": 1402,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:16.572Z"
+    },
+    {
+      "audioTime": 24.56774,
+      "paused": false,
+      "ended": false,
+      "tick": 1462,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:17.581Z"
+    },
+    {
+      "audioTime": 25.584443,
+      "paused": false,
+      "ended": false,
+      "tick": 1522,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:18.593Z"
+    },
+    {
+      "audioTime": 26.587499,
+      "paused": false,
+      "ended": false,
+      "tick": 1582,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:19.594Z"
+    },
+    {
+      "audioTime": 27.594406,
+      "paused": false,
+      "ended": false,
+      "tick": 1642,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:20.603Z"
+    },
+    {
+      "audioTime": 28.602618,
+      "paused": false,
+      "ended": false,
+      "tick": 1702,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:21.613Z"
+    },
+    {
+      "audioTime": 29.615687,
+      "paused": false,
+      "ended": false,
+      "tick": 1774,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:22.629Z"
+    },
+    {
+      "audioTime": 30.632809,
+      "paused": false,
+      "ended": false,
+      "tick": 1834,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:23.641Z"
+    },
+    {
+      "audioTime": 31.639496,
+      "paused": false,
+      "ended": false,
+      "tick": 1894,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:24.650Z"
+    },
+    {
+      "audioTime": 32.652623,
+      "paused": false,
+      "ended": false,
+      "tick": 1954,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:25.665Z"
+    },
+    {
+      "audioTime": 33.665393,
+      "paused": false,
+      "ended": false,
+      "tick": 2014,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:26.674Z"
+    },
+    {
+      "audioTime": 34.669912,
+      "paused": false,
+      "ended": false,
+      "tick": 2074,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:27.676Z"
+    },
+    {
+      "audioTime": 35.674253,
+      "paused": false,
+      "ended": false,
+      "tick": 2134,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:28.683Z"
+    },
+    {
+      "audioTime": 36.683841,
+      "paused": false,
+      "ended": false,
+      "tick": 2194,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:29.694Z"
+    },
+    {
+      "audioTime": 37.691152,
+      "paused": false,
+      "ended": false,
+      "tick": 2254,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:30.704Z"
+    },
+    {
+      "audioTime": 38.704081,
+      "paused": false,
+      "ended": false,
+      "tick": 2314,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:31.713Z"
+    },
+    {
+      "audioTime": 39.714509,
+      "paused": false,
+      "ended": false,
+      "tick": 2374,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:32.725Z"
+    },
+    {
+      "audioTime": 40.721473,
+      "paused": false,
+      "ended": false,
+      "tick": 2434,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:33.734Z"
+    },
+    {
+      "audioTime": 41.730761,
+      "paused": false,
+      "ended": false,
+      "tick": 2494,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:34.745Z"
+    },
+    {
+      "audioTime": 42.736401,
+      "paused": false,
+      "ended": false,
+      "tick": 2554,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:35.753Z"
+    },
+    {
+      "audioTime": 43.750908,
+      "paused": false,
+      "ended": false,
+      "tick": 2614,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:36.759Z"
+    },
+    {
+      "audioTime": 44.758945,
+      "paused": false,
+      "ended": false,
+      "tick": 2674,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:37.769Z"
+    },
+    {
+      "audioTime": 45.769331,
+      "paused": false,
+      "ended": false,
+      "tick": 2734,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:38.782Z"
+    },
+    {
+      "audioTime": 46.776149,
+      "paused": false,
+      "ended": false,
+      "tick": 2794,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:39.791Z"
+    },
+    {
+      "audioTime": 47.792,
+      "paused": false,
+      "ended": false,
+      "tick": 2854,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:40.802Z"
+    },
+    {
+      "audioTime": 48.8,
+      "paused": false,
+      "ended": false,
+      "tick": 2914,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:41.813Z"
+    },
+    {
+      "audioTime": 49.808551,
+      "paused": false,
+      "ended": false,
+      "tick": 2986,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:42.823Z"
+    },
+    {
+      "audioTime": 50.818762,
+      "paused": false,
+      "ended": false,
+      "tick": 3046,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:43.835Z"
+    },
+    {
+      "audioTime": 51.84,
+      "paused": false,
+      "ended": false,
+      "tick": 3106,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:44.849Z"
+    },
+    {
+      "audioTime": 52.848194,
+      "paused": false,
+      "ended": false,
+      "tick": 3166,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:45.863Z"
+    },
+    {
+      "audioTime": 53.867669,
+      "paused": false,
+      "ended": false,
+      "tick": 3226,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:46.874Z"
+    },
+    {
+      "audioTime": 54.87559,
+      "paused": false,
+      "ended": false,
+      "tick": 3286,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:47.884Z"
+    },
+    {
+      "audioTime": 55.873854,
+      "paused": false,
+      "ended": false,
+      "tick": 3346,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:48.884Z"
+    },
+    {
+      "audioTime": 56.881194,
+      "paused": false,
+      "ended": false,
+      "tick": 3406,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:49.894Z"
+    },
+    {
+      "audioTime": 57.888,
+      "paused": false,
+      "ended": false,
+      "tick": 3466,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:50.902Z"
+    },
+    {
+      "audioTime": 58.896,
+      "paused": false,
+      "ended": false,
+      "tick": 3526,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:51.909Z"
+    },
+    {
+      "audioTime": 59.904613,
+      "paused": false,
+      "ended": false,
+      "tick": 3586,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:52.913Z"
+    },
+    {
+      "audioTime": 60.913484,
+      "paused": false,
+      "ended": false,
+      "tick": 3646,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:53.924Z"
+    },
+    {
+      "audioTime": 61.92041,
+      "paused": false,
+      "ended": false,
+      "tick": 3706,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:54.933Z"
+    },
+    {
+      "audioTime": 62.927236,
+      "paused": false,
+      "ended": false,
+      "tick": 3766,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:55.938Z"
+    },
+    {
+      "audioTime": 63.929802,
+      "paused": false,
+      "ended": false,
+      "tick": 3826,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:56.943Z"
+    },
+    {
+      "audioTime": 64.933917,
+      "paused": false,
+      "ended": false,
+      "tick": 3886,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:57.949Z"
+    },
+    {
+      "audioTime": 65.942176,
+      "paused": false,
+      "ended": false,
+      "tick": 3946,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:58.959Z"
+    },
+    {
+      "audioTime": 66.96,
+      "paused": false,
+      "ended": false,
+      "tick": 4006,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:51:59.971Z"
+    },
+    {
+      "audioTime": 67.968,
+      "paused": false,
+      "ended": false,
+      "tick": 4066,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:00.981Z"
+    },
+    {
+      "audioTime": 68.976,
+      "paused": false,
+      "ended": false,
+      "tick": 4126,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:01.991Z"
+    },
+    {
+      "audioTime": 69.990472,
+      "paused": false,
+      "ended": false,
+      "tick": 4186,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:02.999Z"
+    },
+    {
+      "audioTime": 71.001464,
+      "paused": false,
+      "ended": false,
+      "tick": 4246,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:04.012Z"
+    },
+    {
+      "audioTime": 72.012708,
+      "paused": false,
+      "ended": false,
+      "tick": 4318,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:05.025Z"
+    },
+    {
+      "audioTime": 73.026181,
+      "paused": false,
+      "ended": false,
+      "tick": 4378,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:06.035Z"
+    },
+    {
+      "audioTime": 74.023152,
+      "paused": false,
+      "ended": false,
+      "tick": 4438,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:07.040Z"
+    },
+    {
+      "audioTime": 75.04,
+      "paused": false,
+      "ended": false,
+      "tick": 4498,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:08.051Z"
+    },
+    {
+      "audioTime": 76.048,
+      "paused": false,
+      "ended": false,
+      "tick": 4558,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:09.062Z"
+    },
+    {
+      "audioTime": 77.072,
+      "paused": false,
+      "ended": false,
+      "tick": 4618,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:10.080Z"
+    },
+    {
+      "audioTime": 78.08,
+      "paused": false,
+      "ended": false,
+      "tick": 4678,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:11.091Z"
+    },
+    {
+      "audioTime": 79.086994,
+      "paused": false,
+      "ended": false,
+      "tick": 4738,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:12.098Z"
+    },
+    {
+      "audioTime": 80.094531,
+      "paused": false,
+      "ended": false,
+      "tick": 4798,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:13.107Z"
+    },
+    {
+      "audioTime": 81.113116,
+      "paused": false,
+      "ended": false,
+      "tick": 4858,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:14.122Z"
+    },
+    {
+      "audioTime": 82.123642,
+      "paused": false,
+      "ended": false,
+      "tick": 4918,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:15.134Z"
+    },
+    {
+      "audioTime": 83.133821,
+      "paused": false,
+      "ended": false,
+      "tick": 4978,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:16.147Z"
+    },
+    {
+      "audioTime": 84.146068,
+      "paused": false,
+      "ended": false,
+      "tick": 5038,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:17.155Z"
+    },
+    {
+      "audioTime": 85.160171,
+      "paused": false,
+      "ended": false,
+      "tick": 5098,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:18.171Z"
+    },
+    {
+      "audioTime": 86.17871,
+      "paused": false,
+      "ended": false,
+      "tick": 5158,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:19.185Z"
+    },
+    {
+      "audioTime": 87.1851,
+      "paused": false,
+      "ended": false,
+      "tick": 5218,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:20.194Z"
+    },
+    {
+      "audioTime": 88.184095,
+      "paused": false,
+      "ended": false,
+      "tick": 5278,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:21.201Z"
+    },
+    {
+      "audioTime": 89.199552,
+      "paused": false,
+      "ended": false,
+      "tick": 5338,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:22.208Z"
+    },
+    {
+      "audioTime": 90.204726,
+      "paused": false,
+      "ended": false,
+      "tick": 5410,
+      "status": "running",
+      "contextLost": false,
+      "canvasCount": 1,
+      "audioCount": 1,
+      "utc": "2026-11-13T10:52:23.215Z"
+    }
+  ],
+  "models": {
+    "date": "2026-11-13T10:50:53.804Z",
+    "deterministic": "passed: HTTP ownership/idempotency, process concurrency/cancellation/crash recovery, retries, memory deferral, output transaction/journal cleanup, no implicit apply, tools/manifest parser",
+    "models": [
+      {
+        "tool": "segmentObject",
+        "state": "succeeded",
+        "errorCode": null,
+        "wallSeconds": 6.159,
+        "memory": {
+          "adapter": "AMD Radeon RX 7800 XT",
+          "adapterKey": "luid_0x00000000_0x0000dde0",
+          "sharedUsedBytes": 542765056,
+          "ramAvailableBytes": 22065246208,
+          "dedicatedUsedBytes": 1817812992,
+          "vramAvailableBytes": 15345278976,
+          "commitAvailableBytes": 16444698624
+        },
+        "result": {
+          "applied": false,
+          "details": {
+            "toolReport": {
+              "tool": "segmentObject",
+              "quality": "not-reviewed"
+            },
+            "stageMemory": [
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22197432320,
+                  "dedicatedUsedBytes": 1807851520,
+                  "vramAvailableBytes": 15355240448,
+                  "commitAvailableBytes": 16587083776
+                },
+                "phase": "sam",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22065246208,
+                  "dedicatedUsedBytes": 1817812992,
+                  "vramAvailableBytes": 15345278976,
+                  "commitAvailableBytes": 16444698624
+                }
+              }
+            ]
+          },
+          "outputs": [
+            {
+              "name": "result",
+              "artifactId": "6f4a1a7b-8e59-4976-a9e9-7310e226c519"
+            }
+          ],
+          "baseRevisionId": "3607f8e1-4a7a-4f40-988c-b515a829c90d"
+        },
+        "artifacts": [
+          {
+            "kind": "visibility-mask",
+            "sha256": "38ddf5447081fb9a3ef04ef7a76b323cea413039b57a86768a48c36a56a9eeb9",
+            "width": 512,
+            "height": 288,
+            "sizeBytes": 573
+          }
+        ]
+      },
+      {
+        "tool": "fillBackground",
+        "state": "succeeded",
+        "errorCode": null,
+        "wallSeconds": 10.57,
+        "memory": {
+          "adapter": "AMD Radeon RX 7800 XT",
+          "adapterKey": "luid_0x00000000_0x0000dde0",
+          "sharedUsedBytes": 542765056,
+          "ramAvailableBytes": 22216683520,
+          "dedicatedUsedBytes": 1819648000,
+          "vramAvailableBytes": 15343443968,
+          "commitAvailableBytes": 16604782592
+        },
+        "result": {
+          "applied": false,
+          "details": {
+            "toolReport": {
+              "tool": "fillBackground",
+              "quality": "not-reviewed"
+            },
+            "stageMemory": [
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22260965376,
+                  "dedicatedUsedBytes": 1806016512,
+                  "vramAvailableBytes": 15357075456,
+                  "commitAvailableBytes": 16639574016
+                },
+                "phase": "cpu",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22216683520,
+                  "dedicatedUsedBytes": 1819648000,
+                  "vramAvailableBytes": 15343443968,
+                  "commitAvailableBytes": 16604782592
+                }
+              }
+            ]
+          },
+          "outputs": [
+            {
+              "name": "result",
+              "artifactId": "f3afc70b-ef11-401b-acdb-5435550798a3"
+            }
+          ],
+          "baseRevisionId": "3607f8e1-4a7a-4f40-988c-b515a829c90d"
+        },
+        "artifacts": [
+          {
+            "kind": "image",
+            "sha256": "e2107beeecc123b6613b9d6a41b6e0d886222f04d0a58122a79c1f3cc3cd0b29",
+            "width": 512,
+            "height": 288,
+            "sizeBytes": 26677
+          }
+        ]
+      },
+      {
+        "tool": "generateImage",
+        "state": "succeeded",
+        "errorCode": null,
+        "wallSeconds": 30.039,
+        "memory": {
+          "adapter": "AMD Radeon RX 7800 XT",
+          "adapterKey": "luid_0x00000000_0x0000dde0",
+          "sharedUsedBytes": 542765056,
+          "ramAvailableBytes": 22542090240,
+          "dedicatedUsedBytes": 1827250176,
+          "vramAvailableBytes": 15335841792,
+          "commitAvailableBytes": 16759480320
+        },
+        "result": {
+          "applied": false,
+          "details": {
+            "toolReport": {
+              "tool": "generateImage",
+              "quality": "not-reviewed"
+            },
+            "stageMemory": [
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22273200128,
+                  "dedicatedUsedBytes": 1821745152,
+                  "vramAvailableBytes": 15341346816,
+                  "commitAvailableBytes": 16649916416
+                },
+                "phase": "encode",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22244708352,
+                  "dedicatedUsedBytes": 1806016512,
+                  "vramAvailableBytes": 15357075456,
+                  "commitAvailableBytes": 16623828992
+                }
+              },
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22550466560,
+                  "dedicatedUsedBytes": 1827250176,
+                  "vramAvailableBytes": 15335841792,
+                  "commitAvailableBytes": 16759275520
+                },
+                "phase": "transform",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22258679808,
+                  "dedicatedUsedBytes": 1809424384,
+                  "vramAvailableBytes": 15353667584,
+                  "commitAvailableBytes": 16643235840
+                }
+              },
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22544089088,
+                  "dedicatedUsedBytes": 1828560896,
+                  "vramAvailableBytes": 15334531072,
+                  "commitAvailableBytes": 16764440576
+                },
+                "phase": "decode",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22542090240,
+                  "dedicatedUsedBytes": 1827250176,
+                  "vramAvailableBytes": 15335841792,
+                  "commitAvailableBytes": 16759480320
+                }
+              }
+            ]
+          },
+          "outputs": [
+            {
+              "name": "result",
+              "artifactId": "5498bf5b-7e35-42a0-bdc1-706ca5900f72"
+            }
+          ],
+          "baseRevisionId": "3607f8e1-4a7a-4f40-988c-b515a829c90d"
+        },
+        "artifacts": [
+          {
+            "kind": "image",
+            "sha256": "bdf879925cbe22f32854aa2b8768a3cac6a78738471d375ef6be45140176f929",
+            "width": 512,
+            "height": 288,
+            "sizeBytes": 201085
+          }
+        ]
+      },
+      {
+        "tool": "editImage",
+        "state": "succeeded",
+        "errorCode": null,
+        "wallSeconds": 35.538,
+        "memory": {
+          "adapter": "AMD Radeon RX 7800 XT",
+          "adapterKey": "luid_0x00000000_0x0000dde0",
+          "sharedUsedBytes": 542765056,
+          "ramAvailableBytes": 22571458560,
+          "dedicatedUsedBytes": 1820172288,
+          "vramAvailableBytes": 15342919680,
+          "commitAvailableBytes": 16807514112
+        },
+        "result": {
+          "applied": false,
+          "details": {
+            "toolReport": {
+              "tool": "editImage",
+              "quality": "not-reviewed"
+            },
+            "stageMemory": [
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22508478464,
+                  "dedicatedUsedBytes": 1820172288,
+                  "vramAvailableBytes": 15342919680,
+                  "commitAvailableBytes": 16729763840
+                },
+                "phase": "encode",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22567043072,
+                  "dedicatedUsedBytes": 1828560896,
+                  "vramAvailableBytes": 15334531072,
+                  "commitAvailableBytes": 16782815232
+                }
+              },
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22586347520,
+                  "dedicatedUsedBytes": 1820172288,
+                  "vramAvailableBytes": 15342919680,
+                  "commitAvailableBytes": 16809369600
+                },
+                "phase": "transform",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22492090368,
+                  "dedicatedUsedBytes": 1820172288,
+                  "vramAvailableBytes": 15342919680,
+                  "commitAvailableBytes": 16719978496
+                }
+              },
+              {
+                "after": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22573842432,
+                  "dedicatedUsedBytes": 1822531584,
+                  "vramAvailableBytes": 15340560384,
+                  "commitAvailableBytes": 16803127296
+                },
+                "phase": "decode",
+                "before": {
+                  "adapter": "AMD Radeon RX 7800 XT",
+                  "adapterKey": "luid_0x00000000_0x0000dde0",
+                  "sharedUsedBytes": 542765056,
+                  "ramAvailableBytes": 22571458560,
+                  "dedicatedUsedBytes": 1820172288,
+                  "vramAvailableBytes": 15342919680,
+                  "commitAvailableBytes": 16807514112
+                }
+              }
+            ]
+          },
+          "outputs": [
+            {
+              "name": "result",
+              "artifactId": "5801df8c-3672-4171-939f-12a6c52c81b8"
+            }
+          ],
+          "baseRevisionId": "3607f8e1-4a7a-4f40-988c-b515a829c90d"
+        },
+        "artifacts": [
+          {
+            "kind": "image",
+            "sha256": "4442d24519b7a1aa0463afb960d279b14dbc3a11643bbb6f19f4da25de4ebc6b",
+            "width": 512,
+            "height": 288,
+            "sizeBytes": 46867
+          }
+        ]
+      }
+    ],
+    "scope": "No production artwork; small fixtures only",
+    "sampleDirectory": ".tmp/kre02-model-samples-2HcU0w"
+  },
+  "visualArtworkAcceptance": false,
+  "scope": "Existing Forest/Nebula/Cavern renderer with fixture audio; KRE-02 model/tool adapter probes, not a new scene or FPS benchmark"
+}

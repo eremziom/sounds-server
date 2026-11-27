@@ -1,6 +1,11 @@
 # KRE-00 — plan próby lokalnych modeli
 
-Status: **do wykonania**. Sprzęt zgłoszony przez użytkownika: Windows 11,
+Status: **do korekty, 2026-11-10**; [raport i dowody](reports/KRE-00-2026-11-10.md).
+Kontynuacje: [Qwen/VLM i narzędzia](reports/KRE-00-2026-11-10-capabilities.md),
+[modele obrazu B-04–B-08](reports/KRE-00-2026-11-10-image-models.md),
+[sekwencja i QA B-09–B-11](reports/KRE-00-2026-11-10-sequence-qa.md).
+Poniżej pozostaje plan całej próby, nie deklaracja jej ukończenia.
+Sprzęt zgłoszony przez użytkownika: Windows 11,
 AMD Radeon RX 7800 XT 16 GB VRAM, 32 GB RAM.
 Nie wykonano instalacji ani inferencji podczas przygotowania dokumentacji.
 

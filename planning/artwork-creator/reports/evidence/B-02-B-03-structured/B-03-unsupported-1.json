@@ -1,0 +1,636 @@
+{
+  "id": "B-03",
+  "kind": "unsupported",
+  "index": 1,
+  "expected_tool": "reportUnsupported",
+  "turns": [
+    {
+      "request": {
+        "model": "local",
+        "seed": 301,
+        "temperature": 0.1,
+        "max_tokens": 1200,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Jesteś operatorem lokalnej próby KRE-00. Dostępne narzędzia faktycznie wykonuje kod. Nie generuj kodu. Wybierz właściwą funkcję; nie potwierdzaj wykonania przed ok:true. Błędy walidacji są wiążące. Nieobsługiwany efekt pozostaje niewykonany. Kopie mają istniejący schemat 2; początkowy okres lampki w kopii to 6 s. Cała scena i audio są poza tą próbą. Po wykonaniu odpowiedz krótko po polsku. Maksymalnie 4 wywołania."
+          },
+          {
+            "role": "user",
+            "content": "Dodaj smugę akumulowaną po historii zakrzywionego lotu i wygeneruj nowy shader silnika. Jeśli brak takiej funkcji, zarejestruj ograniczenie przez reportUnsupported i wyjaśnij brak wykonania."
+          }
+        ],
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "setBeaconPeriod",
+              "description": "Zmień wyłącznie okres navigation-flash istniejącej lampki. Walidacja silnika, bez zmiany obrazu i tła.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "periodSeconds": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "periodSeconds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "setFlightPath",
+              "description": "Ustaw layer.travel wszystkich trzech części samolotu. Obsługuje bezier/spline, nie pole arc. Punkty są przesunięciami od (0,0).",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "travel": {
+                    "type": "object",
+                    "properties": {
+                      "startSeconds": {
+                        "type": "number"
+                      },
+                      "durationSeconds": {
+                        "type": "number"
+                      },
+                      "path": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "bezier"
+                            ]
+                          },
+                          "segments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "control1": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "control2": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "control1",
+                                "control2",
+                                "to"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "segments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "easing": {
+                        "type": "string",
+                        "enum": [
+                          "linear",
+                          "ease-in",
+                          "ease-out",
+                          "ease-in-out"
+                        ]
+                      },
+                      "orientToPath": {
+                        "type": "boolean"
+                      },
+                      "pivot": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "startSeconds",
+                      "durationSeconds",
+                      "path",
+                      "easing",
+                      "orientToPath",
+                      "pivot"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "travel"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "refineMask",
+              "description": "Wyzeruj prostokąt tylko w kopii maski front-wheel-test. rectangle=[left,top,right,bottom], piksele 1600x900. Nie zmienia innych plików.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "maskId": {
+                    "type": "string",
+                    "enum": [
+                      "front-wheel-test"
+                    ]
+                  },
+                  "rectangle": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "maskId",
+                  "rectangle"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "reportUnsupported",
+              "description": "Zarejestruj brak obsługi efektu. Zwraca błąd, nie generuje kodu i nie modyfikuje sceny.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "effect": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "effect"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "reportUnsupported",
+                    "arguments": "{\"effect\":\"smuga akumulowana po historii zakrzywionego lotu\"}"
+                  },
+                  "id": "kK0ATrA5RMbOdp0VKAQW938mL07k0xw8"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "reportUnsupported",
+                    "arguments": "{\"effect\":\"generowanie nowego shadera silnika\"}"
+                  },
+                  "id": "X1Hmg84smTANPW9cBVh77nSu1vVdQjyq"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794300463,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 72,
+          "prompt_tokens": 1173,
+          "total_tokens": 1245,
+          "prompt_tokens_details": {
+            "cached_tokens": 1113
+          }
+        },
+        "id": "chatcmpl-8iqKuv4Shot8oRHNdoLm5SASHq04bc9d",
+        "timings": {
+          "cache_n": 1113,
+          "prompt_n": 60,
+          "prompt_ms": 125.575,
+          "prompt_per_token_ms": 2.0929166666666665,
+          "prompt_per_second": 477.80211029265377,
+          "predicted_n": 72,
+          "predicted_ms": 868.553,
+          "predicted_per_token_ms": 12.233140845070423,
+          "predicted_per_second": 81.74515544819947
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "local",
+        "seed": 301,
+        "temperature": 0.1,
+        "max_tokens": 1200,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Jesteś operatorem lokalnej próby KRE-00. Dostępne narzędzia faktycznie wykonuje kod. Nie generuj kodu. Wybierz właściwą funkcję; nie potwierdzaj wykonania przed ok:true. Błędy walidacji są wiążące. Nieobsługiwany efekt pozostaje niewykonany. Kopie mają istniejący schemat 2; początkowy okres lampki w kopii to 6 s. Cała scena i audio są poza tą próbą. Po wykonaniu odpowiedz krótko po polsku. Maksymalnie 4 wywołania."
+          },
+          {
+            "role": "user",
+            "content": "Dodaj smugę akumulowaną po historii zakrzywionego lotu i wygeneruj nowy shader silnika. Jeśli brak takiej funkcji, zarejestruj ograniczenie przez reportUnsupported i wyjaśnij brak wykonania."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "reportUnsupported",
+                  "arguments": "{\"effect\":\"smuga akumulowana po historii zakrzywionego lotu\"}"
+                },
+                "id": "kK0ATrA5RMbOdp0VKAQW938mL07k0xw8"
+              },
+              {
+                "type": "function",
+                "function": {
+                  "name": "reportUnsupported",
+                  "arguments": "{\"effect\":\"generowanie nowego shadera silnika\"}"
+                },
+                "id": "X1Hmg84smTANPW9cBVh77nSu1vVdQjyq"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "kK0ATrA5RMbOdp0VKAQW938mL07k0xw8",
+            "content": "{\"ok\": false, \"code\": \"UNSUPPORTED_EFFECT\", \"recorded\": true, \"effect\": \"smuga akumulowana po historii zakrzywionego lotu\", \"error\": \"The tool exists and recorded this limitation; the requested engine effect is unavailable. No effect applied.\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "X1Hmg84smTANPW9cBVh77nSu1vVdQjyq",
+            "content": "{\"ok\": false, \"code\": \"UNSUPPORTED_EFFECT\", \"recorded\": true, \"effect\": \"generowanie nowego shadera silnika\", \"error\": \"The tool exists and recorded this limitation; the requested engine effect is unavailable. No effect applied.\"}"
+          }
+        ],
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "setBeaconPeriod",
+              "description": "Zmień wyłącznie okres navigation-flash istniejącej lampki. Walidacja silnika, bez zmiany obrazu i tła.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "periodSeconds": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "periodSeconds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "setFlightPath",
+              "description": "Ustaw layer.travel wszystkich trzech części samolotu. Obsługuje bezier/spline, nie pole arc. Punkty są przesunięciami od (0,0).",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "travel": {
+                    "type": "object",
+                    "properties": {
+                      "startSeconds": {
+                        "type": "number"
+                      },
+                      "durationSeconds": {
+                        "type": "number"
+                      },
+                      "path": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "bezier"
+                            ]
+                          },
+                          "segments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "control1": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "control2": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "x",
+                                    "y"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "control1",
+                                "control2",
+                                "to"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "segments"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "easing": {
+                        "type": "string",
+                        "enum": [
+                          "linear",
+                          "ease-in",
+                          "ease-out",
+                          "ease-in-out"
+                        ]
+                      },
+                      "orientToPath": {
+                        "type": "boolean"
+                      },
+                      "pivot": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "startSeconds",
+                      "durationSeconds",
+                      "path",
+                      "easing",
+                      "orientToPath",
+                      "pivot"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "travel"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "refineMask",
+              "description": "Wyzeruj prostokąt tylko w kopii maski front-wheel-test. rectangle=[left,top,right,bottom], piksele 1600x900. Nie zmienia innych plików.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "maskId": {
+                    "type": "string",
+                    "enum": [
+                      "front-wheel-test"
+                    ]
+                  },
+                  "rectangle": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "maskId",
+                  "rectangle"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "reportUnsupported",
+              "description": "Zarejestruj brak obsługi efektu. Zwraca błąd, nie generuje kodu i nie modyfikuje sceny.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "effect": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "effect"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto"
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Oba efekty nie są obsługiwane przez dostępne narzędzia. Zarejestrowano brak obsługi dla smugi akumulowanej po historii lotu oraz generowania nowego shadera silnika."
+            }
+          }
+        ],
+        "created": 1794300464,
+        "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 40,
+          "prompt_tokens": 1383,
+          "total_tokens": 1423,
+          "prompt_tokens_details": {
+            "cached_tokens": 1244
+          }
+        },
+        "id": "chatcmpl-kBlhDocpo5BwcRNGaUy80cnQyq6NmBeT",
+        "timings": {
+          "cache_n": 1244,
+          "prompt_n": 139,
+          "prompt_ms": 174.031,
+          "prompt_per_token_ms": 1.252021582733813,
+          "prompt_per_second": 798.7082761117272,
+          "predicted_n": 40,
+          "predicted_ms": 477.575,
+          "predicted_per_token_ms": 12.24551282051282,
+          "predicted_per_second": 81.66256608909595
+        }
+      }
+    }
+  ],
+  "executions": [
+    {
+      "name": "reportUnsupported",
+      "arguments": {
+        "effect": "smuga akumulowana po historii zakrzywionego lotu"
+      },
+      "result": {
+        "ok": false,
+        "code": "UNSUPPORTED_EFFECT",
+        "recorded": true,
+        "effect": "smuga akumulowana po historii zakrzywionego lotu",
+        "error": "The tool exists and recorded this limitation; the requested engine effect is unavailable. No effect applied."
+      }
+    },
+    {
+      "name": "reportUnsupported",
+      "arguments": {
+        "effect": "generowanie nowego shadera silnika"
+      },
+      "result": {
+        "ok": false,
+        "code": "UNSUPPORTED_EFFECT",
+        "recorded": true,
+        "effect": "generowanie nowego shadera silnika",
+        "error": "The tool exists and recorded this limitation; the requested engine effect is unavailable. No effect applied."
+      }
+    }
+  ],
+  "final": "Oba efekty nie są obsługiwane przez dostępne narzędzia. Zarejestrowano brak obsługi dla smugi akumulowanej po historii lotu oraz generowania nowego shadera silnika.",
+  "finish_reason": "stop",
+  "request_seconds": 1.8590601000000788,
+  "process_memory": {
+    "peak_working_set_bytes": 6252998656,
+    "working_set_bytes": 6147645440,
+    "peak_commit_bytes": 8958988288
+  }
+}

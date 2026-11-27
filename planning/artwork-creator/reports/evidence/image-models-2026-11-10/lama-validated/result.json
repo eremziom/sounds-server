@@ -1,0 +1,267 @@
+{
+  "id": "B-08",
+  "model_sha256": "7df918ac3921d3daf0aae1d219776cf0dc4e4935f035af81841b40adcf74fdf2",
+  "fixture": {
+    "cases": [
+      {
+        "id": "open-sky",
+        "source": "digital-grid/plate.png",
+        "crop": {
+          "left": 800,
+          "top": 0,
+          "width": 512,
+          "height": 512
+        },
+        "at": [
+          140,
+          80
+        ]
+      },
+      {
+        "id": "architecture",
+        "source": "digital-grid/plate.png",
+        "crop": {
+          "left": 950,
+          "top": 0,
+          "width": 512,
+          "height": 512
+        },
+        "at": [
+          230,
+          305
+        ]
+      },
+      {
+        "id": "organic",
+        "source": "forest/backdrop.png",
+        "resize": "cover-512",
+        "at": [
+          200,
+          260
+        ]
+      }
+    ],
+    "sourceHashes": {
+      "digital-grid/plate.png": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+      "digital-grid/aircraft.svg": "ae1998e3a01083397c885a2e178c5fa28a2d279a4810e6cadf8d3f8827e6b324",
+      "forest/backdrop.png": "d82d84734ee011235fcd42519e117020e1058e31ee4b49e4f7c17a63f373cd2e"
+    },
+    "sourceUnchanged": true,
+    "note": "Controlled compositing experiment using an existing sprite, not a new production scene; clean backing is ground truth."
+  },
+  "versions": {
+    "onnxruntime": "1.31.1",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "imports_seconds": 0.19088800000008632,
+  "device": "CPUExecutionProvider",
+  "preprocessing": "BGR * 0.00392; binary mask float32 NCHW, as OpenCV example; original pixels preserved outside mask",
+  "intra_op_threads": 8,
+  "inter_op_threads": 1,
+  "runs": [
+    {
+      "case": "open-sky",
+      "index": 0,
+      "inference_seconds": 1.5184228999996776,
+      "save_seconds": 0.020988000000215834,
+      "input_sha256": "88b442977e28fb9d288491fff91029910ec566ef150211bbcb2c19c8c4d9dfe9",
+      "mask_sha256": "1170af53cba975cc14add919518b66c51b86c62581981adb21a5dce8ef656e52",
+      "output_sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 39.028968811035156,
+      "result_masked_mae": 0.07023061066865921,
+      "process_memory": {
+        "peak_working_set_bytes": 596959232,
+        "working_set_bytes": 589856768,
+        "peak_commit_bytes": 1260871680
+      }
+    },
+    {
+      "case": "open-sky",
+      "index": 1,
+      "inference_seconds": 1.5052660999999716,
+      "save_seconds": 0.027424900000369234,
+      "input_sha256": "88b442977e28fb9d288491fff91029910ec566ef150211bbcb2c19c8c4d9dfe9",
+      "mask_sha256": "1170af53cba975cc14add919518b66c51b86c62581981adb21a5dce8ef656e52",
+      "output_sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 39.028968811035156,
+      "result_masked_mae": 0.07023061066865921,
+      "process_memory": {
+        "peak_working_set_bytes": 814350336,
+        "working_set_bytes": 805539840,
+        "peak_commit_bytes": 1539784704
+      }
+    },
+    {
+      "case": "open-sky",
+      "index": 2,
+      "inference_seconds": 1.4981049999996685,
+      "save_seconds": 0.021933699999863165,
+      "input_sha256": "88b442977e28fb9d288491fff91029910ec566ef150211bbcb2c19c8c4d9dfe9",
+      "mask_sha256": "1170af53cba975cc14add919518b66c51b86c62581981adb21a5dce8ef656e52",
+      "output_sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 39.028968811035156,
+      "result_masked_mae": 0.07023061066865921,
+      "process_memory": {
+        "peak_working_set_bytes": 870735872,
+        "working_set_bytes": 861917184,
+        "peak_commit_bytes": 1539801088
+      }
+    },
+    {
+      "case": "architecture",
+      "index": 0,
+      "inference_seconds": 1.4961443000001964,
+      "save_seconds": 0.022724200000084238,
+      "input_sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+      "mask_sha256": "e25855e128be3c164190a25375e35206bd96d19d9966d8789799d70b7e676712",
+      "output_sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 37.221839904785156,
+      "result_masked_mae": 51.34457778930664,
+      "process_memory": {
+        "peak_working_set_bytes": 871940096,
+        "working_set_bytes": 864669696,
+        "peak_commit_bytes": 1540583424
+      }
+    },
+    {
+      "case": "architecture",
+      "index": 1,
+      "inference_seconds": 1.4839580000007118,
+      "save_seconds": 0.022256199999901582,
+      "input_sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+      "mask_sha256": "e25855e128be3c164190a25375e35206bd96d19d9966d8789799d70b7e676712",
+      "output_sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 37.221839904785156,
+      "result_masked_mae": 51.34457778930664,
+      "process_memory": {
+        "peak_working_set_bytes": 873500672,
+        "working_set_bytes": 864694272,
+        "peak_commit_bytes": 1542193152
+      }
+    },
+    {
+      "case": "architecture",
+      "index": 2,
+      "inference_seconds": 1.5228582000008828,
+      "save_seconds": 0.021759799999927054,
+      "input_sha256": "73a09baeb210e8d5e580f5ec719046aaae800c954f90fd125a40b1746e7ec0ec",
+      "mask_sha256": "e25855e128be3c164190a25375e35206bd96d19d9966d8789799d70b7e676712",
+      "output_sha256": "1dc07ca75db2cffbe18e159978608b2324dd5ac6f3ed6d3d72e5dc8c71e7bad3",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 37.221839904785156,
+      "result_masked_mae": 51.34457778930664,
+      "process_memory": {
+        "peak_working_set_bytes": 873697280,
+        "working_set_bytes": 864956416,
+        "peak_commit_bytes": 1542193152
+      }
+    },
+    {
+      "case": "organic",
+      "index": 0,
+      "inference_seconds": 1.4965313000002425,
+      "save_seconds": 0.025572600000487,
+      "input_sha256": "6edd2c03672042519af862985cd41542fca4b7a242bac15a8e2a76b293c28f4e",
+      "mask_sha256": "888515095b7d5f8e49513198165eb909b0b368ab11d66135146d89381a8cd3c3",
+      "output_sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 54.35915756225586,
+      "result_masked_mae": 42.41461944580078,
+      "process_memory": {
+        "peak_working_set_bytes": 874242048,
+        "working_set_bytes": 865497088,
+        "peak_commit_bytes": 1542569984
+      }
+    },
+    {
+      "case": "organic",
+      "index": 1,
+      "inference_seconds": 1.4927290000005087,
+      "save_seconds": 0.025459999999839056,
+      "input_sha256": "6edd2c03672042519af862985cd41542fca4b7a242bac15a8e2a76b293c28f4e",
+      "mask_sha256": "888515095b7d5f8e49513198165eb909b0b368ab11d66135146d89381a8cd3c3",
+      "output_sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 54.35915756225586,
+      "result_masked_mae": 42.41461944580078,
+      "process_memory": {
+        "peak_working_set_bytes": 874795008,
+        "working_set_bytes": 865525760,
+        "peak_commit_bytes": 1543393280
+      }
+    },
+    {
+      "case": "organic",
+      "index": 2,
+      "inference_seconds": 1.47270749999916,
+      "save_seconds": 0.02540099999987433,
+      "input_sha256": "6edd2c03672042519af862985cd41542fca4b7a242bac15a8e2a76b293c28f4e",
+      "mask_sha256": "888515095b7d5f8e49513198165eb909b0b368ab11d66135146d89381a8cd3c3",
+      "output_sha256": "f1ee95a16274bf1d66089ea9c74bd184a28db1780d8fc7c621c4c5299ee39a3f",
+      "masked_pixels": 3498,
+      "outside_mask_exact": true,
+      "input_masked_mae": 54.35915756225586,
+      "result_masked_mae": 42.41461944580078,
+      "process_memory": {
+        "peak_working_set_bytes": 875044864,
+        "working_set_bytes": 865771520,
+        "peak_commit_bytes": 1543393280
+      }
+    }
+  ],
+  "quality": "not-reviewed",
+  "seed": null,
+  "seed_note": "LaMa is deterministic here, no stochastic seed input; repeats measure the same input",
+  "pixel_contract_sha256": "5189183c51b716e251f6c07769126d04c081e95945790a634c85adc68c3910bf",
+  "session_load_seconds": 8.781389100000524,
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "timings": {
+    "open-sky": {
+      "runs": 3,
+      "median_seconds": 1.5052660999999716,
+      "min_seconds": 1.4981049999996685,
+      "max_seconds": 1.5184228999996776
+    },
+    "architecture": {
+      "runs": 3,
+      "median_seconds": 1.4961443000001964,
+      "min_seconds": 1.4839580000007118,
+      "max_seconds": 1.5228582000008828
+    },
+    "organic": {
+      "runs": 3,
+      "median_seconds": 1.4927290000005087,
+      "min_seconds": 1.47270749999916,
+      "max_seconds": 1.4965313000002425
+    }
+  },
+  "release_session_seconds": 0.06452309999986028,
+  "memory_after_release": {
+    "peak_working_set_bytes": 875044864,
+    "working_set_bytes": 697950208,
+    "peak_commit_bytes": 1543393280
+  },
+  "total_worker_seconds": 23.429115099999763,
+  "source_integrity_after": {
+    "digital-grid/plate.png": "ce475b856dc78f85d600a02cdc67761131bb2a72138a2bbf4dcc9b0304a32a25",
+    "digital-grid/aircraft.svg": "ae1998e3a01083397c885a2e178c5fa28a2d279a4810e6cadf8d3f8827e6b324",
+    "forest/backdrop.png": "d82d84734ee011235fcd42519e117020e1058e31ee4b49e4f7c17a63f373cd2e"
+  },
+  "source_unchanged": true
+}

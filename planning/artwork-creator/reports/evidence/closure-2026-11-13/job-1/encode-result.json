@@ -1,0 +1,42 @@
+{
+  "stage": "encode",
+  "torch": "2.9.1+rocm7.2.1",
+  "diffusers": "0.42.1",
+  "pread_weights": true,
+  "dtype": "bfloat16",
+  "records": [
+    {
+      "name": "generate",
+      "prompt": "Wide 16:9 cinematic painterly concept art, a quiet nocturnal stone gateway in a lush alien garden. The gateway stands in the right middle of the frame, clear open passage, layered distant garden behind. One small turquoise survey drone, about eight percent of frame width, is already visible at the left-middle at x=25%, y=45%. Distinct clean readable silhouette, no motion blur. Leave clear space for an arcing flight through the gateway toward the right; foreground pillar and a few branches can later occlude its path. Background garden continues coherently behind the drone and throughout the planned route. Rich material-integrated light details: dozens of small stone fissures and many fine leaf veins distributed in several groups across both gateway sides, foreground vegetation and distant plants. Thin elongated vines and leaf veins carry strong saturated cyan, magenta and amber gradients along their lengths. Preserve dark gaps, rough stone texture, natural branching, fine contours and occlusion. These luminous materials and the drone lamps are visibly separate from dark unlit surroundings, suitable for later independent colored impulses and complete environmental blackout with lights remaining visible. No detached glowing dots, generic floating outlines, white overexposure, text, labels, frame or watermark. Design for later separated layers, precise visibility and light masks, independent longitudinal delay maps, smooth environmental reveal, actual object flight and camera zoom. This is one static concept draft, not animation.",
+      "tokens": 303,
+      "encode_and_save_seconds": 0.9321979000001193,
+      "embedding_sha256": "01a41baae2f5d883f2b1def1fa2cdb7e79d7abd03e33107aa4721289ee061623"
+    },
+    {
+      "name": "edit",
+      "prompt": "Edit this image: change only the small turquoise survey drone hull in the left-middle to deep saturated red. Keep exactly the drone position, scale, shape, orientation and all its separate lamps. Preserve the stone gateway, all garden plants, every background contour, material-integrated light details and the strong cyan-magenta-amber gradients along vines and leaf veins. Preserve dark gaps, rough texture, fine edges and occlusion. Keep the full original composition and camera unchanged. No new objects or text. The distinct lamps and luminous materials must remain suitable for later independent blackout/reveal and impulse/color animation; this edit changes the hull appearance only.",
+      "tokens": 140,
+      "encode_and_save_seconds": 0.19177769999987504,
+      "embedding_sha256": "f56d05b833a651f58b5c9ce116d633de4bc3298f40cf59896b42b5a6d85be387"
+    }
+  ],
+  "quality": "not-reviewed",
+  "imports_seconds": 4.061429699999735,
+  "device": "cuda:0",
+  "device_name": "AMD Radeon RX 7800 XT",
+  "hip": "7.2.53211-158bd99533",
+  "initial_gpu_free_total": [
+    17010655232,
+    17163091968
+  ],
+  "load_seconds": 6.3932386999999835,
+  "gpu_max_allocated_bytes": 8411457536,
+  "gpu_max_reserved_bytes": 8535408640,
+  "gpu_allocated_after_release_bytes": 33570816,
+  "total_worker_seconds": 11.91682899999978,
+  "process_memory": {
+    "peak_working_set_bytes": 8674242560,
+    "working_set_bytes": 917893120,
+    "peak_commit_bytes": 11164852224
+  }
+}

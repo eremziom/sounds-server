@@ -1,0 +1,11 @@
+{
+  "recorded_from": "actual completed tool result; not re-executed for this archive",
+  "command": "node tests/infinite-zoom-integration.browser.mjs",
+  "cwd": "apps/ui",
+  "exit_code": 0,
+  "source_sha256": "4d7635d4f96019635629ba6135336ad15d2332c348635c97081d8c2e05694c8e",
+  "stdout": [
+    "Infinite Zoom app: readiness/cancel, graph reuse, pause/end/next-track, modes/Escape/focus, transition, reset and audio failure isolation OK",
+    "Infinite Zoom first Play: critical load failure blocks music; explicit retry prepares visuals and starts once OK"
+  ]
+}

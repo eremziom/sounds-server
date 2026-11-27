@@ -1,0 +1,25 @@
+Collecting rocm-sdk-core==7.2.1
+  Downloading https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_core-7.2.1-py3-none-win_amd64.whl (644.8 MB)
+     ------------------------------------- 644.8/644.8 MB 12.6 MB/s eta 0:00:00
+Collecting rocm-sdk-devel==7.2.1
+  Downloading https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_devel-7.2.1-py3-none-win_amd64.whl (232.8 MB)
+     ------------------------------------- 232.8/232.8 MB 11.4 MB/s eta 0:00:00
+Collecting rocm-sdk-libraries-custom==7.2.1
+  Downloading https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm_sdk_libraries_custom-7.2.1-py3-none-win_amd64.whl (490.0 MB)
+     ------------------------------------- 490.0/490.0 MB 13.0 MB/s eta 0:00:00
+Collecting https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz
+  Downloading https://repo.radeon.com/rocm/windows/rocm-rel-7.2.1/rocm-7.2.1.tar.gz (15 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: rocm
+  Building wheel for rocm (pyproject.toml): started
+  Building wheel for rocm (pyproject.toml): finished with status 'done'
+  Created wheel for rocm: filename=rocm-7.2.1-py3-none-any.whl size=20088 sha256=4a72c52de8a2cecf42ef751b3b0593a3d6722866e6e662d5292206934d3a2beb
+  Stored in directory: D:\Sandbox\sounds-server\.local\kre00\tmp\pip-ephem-wheel-cache-0kbkp49f\wheels\5f\25\fa\64c630e6b07d94199c5751c182617b4309379b85c58146d540
+Successfully built rocm
+Installing collected packages: rocm-sdk-libraries-custom, rocm-sdk-devel, rocm-sdk-core, rocm
+Successfully installed rocm-7.2.1 rocm-sdk-core-7.2.1 rocm-sdk-devel-7.2.1 rocm-sdk-libraries-custom-7.2.1

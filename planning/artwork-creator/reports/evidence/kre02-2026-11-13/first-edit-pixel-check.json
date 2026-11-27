@@ -1,0 +1,12 @@
+{
+  "dimensions": [
+    512,
+    288
+  ],
+  "source": "deterministically reconstructed from test-artwork-jobs.cjs png fixture",
+  "outsideMaskExact": true,
+  "insideChangedPixels": 53111,
+  "maskPixels": 53111,
+  "insideMeanAbsoluteDifference": 160.844219339371,
+  "visualArtworkAcceptance": false
+}

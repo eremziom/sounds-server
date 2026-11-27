@@ -1,0 +1,6 @@
+{
+  "result": {
+    "error": "Error: Reset restores exact initial composition\n    at check (http://127.0.0.1:65186/preview.mjs:6:34)\n    at window.runPreview (http://127.0.0.1:65186/preview.mjs:35:52)"
+  },
+  "exceptions": []
+}

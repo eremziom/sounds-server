@@ -87,6 +87,131 @@ model User {
   sessions        AuthSession[]
   tracks          Track[]
   audioUploads    AudioUpload[]
+  artworkProjects ArtworkProject[]
+}
+
+model ArtworkProject {
+  id               String            @id @default(uuid())
+  ownerId          Int
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  title            String            @db.VarChar(160)
+  activeRevisionId String?           @unique
+  activeRevision   ArtworkRevision?  @relation("ActiveRevision", fields: [activeRevisionId, id], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  revisions        ArtworkRevision[] @relation("ProjectRevisions")
+  artifacts        ArtworkArtifact[]
+  messages         CreatorMessage[]
+  jobs             ArtworkJob[]
+
+  @@unique([activeRevisionId, id])
+  @@index([ownerId, updatedAt])
+}
+
+model ArtworkRevision {
+  id             String            @id @default(uuid())
+  projectId      String
+  project        ArtworkProject    @relation("ProjectRevisions", fields: [projectId], references: [id], onDelete: Restrict)
+  activeFor      ArtworkProject?   @relation("ActiveRevision")
+  parentId       String?
+  parent         ArtworkRevision?  @relation("RevisionParent", fields: [parentId, projectId], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  children       ArtworkRevision[] @relation("RevisionParent")
+  restoredFromId String?
+  restoredFrom   ArtworkRevision?  @relation("RevisionRestore", fields: [restoredFromId, projectId], references: [id, projectId], onDelete: NoAction, onUpdate: NoAction)
+  restores       ArtworkRevision[] @relation("RevisionRestore")
+  jobs           ArtworkJob[]
+  snapshot       Json
+  createdAt      DateTime          @default(now())
+
+  @@unique([id, projectId])
+  @@index([projectId, createdAt])
+}
+
+model ArtworkArtifact {
+  id             String                 @id @default(uuid())
+  projectId      String
+  project        ArtworkProject         @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  kind           String
+  storageKey     String                 @unique
+  mimeType       String
+  sizeBytes      Int
+  sha256         String                 @db.Char(64)
+  width          Int?
+  height         Int?
+  registrationId String?
+  provenance     Json
+  createdAt      DateTime               @default(now())
+  inputs         ArtworkArtifactInput[] @relation("ArtifactOutputs")
+  outputs        ArtworkArtifactInput[] @relation("ArtifactInputs")
+  jobId          String?
+  outputName     String?
+  job            ArtworkJob? @relation(fields: [jobId, projectId], references: [id, projectId], onDelete: Restrict)
+
+  @@unique([id, projectId])
+  @@unique([jobId, outputName])
+  @@index([projectId, createdAt])
+}
+
+model ArtworkArtifactInput {
+  artifactId String
+  inputId    String
+  projectId  String
+  artifact   ArtworkArtifact @relation("ArtifactOutputs", fields: [artifactId, projectId], references: [id, projectId], onDelete: Restrict)
+  input      ArtworkArtifact @relation("ArtifactInputs", fields: [inputId, projectId], references: [id, projectId], onDelete: Restrict)
+
+  @@id([artifactId, inputId])
+}
+
+model CreatorMessage {
+  id        String         @id @default(uuid())
+  projectId String
+  project   ArtworkProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  role      String
+  text      String         @db.VarChar(16000)
+  createdAt DateTime       @default(now())
+
+  @@index([projectId, createdAt])
+}
+
+enum ArtworkJobState {
+  queued
+  running
+  succeeded
+  failed
+  cancelled
+}
+
+model ArtworkJob {
+  id String @id @default(uuid())
+  projectId String
+  project ArtworkProject @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  baseRevisionId String
+  baseRevision ArtworkRevision @relation(fields: [baseRevisionId, projectId], references: [id, projectId], onDelete: Restrict)
+  requestKey String
+  requestHash String @db.Char(64)
+  tool String
+  arguments Json
+  inputIds Json
+  state ArtworkJobState @default(queued)
+  attempt Int @default(0)
+  progress Int @default(0)
+  phase String @default("queued")
+  cancelRequested Boolean @default(false)
+  runToken String?
+  childPid Int?
+  errorCode String?
+  result Json?
+  memory Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  startedAt DateTime?
+  availableAt DateTime @default(now())
+  finishedAt DateTime?
+  artifacts ArtworkArtifact[]
+  @@unique([id, projectId])
+  @@unique([projectId, requestKey])
+  @@index([state, createdAt])
+  @@index([projectId, createdAt])
 }
 
 model AuthSession {

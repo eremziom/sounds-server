@@ -1,0 +1,25 @@
+{
+  "stage": "encode",
+  "torch": "2.9.1+rocm7.2.1",
+  "diffusers": "0.42.1",
+  "dtype": "bfloat16",
+  "records": [],
+  "quality": "not-reviewed",
+  "imports_seconds": 3.8569021000002977,
+  "device": "cuda:0",
+  "device_name": "AMD Radeon RX 7800 XT",
+  "hip": "7.2.53211-158bd99533",
+  "initial_gpu_free_total": [
+    17010655232,
+    17163091968
+  ],
+  "load_seconds": 5.142303900000115,
+  "error": "ValueError: Cannot use chat template functions because tokenizer.chat_template is not set and no template argument was passed! For information about writing templates and setting the tokenizer.chat_template attribute, please see the documentation at https://huggingface.co/docs/transformers/main/en/chat_templating",
+  "gpu_allocated_after_release_bytes": 0,
+  "total_worker_seconds": 9.76741630000015,
+  "process_memory": {
+    "peak_working_set_bytes": 8719638528,
+    "working_set_bytes": 656703488,
+    "peak_commit_bytes": 11186331648
+  }
+}

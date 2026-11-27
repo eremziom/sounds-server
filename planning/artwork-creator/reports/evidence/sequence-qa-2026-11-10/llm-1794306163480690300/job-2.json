@@ -1,0 +1,11 @@
+{
+  "id": 2,
+  "state": "queued",
+  "arguments": {
+    "seed": 500,
+    "width": 1024,
+    "height": 576
+  },
+  "recipe": "fixed-gate-drone-v1",
+  "selection_policy": "Manual reviewed point/box for this known seed; not free-form scene localization"
+}

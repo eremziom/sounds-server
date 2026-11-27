@@ -1,0 +1,174 @@
+{
+  "plan_source": ".local\\kre00\\runs\\llm-1794306163480690300",
+  "jobs": [
+    {
+      "job_id": 0,
+      "wall_seconds": 62.188309900000604,
+      "stages": [
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "encode",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 14.47918000000027
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "single",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 21.433068899999853
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "segment",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 11.687634199999593
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "fill",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 14.586484299999938
+        }
+      ],
+      "artifacts": {
+        "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+        "backing-fill-mask.png": "e327d14027133b2b46b849b60b1c2b196b4ad4105ace04f4de03e580b6138932",
+        "backing.png": "d0c4f48e80e9251b3b57ac6c4be1ec767a15075e5351c578649d954959994dca",
+        "environment-light-mask.png": "3db0162753d7658cf0b43d64afa61ab4562f502a712bcc9f57d4a5fdb120d2f2",
+        "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+        "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+      }
+    },
+    {
+      "job_id": 1,
+      "wall_seconds": 59.84427490000053,
+      "stages": [
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "encode",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-1"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 13.255346500000087
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "single",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-1"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 20.401172699999734
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "segment",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-1"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 11.684757600000012
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "fill",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-1"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 14.501040200000716
+        }
+      ],
+      "artifacts": {
+        "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+        "backing-fill-mask.png": "e327d14027133b2b46b849b60b1c2b196b4ad4105ace04f4de03e580b6138932",
+        "backing.png": "d0c4f48e80e9251b3b57ac6c4be1ec767a15075e5351c578649d954959994dca",
+        "environment-light-mask.png": "3db0162753d7658cf0b43d64afa61ab4562f502a712bcc9f57d4a5fdb120d2f2",
+        "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+        "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+      }
+    },
+    {
+      "job_id": 2,
+      "wall_seconds": 59.58320420000018,
+      "stages": [
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "encode",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-2"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 13.2438699000013
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+            "single",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-2"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 20.11484460000065
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "segment",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-2"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 11.740320599999905
+        },
+        {
+          "command": [
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+            "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\sequence_image_tools.py",
+            "fill",
+            "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-2"
+          ],
+          "exit_code": 0,
+          "wall_seconds": 14.482136499998887
+        }
+      ],
+      "artifacts": {
+        "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+        "backing-fill-mask.png": "e327d14027133b2b46b849b60b1c2b196b4ad4105ace04f4de03e580b6138932",
+        "backing.png": "d0c4f48e80e9251b3b57ac6c4be1ec767a15075e5351c578649d954959994dca",
+        "environment-light-mask.png": "3db0162753d7658cf0b43d64afa61ab4562f502a712bcc9f57d4a5fdb120d2f2",
+        "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+        "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+      }
+    }
+  ],
+  "scope": "Three fixed-seed pilot jobs; LLM plans batched first, then unloaded before heavy workers",
+  "wall_summary": {
+    "runs": 3,
+    "median_seconds": 59.84427490000053,
+    "min_seconds": 59.58320420000018,
+    "max_seconds": 62.188309900000604
+  }
+}

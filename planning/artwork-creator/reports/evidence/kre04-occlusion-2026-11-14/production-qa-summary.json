@@ -1,0 +1,81 @@
+{
+  "checks": {
+    "realApi": true,
+    "realJwt": true,
+    "realWorker": true,
+    "modelInference": false,
+    "sourceGenerationInference": false,
+    "occlusionCorrection": {
+      "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+      "operations": {
+        "pillar": {
+          "before": [
+            "9f8a6d70-e365-41a6-8cc2-3e3f7a2e3f46",
+            "44a208b4-e17e-4265-87b4-8bdec7dd8462",
+            "c2551522-2970-49de-baa0-ef1aa4e3bfc9",
+            "850dd54b-0157-4fae-ba35-96df516c0ca4",
+            "f7d9e338-b2c0-485c-8f04-492891065ce9",
+            "ec8f4e1b-13ff-447b-a770-b53059957129",
+            "34c29cc5-6956-4fc7-99e1-94b5f4da83d0",
+            "18b4d8c0-3c5a-4951-9e37-269405f3b0c8",
+            "2e59e162-c2ea-49a3-b21a-c4181a277702",
+            "6374a9e6-12ce-4768-80a7-c02a7baae7c5"
+          ],
+          "tool": "segmentObject",
+          "jobId": "eefbf1f4-8191-4d03-8e5f-9c5e8ae5b263",
+          "artifactId": "bbb942e0-b6c2-44e1-905c-e30747c73d24"
+        },
+        "registered": {
+          "before": [
+            "eefbf1f4-8191-4d03-8e5f-9c5e8ae5b263",
+            "9f8a6d70-e365-41a6-8cc2-3e3f7a2e3f46",
+            "44a208b4-e17e-4265-87b4-8bdec7dd8462",
+            "c2551522-2970-49de-baa0-ef1aa4e3bfc9",
+            "850dd54b-0157-4fae-ba35-96df516c0ca4",
+            "f7d9e338-b2c0-485c-8f04-492891065ce9",
+            "ec8f4e1b-13ff-447b-a770-b53059957129",
+            "34c29cc5-6956-4fc7-99e1-94b5f4da83d0",
+            "18b4d8c0-3c5a-4951-9e37-269405f3b0c8",
+            "2e59e162-c2ea-49a3-b21a-c4181a277702",
+            "6374a9e6-12ce-4768-80a7-c02a7baae7c5"
+          ],
+          "tool": "registerMap",
+          "jobId": "fe0777b8-e1af-4296-82d6-52b24eb124f0",
+          "artifactId": "3ca05769-6866-4e17-b559-3ff6c0103056"
+        }
+      },
+      "baseRevisionId": "b4a3a1d6-7648-49b1-a17b-1cb4a25cbcd1",
+      "revisionId": "dd2d57b7-b21b-48fa-b437-cebe2566a6b6"
+    },
+    "productionPause": {
+      "black": 725,
+      "lit": 837236,
+      "uncovered": 0,
+      "hash": 1157851093,
+      "pixels": 1024000
+    },
+    "productionResetFrozen": true,
+    "productionBlackout": {
+      "black": 907658,
+      "lit": 108532,
+      "uncovered": 0,
+      "hash": 4033498764,
+      "pixels": 1024000,
+      "animated": true,
+      "blackCoverage": 0.886384765625,
+      "enabled": true
+    },
+    "productionRevealPause": {
+      "black": 2191,
+      "lit": 759357,
+      "uncovered": 0,
+      "hash": 288307087,
+      "pixels": 1024000
+    },
+    "productionContext": true,
+    "productionReload": true
+  },
+  "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+  "revisionId": "dd2d57b7-b21b-48fa-b437-cebe2566a6b6",
+  "scope": "Occlusion corrected through UI with real SAM; motion/zoom QA; no engine changes"
+}

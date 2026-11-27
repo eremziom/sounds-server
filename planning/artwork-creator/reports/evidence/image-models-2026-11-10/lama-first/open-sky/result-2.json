@@ -1,0 +1,18 @@
+{
+  "case": "open-sky",
+  "index": 2,
+  "inference_seconds": 1.3114097999996375,
+  "save_seconds": 0.024586399999861897,
+  "input_sha256": "88b442977e28fb9d288491fff91029910ec566ef150211bbcb2c19c8c4d9dfe9",
+  "mask_sha256": "1170af53cba975cc14add919518b66c51b86c62581981adb21a5dce8ef656e52",
+  "output_sha256": "9af2fa6cfcd56d2b0aa440eadfec4f888b4b2ee83c24a36c2957dd6564dcd238",
+  "masked_pixels": 3498,
+  "outside_mask_exact": true,
+  "input_masked_mae": 39.028968811035156,
+  "result_masked_mae": 0.07023061066865921,
+  "process_memory": {
+    "peak_working_set_bytes": 874106880,
+    "working_set_bytes": 865357824,
+    "peak_commit_bytes": 1543274496
+  }
+}

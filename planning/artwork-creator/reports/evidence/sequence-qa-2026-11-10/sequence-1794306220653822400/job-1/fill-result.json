@@ -1,0 +1,30 @@
+{
+  "stage": "fill",
+  "input_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "quality": "not-reviewed",
+  "session_load_seconds": 8.360974400000487,
+  "inference_seconds": 1.5057664000014483,
+  "crop": [
+    64,
+    0,
+    576,
+    512
+  ],
+  "mask_expansion_kernel": 101,
+  "outside_fill_exact": true,
+  "note": "Inpainted backing and large glow-removal area need motion/zoom review; not accepted artwork",
+  "total_worker_seconds": 14.29781980000007,
+  "process_memory": {
+    "peak_working_set_bytes": 597659648,
+    "working_set_bytes": 585490432,
+    "peak_commit_bytes": 1261809664
+  },
+  "artifacts": {
+    "B-04-1024-500.png": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+    "backing-fill-mask.png": "e327d14027133b2b46b849b60b1c2b196b4ad4105ace04f4de03e580b6138932",
+    "backing.png": "d0c4f48e80e9251b3b57ac6c4be1ec767a15075e5351c578649d954959994dca",
+    "environment-light-mask.png": "3db0162753d7658cf0b43d64afa61ab4562f502a712bcc9f57d4a5fdb120d2f2",
+    "light-mask.png": "3718fafbc1fe2ba11acce1d132ed48a756e996ff70dbc5eaf17b4b4fe1794812",
+    "object-mask.png": "c0b4ff16744616cda345a7003ab9ed5a69b0a3c28c6c0ea301fa69971007b6e9"
+  }
+}

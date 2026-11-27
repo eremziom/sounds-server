@@ -1,0 +1,26 @@
+{
+  "recorded_from": "actual tool command results, 2026-11-10",
+  "suites": [
+    {
+      "command": "node --test tools/artwork-creator/benchmark-tools.test.mjs",
+      "passed": 4,
+      "exit_code": 0
+    },
+    {
+      "command": "py -m unittest discover -s tools/artwork-creator -p test_kre00.py -v",
+      "passed": 12,
+      "exit_code": 0
+    },
+    {
+      "command": ".local/kre00/venvs/onnx/Scripts/python.exe -m unittest discover -s tools/artwork-creator -p test_image_ops.py -v",
+      "passed": 5,
+      "exit_code": 0
+    },
+    {
+      "command": ".local/kre00/venvs/torch-rocm721/Scripts/python.exe -m unittest discover -s tools/artwork-creator -p test_bounded_attention.py -v",
+      "passed": 3,
+      "exit_code": 0
+    }
+  ],
+  "passed_total": 24
+}

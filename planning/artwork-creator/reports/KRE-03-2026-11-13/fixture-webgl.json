@@ -1,0 +1,2188 @@
+{
+  "result": {
+    "renderer": "ANGLE (AMD, AMD Radeon RX 7800 XT (0x0000747E) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "frames": 1920,
+    "simulationSeconds": 32,
+    "checks": {
+      "blackout": {
+        "blackPixels": 552926,
+        "litPixels": 36849
+      },
+      "pause": true,
+      "objectTravel": {
+        "first": {
+          "id": "drone",
+          "x": -77.49139414108024,
+          "y": -463.28266793172554,
+          "rotation": -0.46364380264568705,
+          "opacity": 0
+        },
+        "last": {
+          "id": "drone",
+          "x": 3398.728060498455,
+          "y": -132.05405817023947,
+          "rotation": -0.14888994760949725,
+          "opacity": 0
+        }
+      },
+      "occlusion": {
+        "frame": 599,
+        "expectedOverlapPixels": 783,
+        "pillarInteriorChanged": 0,
+        "visibleChanged": 2622
+      },
+      "flow": {
+        "probes": [
+          20510,
+          511006
+        ],
+        "baseline": [
+          [
+            39,
+            89,
+            143
+          ],
+          [
+            15,
+            100,
+            140
+          ]
+        ],
+        "early": [
+          [
+            110,
+            0,
+            142
+          ],
+          [
+            15,
+            100,
+            140
+          ]
+        ],
+        "later": [
+          [
+            150,
+            89,
+            0
+          ],
+          [
+            129,
+            0,
+            133
+          ]
+        ],
+        "changes": {
+          "nearEarly": 89,
+          "farEarly": 0,
+          "farLater": 114
+        }
+      },
+      "audioBinding": {
+        "changedPixels": 21406,
+        "quietSum": 9580640,
+        "loudSum": 10041559,
+        "simulationTick": 45,
+        "scope": "Controlled normalized signals; no second audio graph"
+      },
+      "reset": {
+        "changedChannels": 0,
+        "maximum": 0
+      }
+    },
+    "samples": [
+      {
+        "frame": 0,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": -77.49139414108024,
+            "y": -463.28266793172554,
+            "rotation": -0.46364380264568705,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": -77.49139414108024,
+            "y": -463.28266793172554,
+            "rotation": -0.46364380264568705,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 59,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": -56.697025233005434,
+            "y": -458.4023494549849,
+            "rotation": -0.4503544269993272,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": -56.697025233005434,
+            "y": -458.4023494549849,
+            "rotation": -0.4503544269993272,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 179,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 95.72003259226767,
+            "y": -416.23671816899895,
+            "rotation": -0.3538596836527069,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 95.72003259226767,
+            "y": -416.23671816899895,
+            "rotation": -0.3538596836527069,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 359,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.313479835792824
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 514.9393124185707,
+            "y": -265.7606120880605,
+            "rotation": -0.11681533151408002,
+            "opacity": 0.313479835792824
+          },
+          {
+            "id": "drone-lights",
+            "x": 514.9393124185707,
+            "y": -265.7606120880605,
+            "rotation": -0.11681533151408002,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 479,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.6806608253761574
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 865.8228786965059,
+            "y": -138.3906495135867,
+            "rotation": 0.022317513627607224,
+            "opacity": 0.6806608253761574
+          },
+          {
+            "id": "drone-lights",
+            "x": 865.8228786965059,
+            "y": -138.3906495135867,
+            "rotation": 0.022317513627607224,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 659,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.9999869972511574
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 1459.9319173596043,
+            "y": 29.328583804648773,
+            "rotation": 0.13411779945950522,
+            "opacity": 0.9999869972511574
+          },
+          {
+            "id": "drone-lights",
+            "x": 1459.9319173596043,
+            "y": 29.328583804648773,
+            "rotation": 0.13411779945950522,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 839,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 2093.0885526526004,
+            "y": 122.88024493093495,
+            "rotation": 0.13625954043946042,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 2093.0885526526004,
+            "y": 122.88024493093495,
+            "rotation": 0.13625954043946042,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2053.3333333333335,
+            "y": 1050.3703703703704,
+            "rotation": 0,
+            "logScale": 0.25925925925925924
+          },
+          "velocity": {
+            "x": 80,
+            "y": -17.77777777777783,
+            "rotation": 0,
+            "logScale": 0.15555555555555556
+          },
+          "moving": true,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1019,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 2689.4340231470815,
+            "y": 102.82208787704101,
+            "rotation": 0.05663756556309166,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 2689.4340231470815,
+            "y": 102.82208787704101,
+            "rotation": 0.05663756556309166,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1199,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3148.9848674177124,
+            "y": -15.450846654794134,
+            "rotation": -0.060413737488425816,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 3148.9848674177124,
+            "y": -15.450846654794134,
+            "rotation": -0.060413737488425816,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1379,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3382.0352790582842,
+            "y": -122.85228813886411,
+            "rotation": -0.14233859823146372,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 3382.0352790582842,
+            "y": -122.85228813886411,
+            "rotation": -0.14233859823146372,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1439,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1559,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.8460872214988424
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1966.6666666666667,
+            "y": 1069.6296296296296,
+            "rotation": 0,
+            "logScale": 0.0907407407407407
+          },
+          "velocity": {
+            "x": -80,
+            "y": 17.77777777777783,
+            "rotation": 0,
+            "logScale": -0.15555555555555556
+          },
+          "moving": true,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1799,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.15860024233217584
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1919,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.000013002748842638745
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      }
+    ],
+    "opaque": true,
+    "portraitWide": true,
+    "oneCanvas": true,
+    "diagnostics": {
+      "available": true,
+      "disposed": false,
+      "width": 1400,
+      "height": 600,
+      "estimatedTextureBytes": 12976704,
+      "optionalPending": 0,
+      "optionalFailures": 0,
+      "detailEnabled": true,
+      "estimatedTargetBytes": 6720000,
+      "colorBuffer": "rgba16f",
+      "outputDithering": true,
+      "artworks": 1,
+      "textures": 18,
+      "geometries": 2,
+      "programs": 5,
+      "gpuBudgetBytes": 268435456,
+      "scene": "journey",
+      "cachedInitialArtwork": false,
+      "commandError": false,
+      "recording": null,
+      "cameraTiming": 1,
+      "transition": {
+        "phase": "idle",
+        "error": null,
+        "handoff": null,
+        "placement": null,
+        "region": null,
+        "sourceInstanceId": "kre03-production-qa",
+        "destinationInstanceId": null,
+        "canStart": false,
+        "qualityLocked": false
+      }
+    },
+    "errors": [],
+    "visualAcceptance": "requires review of actual motion/zoom recording and uncertain boundaries"
+  },
+  "partial": {
+    "checks": {
+      "blackout": {
+        "blackPixels": 552926,
+        "litPixels": 36849
+      },
+      "pause": true,
+      "objectTravel": {
+        "first": {
+          "id": "drone",
+          "x": -77.49139414108024,
+          "y": -463.28266793172554,
+          "rotation": -0.46364380264568705,
+          "opacity": 0
+        },
+        "last": {
+          "id": "drone",
+          "x": 3398.728060498455,
+          "y": -132.05405817023947,
+          "rotation": -0.14888994760949725,
+          "opacity": 0
+        }
+      },
+      "occlusion": {
+        "frame": 599,
+        "expectedOverlapPixels": 783,
+        "pillarInteriorChanged": 0,
+        "visibleChanged": 2622
+      },
+      "flow": {
+        "probes": [
+          20510,
+          511006
+        ],
+        "baseline": [
+          [
+            39,
+            89,
+            143
+          ],
+          [
+            15,
+            100,
+            140
+          ]
+        ],
+        "early": [
+          [
+            110,
+            0,
+            142
+          ],
+          [
+            15,
+            100,
+            140
+          ]
+        ],
+        "later": [
+          [
+            150,
+            89,
+            0
+          ],
+          [
+            129,
+            0,
+            133
+          ]
+        ],
+        "changes": {
+          "nearEarly": 89,
+          "farEarly": 0,
+          "farLater": 114
+        }
+      },
+      "audioBinding": {
+        "changedPixels": 21406,
+        "quietSum": 9580640,
+        "loudSum": 10041559,
+        "simulationTick": 45,
+        "scope": "Controlled normalized signals; no second audio graph"
+      },
+      "reset": {
+        "changedChannels": 0,
+        "maximum": 0
+      }
+    },
+    "samples": [
+      {
+        "frame": 0,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": -77.49139414108024,
+            "y": -463.28266793172554,
+            "rotation": -0.46364380264568705,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": -77.49139414108024,
+            "y": -463.28266793172554,
+            "rotation": -0.46364380264568705,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 59,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": -56.697025233005434,
+            "y": -458.4023494549849,
+            "rotation": -0.4503544269993272,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": -56.697025233005434,
+            "y": -458.4023494549849,
+            "rotation": -0.4503544269993272,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 179,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 95.72003259226767,
+            "y": -416.23671816899895,
+            "rotation": -0.3538596836527069,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 95.72003259226767,
+            "y": -416.23671816899895,
+            "rotation": -0.3538596836527069,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 359,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.313479835792824
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 514.9393124185707,
+            "y": -265.7606120880605,
+            "rotation": -0.11681533151408002,
+            "opacity": 0.313479835792824
+          },
+          {
+            "id": "drone-lights",
+            "x": 514.9393124185707,
+            "y": -265.7606120880605,
+            "rotation": -0.11681533151408002,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 479,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.6806608253761574
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 865.8228786965059,
+            "y": -138.3906495135867,
+            "rotation": 0.022317513627607224,
+            "opacity": 0.6806608253761574
+          },
+          {
+            "id": "drone-lights",
+            "x": 865.8228786965059,
+            "y": -138.3906495135867,
+            "rotation": 0.022317513627607224,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 659,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.9999869972511574
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 1459.9319173596043,
+            "y": 29.328583804648773,
+            "rotation": 0.13411779945950522,
+            "opacity": 0.9999869972511574
+          },
+          {
+            "id": "drone-lights",
+            "x": 1459.9319173596043,
+            "y": 29.328583804648773,
+            "rotation": 0.13411779945950522,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 839,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 2093.0885526526004,
+            "y": 122.88024493093495,
+            "rotation": 0.13625954043946042,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 2093.0885526526004,
+            "y": 122.88024493093495,
+            "rotation": 0.13625954043946042,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2053.3333333333335,
+            "y": 1050.3703703703704,
+            "rotation": 0,
+            "logScale": 0.25925925925925924
+          },
+          "velocity": {
+            "x": 80,
+            "y": -17.77777777777783,
+            "rotation": 0,
+            "logScale": 0.15555555555555556
+          },
+          "moving": true,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1019,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 2689.4340231470815,
+            "y": 102.82208787704101,
+            "rotation": 0.05663756556309166,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 2689.4340231470815,
+            "y": 102.82208787704101,
+            "rotation": 0.05663756556309166,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1199,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3148.9848674177124,
+            "y": -15.450846654794134,
+            "rotation": -0.060413737488425816,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 3148.9848674177124,
+            "y": -15.450846654794134,
+            "rotation": -0.060413737488425816,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1379,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3382.0352790582842,
+            "y": -122.85228813886411,
+            "rotation": -0.14233859823146372,
+            "opacity": 1
+          },
+          {
+            "id": "drone-lights",
+            "x": 3382.0352790582842,
+            "y": -122.85228813886411,
+            "rotation": -0.14233859823146372,
+            "opacity": 1
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1439,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 2100,
+            "y": 1040,
+            "rotation": 0,
+            "logScale": 0.35
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1559,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.8460872214988424
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1966.6666666666667,
+            "y": 1069.6296296296296,
+            "rotation": 0,
+            "logScale": 0.0907407407407407
+          },
+          "velocity": {
+            "x": -80,
+            "y": 17.77777777777783,
+            "rotation": 0,
+            "logScale": -0.15555555555555556
+          },
+          "moving": true,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1799,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.15860024233217584
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      },
+      {
+        "frame": 1919,
+        "layers": [
+          {
+            "id": "coverage",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "environment",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 0.000013002748842638745
+          },
+          {
+            "id": "west-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "middle-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "east-lights",
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "opacity": 1
+          },
+          {
+            "id": "drone",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          },
+          {
+            "id": "drone-lights",
+            "x": 3398.728060498455,
+            "y": -132.05405817023947,
+            "rotation": -0.14888994760949725,
+            "opacity": 0
+          }
+        ],
+        "camera": {
+          "pose": {
+            "x": 1920,
+            "y": 1080,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "velocity": {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "logScale": 0
+          },
+          "moving": false,
+          "constraintReached": false
+        }
+      }
+    ],
+    "errors": []
+  },
+  "exceptions": []
+}

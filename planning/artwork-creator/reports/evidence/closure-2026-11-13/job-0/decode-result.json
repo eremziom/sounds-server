@@ -1,0 +1,16 @@
+{
+  "stage": "decode",
+  "device": "AMD Radeon RX 7800 XT",
+  "dtype": "bfloat16",
+  "pread_weights": true,
+  "latent_sha256": "8bc1588af3ca833918d898782c7dd26eb6425495e16789461368650aefb52b60",
+  "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "wall_seconds": 6.274526400000013,
+  "gpu_max_allocated_bytes": 3836417024,
+  "gpu_max_reserved_bytes": 4240441344,
+  "process_memory": {
+    "peak_working_set_bytes": 748122112,
+    "working_set_bytes": 737267712,
+    "peak_commit_bytes": 3251412992
+  }
+}

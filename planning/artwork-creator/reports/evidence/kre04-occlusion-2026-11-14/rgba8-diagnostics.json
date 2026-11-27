@@ -1,0 +1,116 @@
+{
+  "diagnostics": {
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "dpr": 1,
+      "renderScale": 1
+    },
+    "renderer": "WebKit WebGL",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "initialRedraw": {
+      "maximum": 1,
+      "channels": 2,
+      "samples": [
+        {
+          "index": 393880,
+          "before": 113,
+          "after": 112
+        },
+        {
+          "index": 1043473,
+          "before": 234,
+          "after": 233
+        }
+      ]
+    },
+    "cameraUnchanged": true,
+    "stateUnchanged": true,
+    "resources": {
+      "available": true,
+      "disposed": false,
+      "width": 1280,
+      "height": 720,
+      "estimatedTextureBytes": 108864000,
+      "optionalPending": 0,
+      "optionalFailures": 0,
+      "detailEnabled": true,
+      "estimatedTargetBytes": 3686400,
+      "colorBuffer": "rgba8",
+      "outputDithering": false,
+      "artworks": 1,
+      "textures": 27,
+      "geometries": 2,
+      "programs": 14,
+      "gpuBudgetBytes": 268435456,
+      "scene": "draft",
+      "cachedInitialArtwork": false,
+      "commandError": false,
+      "recording": {
+        "frames": 100,
+        "capacity": 36000,
+        "complete": false
+      },
+      "cameraTiming": 1,
+      "transition": {
+        "phase": "idle",
+        "error": null,
+        "handoff": null,
+        "placement": {
+          "x": 1920,
+          "y": 1030,
+          "scale": 0.055,
+          "rotation": 0,
+          "anchorX": 1920,
+          "anchorY": 1080
+        },
+        "region": {
+          "x": 1920,
+          "y": 1030,
+          "radiusX": 90,
+          "radiusY": 48,
+          "rotation": 0,
+          "feather": 0.24
+        },
+        "destinationCamera": "stop-at-full-frame",
+        "sourceInstanceId": "pilot-test",
+        "destinationInstanceId": "pilot-test:embedded-1",
+        "canStart": false,
+        "qualityLocked": false
+      }
+    }
+  },
+  "result": {},
+  "exception": {
+    "exceptionId": 1,
+    "text": "Uncaught (in promise) Error: Frozen draft redraw is pixel-identical before Reset: {\"viewport\":{\"width\":1280,\"height\":720,\"dpr\":1,\"renderScale\":1},\"renderer\":\"WebKit WebGL\",\"version\":\"WebGL 2.0 (OpenGL ES 3.0 Chromium)\",\"initialRedraw\":{\"maximum\":1,\"channels\":2,\"samples\":[{\"index\":393880,\"before\":113,\"after\":112},{\"index\":1043473,\"before\":234,\"after\":233}]},\"cameraUnchanged\":true,\"stateUnchanged\":true,\"resources\":{\"available\":true,\"disposed\":false,\"width\":1280,\"height\":720,\"estimatedTextureBytes\":108864000,\"optionalPending\":0,\"optionalFailures\":0,\"detailEnabled\":true,\"estimatedTargetBytes\":3686400,\"colorBuffer\":\"rgba8\",\"outputDithering\":false,\"artworks\":1,\"textures\":27,\"geometries\":2,\"programs\":14,\"gpuBudgetBytes\":268435456,\"scene\":\"draft\",\"cachedInitialArtwork\":false,\"commandError\":false,\"recording\":{\"frames\":100,\"capacity\":36000,\"complete\":false},\"cameraTiming\":1,\"transition\":{\"phase\":\"idle\",\"error\":null,\"handoff\":null,\"placement\":{\"x\":1920,\"y\":1030,\"scale\":0.055,\"rotation\":0,\"anchorX\":1920,\"anchorY\":1080},\"region\":{\"x\":1920,\"y\":1030,\"radiusX\":90,\"radiusY\":48,\"rotation\":0,\"feather\":0.24},\"destinationCamera\":\"stop-at-full-frame\",\"sourceInstanceId\":\"pilot-test\",\"destinationInstanceId\":\"pilot-test:embedded-1\",\"canStart\":false,\"qualityLocked\":false}}}",
+    "lineNumber": 6,
+    "columnNumber": 63,
+    "scriptId": "6",
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "check",
+          "scriptId": "6",
+          "url": "http://127.0.0.1:59755/fixture.mjs",
+          "lineNumber": 5,
+          "columnNumber": 62
+        },
+        {
+          "functionName": "window.runForestPilot",
+          "scriptId": "10",
+          "url": "http://127.0.0.1:59755/pilot-fixture.mjs",
+          "lineNumber": 41,
+          "columnNumber": 4
+        }
+      ]
+    },
+    "exception": {
+      "type": "object",
+      "subtype": "error",
+      "className": "Error",
+      "description": "Error: Frozen draft redraw is pixel-identical before Reset: {\"viewport\":{\"width\":1280,\"height\":720,\"dpr\":1,\"renderScale\":1},\"renderer\":\"WebKit WebGL\",\"version\":\"WebGL 2.0 (OpenGL ES 3.0 Chromium)\",\"initialRedraw\":{\"maximum\":1,\"channels\":2,\"samples\":[{\"index\":393880,\"before\":113,\"after\":112},{\"index\":1043473,\"before\":234,\"after\":233}]},\"cameraUnchanged\":true,\"stateUnchanged\":true,\"resources\":{\"available\":true,\"disposed\":false,\"width\":1280,\"height\":720,\"estimatedTextureBytes\":108864000,\"optionalPending\":0,\"optionalFailures\":0,\"detailEnabled\":true,\"estimatedTargetBytes\":3686400,\"colorBuffer\":\"rgba8\",\"outputDithering\":false,\"artworks\":1,\"textures\":27,\"geometries\":2,\"programs\":14,\"gpuBudgetBytes\":268435456,\"scene\":\"draft\",\"cachedInitialArtwork\":false,\"commandError\":false,\"recording\":{\"frames\":100,\"capacity\":36000,\"complete\":false},\"cameraTiming\":1,\"transition\":{\"phase\":\"idle\",\"error\":null,\"handoff\":null,\"placement\":{\"x\":1920,\"y\":1030,\"scale\":0.055,\"rotation\":0,\"anchorX\":1920,\"anchorY\":1080},\"region\":{\"x\":1920,\"y\":1030,\"radiusX\":90,\"radiusY\":48,\"rotation\":0,\"feather\":0.24},\"destinationCamera\":\"stop-at-full-frame\",\"sourceInstanceId\":\"pilot-test\",\"destinationInstanceId\":\"pilot-test:embedded-1\",\"canStart\":false,\"qualityLocked\":false}}}\n    at check (http://127.0.0.1:59755/fixture.mjs:6:63)\n    at window.runForestPilot (http://127.0.0.1:59755/pilot-fixture.mjs:42:5)",
+      "objectId": "-5782710423202527891.2.1"
+    }
+  }
+}

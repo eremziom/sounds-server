@@ -1,0 +1,71 @@
+{
+  "id": "B-05-masked-alternative",
+  "source": ".local\\kre00\\runs\\klein-1794304814602127700",
+  "source_sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+  "prompts": {
+    "input_points": [
+      [
+        [
+          [
+            320,
+            224
+          ],
+          [
+            321,
+            175
+          ]
+        ]
+      ]
+    ],
+    "input_labels": [
+      [
+        [
+          1,
+          0
+        ]
+      ]
+    ],
+    "input_boxes": [
+      [
+        [
+          240,
+          175,
+          410,
+          270
+        ]
+      ]
+    ]
+  },
+  "mask_policy": "SAM object minus separately protected cyan bright pixels (G/B >140 and >1.4R), light dilation 3x3",
+  "mask_uncertainty": "Heuristic light/hull boundary; not a production-ready visibility/material selection",
+  "pixel_contract_sha256": "20c1dd73e3521adf0c59498fb509bffee58b251a23115beb3ea590aeb0f336a9",
+  "object_pixels": 2753,
+  "hull_pixels": 1666,
+  "protected_pixels": 1221,
+  "records": [
+    {
+      "seed": 600,
+      "compose_and_save_seconds": 0.060742100000425125,
+      "sha256": "0517fbc2c5e8d301499f48d1a97d0b3edc190a958cd0aad553a7d415fbef43e3",
+      "outside_hull_exact": true,
+      "protected_lights_exact": true,
+      "changed_hull_pixels": 1666
+    },
+    {
+      "seed": 601,
+      "compose_and_save_seconds": 0.06118600000081642,
+      "sha256": "4a16333f9f4b33573f1a3209e270928f459c223b372e8b4ec867074f5c25708d",
+      "outside_hull_exact": true,
+      "protected_lights_exact": true,
+      "changed_hull_pixels": 1666
+    },
+    {
+      "seed": 602,
+      "compose_and_save_seconds": 0.05884310000055848,
+      "sha256": "15cb6007fb05fe074d129e14c18296dd4d5a6b68aa18bcfb70a8deba6562dd3c",
+      "outside_hull_exact": true,
+      "protected_lights_exact": true,
+      "changed_hull_pixels": 1666
+    }
+  ]
+}

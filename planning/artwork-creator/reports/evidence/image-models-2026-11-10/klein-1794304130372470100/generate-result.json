@@ -1,0 +1,122 @@
+{
+  "stage": "generate",
+  "torch": "2.9.1+rocm7.2.1",
+  "diffusers": "0.42.1",
+  "dtype": "bfloat16",
+  "records": [
+    {
+      "id": "B-04",
+      "seed": 500,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 48.41671459999998,
+      "sha256": "53ce90da40ed1c887c1853f856006b4e868ba81e4803e4d649c589b19ce50a61",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 8447328256,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 900136960,
+        "peak_commit_bytes": 18989694976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 501,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 1.4696794999999838,
+      "sha256": "59c7233854f120a3cd7e1dbc47ecf51eca551128103d5b1b9b4c5e794625d306",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9271508992,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 907075584,
+        "peak_commit_bytes": 18989694976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 502,
+      "width": 512,
+      "height": 288,
+      "steps": 4,
+      "inference_and_decode_seconds": 1.479782299999897,
+      "sha256": "44e0c1440b95cab9729f3a28b5314bf52357e667bbc2d66243ae2e6bd9a27f5b",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9271508992,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 908697600,
+        "peak_commit_bytes": 18989694976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 500,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 165.2172088999996,
+      "sha256": "c3013af3d77061d3c28c93a1f57ec0e1fdf6d70c347f029bf498bcf0adcb755b",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 9579790336,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 878170112,
+        "peak_commit_bytes": 18989694976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 501,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 6.392097900000408,
+      "sha256": "27eabbd52039c035a0c142206068ec4ba78ddd8feb1db55a1f0b0d813eebe69c",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 13822328832,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 885272576,
+        "peak_commit_bytes": 18989694976
+      }
+    },
+    {
+      "id": "B-04",
+      "seed": 502,
+      "width": 1024,
+      "height": 576,
+      "steps": 4,
+      "inference_and_decode_seconds": 6.384187500000735,
+      "sha256": "e1243fe3c3a06db0f7b3b9929e339ef5256e1f767b420b4a43ca886c05593c67",
+      "gpu_allocated": 8047398912,
+      "gpu_reserved": 13822328832,
+      "process_memory": {
+        "peak_working_set_bytes": 8323682304,
+        "working_set_bytes": 885284864,
+        "peak_commit_bytes": 18989694976
+      }
+    }
+  ],
+  "quality": "not-reviewed",
+  "imports_seconds": 3.6493876000004093,
+  "device": "cuda:0",
+  "device_name": "AMD Radeon RX 7800 XT",
+  "hip": "7.2.53211-158bd99533",
+  "initial_gpu_free_total": [
+    17010655232,
+    17163091968
+  ],
+  "load_seconds": 7.846891600000163,
+  "error": "OutOfMemoryError: HIP out of memory. Tried to allocate 600.00 MiB. GPU 0 has a total capacity of 15.98 GiB of which 2.35 GiB is free. 13.59 GiB allowed; Of the allocated memory 12.82 GiB is allocated by PyTorch, and 395.39 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
+  "gpu_allocated_after_release_bytes": 8481527296,
+  "total_worker_seconds": 267.98230090000015,
+  "process_memory": {
+    "peak_working_set_bytes": 8323682304,
+    "working_set_bytes": 911069184,
+    "peak_commit_bytes": 18989694976
+  }
+}

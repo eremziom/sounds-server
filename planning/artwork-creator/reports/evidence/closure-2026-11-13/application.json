@@ -1,0 +1,128 @@
+{
+  "route": "/animations",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1
+  },
+  "diagnostics": {
+    "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+    "totalFrames": 8,
+    "totalIntervalMs": 113.90000000000009,
+    "retainedFrames": 8,
+    "frameMsP50": 14.199999999999818,
+    "frameMsP95": 14.700000000000045,
+    "averageFps": 70.2370500438981,
+    "events": [
+      {
+        "code": "ENGINE_PREPARING",
+        "tick": 0,
+        "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+        "severity": "info"
+      },
+      {
+        "code": "TRANSITION_IDLE",
+        "tick": 0,
+        "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+        "severity": "info"
+      },
+      {
+        "code": "ENGINE_READY",
+        "tick": 0,
+        "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+        "severity": "info"
+      },
+      {
+        "code": "TRANSITION_PREPARED",
+        "tick": 0,
+        "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+        "severity": "info"
+      },
+      {
+        "code": "ENGINE_RUNNING",
+        "tick": 6,
+        "sessionId": "5534385c-9c59-4dc7-ae5a-2e7fcca24d3c",
+        "severity": "info"
+      }
+    ],
+    "quality": {
+      "profile": "High",
+      "renderScale": 1,
+      "maxDpr": 2
+    },
+    "tick": 6,
+    "status": "running",
+    "seed": 181,
+    "resources": {
+      "available": true,
+      "disposed": false,
+      "width": 1280,
+      "height": 720,
+      "estimatedTextureBytes": 223948800,
+      "optionalPending": 0,
+      "optionalFailures": 0,
+      "detailEnabled": true,
+      "estimatedTargetBytes": 7372800,
+      "colorBuffer": "rgba16f",
+      "outputDithering": true,
+      "artworks": 3,
+      "textures": 10,
+      "geometries": 4,
+      "programs": 3,
+      "gpuBudgetBytes": 268435456,
+      "scene": "journey",
+      "cachedInitialArtwork": false,
+      "commandError": false,
+      "recording": {
+        "frames": 6,
+        "capacity": 36000,
+        "complete": true
+      },
+      "cameraTiming": 0.9731106025733223,
+      "transition": {
+        "phase": "prepared",
+        "error": null,
+        "handoff": null,
+        "placement": {
+          "x": 1920,
+          "y": 1030,
+          "scale": 0.055,
+          "rotation": 0,
+          "anchorX": 1920,
+          "anchorY": 1080
+        },
+        "region": {
+          "x": 1920,
+          "y": 1030,
+          "radiusX": 90,
+          "radiusY": 48,
+          "rotation": 0,
+          "feather": 0.24
+        },
+        "destinationCamera": "stop-at-full-frame",
+        "sourceInstanceId": "initial",
+        "destinationInstanceId": "initial:embedded-1",
+        "canStart": true,
+        "qualityLocked": false
+      }
+    },
+    "camera": {
+      "pose": {
+        "x": 1920,
+        "y": 1080,
+        "rotation": 0,
+        "logScale": 0
+      },
+      "velocity": {
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "logScale": 0
+      },
+      "moving": false,
+      "constraintReached": false
+    },
+    "suspensions": [],
+    "resizePending": false
+  }
+}

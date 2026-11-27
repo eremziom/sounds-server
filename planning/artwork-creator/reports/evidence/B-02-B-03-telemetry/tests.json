@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "node",
+      "--test",
+      "tools/artwork-creator/benchmark-tools.test.mjs"
+    ],
+    "exit_code": 0,
+    "stdout": "✔ real engine rejects zero period; valid retry changes only the beacon period in an isolated draft (28.3805ms)\n✔ arc validates through engine; all separated parts travel together, source stays unchanged (22.8679ms)\n✔ mask operation corrects exactly the deliberately inserted 3600 pixels (148.0207ms)\n✔ paths and unsupported operations fail closed (1.2123ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 316.1687\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "py",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/artwork-creator",
+      "-p",
+      "test_kre00.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "Downloading weights.gguf\nDownloading weights.gguf\n",
+    "stderr": "test_bad_download_does_not_become_usable_weights (test_kre00.EvidenceTests.test_bad_download_does_not_become_usable_weights) ... ok\ntest_iou_distinguishes_correct_missed_and_partial_localization (test_kre00.EvidenceTests.test_iou_distinguishes_correct_missed_and_partial_localization) ... ok\ntest_network_timeout_never_promotes_partial_weights (test_kre00.EvidenceTests.test_network_timeout_never_promotes_partial_weights) ... ok\ntest_preserves_previous_evidence (test_kre00.EvidenceTests.test_preserves_previous_evidence) ... ok\ntest_real_process_memory_high_water_mark (test_kre00.EvidenceTests.test_real_process_memory_high_water_mark) ... ok\ntest_refuses_under_sampled_measurement (test_kre00.EvidenceTests.test_refuses_under_sampled_measurement) ... ok\ntest_rejects_corrupted_cached_weights_without_network (test_kre00.EvidenceTests.test_rejects_corrupted_cached_weights_without_network) ... ok\ntest_summary_does_not_hide_outlier (test_kre00.EvidenceTests.test_summary_does_not_hide_outlier) ... ok\ntest_valid_cached_weights_are_reused (test_kre00.EvidenceTests.test_valid_cached_weights_are_reused) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.017s\n\nOK\n"
+  }
+]

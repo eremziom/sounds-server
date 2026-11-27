@@ -1,6 +1,7 @@
-import type { BehaviorKind, PilotControl, VisualScene } from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
+import type { ActiveVisualScene, BehaviorKind, PilotControl, VisualScene } from "../../engines/infinite-zoom/artwork/pilot-controls.ts";
 import type { LogicalRecording } from "../../engines/infinite-zoom/diagnostics/logical-replay.ts";
 import type { EngineStatus } from "../../engines/infinite-zoom/core/contracts.ts";
+import type { DraftEnvironmentGroups } from "./draft-environment.ts";
 
 export class VisualReadinessError extends Error {
   constructor() { super("Critical visualization is not ready"); this.name = "VisualReadinessError"; }
@@ -12,11 +13,12 @@ export interface VisualView {
   readonly diagnostics?: Readonly<Record<string, unknown>>;
   readonly canTransition?: boolean;
   readonly looping?: boolean;
-  readonly scene?: VisualScene; readonly sceneLoading?: boolean;
+  readonly scene?: ActiveVisualScene; readonly sceneLoading?: boolean;
   readonly pilotControls?: readonly PilotControl[]; readonly pilotCameraMotion?: boolean;
   readonly rimLightingEnabled?: boolean;
   readonly sceneRevealEnabled?: boolean; readonly sceneRevealProgress?: number;
   readonly environmentBlackoutEnabled?: boolean;
+  readonly draftBlackoutEnabled?: boolean; readonly draftBlackoutAvailable?: boolean;
 }
 export interface VisualConnection {
   prepareForPlayback(): Promise<void>;
@@ -26,6 +28,9 @@ export interface VisualConnection {
   setLoop?(enabled: boolean): void;
   exportReplay?(): LogicalRecording | null;
   selectScene?(scene: VisualScene): Promise<void>;
+  previewDraft?(manifest: unknown, signal: AbortSignal, groups?: DraftEnvironmentGroups): Promise<void>;
+  setDraftBlackout?(enabled: boolean): void;
+  endDraftPreview?(): Promise<void>;
   setPilotControl?(kind: BehaviorKind, enabled: boolean, strength: number): void;
   setPilotPreset?(preset: "subtle" | "all" | "none" | BehaviorKind): void;
   setPilotCameraMotion?(enabled: boolean): void;
@@ -67,6 +72,12 @@ export function createVisualBridge() {
     transition() { return connection?.transition() ?? Promise.reject(new Error("Visual host is not mounted")); },
     setLoop(enabled: boolean) { connection?.setLoop?.(enabled); },
     selectScene(scene: VisualScene) { return connection?.selectScene?.(scene) ?? Promise.reject(new Error("Visual host is not mounted")); },
+    previewDraft(manifest: unknown, signal: AbortSignal, groups?: DraftEnvironmentGroups) { return connection?.previewDraft?.(manifest, signal, groups) ?? Promise.reject(new Error("Visual host is not mounted")); },
+    setDraftBlackout(enabled: boolean) { connection?.setDraftBlackout?.(enabled); },
+    endDraftPreview() {
+      if (view.scene === "draft" && mode !== "background") { mode="background"; notify(); }
+      return connection?.endDraftPreview?.() ?? Promise.resolve();
+    },
     setPilotControl(kind: BehaviorKind, enabled: boolean, strength: number) { connection?.setPilotControl?.(kind,enabled,strength); },
     setPilotPreset(preset: "subtle" | "all" | "none" | BehaviorKind) { connection?.setPilotPreset?.(preset); },
     setPilotCameraMotion(enabled: boolean) { connection?.setPilotCameraMotion?.(enabled); },

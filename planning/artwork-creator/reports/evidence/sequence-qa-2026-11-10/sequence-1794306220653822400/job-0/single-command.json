@@ -1,0 +1,10 @@
+{
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\torch-rocm721\\Scripts\\python.exe",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\klein_probe.py",
+    "single",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\sequence-1794306220653822400\\job-0"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 21.433068899999853
+}

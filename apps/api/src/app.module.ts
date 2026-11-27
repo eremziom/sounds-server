@@ -10,9 +10,13 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { ArtworksModule } from './artworks/artworks.module';
+import { ArtworkJobsModule } from './artwork-jobs/artwork-jobs.module';
 
 @Module({
   imports: [
+    ArtworksModule,
+    ArtworkJobsModule,
     TracksModule,
     AuthModule,
     UsersModule,

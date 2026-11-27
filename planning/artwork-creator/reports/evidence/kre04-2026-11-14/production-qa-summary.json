@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "realApi": true,
+    "realJwt": true,
+    "realWorker": true,
+    "modelInference": false,
+    "sourceGenerationInference": false,
+    "productionPause": {
+      "black": 729,
+      "lit": 835687,
+      "uncovered": 0,
+      "hash": 3392082222,
+      "pixels": 1024000
+    },
+    "productionResetFrozen": true,
+    "productionBlackout": {
+      "black": 907657,
+      "lit": 108550,
+      "uncovered": 0,
+      "hash": 528175757,
+      "pixels": 1024000,
+      "animated": true,
+      "blackCoverage": 0.8863837890625,
+      "enabled": true
+    },
+    "productionRevealPause": {
+      "black": 2344,
+      "lit": 752686,
+      "uncovered": 0,
+      "hash": 3286420545,
+      "pixels": 1024000
+    },
+    "productionContext": true,
+    "productionReload": true
+  },
+  "projectId": "1c7a16c5-f510-4767-8052-16f36e1f66df",
+  "revisionId": "b4a3a1d6-7648-49b1-a17b-1cb4a25cbcd1",
+  "scope": "Persisted generated four-layer scene; motion/zoom QA; no model inference or revision changes"
+}

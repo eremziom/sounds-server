@@ -1,0 +1,567 @@
+{
+  "version": 1,
+  "title": "Nocny ogród — dron (pilot KRE-03)",
+  "snapshot": {
+    "brief": {
+      "intent": "KRE-03 layered night garden with an integral flying survey drone",
+      "qaPlan": "Inspect mask contours, inpainted backing, full curved flight, pillar occlusion, color cycles/propagation, blackout/reveal shadows, zoom, pause/reset and portrait/wide coverage. Record motion and uncertain boundaries; no still-only acceptance.",
+      "motionPlan": "Separate drone visibility and lamp layers; 24-second curved left-to-right flight behind the right pillar, tangent rotation about measured mask centroid; inpaint its entire revealed backing. No searchlight beam, trail or baked glow.",
+      "composition": "Dark alien garden and mossed stone gateway at right, thick foreground pillar near x=68%; small compact cyan drone at x=25%, y=45%, width 10%; open middle flight space.",
+      "blackoutPlan": "Opaque black coverage; independently animated garden details and drone lamps remain visible from the start while environment and hull reach zero opacity. Smooth eight-second reveal and return; pause and zoom QA required.",
+      "lightingPlan": "Many dozens of fine stone fissures and leaf-vein bands across three garden groups; saturated cyan-magenta-amber gradients along material, dark gaps preserved; distinct visibility, influence and delay maps, staggered local impulses and bass binding.",
+      "guidelinesPath": "apps/ui/src/engines/infinite-zoom/artwork-authoring-guidelines.md",
+      "guidelinesVersion": "1.7"
+    },
+    "layers": [
+      {
+        "id": "coverage",
+        "parameters": {},
+        "imageArtifactId": "74cc1e2d-2e6b-444b-91b6-8d66236a029f",
+        "maskArtifactIds": []
+      },
+      {
+        "id": "environment",
+        "parameters": {},
+        "imageArtifactId": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "maskArtifactIds": []
+      },
+      {
+        "id": "west-lights",
+        "parameters": {
+          "behaviors": [
+            {
+              "id": "west-color",
+              "kind": "colorShift",
+              "order": 0,
+              "params": {
+                "hue": 3.141592653589793,
+                "phase": 0.5,
+                "lightness": 0,
+                "saturation": 0.3,
+                "frequencyHz": 0.125,
+                "travelSeconds": 3,
+                "delayMapAssetId": "af93db16-8738-41ec-a2df-2fc4dedad98f"
+              }
+            },
+            {
+              "id": "west-impulse",
+              "kind": "glow",
+              "order": 1,
+              "params": {
+                "phase": 0.5,
+                "amount": 0.75,
+                "intensity": 1.5,
+                "sharpness": 5,
+                "threshold": 0,
+                "frequencyHz": 0.25
+              },
+              "modulation": [
+                {
+                  "id": "west-bass",
+                  "max": 1,
+                  "min": 0.6,
+                  "signal": "bass",
+                  "priority": 0,
+                  "operation": "multiply",
+                  "attackSeconds": 0.04,
+                  "releaseSeconds": 0.2
+                }
+              ],
+              "influenceMaskAssetId": "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4"
+            }
+          ],
+          "maskAssetId": "c4cf8234-8b54-4429-9f36-a716a3abef2b"
+        },
+        "imageArtifactId": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "maskArtifactIds": [
+          "c4cf8234-8b54-4429-9f36-a716a3abef2b",
+          "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4",
+          "af93db16-8738-41ec-a2df-2fc4dedad98f"
+        ]
+      },
+      {
+        "id": "middle-lights",
+        "parameters": {
+          "behaviors": [
+            {
+              "id": "middle-color",
+              "kind": "colorShift",
+              "order": 0,
+              "params": {
+                "hue": 3.141592653589793,
+                "phase": 1.8,
+                "lightness": 0,
+                "saturation": 0.3,
+                "frequencyHz": 0.125,
+                "travelSeconds": 3,
+                "delayMapAssetId": "0fb6c65f-0577-4190-952c-1780a578126c"
+              }
+            },
+            {
+              "id": "middle-impulse",
+              "kind": "glow",
+              "order": 1,
+              "params": {
+                "phase": 1.8,
+                "amount": 0.75,
+                "intensity": 1.5,
+                "sharpness": 5,
+                "threshold": 0,
+                "frequencyHz": 0.25
+              },
+              "modulation": [
+                {
+                  "id": "middle-bass",
+                  "max": 1,
+                  "min": 0.6,
+                  "signal": "bass",
+                  "priority": 0,
+                  "operation": "multiply",
+                  "attackSeconds": 0.04,
+                  "releaseSeconds": 0.2
+                }
+              ],
+              "influenceMaskAssetId": "7fa82841-ec76-466f-a9db-2d36d767fba2"
+            }
+          ],
+          "maskAssetId": "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c"
+        },
+        "imageArtifactId": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "maskArtifactIds": [
+          "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c",
+          "7fa82841-ec76-466f-a9db-2d36d767fba2",
+          "0fb6c65f-0577-4190-952c-1780a578126c"
+        ]
+      },
+      {
+        "id": "east-lights",
+        "parameters": {
+          "behaviors": [
+            {
+              "id": "east-color",
+              "kind": "colorShift",
+              "order": 0,
+              "params": {
+                "hue": 3.141592653589793,
+                "phase": 3.1,
+                "lightness": 0,
+                "saturation": 0.3,
+                "frequencyHz": 0.125,
+                "travelSeconds": 3,
+                "delayMapAssetId": "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f"
+              }
+            },
+            {
+              "id": "east-impulse",
+              "kind": "glow",
+              "order": 1,
+              "params": {
+                "phase": 3.1,
+                "amount": 0.75,
+                "intensity": 1.5,
+                "sharpness": 5,
+                "threshold": 0,
+                "frequencyHz": 0.25
+              },
+              "modulation": [
+                {
+                  "id": "east-bass",
+                  "max": 1,
+                  "min": 0.6,
+                  "signal": "bass",
+                  "priority": 0,
+                  "operation": "multiply",
+                  "attackSeconds": 0.04,
+                  "releaseSeconds": 0.2
+                }
+              ],
+              "influenceMaskAssetId": "69264d7c-4849-481e-a49f-531928fa06f2"
+            }
+          ],
+          "maskAssetId": "85fe1527-9172-4e0f-aa21-fe0be01262e0"
+        },
+        "imageArtifactId": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "maskArtifactIds": [
+          "85fe1527-9172-4e0f-aa21-fe0be01262e0",
+          "69264d7c-4849-481e-a49f-531928fa06f2",
+          "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f"
+        ]
+      },
+      {
+        "id": "drone",
+        "parameters": {
+          "travel": {
+            "path": {
+              "kind": "bezier",
+              "segments": [
+                {
+                  "to": {
+                    "x": 3400,
+                    "y": 20
+                  },
+                  "control1": {
+                    "x": 900,
+                    "y": -450
+                  },
+                  "control2": {
+                    "x": 2200,
+                    "y": 200
+                  }
+                }
+              ]
+            },
+            "pivot": {
+              "x": 1323.8173148840688,
+              "y": 917.1765145848917
+            },
+            "easing": "ease-in-out",
+            "orientToPath": true,
+            "startSeconds": 0,
+            "durationSeconds": 24,
+            "headingOffsetRadians": 0.4636476090008061
+          },
+          "maskAssetId": "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+          "occlusionMaskAssetId": "521ad60e-2297-42c5-a31a-e8afad323bf7"
+        },
+        "imageArtifactId": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+        "maskArtifactIds": [
+          "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+          "521ad60e-2297-42c5-a31a-e8afad323bf7"
+        ]
+      },
+      {
+        "id": "drone-lights",
+        "parameters": {
+          "travel": {
+            "path": {
+              "kind": "bezier",
+              "segments": [
+                {
+                  "to": {
+                    "x": 3400,
+                    "y": 20
+                  },
+                  "control1": {
+                    "x": 900,
+                    "y": -450
+                  },
+                  "control2": {
+                    "x": 2200,
+                    "y": 200
+                  }
+                }
+              ]
+            },
+            "pivot": {
+              "x": 1323.8173148840688,
+              "y": 917.1765145848917
+            },
+            "easing": "ease-in-out",
+            "orientToPath": true,
+            "startSeconds": 0,
+            "durationSeconds": 24,
+            "headingOffsetRadians": 0.4636476090008061
+          },
+          "behaviors": [
+            {
+              "id": "drone-color",
+              "kind": "colorShift",
+              "order": 0,
+              "params": {
+                "hue": 3.141592653589793,
+                "phase": 0.7,
+                "lightness": 0,
+                "saturation": 0.3,
+                "frequencyHz": 0.125,
+                "travelSeconds": 3,
+                "delayMapAssetId": "4a6325e6-b8bf-497c-901b-960c80b3f7e2"
+              }
+            },
+            {
+              "id": "drone-impulse",
+              "kind": "glow",
+              "order": 1,
+              "params": {
+                "phase": 0.7,
+                "amount": 0.75,
+                "intensity": 1.5,
+                "sharpness": 5,
+                "threshold": 0,
+                "frequencyHz": 0.25
+              },
+              "modulation": [
+                {
+                  "id": "drone-bass",
+                  "max": 1,
+                  "min": 0.6,
+                  "signal": "bass",
+                  "priority": 0,
+                  "operation": "multiply",
+                  "attackSeconds": 0.04,
+                  "releaseSeconds": 0.2
+                }
+              ],
+              "influenceMaskAssetId": "cb2ab4e7-e610-45f0-8a8e-038fe350febd"
+            }
+          ],
+          "maskAssetId": "39b14668-a02d-4767-a16f-bc8271e51232",
+          "occlusionMaskAssetId": "521ad60e-2297-42c5-a31a-e8afad323bf7"
+        },
+        "imageArtifactId": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+        "maskArtifactIds": [
+          "39b14668-a02d-4767-a16f-bc8271e51232",
+          "cb2ab4e7-e610-45f0-8a8e-038fe350febd",
+          "4a6325e6-b8bf-497c-901b-960c80b3f7e2",
+          "521ad60e-2297-42c5-a31a-e8afad323bf7"
+        ]
+      }
+    ],
+    "decisions": [
+      "Private copy of KRE-03 technical pilot; not published or artistically accepted. Source package SHA256 ae827bd13459956c0e84cf85d71dde6a99cef4e78739c7b7fd87227179a23ea4"
+    ],
+    "artifactIds": [
+      "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+      "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+      "39b14668-a02d-4767-a16f-bc8271e51232",
+      "cb2ab4e7-e610-45f0-8a8e-038fe350febd",
+      "4a6325e6-b8bf-497c-901b-960c80b3f7e2",
+      "74cc1e2d-2e6b-444b-91b6-8d66236a029f",
+      "87485806-1be3-47fa-8dc0-d160f9454bc5",
+      "521ad60e-2297-42c5-a31a-e8afad323bf7",
+      "c4cf8234-8b54-4429-9f36-a716a3abef2b",
+      "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4",
+      "af93db16-8738-41ec-a2df-2fc4dedad98f",
+      "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c",
+      "7fa82841-ec76-466f-a9db-2d36d767fba2",
+      "0fb6c65f-0577-4190-952c-1780a578126c",
+      "85fe1527-9172-4e0f-aa21-fe0be01262e0",
+      "69264d7c-4849-481e-a49f-531928fa06f2",
+      "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f"
+    ],
+    "schemaVersion": 1
+  },
+  "artifacts": [
+    {
+      "id": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+      "kind": "image",
+      "sha256": "22265ebab4e93f6c57d5991c8f87cff9a28cdd820257f3f92b13b52620c56980",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [],
+      "file": "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72.png"
+    },
+    {
+      "id": "b4ee5b80-4077-4c3b-bcbe-893f4014b08c",
+      "kind": "visibility-mask",
+      "sha256": "6419d4be97fc0a0f8ce8a50339d81539724ab6e485234e398a28fba0c2393054",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72"
+      ],
+      "file": "b4ee5b80-4077-4c3b-bcbe-893f4014b08c.png"
+    },
+    {
+      "id": "39b14668-a02d-4767-a16f-bc8271e51232",
+      "kind": "material-mask",
+      "sha256": "d9ad4970456b8954a1b187cd530874d277048635e593335698954c21ad1c6c98",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+        "b4ee5b80-4077-4c3b-bcbe-893f4014b08c"
+      ],
+      "file": "39b14668-a02d-4767-a16f-bc8271e51232.png"
+    },
+    {
+      "id": "cb2ab4e7-e610-45f0-8a8e-038fe350febd",
+      "kind": "influence-map",
+      "sha256": "b7667d60748e44a84ebec2f723ec7a2df13c0e3660db83cf6fe9c2f70b5cdccf",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+        "39b14668-a02d-4767-a16f-bc8271e51232"
+      ],
+      "file": "cb2ab4e7-e610-45f0-8a8e-038fe350febd.png"
+    },
+    {
+      "id": "4a6325e6-b8bf-497c-901b-960c80b3f7e2",
+      "kind": "delay-map",
+      "sha256": "731030927d99537ac7fd9a22c2e24be60a0f985d43a40b898a54a3eae0901b74",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72",
+        "39b14668-a02d-4767-a16f-bc8271e51232"
+      ],
+      "file": "4a6325e6-b8bf-497c-901b-960c80b3f7e2.png"
+    },
+    {
+      "id": "74cc1e2d-2e6b-444b-91b6-8d66236a029f",
+      "kind": "image",
+      "sha256": "4c43ca8b8e48de4bb2776fd8ed3ec78319f54ca346ff3e43ad710b5b481c1611",
+      "width": 16,
+      "height": 9,
+      "registrationId": "1e7f02af-85b9-44ca-93da-39f0e8eee0ab",
+      "inputIds": [],
+      "file": "74cc1e2d-2e6b-444b-91b6-8d66236a029f.png"
+    },
+    {
+      "id": "87485806-1be3-47fa-8dc0-d160f9454bc5",
+      "kind": "image",
+      "sha256": "d838fc16ecfdf7ac581f74cb7809077dd44f71a44d8ae1d66eb34e729ef25557",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72"
+      ],
+      "file": "87485806-1be3-47fa-8dc0-d160f9454bc5.png"
+    },
+    {
+      "id": "521ad60e-2297-42c5-a31a-e8afad323bf7",
+      "kind": "occlusion-mask",
+      "sha256": "3eec839807807b4e8cf1e0fb282b253c1ceb5ba468e39a0c96ab2b977d37f548",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "0e10e45e-5c74-4fee-b0bc-aecdfbd09b72"
+      ],
+      "file": "521ad60e-2297-42c5-a31a-e8afad323bf7.png"
+    },
+    {
+      "id": "c4cf8234-8b54-4429-9f36-a716a3abef2b",
+      "kind": "material-mask",
+      "sha256": "ca83bcfe49a6bc27c47a46b8a2eeaf4443c18cc7e7cc376c652b8f3782233437",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5"
+      ],
+      "file": "c4cf8234-8b54-4429-9f36-a716a3abef2b.png"
+    },
+    {
+      "id": "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4",
+      "kind": "influence-map",
+      "sha256": "ef0f3ba94ceda3219e49cf04280586cb6ca555338394c95b2c1aa603984083ed",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "c4cf8234-8b54-4429-9f36-a716a3abef2b"
+      ],
+      "file": "2eeeeb7f-ce47-4ed3-826f-891c1f8790a4.png"
+    },
+    {
+      "id": "af93db16-8738-41ec-a2df-2fc4dedad98f",
+      "kind": "delay-map",
+      "sha256": "1770e058d9eb14a035ac80567bbf32651e829613e1edce0977fb86210258b788",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "c4cf8234-8b54-4429-9f36-a716a3abef2b"
+      ],
+      "file": "af93db16-8738-41ec-a2df-2fc4dedad98f.png"
+    },
+    {
+      "id": "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c",
+      "kind": "material-mask",
+      "sha256": "48afa6582c7b73e2305604a211d221c5ba645f7811eff209158b55d0ae4414d2",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5"
+      ],
+      "file": "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c.png"
+    },
+    {
+      "id": "7fa82841-ec76-466f-a9db-2d36d767fba2",
+      "kind": "influence-map",
+      "sha256": "816ae70d93c9b9f990119f4056bb67ed07a99f360c7c655484bd17dc7f7cd5e7",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c"
+      ],
+      "file": "7fa82841-ec76-466f-a9db-2d36d767fba2.png"
+    },
+    {
+      "id": "0fb6c65f-0577-4190-952c-1780a578126c",
+      "kind": "delay-map",
+      "sha256": "63382550d63fea6f357b1cabb79f718edd9b36fe9df836771364d0d2ebf1248b",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "8d7dadf4-6d00-4c83-abf1-9d97a0485c2c"
+      ],
+      "file": "0fb6c65f-0577-4190-952c-1780a578126c.png"
+    },
+    {
+      "id": "85fe1527-9172-4e0f-aa21-fe0be01262e0",
+      "kind": "material-mask",
+      "sha256": "7c47286d40ca450339f80725d978289f484948fd8dce232395bfaa9a91fd7c59",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5"
+      ],
+      "file": "85fe1527-9172-4e0f-aa21-fe0be01262e0.png"
+    },
+    {
+      "id": "69264d7c-4849-481e-a49f-531928fa06f2",
+      "kind": "influence-map",
+      "sha256": "413378887ecdc79cfa81292184effe9500ddc4c9ba1b3c9a532d8ff7a4ba971a",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "85fe1527-9172-4e0f-aa21-fe0be01262e0"
+      ],
+      "file": "69264d7c-4849-481e-a49f-531928fa06f2.png"
+    },
+    {
+      "id": "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f",
+      "kind": "delay-map",
+      "sha256": "dd2485cac18ffed2626721a5c4f8e23a0d8d3ba3bc0e44de8424fbe4d3444155",
+      "width": 1024,
+      "height": 576,
+      "registrationId": "498b7248-56db-44d4-961c-1ee9e26ebd4a",
+      "inputIds": [
+        "87485806-1be3-47fa-8dc0-d160f9454bc5",
+        "85fe1527-9172-4e0f-aa21-fe0be01262e0"
+      ],
+      "file": "d48b36c0-6ab5-49cf-a0c1-ae76eea8028f.png"
+    }
+  ],
+  "previewControls": {
+    "environmentLayerIds": [
+      "environment",
+      "drone"
+    ],
+    "lightLayerIds": [
+      "west-lights",
+      "middle-lights",
+      "east-lights",
+      "drone-lights"
+    ]
+  },
+  "sourcePackageSha256": "ae827bd13459956c0e84cf85d71dde6a99cef4e78739c7b7fd87227179a23ea4"
+}

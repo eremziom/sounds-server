@@ -1,0 +1,31 @@
+{
+  "packages": {
+    "onnxruntime": "1.31.1",
+    "onnx": "1.23.2",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "model_repo": "opencv/inpainting_lama",
+  "revision": "aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f",
+  "weight": {
+    "type": "file",
+    "oid": "425f3a0e4bb6312a6df126d1f8cfdedb6891bed4",
+    "size": 92591623,
+    "lfs": {
+      "oid": "7df918ac3921d3daf0aae1d219776cf0dc4e4935f035af81841b40adcf74fdf2",
+      "size": 92591623,
+      "pointerSize": 133
+    },
+    "xetHash": "06926c328bc448de03385dd7df1a1beb53c7a566e570cf1eb67274af63557c10",
+    "path": "inpainting_lama_2025jan.onnx"
+  },
+  "license": "Apache-2.0 (OpenCV model repository)",
+  "license_url": "https://huggingface.co/opencv/inpainting_lama/blob/aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f/LICENSE",
+  "artifact": {
+    "url": "https://huggingface.co/opencv/inpainting_lama/resolve/aee6d22f0a13e5e35af1c9a1c3afd62841fc6f3f/inpainting_lama_2025jan.onnx",
+    "file": ".local\\kre00\\models\\lama\\inpainting_lama_2025jan.onnx",
+    "sha256": "7df918ac3921d3daf0aae1d219776cf0dc4e4935f035af81841b40adcf74fdf2",
+    "bytes": 92591623
+  },
+  "lock_sha256": "2c0f3e5dc67eb60e9dc8c68f6f7c5d4eceeb4aa80f6850b89919d041f4f3cb5a"
+}

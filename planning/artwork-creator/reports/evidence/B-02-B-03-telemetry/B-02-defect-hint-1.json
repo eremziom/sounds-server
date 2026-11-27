@@ -1,0 +1,129 @@
+{
+  "id": "B-02",
+  "kind": "defect-hint",
+  "index": 1,
+  "request": {
+    "model": "local",
+    "seed": 201,
+    "temperature": 0.1,
+    "max_tokens": 500,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "grounding",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "box": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "problem": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "box",
+            "problem"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "To obraz z czerwoną nakładką maski przedniego koła. Wskaż błędny, odłączony prostokątny fragment maski poza motocyklem. Nie wskazuj koła jako błędu. Wskazówka użytkownika: błąd jest w lewym górnym rogu obrazu; wybierz jego dokładny prostokąt, nie całą ćwiartkę. Zwróć obiekt JSON {\"box\":[left,top,right,bottom],\"problem\":\"opis\"}. Współrzędne całkowite 0..1000, początek lewy górny róg, 1000 oznacza prawą/dolną krawędź."
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": ".local\\kre00\\runs\\llm-1794301021327259600\\fixture\\mask-overlay.png"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "image_sha256": "8eddd9a24d9aedb8c9fd06eacdd19b1da2b0b9bc771d680f44ca635142d63bf9",
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"box\":[22,44,57,117],\"problem\":\"odłączony prostokątny fragment maski przedniego koła\"}"
+        }
+      }
+    ],
+    "created": 1794301039,
+    "model": "D:\\Sandbox\\sounds-server\\.local\\kre00\\models\\Qwen3.5-9B-Q4_K_M.gguf",
+    "system_fingerprint": "b12110-cd959bae9",
+    "object": "chat.completion",
+    "usage": {
+      "completion_tokens": 35,
+      "prompt_tokens": 1564,
+      "total_tokens": 1599,
+      "prompt_tokens_details": {
+        "cached_tokens": 1560
+      }
+    },
+    "id": "chatcmpl-oejko4OItF8ExJxLeeynlIhz6obZ4nlp",
+    "timings": {
+      "cache_n": 1560,
+      "prompt_n": 4,
+      "prompt_ms": 35.945,
+      "prompt_per_token_ms": 8.98625,
+      "prompt_per_second": 111.28112393935179,
+      "predicted_n": 35,
+      "predicted_ms": 417.615,
+      "predicted_per_token_ms": 12.28279411764706,
+      "predicted_per_second": 81.41470014247572
+    }
+  },
+  "request_seconds": 0.6054193999998461,
+  "process_memory": {
+    "peak_working_set_bytes": 5981954048,
+    "working_set_bytes": 5792129024,
+    "peak_commit_bytes": 8693997568
+  },
+  "coordinate_system": "integer-0-1000",
+  "assistance": "explicit top-left location hint",
+  "box_model": [
+    22,
+    44,
+    57,
+    117
+  ],
+  "box": [
+    0.022,
+    0.044,
+    0.057,
+    0.117
+  ],
+  "reference": [
+    0.025,
+    0.044444444444444446,
+    0.0625,
+    0.1111111111111111
+  ],
+  "iou": 0.7301768397033656,
+  "annotation": {
+    "artifact": "prediction.png",
+    "sha256": "a61b0b7582d7a7f189d1dd92bc4939e47c71b1438ef6e25afe4d15ddec0cf722"
+  }
+}

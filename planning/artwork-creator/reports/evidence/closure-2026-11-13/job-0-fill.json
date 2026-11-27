@@ -1,0 +1,13 @@
+{
+  "label": "job-0-fill",
+  "command": [
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\venvs\\onnx\\Scripts\\python.exe",
+    "-B",
+    "D:\\Sandbox\\sounds-server\\tools\\artwork-creator\\pilot-correction.py",
+    "fill",
+    "D:\\Sandbox\\sounds-server\\.local\\kre00\\runs\\app-budget-1794557087722\\job-0"
+  ],
+  "pid": 24836,
+  "exitCode": 0,
+  "wallSeconds": 12.134
+}

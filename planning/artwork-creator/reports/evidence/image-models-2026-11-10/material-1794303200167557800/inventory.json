@@ -1,0 +1,79 @@
+[
+  {
+    "file": "command.json",
+    "bytes": 281,
+    "sha256": "39ae4fc091a37dfd04fca0f609f23c4de03774a806f0750d73d1c9d893b85ff3",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\command.json"
+  },
+  {
+    "file": "material-140.png",
+    "bytes": 6527,
+    "sha256": "8050b73c6bfbb0f6717f6631c1343d7058b2d1a747f2989b0ca670be5cdc94ea",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\material-140.png"
+  },
+  {
+    "file": "material-170.png",
+    "bytes": 6514,
+    "sha256": "a9effc0476b8d79d20e122e4f760abd812a777b75a291a670f6a569d439c4faa",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\material-170.png"
+  },
+  {
+    "file": "material-200.png",
+    "bytes": 6011,
+    "sha256": "7c7eda98a2093e671b52a46a46e11e6ff3058d7eacb263b2f606508bb7fafb32",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\material-200.png"
+  },
+  {
+    "file": "object-0.png",
+    "bytes": 5236,
+    "sha256": "64891acb5a49df7034f88545c794356f62896cb42fbdf8cd123d7ff2db0f5b28",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\object-0.png"
+  },
+  {
+    "file": "object-1.png",
+    "bytes": 5236,
+    "sha256": "64891acb5a49df7034f88545c794356f62896cb42fbdf8cd123d7ff2db0f5b28",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\object-1.png"
+  },
+  {
+    "file": "object-2.png",
+    "bytes": 5236,
+    "sha256": "64891acb5a49df7034f88545c794356f62896cb42fbdf8cd123d7ff2db0f5b28",
+    "archived": false,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\object-2.png"
+  },
+  {
+    "file": "result.json",
+    "bytes": 3252,
+    "sha256": "4682fa9086e89887d58956e2745884ef6163ff911d0a48edf6d6d2d74445226d",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\result.json"
+  },
+  {
+    "file": "review.webp",
+    "bytes": 101258,
+    "sha256": "c48d76f3dabb3807504ce3a88edbd06148331e61794b1f888be35b0e34a28ec8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\review.webp"
+  },
+  {
+    "file": "status.json",
+    "bytes": 22,
+    "sha256": "615b528c5c005c3fa1f565a5f58bb0f9fb327229716a5ea9a8143c5524daf9b8",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\status.json"
+  },
+  {
+    "file": "worker.txt",
+    "bytes": 1374,
+    "sha256": "899b1057128fcbbcc7ee030ef96f3cff6ab7976300c75be20ff62d09ae2f38f6",
+    "archived": true,
+    "local_source": ".local\\kre00\\runs\\material-1794303200167557800\\worker.txt"
+  }
+]

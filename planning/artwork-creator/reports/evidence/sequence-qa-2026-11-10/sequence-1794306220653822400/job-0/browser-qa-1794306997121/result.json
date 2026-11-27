@@ -1,0 +1,1384 @@
+{
+  "result": {
+    "result": {
+      "renderer": "ANGLE (AMD, AMD Radeon RX 7800 XT (0x0000747E) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "frames": 840,
+      "simulationSeconds": 14,
+      "oneCanvas": true,
+      "noExtraAudio": true,
+      "pause": true,
+      "reset": true,
+      "opaque": true,
+      "portraitWide": true,
+      "diagnostics": {
+        "available": true,
+        "disposed": false,
+        "width": 1400,
+        "height": 600,
+        "estimatedTextureBytes": 6488640,
+        "optionalPending": 0,
+        "optionalFailures": 0,
+        "detailEnabled": true,
+        "estimatedTargetBytes": 6720000,
+        "colorBuffer": "rgba16f",
+        "outputDithering": true,
+        "artworks": 1,
+        "textures": 7,
+        "geometries": 2,
+        "programs": 3,
+        "gpuBudgetBytes": 268435456,
+        "scene": "journey",
+        "cachedInitialArtwork": false,
+        "commandError": false,
+        "recording": null,
+        "cameraTiming": 1,
+        "transition": {
+          "phase": "idle",
+          "error": null,
+          "handoff": null,
+          "placement": null,
+          "region": null,
+          "sourceInstanceId": "kre00-preview",
+          "destinationInstanceId": null,
+          "canStart": false,
+          "qualityLocked": false
+        }
+      },
+      "samples": [
+        {
+          "frame": 0,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 2.0551481397448557,
+                        "saturation": 1.1308347940906027,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.4272216908106132,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 20.88337914404707,
+                "y": -404.634278230949,
+                "scale": 1,
+                "rotation": -0.5404075212590775,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 20.88337914404707,
+                "y": -404.634278230949,
+                "scale": 1,
+                "rotation": -0.5404075212590775,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 2.0551481397448557,
+                        "saturation": 1.1308347940906027,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.4272216908106132,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 59,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 3.1301440376790794,
+                        "saturation": 1.1992711584744997,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.7747876210097138,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 52.82577276966671,
+                "y": -389.336103958851,
+                "scale": 1,
+                "rotation": -0.4999193545146558,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 52.82577276966671,
+                "y": -389.336103958851,
+                "scale": 1,
+                "rotation": -0.4999193545146558,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 3.1301440376790794,
+                        "saturation": 1.1992711584744997,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.7747876210097138,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 179,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.39666666666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 0.2679602665908993,
+                        "saturation": 1.0170588803920655,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 4.1196721935663803e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 255.24826582933994,
+                "y": -268.84381367476647,
+                "scale": 1,
+                "rotation": -0.24243655395824437,
+                "opacity": 0.39666666666666667,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 255.24826582933994,
+                "y": -268.84381367476647,
+                "scale": 1,
+                "rotation": -0.24243655395824437,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 0.2679602665908993,
+                        "saturation": 1.0170588803920655,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 4.1196721935663803e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 299,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.7966666666666666,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -3.1301440376790794,
+                        "saturation": 0.8007288415255003,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.41111165538453043,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 533.8060281050646,
+                "y": -71.69013884844398,
+                "scale": 1,
+                "rotation": 0.06136397296775591,
+                "opacity": 0.7966666666666666,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 533.8060281050646,
+                "y": -71.69013884844398,
+                "scale": 1,
+                "rotation": 0.06136397296775591,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -3.1301440376790794,
+                        "saturation": 0.8007288415255003,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.41111165538453043,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 419,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -0.26796026659089967,
+                        "saturation": 0.9829411196079345,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.04178548478902447,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 822.2090981601947,
+                "y": 144.5347958956971,
+                "scale": 1,
+                "rotation": 0.28486478664993203,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 822.2090981601947,
+                "y": 144.5347958956971,
+                "scale": 1,
+                "rotation": 0.28486478664993203,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -0.26796026659089967,
+                        "saturation": 0.9829411196079345,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.04178548478902447,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 599,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 2.402822596728499,
+                        "saturation": 1.1529684374568978,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.4111116553845297,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1146.2594775447694,
+                "y": 433.8993629356089,
+                "scale": 1,
+                "rotation": 0.4864147401843709,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1146.2594775447694,
+                "y": 433.8993629356089,
+                "scale": 1,
+                "rotation": 0.4864147401843709,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 2.402822596728499,
+                        "saturation": 1.1529684374568978,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.4111116553845297,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 2050,
+              "y": 1050,
+              "rotation": 0,
+              "logScale": 0.3
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 659,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 0.2679602665909048,
+                        "saturation": 1.017058880392066,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.774787621009714,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1199.2156326564602,
+                "y": 491.5266669685391,
+                "scale": 1,
+                "rotation": 0.5210169547661808,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1199.2156326564602,
+                "y": 491.5266669685391,
+                "scale": 1,
+                "rotation": 0.5210169547661808,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": 0.2679602665909048,
+                        "saturation": 1.017058880392066,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.774787621009714,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1985,
+              "y": 1065,
+              "rotation": 0,
+              "logScale": 0.15
+            },
+            "velocity": {
+              "x": -97.5,
+              "y": 22.5,
+              "rotation": 0,
+              "logScale": -0.22499999999999998
+            },
+            "moving": true,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 719,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.5083333333333333,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -2.0238695535385354,
+                        "saturation": 0.8711564625524619,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.04178548478902447,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -2.0238695535385354,
+                        "saturation": 0.8711564625524619,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.04178548478902447,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 779,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0.008333333333333304,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -3.1301440376790794,
+                        "saturation": 0.8007288415255003,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 4.1196721935665054e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -3.1301440376790794,
+                        "saturation": 0.8007288415255003,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 4.1196721935665054e-8,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        },
+        {
+          "frame": 839,
+          "snapshot": {
+            "id": "kre00-preview",
+            "packageId": "kre00-unverified-pilot",
+            "layers": [
+              {
+                "id": "coverage",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "environment-lights",
+                "x": 0,
+                "y": 0,
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -2.4028225967284995,
+                        "saturation": 0.8470315625431022,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.0027839476200098474,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": []
+                  }
+                ],
+                "audioGain": 1
+              },
+              {
+                "id": "drone-lights",
+                "x": 1217.7720654039133,
+                "y": 512.9074715026172,
+                "scale": 1,
+                "rotation": 0.5337081916392615,
+                "opacity": 0,
+                "groups": [
+                  {
+                    "id": "layer",
+                    "maxDisplacement": 512,
+                    "effects": [
+                      {
+                        "id": "color",
+                        "kind": "colorShift",
+                        "hue": -2.4028225967284995,
+                        "saturation": 0.8470315625431022,
+                        "lightness": 0
+                      },
+                      {
+                        "id": "impulse",
+                        "kind": "glow",
+                        "amount": 0.0027839476200098474,
+                        "threshold": 0
+                      }
+                    ]
+                  }
+                ],
+                "audioGain": 1
+              }
+            ]
+          },
+          "camera": {
+            "pose": {
+              "x": 1920,
+              "y": 1080,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "velocity": {
+              "x": 0,
+              "y": 0,
+              "rotation": 0,
+              "logScale": 0
+            },
+            "moving": false,
+            "constraintReached": false
+          }
+        }
+      ],
+      "errors": [],
+      "scope": "Unpublished diagnostic package; recorded real flight, lighting, blackout/reveal and zoom. Artistic acceptance remains separate."
+    }
+  },
+  "exceptions": []
+}

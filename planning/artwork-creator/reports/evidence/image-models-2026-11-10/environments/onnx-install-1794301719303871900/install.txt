@@ -1,0 +1,33 @@
+Collecting onnxruntime==1.31.1
+  Downloading onnxruntime-1.31.1-cp312-cp312-win_amd64.whl.metadata (6.1 kB)
+Collecting onnx==1.23.2
+  Downloading onnx-1.23.2-cp312-abi3-win_amd64.whl.metadata (8.7 kB)
+Collecting numpy==2.5.4
+  Downloading numpy-2.5.4-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Collecting pillow==13.0.0
+  Downloading pillow-13.0.0-cp312-cp312-win_amd64.whl.metadata (9.3 kB)
+Collecting flatbuffers (from onnxruntime==1.31.1)
+  Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting packaging (from onnxruntime==1.31.1)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting protobuf>=4.25.8 (from onnxruntime==1.31.1)
+  Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+Collecting typing_extensions>=4.7.1 (from onnx==1.23.2)
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting ml_dtypes>=0.5.4 (from onnx==1.23.2)
+  Downloading ml_dtypes-0.6.0-cp312-cp312-win_amd64.whl.metadata (8.8 kB)
+Downloading onnxruntime-1.31.1-cp312-cp312-win_amd64.whl (14.9 MB)
+   ---------------------------------------- 14.9/14.9 MB 1.5 MB/s eta 0:00:00
+Downloading onnx-1.23.2-cp312-abi3-win_amd64.whl (7.9 MB)
+   ---------------------------------------- 7.9/7.9 MB 2.7 MB/s eta 0:00:00
+Downloading numpy-2.5.4-cp312-cp312-win_amd64.whl (12.6 MB)
+   ---------------------------------------- 12.6/12.6 MB 1.8 MB/s eta 0:00:00
+Downloading pillow-13.0.0-cp312-cp312-win_amd64.whl (7.3 MB)
+   ---------------------------------------- 7.3/7.3 MB 6.8 MB/s eta 0:00:00
+Downloading ml_dtypes-0.6.0-cp312-cp312-win_amd64.whl (439 kB)
+Downloading protobuf-7.36.2-cp310-abi3-win_amd64.whl (456 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: flatbuffers, typing_extensions, protobuf, pillow, packaging, numpy, onnxruntime, ml_dtypes, onnx
+Successfully installed flatbuffers-25.12.19 ml_dtypes-0.6.0 numpy-2.5.4 onnx-1.23.2 onnxruntime-1.31.1 packaging-26.3 pillow-13.0.0 protobuf-7.36.2 typing_extensions-4.16.0

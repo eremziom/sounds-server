@@ -17,6 +17,7 @@ export function PilotArtworkControls() {
     if(scenePrefix === "clockwork" && (kind === "rotate" || kind === "pulse" || kind === "glow"))return t(`clockworkBehaviors.${kind}`);
     return t(`${scenePrefix === "layered" ? "layeredBehaviors" : "pilotBehaviors"}.${kind}`);
   }
+  if (snapshot.scene === "draft") return null;
   return <div className="space-y-4">
     <label className="flex flex-wrap items-center gap-3 text-sm font-medium">
       {t("sceneLabel")}
